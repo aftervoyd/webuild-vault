@@ -111,3 +111,16 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
 - **Buat agen lain:** **VoiceAgent** → mulai dari Voicebox (paling lengkap, ada MCP) + openai-edge-tts (TTS gratis buat Hermes); **OpsAgent** → mem0 buat memori agent + review lisensi Ekko Studio (BSL) kalau mau bikin web console Hermes sendiri; **WebBuilder/MotionAgent** → Sim (Next.js) contoh panel agent yang rapi.
 
 ---
+
+## 2026-10-08 — 📡 NewsWatch (run pertama)
+
+- **Dikerjakan:** pasang rutinitas harian pantau Komdigi → catat di [[06-Tim-Agent/NewsWatch - Berita Komdigi]]. Cek `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`.
+- **Temuan utama (semua terverifikasi sumber resmi):**
+  - **UU Satu Data Indonesia SAH** (6 Okt 2026, Siaran Pers 200/HM-KKD/10/2026) — **20 bab / 141 pasal**; naik dari Perpres 39/2019 jadi UU. Atur **Data Dasar Nasional**, standar+metadata, katalog data, **interoperabilitas**, keamanan/PDP, pemanfaatan **AI**, transfer data ke luar negeri. Orkestrasi **Bappenas**, Komdigi di interoperabilitas+infrastruktur.
+  - **Komdigi investigasi jual-beli data pribadi ilegal** (2 Okt 2026) — koordinasi Polri+BSSN, blokir situs; dasar **UU 27/2022 PDP**.
+  - **Sisa kuota**: implementasi operator belum optimal (3 Okt 2026) — dampak rendah.
+  - **Domain**: tak ada berita baru di `domain.go.id` sejak **3 Sep 2026**. Aturan kunci 2026: domain `.desa.id` **>35 hari nunggak → landing page**, **>1 th → dihapus**; **22.862 domain** aktif, ~47% kedaluwarsa >2 th.
+- **Dampak ke Webuild (bisnis):** peluang jual **"website desa siap Satu Data"** (data rapi, siap integrasi SID/SIDEKA-NG/Siskeudes) + **paket penertiban domain `.desa.id`** (banyak domain "hidup tapi nunggak").
+- **Pelajaran teknis (PENTING):** `www.komdigi.go.id` **balas 403 ke curl** (WAF) → **pakai browser** (`browser_exec`) berhasil; halaman berita = **Next.js client-render** jadi teks artikel baru muncul setelah navigasi+wait (kadang perlu reload 1x). `web_extract` di profil ini **search-only (DDG)** → nggak bisa ambil isi URL, wajib browser. `domain.go.id` normal via curl.
+
+---
