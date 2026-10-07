@@ -100,3 +100,27 @@ font default, radius besar + shadow lembut, **nol identitas lokal Madura**, nol 
 (41,7% + 31,3% + 12,0% + 10,5% + 4,5% = 100%).
 
 **Kredit foto:** `foto/KREDIT.md` (23 foto Wikimedia Commons, CC BY / CC BY-SA).
+
+---
+
+## 🔁 Putaran kedua — 4 gaya yang lebih resmi (7 Okt 2026)
+
+**Masukan user:** 3 arah sebelumnya *"malah lebay dan terlalu modern"*.
+→ Pelajaran: untuk website desa/pemerintah, **tahan diri**. Tanpa serif raksasa, tanpa outline
+type, tanpa elemen miring, tanpa animasi.
+
+**Empat gaya baru** (`/root/projects/desa-redesign/gaya-{1..4}.html`, pemilih: `pilih.html`):
+
+| # | Nama | Karakter | Warna | Nilai juri |
+|---|---|---|---|---|
+| 1 | **Resmi & Rapi** | portal instansi klasik: bar kontak, kop, menu biru, APBDes = tabel resmi | biru tua + kuning | **8/10** |
+| 2 | **Hangat & Kekeluargaan** | nada menyapa, foto warga, kartu lembut | krem + bata + zaitun | **8/10** (setelah fix) |
+| 3 | **Adat Nusantara** | formal simetris, pita & bingkai motif **kawung**, layanan I–VI | marun + emas + hijau tua | **9/10** |
+| 4 | **Buletin Desa** | koran/buletin: masthead, headline, rubrik 3 kolom, Pengumuman | kertas + tinta + merah | **9/10** |
+
+**Pelajaran teknis baru:**
+1. **JANGAN pakai emoji sebagai ikon** → di headless/beberapa sistem jadi kotak kosong ("tofu").
+   Pakai **inline SVG** (`stroke="currentColor"`), ukuran 20–22px.
+2. **Kecurigaan hasil vision harus diuji ulang** — vision pernah lapor "label tombol tak terlihat",
+   padahal cuma **crop-nya yang salah posisi**. Selalu zoom area spesifik sebelum "memperbaiki".
+3. Angka & persen APBDes di keempat gaya konsisten: Rp2.847.500.000 (41,7/31,3/12,0/10,5/4,5).
