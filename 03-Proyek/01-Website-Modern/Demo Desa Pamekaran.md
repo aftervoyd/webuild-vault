@@ -227,3 +227,12 @@ Berkas: `/root/projects/desa-mobile/app.html` — LIVE `http://100.115.213.21:80
 **Cara ukur yang benar:** `getBoundingClientRect()` lewat iframe 390×844 + `--dump-dom`, lalu grep `.produk / .pk / .navb`. Angka jauh lebih cepat daripada menebak dari gambar.
 
 - **Koreksi isi berita (audit foto):** kartu ke-4 memakai foto **plakat bertulisan** (nyambung tidak dengan headline "Pelatihan Pemasaran Digital"). Diganti: berita-3 → foto monumen + bendera (`berita1-wide2`), headline "Monumen Gotong Royong Desa Diresmikan Warga"; berita-4 → foto kerupuk (`kerupuk-0-wide`), label **UMKM**, headline "UMKM Kerupuk Rumahan Tembus Pasar Kecamatan". Pelajaran: **judul harus mengikuti foto yang benar-benar tersedia**, bukan sebaliknya.
+
+
+### 🏁 Putaran final (8 Okt 2026)
+1. **Cover berita mobile → 1:1.** `.kartu-berita{aspect-ratio:1/1;height:auto}` + `.geser{align-items:flex-start}` (tanpa itu flex `stretch` mengalahkan `aspect-ratio`). Efek: ruang kosong di bawah carousel terisi foto.
+2. **Versi website desktop: sidebar PERMANEN di kiri.** Kelas `body.web`: `.drawer{transform:translateX(0);width:288px;border-radius:0}` + `.scrim{display:none}` + **`.screen{left:288px}`** (bukan `padding-left` pada `.panggung` — anak `position:absolute` diposisikan relatif ke **padding box**, jadi padding tidak menggeser mereka) + `#shell[data-screen="login"]` menonaktifkan sidebar di layar login + `#buka-drawer` disembunyikan + `buka()` diberi guard `if(document.body.classList.contains('web'))return;` supaya klik hamburger tidak menyembunyikan nav.
+3. **Kolom kanan: Agenda Desa.** Grid 2 kolom di `.isi` versi web (`minmax(0,1fr) 340px`), berisi **kalender Oktober 2026** (1 Okt = Kamis → 3 sel kosong; tanggal 8 = hari ini dilingkari, 12/17/24/31 = hari acara) + 4 kartu acara. Tersembunyi di mobile (`.kolom-k{display:none}`).
+4. **Finalisasi**: `<title>`, meta description, `apple-mobile-web-app-*`, **`manifest.webmanifest`** + ikon 192/512/64 (digambar PIL: rumah putih di kotak biru gradien) → aplikasi bisa di-*install* ke home screen. Status bar HP (`.sbar`) disembunyikan di versi website.
+
+**Sisa (jujur, belum dikerjakan):** versi desktop masih memakai **nav pil bawah** (pola mobile) padahal sidebar sudah permanen → agak redundant; dan halaman Pasar hanya 4 produk sehingga bawahnya kosong.
