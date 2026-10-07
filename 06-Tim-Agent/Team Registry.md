@@ -26,7 +26,7 @@
 |---|---|---|---|
 | **RepoScout** | Cari repo GitHub berguna (AI, agentic, design, content, web) | `gh` + DeepWiki MCP | 🟢 Aktif → [[06-Tim-Agent/RepoScout - Katalog Repo]] |
 | **TrendScout** | Tren teknologi & desain | web search | ⚪ Rencana |
-| **NewsWatch** | Monitor berita & regulasi **Komdigi** | cron + scraping | ⚪ Rencana |
+| **NewsWatch** | Monitor berita & regulasi **Komdigi** | cron + scraping | 🟢 Bot aktif (profil `newswatch`, harian 07:00) |
 
 ### 🏗️ Divisi PRODUKSI — bikin produk klien
 | Agent | Tugas | Tool/Integrasi | Status |
@@ -82,6 +82,18 @@ Simpan ke vault + lapor ke user
 - **Persisten** (tetap) — punya jadwal otomatis (mis. NewsWatch harian)
 
 ---
+
+## 🫀 Sistem Hidup (AKTIF)
+
+| Komponen | Wujud |
+|---|---|
+| **Identitas** | `~/.hermes/profiles/<bot>/SOUL.md` |
+| **Rutinitas** | cron harian per bot |
+| **Sosial** | papan Kanban `webuild` + [[06-Tim-Agent/Papan Hidup Agent]] |
+| **Belajar** | tiap agent patch skill-nya sendiri tiap ada pelajaran |
+
+**Jadwal harian:** 06:00 RepoScout · 07:00 NewsWatch · 08:00 Orchestrator digest → Telegram
+**Cara kelola:** skill `webuild-agents`
 
 ## 🔗 Terkait
 - [[01-Bisnis/Webuild - Visi & Roadmap]]
