@@ -15,18 +15,22 @@
 | `05-Journal` | Catatan harian |
 | `06-Tim-Agent` | Tim agent AI (registry & SOP) |
 | `07-Aset` | Template, brand, proposal, RAB |
+| `08-Infrastruktur` | VPS, akses, prosedur pemulihan |
 
 ## 🚀 Proyek
 
 - 🟢 **[[03-Proyek/01-Website-Modern/README|01 — Website Modern]]** — aktif (konsumen pertama: calon kepala desa)
 - ⚪ **[[03-Proyek/02-Autonomous-AI-UMKM/README|02 — Autonomous AI untuk UMKM]]** — rencana
 - ⚪ **[[03-Proyek/03-Autonomous-AI-Content-Creator/README|03 — Autonomous AI untuk Content Creator]]** — rencana
+- ⚪ **[[03-Proyek/04-Virtual-Office-Visualisasi/README|04 — Virtual Office Visualisasi]]** — rencana (ide produk)
 
 ## 📌 Pintu masuk cepat
 
 - 🎯 [[01-Bisnis/Webuild - Visi & Roadmap]] — arah & rencana besar
 - 🤖 [[06-Tim-Agent/Team Registry]] — siapa saja agent kita
 - ⚖️ [[01-Bisnis/Baseline & Compliance - Website Desa]] — aturan domain, legal, harga
+- 🖥️ [[08-Infrastruktur/VPS Manifest]] — peta server + akses
+- 🆘 [[08-Infrastruktur/Prosedur Pemulihan Akses]] — kalau nggak bisa masuk VPS
 - 🎓 [[02-Skill/Roadmap Learning]] — yang lagi dipelajari
 
 ## ➕ Cara nambah proyek baru (biar tetap rapi)
