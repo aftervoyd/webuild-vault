@@ -124,3 +124,24 @@ type, tanpa elemen miring, tanpa animasi.
 2. **Kecurigaan hasil vision harus diuji ulang** — vision pernah lapor "label tombol tak terlihat",
    padahal cuma **crop-nya yang salah posisi**. Selalu zoom area spesifik sebelum "memperbaiki".
 3. Angka & persen APBDes di keempat gaya konsisten: Rp2.847.500.000 (41,7/31,3/12,0/10,5/4,5).
+
+---
+
+## ⏸️ STATUS: MENUNGGU REFERENSI DARI USER (7 Okt 2026)
+
+Keputusan user: **"kita lanjut nanti aja, gua bakal kirim page per page referensinya"**
+→ Jangan mulai redesign lagi sampai user mengirim referensi per halaman.
+
+**Yang sudah siap dipakai saat lanjut:**
+- **4 gaya desain** siap: `gaya-1` Resmi & Rapi · `gaya-2` Hangat & Kekeluargaan ·
+  `gaya-3` Adat Nusantara · `gaya-4` Buletin Desa
+- Pemilih: `http://100.115.213.21:8085/pilih.html`
+- 3 eksperimen lama (lebay): `index.html`
+- Foto asli berlisensi + kredit: `foto/web/` & `foto/KREDIT.md`
+- **Data desa siap pakai (terverifikasi balance):** APBDes Rp2.847.500.000
+  (41,7 / 31,3 / 12,0 / 10,5 / 4,5) · 3.847 jiwa · 1.124 KK · 4 dusun · 412,6 Ha · 48 UMKM
+- Sistem service: `desa-redesign` (port 8085, Tailscale-only), `desa-pamekaran` (port 8080)
+
+**Cara kerja saat referensi masuk:** proses **halaman per halaman**, ikuti struktur &
+proporsi referensi, tetap pakai palet/gaya yang user pilih, dan pakai data desa di atas
+(jangan ganti angka dengan karangan).
