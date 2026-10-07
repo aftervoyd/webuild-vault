@@ -79,3 +79,21 @@
 - **Pelajaran teknis**: `assignSpot()` dulu cuma nerima spot `type === 'desk'`, jadi ruangan non-kantor
   (server-room=`standing`, meeting-room=`meeting-seat`) selalu gagal → agent jatuh ke kantor utama.
   Fix: tambah param `types` + fallback ke spot apa pun yang bebas.
+
+### Lanjutan — art ruangan disejajarkan dengan titik kursi
+
+Temuan: karakter berhenti di pintu, bukan di kursi. Ternyata **art ruangan tidak sejajar
+dengan koordinat spot** di `rooms.ts` (meja digambar di bawah, sementara titik kursi di atas).
+
+Fix: semua prop digambar ulang mengikuti koordinat spot asli:
+- meeting-room: meja oval dipindah ke pusat `(150,107)` = titik seat-1..4 (x 30%/70%, y 40%/55%)
+- kitchen: meja makan ke `(150,146)` = lunch-1/lunch-2 (35%/65%); mesin kopi ke x 90 (coffee-spot)
+- server-room: rak server di x 24/82/172/262 biar spot (35%/65%, y 60%) ada di depan rak
+- lobby: meja resepsionis ke `(150,90)`; sofa panjang di x 44..118 = waiting-1/2
+- gym: 2 treadmill pas di x 75 & 225 (gym-1/gym-2)
+- nap-room: 3 sofa di x 75/150/225 (nap-1/2/3)
+- rooftóp: kursi santai pas di roof-1/2/3
+- manager-office & ceo-office: meja ke y 90 / y 101 (mgr-spot / ceo-spot)
+
+Verifikasi: VoiceAgent jalan dari pintu (90,50) → sampai seat-1 (30,40) → state `working` dalam ~20 detik.
+Semua 14 agent akhirnya `working` di ruangannya masing-masing.
