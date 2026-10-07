@@ -174,3 +174,26 @@ Tidak ada lagi cerita palsu (CI/CD, standup, fire drill) — itu cuma nyala kala
   **Fix:** `params.get('story') !== '1'`.
 - Client bisa ketinggalan event spawn (WS reconnect). **Fix:** rekonsiliasi `/roster` tiap 12 detik
   (idempoten — reducer skip agent yang sudah ada).
+
+---
+
+## ⚠️ KOREKSI ARAH DARI USER (7 Okt 2026) — PENTING, belum dikerjakan
+
+**Perkataan user:**
+> "harusnya setiap ruangan tetep semi 3d kaya ruangan pertama dan tambahin ruangan baru disampingnya"
+
+**Artinya:**
+1. **Art ruangan lain HARUS bergaya SAMA dengan Main Office** — perspektif **semi-3D**
+   (isometrik: lantai + dinding belakang + sudut ruangan, ada kedalaman), BUKAN flat 2D.
+   Generator PIL yang sekarang bikin ruangan flat/denah → **salah arah**.
+2. **Ruangan baru ditambahkan DI SAMPING** (bersebelahan / nyambung), bukan sebagai
+   ruangan terpisah yang di-navigasi lewat sidebar. Jadi konsepnya kantor besar yang
+   MELEBAR — lorong/pintu nyambung antar ruangan dalam satu peta.
+
+**Yang harus dilakukan nanti (saat lanjut):**
+- Art: bikin ulang ruangan dengan gaya semi-3D menyerupai `office-day.png` (isometrik,
+  ada dinding + sudut + bayangan), ATAU pakai tileset isometrik siap pakai.
+- Layout: satu peta besar, ruangan bersambung kiri-kanan lewat pintu — bukan sidebar-navigasi.
+- Sidebar navigasi + denah (yang sekarang) boleh tetap ada sebagai shortcut, bukan pengganti.
+
+**Status:** ⏸️ DIHENTIKAN atas permintaan user. Lanjutkan nanti.
