@@ -145,3 +145,48 @@ Keputusan user: **"kita lanjut nanti aja, gua bakal kirim page per page referens
 **Cara kerja saat referensi masuk:** proses **halaman per halaman**, ikuti struktur &
 proporsi referensi, tetap pakai palet/gaya yang user pilih, dan pakai data desa di atas
 (jangan ganti angka dengan karangan).
+
+---
+
+## 📱 Aplikasi Mobile "Desa Digital Pamekaran" (7 Okt 2026)
+
+**Permintaan user:** *"fokus ke mobile device dan ui/ux nya persis seperti ini"* (kirim referensi
+4 layar: Login · Dashboard · Drawer · Pasar UMKM Lokal).
+
+**Hasil:** `/root/projects/desa-mobile/app.html` — aplikasi mobile yang benar-benar jalan.
+Live: **http://100.115.213.21:8086/app.html** (Tailscale-only, systemd `desa-mobile`).
+Presentasi 4 HP: `/root/projects/desa-mobile/presentasi.png`
+
+**Token desain (diambil dengan sampling piksel dari referensi, bukan perkiraan):**
+- Biru utama `#1E4E9C` · layar `#EEF2F7` · kartu/tile `#FFFFFF` · ikon tile `#EAF1FB`
+- Teks `#1F2937` · redup `#6B7280` · garis `#E5E7EB` · merah `#DC2626`
+- Font Inter · tile 112px · gap 11px · radius kartu 16px · tombol 10px
+- **Terkonfirmasi: tile dashboard PUTIH di atas latar abu-biru** (bukan kebalikannya)
+
+**4 layar:** Login (crest, 2 input, Login, Social Login G/X/FB/LinkedIn) · Dashboard
+(2x3 tile: Administrasi/Kesehatan/UMKM Lokal/Berita & Info/Pariwisata/Pelayanan + carousel
+berita + nav bawah 5 ikon) · Drawer (profil + 8 menu, Dashboard aktif biru, Logout merah) ·
+Pasar UMKM (chips Semua/Makanan/Kerajinan/Pertanian/Wisata + 4 produk 2 kolom + Add to Cart).
+
+**URL param:** `?w=390` (mode bingkai tetap 390x844 untuk screenshot) · `?s=login|dash|pasar`
+· `?drawer=1`.
+
+### ⚠️ 4 JEBAKAN YANG DITEMUKAN (WAJIB DIINGAT)
+
+1. **`onerror` + `innerHTML +=` = LOOP TAK TERBATAS.** `onerror="this.parentNode.innerHTML+='...'"`
+   menulis ulang `<img>` berikut atribut `onerror`-nya → 404 → onerror → 404 → **Chrome hang
+   tanpa error** (70 detik, tanpa file output). FIX: avatar ilustrasi SVG / `this.remove()`.
+   **Jangan pernah pakai `innerHTML +=` di dalam handler error.**
+2. **Chrome headless + `<meta viewport width=device-width>` = layout viewport ≠ ukuran window.**
+   `--window-size=390,844` menghasilkan gambar 390x844 TAPI layout viewport **500px** → shell
+   430px (max-width) termotong 40px di kanan. FIX: `?w=390` memaksa `.stage`/`.shell` 390x844.
+3. **`.shell{width:100%}` di dalam flex item pembungkus yang belum di-CSS = ambruk.** `.stage`
+   tanpa aturan → shell 99px, input 7px (placeholder "Password" jadi "P"). FIX: beri `.stage`
+   aturan eksplisit + `.shell{flex:0 0 auto;min-width:0}`.
+4. **Emoji sebagai ikon = kotak kosong ("tofu")** di server tanpa font emoji. **Pakai inline SVG**
+   (`stroke="currentColor"`), 20-24px.
+
+5. **Verifikasi vision HARUS lewat resolusi penuh.** Saat gambar diperkecil ke 350px, vision
+   melaporkan "drawer kosong", "kolom ke-3 terpotong", "label Pelayanan terpotong" — **semuanya
+   SALAH**; di resolusi penuh semuanya normal. Selalu potong area spesifik lalu zoom sebelum
+   "memperbaiki" sesuatu. Jangan memperbaiki bug yang tidak ada.
