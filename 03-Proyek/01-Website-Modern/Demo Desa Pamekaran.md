@@ -225,3 +225,5 @@ Berkas: `/root/projects/desa-mobile/app.html` — LIVE `http://100.115.213.21:80
 - **`aspect-ratio` diabaikan** pada `.pk .foto` karena `<img height:100%>` menyelesaikan tinggi dirinya dari rasio asli gambar → kartu tetap 289px, nav menutupi baris kedua dan tombol Add to Cart hilang. FIX: `img{position:absolute;inset:0}` + `aspect-ratio:3/2` → kartu 240px, baris kedua berakhir di y720 (nav di y768) ✓. **Pelajaran: untuk aspect-ratio, gambar harus dikeluarkan dari alur (absolut).**
 
 **Cara ukur yang benar:** `getBoundingClientRect()` lewat iframe 390×844 + `--dump-dom`, lalu grep `.produk / .pk / .navb`. Angka jauh lebih cepat daripada menebak dari gambar.
+
+- **Koreksi isi berita (audit foto):** kartu ke-4 memakai foto **plakat bertulisan** (nyambung tidak dengan headline "Pelatihan Pemasaran Digital"). Diganti: berita-3 → foto monumen + bendera (`berita1-wide2`), headline "Monumen Gotong Royong Desa Diresmikan Warga"; berita-4 → foto kerupuk (`kerupuk-0-wide`), label **UMKM**, headline "UMKM Kerupuk Rumahan Tembus Pasar Kecamatan". Pelajaran: **judul harus mengikuti foto yang benar-benar tersedia**, bukan sebaliknya.
