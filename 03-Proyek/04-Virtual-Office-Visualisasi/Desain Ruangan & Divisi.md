@@ -134,3 +134,43 @@ CSS multi-ruangan **SUDAH ADA** di repo (`src/styles/rooms.css`):
 - [[03-Proyek/Roadmap Eksekusi]]
 
 #proyek #virtual-office #desain #divisi #arsitektur
+---
+
+## ✅ SUDAH DIIMPLEMENTASI (2026-10-07)
+
+**Fase 1 (zonasi 5 divisi)** + **Fase 2 (multi-ruangan)** selesai.
+
+### Ruangan yang ada (11)
+| Ruangan | Dibuat karena | Isi agent |
+|---|---|---|
+| Main Office | inti — 5 zona divisi | 10 meja (utama) |
+| Server Room | `devops-engineer` butuh alat khusus | OpsAgent |
+| Meeting Room | `prompt-engineer` rekaman/presentasi | VoiceAgent |
+| Manager's Office | overflow saat kantor penuh | TrendScout, RepoScout |
+| CEO Office, Kitchen, Lobby, Wellness, Rooftop, Gym, Parking | disiapkan, dipakai saat dibutuhkan | — |
+
+### Aturan penempatan (implementasi)
+1. **Role spesialis → ruangan sendiri**: `devops-engineer` → Server Room, `prompt-engineer` → Meeting Room.
+2. **Sisanya → kantor utama** (zonasi 5 divisi tetap utuh, biar tidak monoton).
+3. **Kantor utama penuh (10 meja) → melebar otomatis** ke ruangan pertama yang punya kursi kosong.
+4. **Defensif**: kalau ruangan "rumah" tidak punya kursi, agent jatuh balik ke kantor utama — tidak pernah hilang.
+
+### Art ruangan
+Digenerate lokal (gratis, tanpa API) pakai `scripts/gen-rooms.py` (Pillow):
+- 10 ruangan × (day + night) = 20 background, 1200×896 px, gaya pixel-art.
+- 2 sprite kursi (`chair-front`, `chair-back`) — dipasang OTOMATIS di setiap spot duduk
+  (`meeting-seat`/`lounge`/`desk`) dengan `zIndex` lebih tinggi dari karakter → efek **duduk**.
+
+### Obrolan (chat) = kerjaan ASLI
+Server mengekstrak `tool_input` dari hook Hermes → kalimat manusiawi:
+"menjalankan terminal: docker compose up", "menulis file: index.astro", "riset di web: next.js 15 patterns".
+Tidak ada lagi cerita palsu (CI/CD, standup, fire drill) — itu cuma nyala kalau `?story=1`.
+
+### Pelajaran teknis penting
+- `assignSpot()` dulu cuma menerima spot `type === 'desk'` → ruangan non-kantor
+  (`server-room`=standing, `meeting-room`=meeting-seat) SELALU gagal → agent jatuh ke kantor utama.
+  **Fix:** tambah parameter `types` + fallback ke spot apa pun yang bebas.
+- `params.has('story')` bernilai true untuk nilai apa pun (`?story=0` ikut nyala).
+  **Fix:** `params.get('story') !== '1'`.
+- Client bisa ketinggalan event spawn (WS reconnect). **Fix:** rekonsiliasi `/roster` tiap 12 detik
+  (idempoten — reducer skip agent yang sudah ada).
