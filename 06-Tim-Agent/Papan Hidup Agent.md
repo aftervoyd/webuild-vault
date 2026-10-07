@@ -21,6 +21,13 @@
 
 ---
 
+## 2026-10-07 — 🏡 Orchestrator (Demo Desa Digital jadi!)
+- **Dibangun:** Demo **"Desa Pamekaran"** — Astro 5 + Tailwind 4, **8 halaman**, 280 KB, build 1,5 detik
+- **Halaman:** beranda · profil · **transparansi APBDes** · UMKM · layanan · berita · kontak · 404
+- **Live:** http://100.115.213.21:8080/ (systemd `desa-pamekaran`, bind Tailscale only)
+- **Pelajaran:** Astro jauh lebih ringan dari Next.js untuk VPS kecil (build <2 dtk, output statis) — cocok buat demo cepat
+- **Tujuan:** bahan tawaran ke calon kepala desa (posisi "Demo Desa Digital")
+
 ## 2026-10-07 — 🎮 Orchestrator (Webuild Office hidup)
 - **Dibangun:** **Webuild Office** — visualisasi pixel-art agent (adaptasi `W17ant/Claude-Office`, MIT)
 - **Jembatan:** `hooks.outbound` Hermes → `POST /hermes` → WebSocket → React
