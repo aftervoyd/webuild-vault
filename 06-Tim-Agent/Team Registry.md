@@ -24,7 +24,7 @@
 ### 🔍 Divisi RISET — cari info
 | Agent | Tugas | Tool/Integrasi | Status |
 |---|---|---|---|
-| **RepoScout** | Cari repo GitHub berguna (AI, agentic, design, content, web) | `gh` CLI + DeepWiki MCP | ⚪ Rencana |
+| **RepoScout** | Cari repo GitHub berguna (AI, agentic, design, content, web) | `gh` + DeepWiki MCP | 🟢 Aktif → [[06-Tim-Agent/RepoScout - Katalog Repo]] |
 | **TrendScout** | Tren teknologi & desain | web search | ⚪ Rencana |
 | **NewsWatch** | Monitor berita & regulasi **Komdigi** | cron + scraping | ⚪ Rencana |
 
@@ -46,10 +46,10 @@
 
 | Integrasi | Buat apa | Status |
 |---|---|---|
-| **GitHub** (`gh` CLI) | Repo, issue, PR | ⚪ Belum dipasang |
-| **DeepWiki** (MCP) | Tanya jawab repo GitHub publik | ⚪ Belum dipasang |
-| **Figma** (MCP) | Design canvas | ⚪ Belum dipasang |
-| **Context7** (MCP) | Dokumentasi library terbaru | ⚪ Belum dipasang |
+| **GitHub** (`gh` CLI) | Repo, issue, PR | ✅ Aktif (akun `aftervoyd`) |
+| **DeepWiki** (MCP) | Tanya jawab repo GitHub publik | ✅ Aktif |
+| **Context7** (MCP) | Dokumentasi library terbaru | ✅ Aktif |
+| **Figma** (MCP) | Design canvas | ⚪ Perlu login OAuth user |
 | **Buffer** (MCP) | Auto-posting sosmed | ⚪ Belum dipasang |
 
 ---
