@@ -212,3 +212,16 @@ Berkas: `/root/projects/desa-mobile/app.html` — LIVE `http://100.115.213.21:80
 1. **Chrome MENOLAK jendela < ~500px.** `--window-size=390,844` → viewport sebenarnya **500×757**. Akibatnya elemen di bawah y=757 (nav ada di y768-830) **tidak pernah ter-paint** padahal ada di DOM → tampak "nav hilang". FIX: render di jendela besar (`--window-size=560,1040`) lalu **crop** dengan PIL ke 390×844.
 2. **Media query `min-width` dinilai dari LAYOUT VIEWPORT**, bukan lebar konten → jangan andalkan media query untuk mengaktifkan layout desktop saat render. Pakai kelas yang di-set JS + parameter URL.
 3. Verifikasi lewat **angka**, bukan mata AI: `getBoundingClientRect()` lewat iframe + `--dump-dom`, dan tampilkan `innerWidth/innerHeight` di layar lewat overlay debug.
+
+
+### 🔧 Revisi setelah tinjauan user (8 Okt 2026)
+1. **Nav bawah → 4 ikon** (hapus hamburger): `Beranda · Profil · Pesan · Pengaturan`, masing-masing pakai label teks 9.5px. Beranda = ikon di dalam lingkaran biru 32px, label biru.
+2. **Foto berita disejajarkan** dengan kolom tile di atasnya: `.geser` tak lagi full-bleed (`margin:0`), `.kartu-berita{width:100%}` → tepi kiri/kanan kartu = tepi tile, tak ada kartu kedua mengintip.
+3. **Drawer menutupi nav bawah**: `buka()` menyetel `navb.style.visibility='hidden'`, `tutup()` mengembalikannya.
+4. **Pasar UMKM**: kotak pencarian di atas (ikon kaca + `#ic-cari` baru) yang **menyaring realtime** digabung dengan chip kategori; **nav bawah juga tampil** di layar ini (`display` nav sekarang `(name==='login')?'none':'flex'`).
+
+**⚠️ Dua bug nyata yang ditemukan saat verifikasi (PENTING)**
+- **`.screen` adalah flex-column** → begitu konten melebihi tinggi layar, flex item dengan `flex-shrink:1` **menyusut** alih-alih menggulir. Akibatnya baris chip terjepit sampai **teksnya hilang** (chip tampak pil kosong). FIX: `flex:none` pada `.cari`, `.chips`, `.produk`. **Pelajaran: setiap blok yang tidak boleh menyusut di dalam `.screen` WAJIB `flex:none`.**
+- **`aspect-ratio` diabaikan** pada `.pk .foto` karena `<img height:100%>` menyelesaikan tinggi dirinya dari rasio asli gambar → kartu tetap 289px, nav menutupi baris kedua dan tombol Add to Cart hilang. FIX: `img{position:absolute;inset:0}` + `aspect-ratio:3/2` → kartu 240px, baris kedua berakhir di y720 (nav di y768) ✓. **Pelajaran: untuk aspect-ratio, gambar harus dikeluarkan dari alur (absolut).**
+
+**Cara ukur yang benar:** `getBoundingClientRect()` lewat iframe 390×844 + `--dump-dom`, lalu grep `.produk / .pk / .navb`. Angka jauh lebih cepat daripada menebak dari gambar.
