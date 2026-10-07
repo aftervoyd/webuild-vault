@@ -63,3 +63,40 @@ http://100.115.213.21:8080/     ← via Tailscale
 - [[01-Bisnis/Baseline & Compliance - Website Desa]]
 
 #proyek #website-modern #desa #demo #selesai
+---
+
+## 🎨 Eksperimen Redesign (7 Okt 2026) — 3 arah
+
+**Lokasi:** `/root/projects/desa-redesign/` → live `http://100.115.213.21:8085/` (systemd `desa-redesign`, Tailscale-only)
+
+**Kenapa:** user menilai demo lama "generik di desktop & nggak modern kalau jadi aplikasi".
+Diagnosis: hero gradien hijau-biru + kartu ngambang (pola SaaS template), statistik dobel,
+font default, radius besar + shadow lembut, **nol identitas lokal Madura**, nol fotografi.
+
+**Tiga arah yang dibangun (data sama, bahasa visual beda):**
+| | Arah | Gaya | Nilai juri |
+|---|---|---|---|
+| A | **Editorial Madura** ⭐ rekomendasi | serif raksasa, grid asimetris, palet tanah/kunyit/hijau tua, motif batik halus | **8/10** |
+| B | **Civic Dark Tech** | dark-mode default, aksen limau, bento dashboard, ticker | **8/10** |
+| C | **Organic Magazine** | Anton raksasa, outline type, miring/rotate, kolase | **7/10** |
+
+**Pelajaran teknis (penting, jangan diulang):**
+1. **JANGAN pakai IntersectionObserver buat reveal** → di headless/harness observer tak pernah
+   jalan → konten opacity 0 → halaman KOSONG. Ganti ke **CSS murni `animation-timeline: view()`**;
+   kalau browser lama tak mendukung, konten tetap terlihat (gagal-aman).
+2. `data-w="42"` + JS → ganti ke **CSS custom property** `--w:41,7%` + `@keyframes grow` view-timeline.
+3. Screenshot: **browser harness sering timeout** → pakai **chromium lokal headless**:
+   `/root/.hermes/tools/chromium-1208/chrome-linux64/chrome --headless=new --no-sandbox \
+   --hide-scrollbars --window-size=1440,4400 --virtual-time-budget=13000 --screenshot=out.png URL`
+4. **Foto stok acak (picsum) berbahaya** → pernah menampilkan **Manhattan** di situs desa Madura.
+5. **Wikimedia Commons = sumber foto asli berlisensi bebas** (pakai User-Agent deskriptif +
+   jeda 1,5–2 dtk, kalau nggak → 403). **Wajib potong tepi ~8,5%** untuk buang watermark
+   ("Wonderful Indonesia" / "NUSANTARA" nempel di sudut).
+6. **Selalu verifikasi angka anggaran pakai hitungan**, dan tulis **persen** di bar — bar tanpa
+   skala cuma jadi tekstur, bukan data.
+7. `prefers-reduced-motion` wajib: matikan marquee/animasi + netralkan rotate.
+
+**Data APBDes (terverifikasi balance):** belanja = pendapatan = **Rp2.847.500.000**
+(41,7% + 31,3% + 12,0% + 10,5% + 4,5% = 100%).
+
+**Kredit foto:** `foto/KREDIT.md` (23 foto Wikimedia Commons, CC BY / CC BY-SA).
