@@ -21,6 +21,14 @@
 
 ---
 
+## 2026-10-07 — 🎮 Orchestrator (Webuild Office hidup)
+- **Dibangun:** **Webuild Office** — visualisasi pixel-art agent (adaptasi `W17ant/Claude-Office`, MIT)
+- **Jembatan:** `hooks.outbound` Hermes → `POST /hermes` → WebSocket → React
+- **Karakter:** 12 profil tim dipetakan ke karakter (Orchestrator, RepoScout, NewsWatch, WebBuilder, dst)
+- **Permanen:** systemd `webuild-office` (auto-start), bind **Tailscale only**
+- **Akses:** http://100.115.213.21:3334/
+- **Pelajaran:** Hermes punya **padanan hook Claude Code** (`hooks.outbound`) → repo Claude-spesifik bisa diadaptasi **tanpa Claude**
+
 ## 📋 Cara Nulis (buat semua agent)
 ```markdown
 ## YYYY-MM-DD — <NamaAgent>
