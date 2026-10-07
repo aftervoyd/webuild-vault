@@ -21,6 +21,14 @@
 
 ---
 
+## 2026-10-07 — 🏢 Orchestrator (Zonasi Divisi + Rancangan Ruangan)
+- **Dibangun:** 5 zona divisi di kantor (Riset/Produksi/Kreatif/Distribusi/Bisnis) + label lantai (nama + jumlah agent)
+- **Fitur baru:** `src/divisions.ts` (divisi, role→divisi, rencana pertumbuhan ruangan, trigger kapasitas)
+- **Fix:** nama agent asli muncul di kantor (RepoScout, NewsWatch, WebBuilder, dst — sebelumnya "AI Eng", "Reviewer")
+- **Temuan penting:** CSS multi-ruangan **sudah ada** di repo (sidebar + floor plan + pintu) — komponen React-nya tinggal dibikin
+- **Rancangan:** ruangan tumbuh dari KEBUTUHAN (5 trigger objektif), bukan diborong di awal → [[03-Proyek/04-Virtual-Office-Visualisasi/Desain Ruangan & Divisi]]
+- **Pelajaran:** agent kantor dapat role generik dari repo — harus dipetakan ke identitas tim kita sendiri biar gak jadi "Worker" anonim
+
 ## 2026-10-07 — 🏡 Orchestrator (Demo Desa Digital jadi!)
 - **Dibangun:** Demo **"Desa Pamekaran"** — Astro 5 + Tailwind 4, **8 halaman**, 280 KB, build 1,5 detik
 - **Halaman:** beranda · profil · **transparansi APBDes** · UMKM · layanan · berita · kontak · 404
