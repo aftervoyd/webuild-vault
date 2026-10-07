@@ -60,3 +60,22 @@
 - [[06-Tim-Agent/RepoScout - Katalog Repo]]
 
 #papan-hidup #tim-agent #journal
+
+## 2026-10-07 — Kantor multi-ruangan + obrolan kerjaan ASLI jadi
+
+- **Obrolan sekarang nampilin kerjaan ASLI** (dari `tool_input`): "menjalankan terminal: npm run build",
+  "menulis file: index.astro", "riset di web: next.js patterns". Sebelumnya cuma generik.
+- **10 ruangan baru** (dibuat pakai `scripts/gen-rooms.py`, pixel-art day+night):
+  Server Room, Meeting Room, Kitchen, Lobby, Wellness, Rooftop, Gym, Parking, Manager, CEO.
+- **Sidebar navigasi + denah**: klik ruangan buat pindah; tombol Denah nampilin 11 ruangan
+  sekaligus dengan jumlah agent per ruangan.
+- **Kursi otomatis** di tiap spot duduk (meeting-seat/lounge/desk) → karakter kelihatan duduk.
+- **Aturan ruangan (tumbuh dari kebutuhan)**: role spesialis punya ruangan sendiri
+  (OpsAgent→Server Room, VoiceAgent→Meeting Room); sisanya kantor utama (zonasi 5 divisi tetap utuh);
+  kalau kantor utama penuh (10 meja), agent baru melebar ke ruangan lain.
+- **Rekonsiliasi roster tiap 12 detik**: kantor selalu sinkron dengan server, agent gak hilang.
+- **Bug fix**: cerita palsu tadinya masih nyala di `?story=0` (`params.has()` true untuk nilai apa pun).
+  Sekarang wajib `?story=1`.
+- **Pelajaran teknis**: `assignSpot()` dulu cuma nerima spot `type === 'desk'`, jadi ruangan non-kantor
+  (server-room=`standing`, meeting-room=`meeting-seat`) selalu gagal → agent jatuh ke kantor utama.
+  Fix: tambah param `types` + fallback ke spot apa pun yang bebas.
