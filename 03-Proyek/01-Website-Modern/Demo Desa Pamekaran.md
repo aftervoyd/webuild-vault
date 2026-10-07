@@ -236,3 +236,15 @@ Berkas: `/root/projects/desa-mobile/app.html` — LIVE `http://100.115.213.21:80
 4. **Finalisasi**: `<title>`, meta description, `apple-mobile-web-app-*`, **`manifest.webmanifest`** + ikon 192/512/64 (digambar PIL: rumah putih di kotak biru gradien) → aplikasi bisa di-*install* ke home screen. Status bar HP (`.sbar`) disembunyikan di versi website.
 
 **Sisa (jujur, belum dikerjakan):** versi desktop masih memakai **nav pil bawah** (pola mobile) padahal sidebar sudah permanen → agak redundant; dan halaman Pasar hanya 4 produk sehingga bawahnya kosong.
+
+
+### 📐 Putaran lebar & navbar (8 Okt 2026)
+5. **Navbar bawah DIHAPUS di versi website** (permintaan user). `body.web:not(.frame) .navb{display:none!important}` — **`!important` wajib**, karena `show()` menulis `navb.style.display` sebagai inline style yang mengalahkan rule CSS biasa. Padding bawah dikurangi karena tak ada lagi nav melayang: `.isi` 132→48, `.produk` 110→48, `#s-login` 132→72.
+6. **Lebar menyesuaikan laptop/komputer.** `.shell{max-width:1720px;margin:0 auto}` (di monitor ultrawide aplikasi tidak melar), `.isi`/`.produk`/`.cari`/`.chips` `max-width:1320px`, gutter `--gutter:clamp(22px,3vw,56px)`, sidebar `--sidebar:clamp(232px,18vw,288px)`. **Diuji nyata di 1366×768, 1440×900, 1920×1080** → tanpa overflow horizontal, kalender tetap muat, sidebar menyesuaikan sendiri.
+7. **Dua bug halus hasil audit gambar:** (a) `.produk` memakai `margin:0 auto` di dalam flex-column → **auto-margin menang atas `align-items:stretch`**, jadi item menyusut ke lebar *fit-content* (terukur 1092px = 4×240 + gap + padding) → wajib `width:100%` eksplisit. (b) `repeat(auto-fill,…)` menyisakan track kosong di kanan → pakai **`auto-fit`**.
+8. **Kolom kanan diisi tuntas:** kalender + 4 acara + **Statistik Desa** (3.847 jiwa / 1.124 KK / 48 UMKM / 412,6 Ha) + **Pengumuman** (3 item) + `position:sticky;top:24px` supaya ikut terlihat saat digulir. Foto berita 3 diganti anyaman bambu (foto monumen lama pudar).
+9. **Jebakan render baru (mahal):** di mode `--dump-dom` **tidak ada paint**, jadi **CSS transition tidak pernah maju** → `getComputedStyle(el).transform` melaporkan nilai AWAL (drawer terbaca `matrix(1,0,0,1,-255.71,0)` = tertutup, padahal di screenshot sudah terbuka). **Jangan ukur transform lewat `--dump-dom`; ukur dari screenshot.** Efek samping nyata: sidebar ikut beranimasi meluncur tiap load → rule web diberi `transition:none`.
+
+### 📱 Mobile (final)
+- Cover berita **1:1** (`.kartu-berita{aspect-ratio:1/1}` + `.geser{align-items:flex-start}` — tanpa `flex-start`, `align-items:stretch` mengalahkan `aspect-ratio`).
+- **PWA:** `manifest.webmanifest` + ikon 192/512/64 + `apple-mobile-web-app-*` → bisa di-install ke home screen.
