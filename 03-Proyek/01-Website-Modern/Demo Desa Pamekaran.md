@@ -190,3 +190,25 @@ Pasar UMKM (chips Semua/Makanan/Kerajinan/Pertanian/Wisata + 4 produk 2 kolom + 
    melaporkan "drawer kosong", "kolom ke-3 terpotong", "label Pelayanan terpotong" — **semuanya
    SALAH**; di resolusi penuh semuanya normal. Selalu potong area spesifik lalu zoom sebelum
    "memperbaiki" sesuatu. Jangan memperbaiki bug yang tidak ada.
+
+
+---
+
+## 🧊 Putaran 3 — Glassmorphism + nav pil melayang (8 Okt 2026)
+
+Permintaan user: (1) **glassmorphism**, (2) nav bawah **rounded berisi 5 ikon dengan "Beranda" di tengah**, (3) versi website: **berita disusun ke bawah**.
+
+Berkas: `/root/projects/desa-mobile/app.html` — LIVE `http://100.115.213.21:8086/app.html` (systemd `desa-mobile`, Tailscale-only).
+
+**Yang dikerjakan**
+- Token kaca baru: `--kaca`, `--kaca-grad`, `--kaca-kuat`, `--kaca-garis`, `--blur`, `--blur-kuat`, `--bayang-kaca` + fallback `@supports not (backdrop-filter:…)`.
+- Latar `shell` jadi gradien **+ 6 blob radial berwarna** (`::before`). Pelajaran: glassmorphism **wajib** punya latar berwarna — kalau latarnya putih, efek kaca tak terbaca (keluhan pertama: "tiles terlihat seperti kartu putih biasa").
+- Nav bawah jadi **pil melayang**: `position:absolute;left/right:16px;bottom:14px;border-radius:32px`, beranda di tengah sebagai tombol **naik** (`margin-top:-24px`, lingkaran biru gradien). Layar diberi `padding-bottom:104px` supaya konten tak ketutup pil.
+- **Versi website** aktif lewat kelas `body.web` (JS: `innerWidth>=700` **atau** parameter `&web=1`): 6 tile sebaris, berita `display:block` **disusun ke bawah** (bukan carousel), pil nav di tengah, produk 4 kolom.
+- Berita ditambah jadi **4 kartu** supaya versi website tidak menyisakan ruang kosong besar.
+- Login: panel kaca + tautan "Lupa Password?" / "Belum punya akun? Daftar".
+
+**⚠️ PELAJARAN MAHAL — Chrome headless**
+1. **Chrome MENOLAK jendela < ~500px.** `--window-size=390,844` → viewport sebenarnya **500×757**. Akibatnya elemen di bawah y=757 (nav ada di y768-830) **tidak pernah ter-paint** padahal ada di DOM → tampak "nav hilang". FIX: render di jendela besar (`--window-size=560,1040`) lalu **crop** dengan PIL ke 390×844.
+2. **Media query `min-width` dinilai dari LAYOUT VIEWPORT**, bukan lebar konten → jangan andalkan media query untuk mengaktifkan layout desktop saat render. Pakai kelas yang di-set JS + parameter URL.
+3. Verifikasi lewat **angka**, bukan mata AI: `getBoundingClientRect()` lewat iframe + `--dump-dom`, dan tampilkan `innerWidth/innerHeight` di layar lewat overlay debug.
