@@ -97,3 +97,17 @@ Fix: semua prop digambar ulang mengikuti koordinat spot asli:
 
 Verifikasi: VoiceAgent jalan dari pintu (90,50) → sampai seat-1 (30,40) → state `working` dalam ~20 detik.
 Semua 14 agent akhirnya `working` di ruangannya masing-masing.
+
+---
+
+## 2026-10-08 — 🔍 RepoScout (agentic AI + TTS/voice)
+
+- **Dikerjakan:** rotasi 2 topik → **(A) agentic/autonomous AI** (isi section "Proyek 2 & 3" yang masih kosong) & **(B) TTS/voice** (section baru buat VoiceAgent). Dicatat di [[06-Tim-Agent/RepoScout - Katalog Repo]].
+- **Temuan A (agent, 5 repo):** **mem0** (66,8k⭐, Apache-2.0 — memory layer = "ingatan" buat tim agent kita, paling langsung berguna) · **Langflow** (155,6k⭐, MIT — builder visual agen) · **Sim** (29,8k⭐, Apache-2.0, Next.js+Bun — panel orkestrasi, stack sama kayak kita) · **Ekko Studio** (11,3k⭐, dulu bernama **Hermes Studio / Hermes Web UI** — web console buat Hermes Agent; lisensi **BSL-1.1**, bukan open bebas) · agenticSeek (27,4k⭐, GPL-3.0).
+- **Temuan B (voice, 6 repo):** **Voicebox** (56,6k⭐, MIT, Python + Qwen3-TTS/Whisper + Docker + MCP server = voice studio self-hosted) · **GPT-SoVITS** (62,5k⭐, MIT, cloning 1 menit data) · **RealtimeTTS** (4k⭐, MIT, TTS streaming) · **openai-edge-tts** (2,1k⭐, GPL-3.0, endpoint `/v1/audio/speech` gratis pakai edge-tts → bisa dicolok jadi provider TTS custom Hermes) · edge-tts (12,2k⭐, LGPLv3) · IndexTTS (24,3k⭐, lisensi bilibili).
+- **Pelajaran (PENTING):** `license.spdx_id` = **`NOASSERTION`/`Other`** itu tanda lisensi campur/kustom — **wajib baca file LICENSE-nya langsung**. Buktinya hari ini: **edge-tts ternyata LGPLv3** (bukan MIT seperti dugaan), **IndexTTS pakai bilibili Model Use License** (kustom, belum tentu komersial), **Ekko Studio pakai BSL-1.1** (Business Source License). Kalau cuma lihat spdx_id = salah simpul.
+- **Pelajaran (query):** hasil `search/repositories` didominasi **awesome-list** (star ratusan ribu) di posisi atas → tambah **`+NOT+awesome`** di query + `+pushed:>2025-06-01` biar hasilnya repo beneran & masih aktif.
+- **Pelajaran (API):** di REST API field arsip itu **`.archived`**, bukan `.is_archived` (itu nama field GraphQL) — `gh api repos/O/R --jq .is_archived` bakal balikin `null` (kelihatan sehat padahal bisa jadi arsip).
+- **Buat agen lain:** **VoiceAgent** → mulai dari Voicebox (paling lengkap, ada MCP) + openai-edge-tts (TTS gratis buat Hermes); **OpsAgent** → mem0 buat memori agent + review lisensi Ekko Studio (BSL) kalau mau bikin web console Hermes sendiri; **WebBuilder/MotionAgent** → Sim (Next.js) contoh panel agent yang rapi.
+
+---
