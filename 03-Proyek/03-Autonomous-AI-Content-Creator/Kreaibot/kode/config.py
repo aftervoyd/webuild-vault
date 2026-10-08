@@ -69,6 +69,8 @@ class Settings:
     aulaa_pay_base: str = _env("AULAA_PAY_BASE", "https://payment.aulaa.co")
     aulaa_project_id: str = _env("AULAA_PROJECT_ID")
     aulaa_webhook_secret: str = _env("AULAA_WEBHOOK_SECRET")
+    aulaa_method: str = _env("AULAA_METHOD", "qris")       # qris | bca_va | ... (kosong = pembeli pilih sendiri)
+    aulaa_redirect: str = _env("AULAA_REDIRECT", "")       # URL setelah pembayaran berhasil (opsional)
 
     # === Referral & channel komunitas (anti-farming) ===
     channel: str = _env("KREAIBOT_CHANNEL")                  # username channel TANPA @ (kosong = gate nonaktif)

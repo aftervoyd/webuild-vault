@@ -60,6 +60,20 @@ CREATE TABLE IF NOT EXISTS referrals (
     paid_at      INTEGER
 );
 CREATE INDEX IF NOT EXISTS idx_ref_inviter ON referrals(inviter_id, status);
+CREATE TABLE IF NOT EXISTS payments (
+    order_id    TEXT PRIMARY KEY,                    -- order unik kita (idempotensi Aulaa)
+    payment_id  TEXT,                                -- id invoice Aulaa
+    telegram_id INTEGER NOT NULL,
+    amount      INTEGER NOT NULL,                    -- rupiah
+    tokens      REAL NOT NULL,                       -- token yg didapat kalau lunas
+    status      TEXT NOT NULL DEFAULT 'pending',     -- pending|paid|expired|error
+    is_test     INTEGER NOT NULL DEFAULT 0,          -- 1 = transaksi sandbox
+    invoice     TEXT,                                -- string QRIS / nomor VA
+    note        TEXT,
+    created_at  INTEGER NOT NULL,
+    paid_at     INTEGER
+);
+CREATE INDEX IF NOT EXISTS idx_pay_status ON payments(status, created_at);
 """
 
 
@@ -209,6 +223,41 @@ class Database:
         if r and r["invitee_paid"] and not r["inviter_paid"]:
             return int(r["inviter_id"])
         return None
+
+    # ---------- pembayaran Aulaa (QRIS) ----------
+    def pay_create(self, order_id: str, telegram_id: int, amount: int, tokens: float) -> None:
+        self.conn.execute(
+            "INSERT OR REPLACE INTO payments (order_id, telegram_id, amount, tokens, status, created_at)"
+            " VALUES (?,?,?,?,'pending',?)",
+            (order_id, telegram_id, int(amount), float(tokens), _now()))
+        self.conn.commit()
+
+    def pay_set(self, order_id: str, **f: Any) -> None:
+        allowed = {"payment_id", "status", "is_test", "invoice", "note", "paid_at"}
+        f = {k: v for k, v in f.items() if k in allowed}
+        if not f:
+            return
+        if f.get("status") == "paid":
+            f["paid_at"] = _now()
+        cols = ", ".join(f"{k}=?" for k in f)
+        self.conn.execute(f"UPDATE payments SET {cols} WHERE order_id=?", (*f.values(), order_id))
+        self.conn.commit()
+
+    def pay_get(self, order_id: str) -> sqlite3.Row | None:
+        return self.conn.execute("SELECT * FROM payments WHERE order_id=?", (order_id,)).fetchone()
+
+    def pay_pending(self, limit: int = 20) -> list[sqlite3.Row]:
+        return list(self.conn.execute(
+            "SELECT * FROM payments WHERE status='pending' ORDER BY created_at LIMIT ?", (limit,)))
+
+    def pay_mark_paid(self, order_id: str) -> sqlite3.Row | None:
+        self.pay_set(order_id, status="paid")
+        return self.pay_get(order_id)
+
+    def pay_recent(self, telegram_id: int, limit: int = 5) -> list[sqlite3.Row]:
+        return list(self.conn.execute(
+            "SELECT * FROM payments WHERE telegram_id=? ORDER BY created_at DESC LIMIT ?",
+            (telegram_id, limit)))
 
     def stats(self) -> dict[str, Any]:
         c = self.conn

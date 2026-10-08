@@ -25,6 +25,7 @@ from aiogram.types import (CallbackQuery, FSInputFile, InlineKeyboardButton,
 
 import catalog
 import promptsmith
+from aulaa import Aulaa, make_client
 from backends import GenRequest, GenStatus, make_backend
 from config import settings
 from db import Database
@@ -37,6 +38,8 @@ db = Database(settings.db_path)
 backend = make_backend(settings.backend, api_key=settings.runninghub_api_key,
                        base=settings.runninghub_base, work_dir=settings.work_dir)
 router = Router()
+pay_gw = make_client(settings)            # None kalau AULAA_API_KEY belum diisi
+bot: Bot = None                            # type: ignore[assignment]  # di-set di main(), dipakai handler
 SEM = asyncio.Semaphore(settings.concurrency)
 
 # ============================ util ============================
@@ -184,16 +187,61 @@ async def cb_paket(cb: CallbackQuery):
     rp = int(cb.data.split(":")[2])
     harga_token = max(1, settings.harga_per_10k // max(1, settings.tokens_per_10k))
     tok = rp // harga_token
-    rows = [[InlineKeyboardButton(text="✅ Sudah Bayar — Minta Diisi", callback_data=f"t:klaim:{rp}")],
-            [InlineKeyboardButton(text="⬅️ Kembali", callback_data="m:topup")]]
-    await cb.message.edit_text(
-        (f"💳 <b>Pembayaran Rp{rp:,}</b> → <b>{tok} Token</b>\n\n"
-         f"{settings.pay_info}\n\n"
-         f"Sudah bayar? Tekan tombol di bawah — admin langsung dapat notifikasi "
-         f"dan tinggal 1 klik buat isiin token kamu.\n\n"
-         f"ID kamu: <code>{cb.from_user.id}</code>").replace(",", "."),
-        reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
-    await cb.answer()
+    uid = cb.from_user.id
+    manual_kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="✅ Sudah Bayar — Minta Diisi", callback_data=f"t:klaim:{rp}")],
+        [InlineKeyboardButton(text="⬅️ Kembali", callback_data="m:topup")]])
+
+    if pay_gw is None:                      # AULAA_API_KEY belum diisi → alur manual
+        await cb.message.edit_text(
+            (f"💳 <b>Pembayaran Rp{rp:,}</b> → <b>{tok:g} Token</b>\n\n"
+             f"{settings.pay_info}\n\n"
+             f"Sudah bayar? Tekan tombol di bawah — admin dapat notifikasi & tinggal 1 klik.\n\n"
+             f"ID kamu: <code>{uid}</code>").replace(",", "."),
+            reply_markup=manual_kb)
+        await cb.answer()
+        return
+
+    # ---- QRIS otomatis (Aulaa) ----
+    order_id = f"KREE-{uid}-{int(time.time())}"
+    db.pay_create(order_id, uid, rp, tok)
+    await cb.answer("Membuat QRIS…")
+    try:
+        p = await pay_gw.create(order_id, rp, method=(settings.aulaa_method or "qris"),
+                                redirect_url=(settings.aulaa_redirect or None))
+    except Exception as e:                  # noqa: BLE001
+        log.warning("aulaa create gagal: %s", e)
+        db.pay_set(order_id, status="error", note=str(e)[:180])
+        await cb.message.edit_text(
+            (f"⚠️ <b>QRIS otomatis sedang gangguan.</b>\n\n"
+             f"{settings.pay_info}\n\nNominal: <b>Rp{rp:,}</b> → {tok:g} Token\n"
+             f"ID kamu: <code>{uid}</code>\n\nTransfer manual dulu, lalu tekan tombol di bawah.").replace(",", "."),
+            reply_markup=manual_kb)
+        return
+
+    db.pay_set(order_id, payment_id=p.id, invoice=p.number, is_test=1 if p.is_test else 0)
+    exp = f"\n⏳ Berlaku sampai: {p.expired_at}" if p.expired_at else ""
+    sand = "\n🧪 <b>MODE SANDBOX</b> — pembayaran uji coba" if p.is_test else ""
+    cap = ((f"💳 <b>Rp{rp:,}</b> → <b>{tok:g} Token</b>\n\n"
+            f"Scan QR ini pakai <b>m-banking / e-wallet apa saja</b> (QRIS).\n"
+            f"Token masuk <b>otomatis</b> begitu pembayaran berhasil — gak perlu kirim bukti.{exp}{sand}\n\n"
+            f"ID kamu: <code>{uid}</code>").replace(",", "."))
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="🔔 Sudah Bayar — Cek Sekarang", callback_data=f"t:cek:{order_id}")],
+        [InlineKeyboardButton(text="📄 Buka Halaman Bayar", url=pay_gw.pay_url(p.id))],
+        [InlineKeyboardButton(text="⬅️ Menu Utama", callback_data="m:home")]])
+    try:
+        await cb.message.edit_text(f"💳 QRIS Rp{rp:,} — lihat pesan di bawah ⬇️".replace(",", "."))
+    except Exception:                       # noqa: BLE001
+        pass
+    if p.number and len(p.number) > 24:     # QRIS = string panjang → render jadi gambar QR
+        try:
+            qp = Aulaa.qr_png(p.number, Path(settings.work_dir) / f"qr-{order_id}.png")
+            await cb.message.answer_photo(FSInputFile(qp), caption=cap, reply_markup=kb)
+            return
+        except Exception as e:              # noqa: BLE001
+            log.warning("render QR gagal: %s", e)
+    await cb.message.answer(cap, reply_markup=kb)
 
 
 @router.callback_query(F.data.startswith("t:klaim:"))
@@ -222,6 +270,102 @@ async def cb_klaim(cb: CallbackQuery):
         f"Token masuk begitu pembayaran diverifikasi.\nSaldo sekarang: {saldo_txt(u.id)}",
         reply_markup=back_kb())
     await cb.answer("Terkirim ke admin")
+
+
+# ============================ QRIS otomatis (Aulaa) ============================
+
+async def _credit_topup(order_id: str) -> float | None:
+    """Kredit token setelah pembayaran Aulaa lunas. Idempoten (aman dipanggil berulang)."""
+    row = db.pay_get(order_id)
+    if not row or row["status"] == "paid":
+        return None
+    uid, tok = int(row["telegram_id"]), float(row["tokens"])
+    db.ledger_add(uid, tok, "topup_aulaa", ref=order_id)   # ledger dulu → baru tandai lunas
+    db.pay_mark_paid(order_id)
+    bal = db.balance(uid)
+    try:
+        await bot.send_message(
+            uid,
+            f"🎉 <b>Pembayaran diterima!</b>\n\n"
+            f"💚 +{tok:g} Token masuk\nSaldo sekarang: <b>{bal:g} Token</b>\n\n"
+            f"Langsung bikin video 👇",
+            reply_markup=main_menu_kb())
+    except Exception as e:                      # noqa: BLE001
+        log.warning("gagal kabari user %s: %s", uid, e)
+    log.info("topup lunas: order=%s user=%s token=+%s", order_id, uid, tok)
+    await _ref_on_purchase(uid)                 # mode aman referral
+    return bal
+
+
+@router.callback_query(F.data.startswith("t:cek:"))
+async def cb_cek(cb: CallbackQuery):
+    """User menekan 'Sudah Bayar' → cek status ke Aulaa sekarang."""
+    order_id = cb.data.split(":", 2)[2]
+    row = db.pay_get(order_id)
+    if not row:
+        await cb.answer("Order tidak ditemukan 🙏", show_alert=True)
+        return
+    if row["status"] == "paid":
+        await cb.answer("✅ Sudah lunas — token sudah masuk", show_alert=True)
+        return
+    if pay_gw is None or not row["payment_id"]:
+        await cb.answer("Belum bisa dicek otomatis. Hubungi admin ya.", show_alert=True)
+        return
+    await cb.answer("Mengecek ke gateway…")
+    try:
+        p = await pay_gw.get(str(row["payment_id"]))
+    except Exception as e:                      # noqa: BLE001
+        log.warning("cek status %s gagal: %s", order_id, e)
+        await cb.answer("Gagal cek status, coba lagi sebentar lagi 🙏", show_alert=True)
+        return
+    if p.paid:
+        bal = await _credit_topup(order_id)
+        txt = (f"🎉 <b>Lunas!</b> +{float(row['tokens']):g} Token masuk.\n"
+               f"Saldo: <b>{bal if bal is not None else db.balance(int(row['telegram_id'])):g} Token</b>")
+        try:
+            if cb.message.photo:
+                await cb.message.edit_caption(caption=txt, reply_markup=main_menu_kb())
+            else:
+                await cb.message.edit_text(txt, reply_markup=main_menu_kb())
+        except Exception:                       # noqa: BLE001
+            await cb.message.answer(txt, reply_markup=main_menu_kb())
+    elif p.dead:
+        db.pay_set(order_id, status="expired")
+        await cb.answer("⌛ Sesi pembayaran sudah berakhir — buat QR baru ya", show_alert=True)
+    else:
+        await cb.answer("⏳ Belum masuk. Kalau baru bayar, tunggu ±10 detik lalu cek lagi.", show_alert=True)
+
+
+async def poller_payments() -> None:
+    """Cek status QRIS pending tiap 12 detik → token masuk otomatis (tanpa webhook publik)."""
+    if pay_gw is None:
+        log.info("poller pembayaran nonaktif (AULAA_API_KEY belum diisi)")
+        return
+    log.info("poller pembayaran Aulaa AKTIF (interval 12s)")
+    while True:
+        try:
+            for row in db.pay_pending(20):
+                if not row["payment_id"]:
+                    continue
+                try:
+                    p = await pay_gw.get(str(row["payment_id"]))
+                except Exception as e:          # noqa: BLE001
+                    log.debug("poll %s gagal: %s", row["order_id"], e)
+                    continue
+                if p.paid:
+                    await _credit_topup(str(row["order_id"]))
+                elif p.dead:
+                    db.pay_set(str(row["order_id"]), status="expired")
+                    try:
+                        await bot.send_message(
+                            int(row["telegram_id"]),
+                            "⌛ <b>Waktu pembayaran habis.</b>\n\nKalau kamu sudah bayar, hubungi admin ya.",
+                            reply_markup=main_menu_kb())
+                    except Exception:           # noqa: BLE001
+                        pass
+        except Exception as e:                  # noqa: BLE001
+            log.warning("poller pembayaran error: %s", e)
+        await asyncio.sleep(12)
 
 
 @router.callback_query(F.data.startswith("adm:ok:"))
@@ -958,6 +1102,7 @@ def check() -> int:
 
 
 async def main() -> None:
+    global bot
     if not settings.bot_token:
         print("❌ KREAIBOT_TOKEN kosong. Isi di .env dulu (dari @BotFather).")
         sys.exit(1)
@@ -966,8 +1111,10 @@ async def main() -> None:
     dp = Dispatcher()
     dp.include_router(router)
     me = await bot.get_me()
-    log.info("KREE.AI jalan sebagai @%s (backend=%s, promptsmith=%s)", me.username, settings.backend,
-             "llm" if settings.promptsmith_key else "template")
+    log.info("KREE.AI jalan sebagai @%s (backend=%s, promptsmith=%s, bayar=%s)",
+             me.username, settings.backend, "llm" if settings.promptsmith_key else "template",
+             "aulaa-qris" if pay_gw else "manual")
+    asyncio.create_task(poller_payments())      # cek QRIS pending tanpa perlu webhook publik
     await dp.start_polling(bot)
 
 

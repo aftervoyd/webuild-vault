@@ -120,6 +120,44 @@ async def main() -> int:
     res.append(ok("cap default 10/hari · 30/bulan",
                   settings.ref_max_day == 10 and settings.ref_max_month == 30))
 
+    # 3c) pembayaran Aulaa / QRIS (offline — tanpa panggil API)
+    from aulaa import Aulaa, _extract_id, _to_payment
+    db.pay_create("KREE-123-1", 123, 10_000, 10.0)
+    res.append(ok("order pembayaran tercatat pending",
+                  db.pay_get("KREE-123-1")["status"] == "pending"))
+    db.pay_set("KREE-123-1", payment_id="f47ac10b-58cc-4372-a567-0e02b2c3d479",
+               invoice="00020101021226670016COM.NOBUBANK")
+    res.append(ok("payment_id + invoice QRIS tersimpan",
+                  str(db.pay_get("KREE-123-1")["payment_id"]).startswith("f47ac10b")))
+    res.append(ok("order pending kebaca poller",
+                  any(r["order_id"] == "KREE-123-1" for r in db.pay_pending())))
+    db.pay_mark_paid("KREE-123-1")
+    r_ = db.pay_get("KREE-123-1")
+    res.append(ok("tandai lunas → paid + paid_at", r_["status"] == "paid" and bool(r_["paid_at"])))
+    res.append(ok("order lunas keluar dari daftar pending",
+                  not any(r["order_id"] == "KREE-123-1" for r in db.pay_pending())))
+    qp = Aulaa.qr_png("00020101021226670016COM.NOBUBANK.WWW0118936000000000000000", WORK / "qr-test.png")
+    res.append(ok("QR PNG ter-render dari string QRIS", qp.exists() and qp.stat().st_size > 200,
+                  f"{qp.stat().st_size} bytes"))
+    res.append(ok("idempotensi: UUID diambil dari respons 409",
+                  _extract_id({"error": "order_id exists",
+                               "id": "f47ac10b-58cc-4372-a567-0e02b2c3d479"})
+                  == "f47ac10b-58cc-4372-a567-0e02b2c3d479"))
+    pm = _to_payment({"id": "x", "order_id": "o", "status": "paid", "amount": 10_000,
+                      "payment_method": "qris", "payment_number": "00020101", "is_test": True})
+    res.append(ok("parser status paid/dead/sandbox benar", pm.paid and not pm.dead and pm.is_test))
+    res.append(ok("paket topup ≥ Rp10.000 (biaya QRIS ≤5%)", all(rp >= 10_000 and rp % 1_000 == 0
+                  for rp in (10_000, 25_000, 50_000, 100_000))))
+    res.append(ok("metode bayar default = qris (biaya termurah)", settings.aulaa_method == "qris"))
+
+    # 3d) guard bug laten di bot.py (handler pakai `bot.send_message` → wajib global)
+    src_bot = (Path(__file__).resolve().parent / "bot.py").read_text()
+    res.append(ok("`bot` global + di-set di main() (anti-NameError)",
+                  "\nbot: Bot = None" in src_bot and "global bot" in src_bot))
+    res.append(ok("poller pembayaran terdaftar di bot.py",
+                  "async def poller_payments" in src_bot and "create_task(poller_payments())" in src_bot))
+    res.append(ok("handler cek pembayaran (t:cek) terdaftar", 'F.data.startswith("t:cek:")' in src_bot))
+
     # 4) backend mock → render video nyata
     be = make_backend("mock", work_dir=str(WORK))
     req = GenRequest(job_id=jid, feature_key="ugc", workflow="krea_ugc_h3",
