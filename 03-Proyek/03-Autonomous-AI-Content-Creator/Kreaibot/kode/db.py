@@ -178,6 +178,16 @@ class Database:
         return list(self.conn.execute(
             "SELECT * FROM jobs WHERE status IN ('queued','running') ORDER BY id"))
 
+    def running_jobs(self) -> list[sqlite3.Row]:
+        """Job yang sudah disubmit ke backend tapi belum tuntas.
+
+        Dipakai saat startup: service yang direstart kehilangan loop poll-nya, jadi
+        render yang sudah jalan (dan sudah dibayar) harus disambung lagi.
+        """
+        return list(self.conn.execute(
+            "SELECT * FROM jobs WHERE status='running' AND task_id IS NOT NULL "
+            "AND task_id<>'' ORDER BY id"))
+
     # ---------- referral (anti-farming) ----------
     def ref_register(self, inviter_id: int, invitee_id: int) -> bool:
         """Catat invitee (1 akun = 1 kali seumur hidup). False kalau tidak valid/duplikat."""

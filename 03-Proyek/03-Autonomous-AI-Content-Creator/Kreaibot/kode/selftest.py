@@ -88,8 +88,21 @@ async def main() -> int:
                   "whole frame" in promptsmith.VIDEO_REFINE_SYSTEM.lower()))
     res.append(ok("bot merapikan prompt video sebelum render (dengan saklar)",
                   "refine_video_prompt" in src and "settings.refine_video" in src))
+    res.append(ok("i2v: frame akhir DIKOSONGKAN (@empty, bukan dilewati)",
+                  "@empty" in next((l for l in (Path(__file__).with_name(".env")).read_text(encoding="utf-8").splitlines()
+                                    if l.startswith("RUNNINGHUB_NODES_I2V=")), "")))
+    _rh = (Path(__file__).with_name("backends") / "runninghub.py").read_text(encoding="utf-8")
+    res.append(ok("backend: sentinel @empty kirim field kosong eksplisit",
+                  'force_empty = val == "@empty"' in _rh and "not force_empty" in _rh))
     res.append(ok("saklar perapian bisa dimatikan lewat env",
                   "KREAIBOT_REFINE_VIDEO" in (Path(__file__).with_name("config.py")).read_text(encoding="utf-8")))
+    _bot_src = (Path(__file__).with_name("bot.py")).read_text(encoding="utf-8")
+    res.append(ok("job terputus disambung saat startup (_resume_jobs)",
+                  "_resume_jobs" in _bot_src and "asyncio.create_task(_resume_jobs(bot))" in _bot_src))
+    res.append(ok("db punya running_jobs() (dasar fitur resume)",
+                  "def running_jobs" in (Path(__file__).with_name("db.py")).read_text(encoding="utf-8")))
+    res.append(ok("alat pemulihan job tersedia (tools/deliver_job.py)",
+                  (Path(__file__).with_name("tools") / "deliver_job.py").exists()))
 
     # 2) PromptSmith
     res.append(ok("6 gaya UGC tersedia", len(promptsmith.STYLES) == 6, ", ".join(promptsmith.STYLES)))

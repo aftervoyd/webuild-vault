@@ -122,7 +122,13 @@ class RunningHubBackend:
         extra = extra or {}
         for b in bindings:
             val = str(b.get("value", ""))
-            if val in extra:                        # mis. @photo1_zoom (sudah diunggah terpisah)
+            # @empty = kirim field KOSONG secara eksplisit (BUKAN dilewati).
+            # Bukti uji 9 Okt: frame-akhir kosong membebaskan gerakan (badan 13,4 → 25,8),
+            # sedangkan melewati node bikin workflow jatuh ke contoh bawaan (bug balon).
+            force_empty = val == "@empty"
+            if force_empty:
+                val = ""
+            elif val in extra:                        # mis. @photo1_zoom (sudah diunggah terpisah)
                 val = extra[val]
             elif val.startswith("@photo"):
                 idx = int(val.replace("@photo", "") or "1") - 1
@@ -142,7 +148,7 @@ class RunningHubBackend:
                 val = str(w if val == "@width" else h)
             elif val == "@video":
                 val = uploaded[-1] if uploaded else ""
-            if val == "":
+            if val == "" and not force_empty:
                 continue
             out.append({"nodeId": str(b.get("nodeId", "")),
                         "fieldName": str(b.get("fieldName", "text")),

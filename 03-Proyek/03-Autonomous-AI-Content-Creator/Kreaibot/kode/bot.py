@@ -1262,6 +1262,70 @@ def check() -> int:
     return 0
 
 
+async def _resume_one(bot: Bot, job: dict) -> None:
+    """Lanjutkan SATU job: poll task lama → unduh → kirim → tandai selesai."""
+    jid = int(job["id"])
+    uid = int(job["telegram_id"])
+    f = catalog.get(job["feature"])
+    work = Path(settings.work_dir) / f"job_{jid}"
+    work.mkdir(parents=True, exist_ok=True)
+    out = work / "hasil.mp4"
+    t0 = time.time()
+    try:
+        while True:
+            if time.time() - t0 > settings.job_timeout:
+                raise TimeoutError("melebihi batas waktu render (resume)")
+            st: GenStatus = await backend.poll(str(job["task_id"]))
+            if st.state == "failed":
+                raise RuntimeError(st.error or "backend gagal")
+            if st.state == "done":
+                rp = str(st.result_path or "")
+                if rp.startswith("http"):
+                    result = await fetch_url(rp, out)
+                elif rp and Path(rp).exists():
+                    result = Path(rp)
+                else:
+                    result = out
+                break
+            await asyncio.sleep(settings.poll_interval)
+        db.set_job(jid, status="done", result_path=str(result))
+        await bot.send_video(uid, FSInputFile(result),
+                             caption=(f"✨ <b>{f.label if f else job['feature']}</b> selesai tanpa watermark!\n"
+                                      f"🆔 Job <code>{jid}</code> · {saldo_txt(uid)}"),
+                             parse_mode=ParseMode.HTML)
+        log.info("resume: job %s terkirim ke %s", jid, uid)
+    except Exception as e:                      # noqa: BLE001
+        log.exception("resume: job %s gagal", jid)
+        db.set_job(jid, status="failed", error=str(e)[:400])
+        if f:
+            db.ledger_add(uid, f.cost, "refund", ref=str(jid))
+        try:
+            await bot.send_message(uid,
+                f"❌ <b>Render gagal</b> (job <code>{jid}</code>) & Token dikembalikan.\n"
+                f"Alasan: <code>{str(e)[:200]}</code>", parse_mode=ParseMode.HTML)
+        except Exception:
+            pass
+
+
+async def _resume_jobs(bot: Bot) -> None:
+    """Sambung job 'running' yang terputus saat service direstart.
+
+    Tanpa ini, render yang sudah jalan di cloud (dan sudah dibayar user) tidak pernah
+    terkirim — persis kasus job 5 (9 Okt).
+    """
+    try:
+        rows = db.running_jobs()
+    except Exception as e:                      # noqa: BLE001
+        log.warning("resume: gagal baca job running: %s", e)
+        return
+    rows = [r for r in rows if not str(r["task_id"]).startswith("mock")]
+    if not rows:
+        return
+    log.info("resume: %d job berjalan ditemukan → disambung", len(rows))
+    for r in rows:
+        asyncio.create_task(_resume_one(bot, dict(r)))
+
+
 async def main() -> None:
     global bot
     if not settings.bot_token:
@@ -1289,6 +1353,7 @@ async def main() -> None:
     except Exception as e:                      # noqa: BLE001
         log.warning("gagal set perintah bot: %s", e)
     asyncio.create_task(poller_payments())      # cek QRIS pending tanpa perlu webhook publik
+    asyncio.create_task(_resume_jobs(bot))      # sambung job yang terputus karena restart
     await dp.start_polling(bot)
 
 
