@@ -80,7 +80,15 @@ STYLES: dict[str, Style] = {
 }
 
 NEGATIVE = ("no extra people, no warped hands or fingers, no distorted face, no duplicate limbs, "
-            "no on-screen typos, no watermark, no logo overlay, no jitter or morphing")
+            "no on-screen typos, no watermark, no logo overlay, no flicker or warping artifacts "
+            "(natural motion is wanted — keep it)")
+
+# Latar WAJIB hidup. Kalau workflow-nya FL2VA (frame awal & akhir = foto yang sama),
+# model cenderung mengunci latar jadi foto beku — gejalanya "lautnya nggak gerak".
+AMBIENT_MOTION = (
+    "LIVING BACKGROUND: the whole frame stays continuously in motion — natural ambient movement "
+    "in the environment (air, light, water, foliage, fabric, hair) so the scene never looks like "
+    "a frozen still photo; keep that motion physically plausible and flowing from start to end.")
 
 
 def style_list_kb_rows():
@@ -153,6 +161,7 @@ def build_ugc_prompt(brief: str, style_key: str, product_hint: str = "",
         parts.append(f"DETAILS FROM THE CREATOR (follow these facts exactly, in a natural way): {brief_clean}.")
 
     parts.append(f"CAMERA & LIGHTING: {st.camera}; realistic natural lighting, photoreal skin texture.")
+    parts.append(AMBIENT_MOTION)
     parts.append(f"MOOD: {st.tone}.")
     parts.append(f"AVOID: {NEGATIVE}.")
     return " ".join(parts)

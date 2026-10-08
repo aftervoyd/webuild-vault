@@ -137,7 +137,7 @@ async def main() -> int:
     ap.add_argument("--duration", type=int, default=5)
     ap.add_argument("--first", dest="first", default="6")
     ap.add_argument("--last", dest="last", default="4")
-    ap.add_argument("--last-mode", choices=["same", "zoom", "none"], default="same")
+    ap.add_argument("--last-mode", choices=["same", "zoom", "none", "empty"], default="same")
     ap.add_argument("--poll", type=int, default=900)
     a = ap.parse_args()
 
@@ -158,6 +158,10 @@ async def main() -> int:
         nodes.append({"nodeId": str(a.last), "fieldName": "image",
                       "fieldValue": await upload(zv)})
     # last_mode == none → sengaja kosong (untuk membuktikan bocornya default)
+    if a.last_mode == "empty":
+        # node terakhir dikirim dengan NILAI KOSONG → harapan: workflow menganggap
+        # "tidak ada frame terakhir" (i2v bebas beranimasi) tanpa pakai sampel default.
+        nodes.append({"nodeId": str(a.last), "fieldName": "image", "fieldValue": ""})
     nodes += [{"nodeId": "8", "fieldName": "prompt", "fieldValue": a.prompt},
               {"nodeId": "7", "fieldName": "aspect_ratio", "fieldValue": a.ratio},
               {"nodeId": "7", "fieldName": "duration_seconds", "fieldValue": str(a.duration)},
