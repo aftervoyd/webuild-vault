@@ -48,4 +48,25 @@ JSON mentah: `minimax-h3-fl2va.json` (di folder ini). Cara ambil ulang: buka hal
 - ⚠️ `POST /task/openapi/getWorkflowJson` **balikin code 404** untuk ID post komunitas → pakai tombol **Download** di halaman workflow sebagai gantinya.
 - 🔎 Kalau ada error `field_not_found_in_node_inputs`: jalankan **`tools/rh_probe_fields.py`** (brute-force nama field kandidat sampai ketemu).
 
-**Tes render pertama:** taskId `2108059227392602114` (2 foto frame awal/akhir, prompt gaya H3 2 segmen) — status: jalan di cloud.
+**Tes render pertama: ✅ SUKSES** (taskId `2108059227392602114`)
+
+| Item | Hasil terukur |
+|---|---|
+| Status API | `SUCCESS` |
+| Output | `https://rh-hk-images.xiaoyaoyou.com/…/fl2va_first_last_frame_00001_lxlup_1791435799.mp4` |
+| Video | h264 · **832×480** · **24 fps** |
+| **Audio** | **aac · 32 kHz · stereo** ✅ (benar, ada suaranya!) |
+| Durasi | **5,167 detik** |
+| Ukuran | 1.617.703 bytes (~1,6 MB) |
+| **BIAYA** | **`consumeCoins: 70`** (70 koin untuk video 5 detik) |
+| Waktu GPU | `taskCostTime: 348` detik (~6 menit) |
+
+### 💰 Arti angka ini buat bisnis
+- 1 video **5 detik 832×480 = 70 koin**.
+- Koin gratis 100 → habis 70 → **sisa ±30** (tidak cukup untuk 1 video lagi).
+- Kalau plan ± $9,99/bulan = 50.000 kredit → 1 koin ≈ Rp3,2 → **1 video 5 detik ≈ Rp225**.
+- Video **30 detik** (yang dijual kompetitor Rp1.000) butuh ± 6× koin → ± **Rp1.350** di tarif itu → **lebih mahal dari harga jual kompetitor**. ⇒ wajib cari **paket kredit lebih murah** (paket besar) atau tier/resolusi lebih efisien. **Butuh harga plan asli dari akun lo** buat itung pasti.
+- **Tidak ada endpoint API untuk cek saldo koin** (4 kandidat diuji → `404`). Saldo hanya bisa dilihat di UI.
+
+### 🐛 Bug yang ketemu & di-fix
+`Path("https://host/file.mp4")` menormalisasi URL jadi `https:/host/file.mp4` → `urllib` gagal: **`no host given`**. URL output SELALU disimpan sebagai **string mentah**, jangan pernah dibungkus `Path()`.

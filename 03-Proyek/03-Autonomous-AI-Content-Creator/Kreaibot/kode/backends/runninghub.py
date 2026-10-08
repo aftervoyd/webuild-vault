@@ -50,22 +50,59 @@ class RunningHubBackend:
     async def _post(self, path: str, payload: dict) -> dict:
         url = f"{self.base}{path}"
         async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=120)) as s:
-            async with s.post(url, json=payload) as r:
+            async with s.post(url, json=payload,
+                              headers={"Authorization": f"Bearer {self.api_key}"}) as r:
                 return await r.json(content_type=None)
 
     async def upload(self, file_path: Path) -> str:
-        """Upload aset ke RunningHub, balikin nama file di server mereka."""
-        url = f"{self.base}/task/openapi/upload"
-        data = aiohttp.FormData()
-        data.add_field("apiKey", self.api_key)
-        data.add_field("file", Path(file_path).read_bytes(),
-                       filename=Path(file_path).name, content_type="application/octet-stream")
-        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=300)) as s:
-            async with s.post(url, data=data) as r:
-                js = await r.json(content_type=None)
-        # struktur umum: {"code":0,"data":{"fileName":"..."}}
-        if isinstance(js, dict) and isinstance(js.get("data"), dict):
-            return str(js["data"].get("fileName") or js["data"].get("file") or "")
+        """Upload aset ke RunningHub, balikin nama file di server mereka.
+
+        Kirim juga `fileType` (image/video/audio) + header Bearer, dan coba
+        endpoint baru lalu lama — beberapa versi API minta kombinasi berbeda.
+        """
+        p = Path(file_path)
+        ext = p.suffix.lower().lstrip(".")
+        if ext in ("mp4", "mov", "webm", "mkv", "avi"):
+            kind = "video"
+        elif ext in ("mp3", "wav", "m4a", "aac", "flac", "ogg"):
+            kind = "audio"
+        else:
+            kind = "image"
+
+        last_err: object = None
+        for path in ("/task/openapi/upload", "/task/openapi/fileUpload"):
+            try:
+                data = aiohttp.FormData()
+                data.add_field("apiKey", self.api_key)
+                data.add_field("fileType", kind)
+                data.add_field("file", p.read_bytes(), filename=p.name,
+                               content_type="application/octet-stream")
+                async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=300)) as s:
+                    async with s.post(f"{self.base}{path}", data=data,
+                                      headers={"Authorization": f"Bearer {self.api_key}"}) as r:
+                        js = await r.json(content_type=None)
+            except Exception as e:                      # noqa: BLE001
+                last_err = e
+                continue
+            name = self._pick_name(js)
+            if name:
+                return name
+            last_err = js
+        raise RuntimeError(f"upload ke RunningHub gagal ({p.name}): {last_err}")
+
+    @staticmethod
+    def _pick_name(js: object) -> str:
+        """Ambil nama file dari berbagai bentuk respons upload."""
+        d = js.get("data") if isinstance(js, dict) else None
+        if isinstance(d, dict):
+            for k in ("fileName", "file", "name", "fileNameList"):
+                v = d.get(k)
+                if isinstance(v, list) and v:
+                    return str(v[0])
+                if isinstance(v, str) and v:
+                    return v
+        if isinstance(d, list) and d:
+            return str(d[0])
         return ""
 
     def _bind(self, bindings: list[dict], req: GenRequest, uploaded: list[str]) -> list[dict]:
@@ -131,8 +168,12 @@ class RunningHubBackend:
         return GenStatus(state="running", progress=60, message="merender di cloud")
 
     @staticmethod
-    def _output_url(js: dict) -> Path | None:
-        """Ambil URL hasil pertama (dipakai worker untuk download)."""
+    def _output_url(js: dict) -> str | None:
+        """Ambil URL hasil pertama.
+
+        ⚠️ JANGAN dibungkus Path(): Path("https://x/y") menormalisasi jadi
+        "https:/x/y" → urllib gagal dengan 'no host given'.
+        """
         try:
             d = js.get("data")
             items = d if isinstance(d, list) else [d]
@@ -140,7 +181,7 @@ class RunningHubBackend:
                 if isinstance(it, dict):
                     url = it.get("fileUrl") or it.get("url")
                     if url:
-                        return Path(str(url))          # URL disimpan sebagai "path"
+                        return str(url)
         except Exception:
             pass
         return None
