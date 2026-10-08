@@ -107,6 +107,7 @@ def main() -> int:
         "handler teks bebas (mis. ketik '15 detik')": "on_free_text",
         "tombol durasi di layar detail": "m:go:{key}:{d}",
         "handler pilih durasi": 'startswith("a:dur:")',
+        "pilih durasi/rasio MENGEDIT pesan (tidak spam pesan baru)": "edit=True",
         "handler pilih rasio": 'startswith("a:ratio:")',
         "handler render": 'F.data == "f:render"',
         "handler top-up": 'F.data == "m:topup"',

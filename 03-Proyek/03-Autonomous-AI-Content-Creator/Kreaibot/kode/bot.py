@@ -18,6 +18,7 @@ from pathlib import Path
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -758,7 +759,7 @@ async def ugc_style(cb: CallbackQuery, state: FSMContext):
         await cb.answer("Gaya tidak dikenal", show_alert=True)
         return
     await state.update_data(style=key)
-    await _confirm(cb.message, state, cb.from_user.id)
+    await _confirm(cb.message, state, cb.from_user.id, edit=True)
     await cb.answer(f"Gaya: {promptsmith.STYLES[key].label}")
 
 
@@ -820,7 +821,7 @@ async def cb_next(cb: CallbackQuery, state: FSMContext):
             f"{f.label}\n\n📝 <b>Ketik prompt</b>-nya sekarang (teks biasa).",
             reply_markup=back_kb([[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]))
     else:
-        await _confirm(cb.message, state, cb.from_user.id)
+        await _confirm(cb.message, state, cb.from_user.id, edit=True)
     await cb.answer()
 
 
@@ -828,8 +829,8 @@ async def cb_next(cb: CallbackQuery, state: FSMContext):
 async def adj_ratio(cb: CallbackQuery, state: FSMContext):
     # ⚠️ rasio memuat titik dua ("9:16") → JANGAN pakai split(":")[2]
     await state.update_data(ratio=cb.data[len("a:ratio:"):])
-    await _confirm(cb.message, state, cb.from_user.id)
-    await cb.answer()
+    await _confirm(cb.message, state, cb.from_user.id, edit=True)
+    await cb.answer(f"✅ Rasio {cb.data[len('a:ratio:'):]} dipilih — tekan 🚀 Render")
 
 
 @router.callback_query(F.data.startswith("a:dur:"))
@@ -839,11 +840,13 @@ async def adj_duration(cb: CallbackQuery, state: FSMContext):
     except (IndexError, ValueError):
         await cb.answer("Durasi tidak valid", show_alert=True)
         return
-    await _confirm(cb.message, state, cb.from_user.id)
-    await cb.answer()
+    d = int(cb.data.split(":")[2])
+    f = catalog.get((await state.get_data()).get("feature", ""))
+    await _confirm(cb.message, state, cb.from_user.id, edit=True)
+    await cb.answer(f"✅ {d} detik · {catalog.cost_for(f.key, d) if f else 0:g} Token — tekan 🚀 Render kalau pas")
 
 
-async def _confirm(target: Message, state: FSMContext, uid: int):
+async def _confirm(target: Message, state: FSMContext, uid: int, edit: bool = False):
     data = await state.get_data()
     f = catalog.get(data.get("feature", ""))
     if not f:
@@ -888,7 +891,19 @@ async def _confirm(target: Message, state: FSMContext, uid: int):
     if f.kind == "ugc":
         rows.append([InlineKeyboardButton(text="🎨 Ganti gaya", callback_data="u:stylemenu")])
     rows.append([InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")])
-    await target.answer(teks, reply_markup=back_kb(rows))
+    kb = back_kb(rows)
+    if edit:
+        # Ganti durasi/rasio = EDIT pesan yang sama, bukan kirim pesan baru.
+        # (Bug sebelumnya: tiap tap muncul pesan baru → "muncul itu lagi itu lagi".)
+        try:
+            await target.edit_text(teks, reply_markup=kb)
+            return
+        except TelegramBadRequest as e:
+            if "not modified" in str(e).lower():
+                return                  # pilihan tidak berubah → jangan kirim pesan baru
+        except Exception:               # noqa: BLE001
+            pass
+    await target.answer(teks, reply_markup=kb)
 
 
 @router.callback_query(F.data == "f:recheck")
@@ -1163,9 +1178,14 @@ async def cmd_cek(msg: Message):
 
 @router.message(Command("help"))
 async def cmd_help(msg: Message):
-    await msg.answer("📖 /start · /saldo · /topup · /cancel\n"
-                     f"Fitur siap pakai: {', '.join(f.label for f in catalog.enabled_features())}\n"
-                     "Segera hadir: Face Swap, Pose Transfer, Lip Sync, Image Editor")
+    await msg.answer(
+        "📖 <b>Cara pakai KREE.AI</b>\n\n"
+        "1️⃣ Buka menu (/start) → pilih fitur\n"
+        "2️⃣ Pilih durasi lewat tombol (harga langsung kelihatan)\n"
+        "3️⃣ Kirim foto → <b>langsung ketik prompt</b> → tekan 🚀 Render\n\n"
+        f"Fitur siap pakai: {', '.join(f.label for f in catalog.enabled_features())}\n"
+        "Segera hadir: Face Swap, Pose Transfer, Lip Sync, Image Editor\n\n"
+        "Perintah: /start · /saldo · /topup · /cancel · /help")
 
 
 # ============================ teks bebas ============================
