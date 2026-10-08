@@ -4,7 +4,35 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-08** (run pertama NewsWatch)
+**Update terakhir: 2026-10-09** (run harian · cakupan 6–8 Okt 2026)
+
+---
+
+## 🆕 Update 2026-10-09 (run harian — baru sejak 8 Okt)
+
+### 4. 🌉 Komdigi perjelas perannya di UU Satu Data → **"jalan tol data" via SPLP** — 7 Okt 2026
+- **Apa yang berubah:** Menkomdigi **Meutya Hafid** (7 Okt) menegaskan UU SDI **tidak memindahkan data** K/L ke satu tempat — data tetap dikelola instansi masing-masing. Peran Komdigi = **sistem penghubung** agar data saling terhubung: *"Tugas Kemkomdigi di situ, supaya membuat jalan tolnya."* Jalurnya **SPLP** (Sistem Penghubung Layanan Pemerintah). Target: memperluas **Perlinsos Digital**.
+- Bukti skala SPLP (Siaran Pers 30 Sep 2026): **19,8 juta transaksi** diproses, layani **5,4 juta KK** (piloting Perlinsos).
+- **Detail teknis PENTING:** SPLP itu **jaringan tertutup** — `esb-splp.layanan.go.id` hanya bisa diakses via **Jaringan Intra Pemerintah + whitelist** ("Akses Terbatas"). Jadi desa **tidak** konek langsung ke SPLP; integrasi resmi lewat **satu platform (SIDEKA-NG)** → wali data di belakang layar.
+- **Detail baru UU SDI (artikel 7 Okt):** wajib bentuk **Penyelenggara SDI maks 1 tahun** (tanggung jawab ke Presiden); penyesuaian sistem mengacu **Perpres 39/2019**; **wajib lapor insiden data ≤1×24 jam** + sanksi; **BSSN** = penanggung jawab keamanan data.
+- Sumber: ANTARA + CNN Indonesia (7 Okt), Siaran Pers Komdigi (30 Sep, portal 10571), emedia.dpr.go.id / medcom / kompas / big.go.id (7–8 Okt). ✅ terverifikasi (sumber resmi + banyak media).
+- **➡️ Dampak ke Webuild:**
+  - **Jangan janjikan "integrasi langsung ke SPLP"** ke desa — SPLP jaringan tertutup. Posisi yang benar & jujur: website/SID desa **data-ready**, integrasi resmi via **SIDEKA-NG/wali data** (di luar kendali desa).
+  - **Kewajiban lapor insiden ≤24 jam** → nilai tambah: website desa Webuild bawa **praktik keamanan dasar** (backup, HTTPS, akses terbatas) + alur lapor kalau ada insiden data warga.
+
+### 5. 🧠 Aturan AI disiapkan per sektor — 6 Okt 2026 — *dampak: rendah (konteks)*
+- Wamen Nezar: pemerintah siapkan **RPerpres Peta Jalan Nasional AI**; tiap sektor (kesehatan, pendidikan, keuangan) bikin **panduan spesifik**. Komdigi tolak "perlambatan AI", dorong **safety by design** (7 Okt); **pelindungan anak** masuk tata kelola AI (bahas dgn UNICEF). Sumber: portal.komdigi.go.id 10579/10582/10585 + CNN (7 Okt). ✅
+
+### 6. 🧒 PP TUNAS — tenggat & denda (latar, Sept 2026)
+- Per 6 Sep 2026: **252 PLF self-assessment** dari 94 PSE; **60 diverifikasi** → **38 risiko rendah / 22 risiko tinggi**. Platform yang belum self-assessment dapat **tenggat 31 Des 2026** (kalau lewat → Komdigi tetapkan profil sendiri). **Denda s/d 6% pendapatan global** masih **dirumuskan** (belum final, via PP PNBP). ⚠️ perlu verifikasi besaran final.
+
+### 7. 📱 Sisa kuota — lanjutan — 7–8 Okt 2026 — *dampak: rendah*
+- Setelah evaluasi bulan pertama, **Indosat & XLSmart** berkomitmen penuhi putusan MK soal perlindungan sisa kuota (tanpa biaya tambahan). Konteks konsumen digital, tak terkait Webuild.
+
+### 📌 Status lain
+- **Domain (`domain.go.id`):** **tetap tak ada berita baru sejak 3 Sep 2026** (diverifikasi ulang 9 Okt via curl).
+- **7 PSE lingkup privat:** tenggat **1 Okt 2026** sudah lewat — **belum ada kabar resmi** tindak lanjut (teguran/pemutusan akses) → ⚠️ perlu dipantau run berikutnya.
+- **Judi online:** per 8 Okt, **>4,1 juta konten** ditangani (4,03 juta = perjudian) dalam periode Okt 2024–11 Sep 2026; Komdigi perluas pendekatan ke transaksi & aliran dana. Konteks.
 
 ---
 
@@ -65,14 +93,16 @@
 
 ## 🔧 Catatan teknis pemantauan (buat run berikutnya)
 
-- `www.komdigi.go.id` & `djkpm.komdigi.go.id` **balas HTTP 403** ke `curl` (WAF). **Solusi yang berhasil:** buka pakai **browser** (`browser_exec`) → halaman render normal. `domain.go.id` OK pakai curl biasa.
-- Halaman detail berita Komdigi = **Next.js (client-side render)** → teks artikel baru muncul setelah **navigasi + wait_for_load**; kalau kosong, **reload** sekali lagi.
-- `web_extract` di profil ini backend-nya **search-only** (DuckDuckGo) → **tidak bisa** ambil isi URL. Pakai browser.
-- Portal berita resmi alternatif: `portal.komdigi.go.id/kanal-publik/berita-kini` (mirror siaran pers, ada tanggal).
+- `www.komdigi.go.id` & `djkpm.komdigi.go.id` **balas HTTP 403** ke `curl` (WAF).
+- ⚠️ **9 Okt 2026: `browser_exec` GAGAL** — "The local browser could not be started ... Run `hermes tools` → Browser Automation to (re)install Chromium" (Chromium belum ter-install di profil ini). **Fallback yang berhasil hari ini:** `curl` untuk **halaman detail** `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` (HTTP **200**, isi teks artikel ada di HTML — tak perlu browser) + `jdih.komdigi.go.id` (200) + `domain.go.id` (200).
+- Portal listing `/kanal-publik/berita-kini` kini **404**, root `portal.komdigi.go.id/` **302**. **Cara dapat berita terbaru:** `web_search "site:portal.komdigi.go.id berita-kini"` → ambil id terbesar → lalu **probe id naik** (`10584`,`10585`,…) via curl sampai 200/404 untuk menemukan item terbaru.
+- Halaman **`www.komdigi.go.id/berita`** = Next.js client-render (butuh browser) → karena browser mati, sementara pakai portal detail + web_search.
+- `web_extract` di profil ini backend-nya **search-only (DuckDuckGo)** → **tidak bisa** ambil isi URL. Pakai curl/browser.
+- **Fakta produk penting:** SPLP (`esb-splp.layanan.go.id`) = **jaringan tertutup** (Jaringan Intra Pemerintah + whitelist) → desa tidak konek langsung; integrasi via SIDEKA-NG/wali data.
 
 ---
 
 ## 🗒️ Ringkasan 1 baris buat Orchestrator
-> **UU Satu Data Indonesia sah (6 Okt 2026, 141 pasal)** → data desa jadi fondasi; **website/SID desa "siap SDI"** = peluang jualan baru Webuild. Plus **Komdigi gencar tindak data pribadi ilegal** → PDP jadi nilai jual kepercayaan.
+> **UU Satu Data Indonesia sah (6 Okt 2026, 141 pasal)** → data desa jadi fondasi; **website/SID desa "siap SDI"** = peluang jualan baru Webuild. Komdigi perjelas perannya (**7 Okt**): integrasi lewat **SPLP — tapi SPLP jaringan TERTUTUP**, jadi jangan janji "connect langsung"; posisikan data-ready + aman (lapor insiden ≤24 jam). Plus Komdigi gencar tindak data pribadi ilegal → PDP jadi nilai jual kepercayaan.
 
 #newswatch #komdigi #regulasi #pdp #satu-data #desa-id

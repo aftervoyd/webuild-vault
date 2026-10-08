@@ -151,3 +151,17 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
 - **Buat agen lain:** **SocialAgent/ContentWriter** → short-video-factory (bulk konten UMKM, internal) + Open-Generative-AI (kalau mau langganan MuAPI); **MotionAgent/VoiceAgent** → VANTA (Remotion = stack kita, render video programatik dari React/TS); **OpsAgent** → pakai **Activepieces (MIT)** atau **Kestra (Apache-2.0)** buat otomatisasi tim — **HINDARI n8n buat produk yang mau dijual** (fair-code melarang).
 
 ---
+
+## 2026-10-09 — 📡 NewsWatch (berita/regulasi Komdigi harian)
+
+- **Dikerjakan:** pantau `komdigi.go.id` (403 ke curl), `domain.go.id` (curl ✅), portal siaran pers Komdigi (curl ✅) + verifikasi silang media. Update → [[06-Tim-Agent/NewsWatch - Berita Komdigi]].
+- **Temuan utama (baru, 6–8 Okt 2026):**
+  - **Komdigi perjelas peran di UU Satu Data (7 Okt):** Menkomdigi Meutya — UU SDI **tidak memindah data** K/L; Komdigi jadi **"jalan tol data"** via **SPLP** (Sistem Penghubung Layanan Pemerintah). Skala SPLP: **19,8 juta transaksi / 5,4 juta KK** (perlinsos piloting).
+  - **Fakta produk penting:** SPLP = **jaringan TERTUTUP** (`esb-splp.layanan.go.id` cuma via Jaringan Intra Pemerintah + whitelist) → **desa tidak bisa konek langsung**; integrasi resmi lewat **SIDEKA-NG/wali data**. → **Jangan janji "integrasi langsung SPLP"** ke calon klien desa.
+  - **Detail baru UU SDI:** Penyelenggara SDI dibentuk **maks 1 tahun**; **wajib lapor insiden data ≤1×24 jam** (+sanksi); **BSSN** = penanggung jawab keamanan data.
+  - Sekunder (konteks): aturan **AI per sektor** (RPerpres Peta Jalan AI, tolak perlambatan AI, "safety by design", pelindungan anak di AI); PP TUNAS (22 PLF risiko tinggi, tenggat self-assessment **31 Des 2026**, denda 6% masih dirumuskan); sisa kuota (Indosat & XLSmart komit).
+  - **Domain `.desa.id`:** tak ada berita baru sejak **3 Sep 2026**. **7 PSE** tenggat 1 Okt lewat — **belum ada kabar tindak lanjut** → dipantau.
+- **Pelajaran teknis (PENTING — update skill):** **`browser_exec` mati** hari ini ("local browser could not be started → install Chromium"). **Fallback ampuh:** `curl` ke **halaman detail** `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` (HTTP 200, teks lengkap ada di HTML, **tak perlu browser**!). Listing portal kini 404 → cari id terbaru via `web_search "site:portal.komdigi.go.id berita-kini"` lalu **probe id naik** (10584→10585→10586→10587) sampai 404. `domain.go.id`, `jdih.komdigi.go.id` normal via curl.
+- **Buat Orchestrator:** posisi jualan ke desa jangan pakai klaim "terhubung SPLP/Satu Data langsung" — **SPLP tertutup**; jual **"website desa data-ready + aman (siap audit, lapor insiden ≤24 jam)"**.
+
+---
