@@ -19,7 +19,9 @@ class Feature:
     need_style: bool = False # wajib pilih gaya (UGC)
     char_first: bool = False # foto ke-1 = character sheet
     product_slot: bool = False  # ada slot foto produk
-    duration: int = 5         # durasi render (detik) — batas workflow 4..15
+    duration: int = 5         # durasi default render (detik) — batas workflow 4..15
+    durations: tuple[int, ...] = (5,)   # pilihan durasi yang dijual
+    hint: str = ""            # petunjuk langkah saat minta foto
 
 
 FEATURES: dict[str, Feature] = {
@@ -37,27 +39,35 @@ FEATURES: dict[str, Feature] = {
               "· Prompt video dirakit otomatis jadi lebih rapi & natural"),
         backend_workflow="krea_ugc_h3",
         kind="ugc", need_style=True, char_first=True, product_slot=True,
+        durations=(15,),
+        hint="Kirim foto karakter, lalu foto produk, terus langsung ketik brief-nya.",
     ),
     "allinone": Feature(
         key="allinone",
-        label="🌌 Video All-in-One (15 dtk)",
+        label="🌌 Video All-in-One",
         cost=2.5,
         min_photos=1, max_photos=6,
         need_prompt=True, need_ratio=True,
-        duration=15,
-        desc=("Video 30 detik dari 1–6 foto referensi.\n"
-              "· Foto 1 = frame awal · Foto 2 = frame akhir (opsional)\n"
-              "· Foto 3–6 = elemen tambahan (outfit/properti/scene)"),
+        duration=15, durations=(5, 15),
+        desc=("Video sinematik dari 1–6 foto referensi.\n"
+              "· Foto 1 = frame awal · Foto 2 = frame akhir\n"
+              "· Foto 3–6 = elemen tambahan (outfit/properti/scene)\n"
+              "· 5 detik = 1 Token · 15 detik = 2,5 Token"),
         backend_workflow="krea_allinone_h3",
+        hint="Kirim 1–6 foto (foto 1 = frame awal, foto 2 = frame akhir).",
     ),
     "i2v": Feature(
         key="i2v",
         label="🎬 Image to Video",
-        cost=1.0,
+        cost=0.5,
         min_photos=1, max_photos=1,
         need_prompt=True, need_ratio=True,
-        desc="Foto → video pendek (5 detik). Cocok buat teaser & loop.",
+        duration=5, durations=(5, 10, 15),
+        desc=("Foto → video pendek.\n"
+              "· 5 detik = 0,5 Token · 10 detik = 1,5 Token · 15 detik = 2,5 Token\n"
+              "· Cocok buat teaser, loop, dan bikin cepat"),
         backend_workflow="krea_i2v_ltx",
+        hint="Kirim 1 foto (wajah, produk, atau scene apa saja).",
     ),
     "faceswap": Feature(
         key="faceswap",
@@ -99,6 +109,22 @@ FEATURES: dict[str, Feature] = {
 }
 
 RATIOS = {"9:16": "📱 9:16 (TikTok/Reels/Shorts)", "16:9": "🎬 16:9 (YouTube)", "1:1": "🔲 1:1 (Feed IG)"}
+
+# Harga token per (fitur, durasi) — acuan pasar @KuzushiGenBot, margin kita 40–70%.
+# Ubah di sini kalau mau naik/turunin harga; kode lain ngikut otomatis.
+DURATION_COST: dict[tuple[str, int], float] = {
+    ("i2v", 5): 0.5, ("i2v", 10): 1.5, ("i2v", 15): 2.5,
+    ("allinone", 5): 1.0, ("allinone", 15): 2.5,
+    ("ugc", 15): 2.5,
+}
+
+
+def cost_for(key: str, duration: int) -> float:
+    """Biaya token untuk fitur + durasi tertentu (fallback: harga default fitur)."""
+    if (key, duration) in DURATION_COST:
+        return DURATION_COST[(key, duration)]
+    f = FEATURES.get(key)
+    return f.cost if f else 0.0
 
 
 # Fitur yang SUDAH tersambung ke mesin render nyata (RunningHub workflow FL2VA).

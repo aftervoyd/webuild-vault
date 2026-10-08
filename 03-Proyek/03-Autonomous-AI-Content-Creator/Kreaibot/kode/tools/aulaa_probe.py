@@ -30,7 +30,7 @@ async def main() -> int:
         if e.status == 401:
             print("   → API key salah/tidak aktif. Ambil ulang dari Dashboard → Projects → API Keys.")
         elif e.status == 403:
-            print("   → Project belum Live / disuspend (pastikan switch project = Sandbox).")
+            print("   → Project belum Live / disuspend (cek switch Sandbox↔Live di Dashboard → Projects).")
         return 1
 
     print(f"✅ API key VALID — {len(ms)} metode aktif untuk project ini:\n")

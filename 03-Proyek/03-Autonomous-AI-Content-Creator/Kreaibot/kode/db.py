@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     brief       TEXT,
     style       TEXT,
     ratio       TEXT,
+    duration    INTEGER,
     result_path TEXT,
     error       TEXT,
     created_at  INTEGER NOT NULL,
@@ -103,7 +104,7 @@ class Database:
     def _migrate(self) -> None:
         """Tambah kolom baru ke DB lama tanpa menghapus data."""
         cols = {r["name"] for r in self.conn.execute("PRAGMA table_info(jobs)")}
-        for name, ddl in (("brief", "TEXT"), ("style", "TEXT")):
+        for name, ddl in (("brief", "TEXT"), ("style", "TEXT"), ("duration", "INTEGER")):
             if name not in cols:
                 self.conn.execute(f"ALTER TABLE jobs ADD COLUMN {name} {ddl}")
 
@@ -152,12 +153,13 @@ class Database:
     # ---------- job ----------
     def create_job(self, telegram_id: int, feature: str, cost: float,
                    ref_photos: Iterable[str], prompt: str, ratio: str,
-                   brief: str = "", style: str = "") -> int:
+                   brief: str = "", style: str = "", duration: int = 0) -> int:
         import json
         cur = self.conn.execute(
-            "INSERT INTO jobs (telegram_id, feature, cost, ref_photos, prompt, brief, style, ratio, created_at, updated_at)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?)",
-            (telegram_id, feature, cost, json.dumps(list(ref_photos)), prompt, brief, style, ratio, _now(), _now()))
+            "INSERT INTO jobs (telegram_id, feature, cost, ref_photos, prompt, brief, style, ratio, duration, created_at, updated_at)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
+            (telegram_id, feature, cost, json.dumps(list(ref_photos)), prompt, brief, style,
+             ratio, int(duration or 0), _now(), _now()))
         self.conn.commit()
         return int(cur.lastrowid)
 

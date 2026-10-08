@@ -17,6 +17,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import logging
 import os
 from pathlib import Path
 
@@ -24,6 +25,7 @@ import aiohttp
 
 from . import GenRequest, GenStatus
 
+log = logging.getLogger("kreaibot")
 DEFAULT_BASE = "https://www.runninghub.ai"
 
 
@@ -114,11 +116,15 @@ class RunningHubBackend:
             return str(d[0])
         return ""
 
-    def _bind(self, bindings: list[dict], req: GenRequest, uploaded: list[str]) -> list[dict]:
+    def _bind(self, bindings: list[dict], req: GenRequest, uploaded: list[str],
+              extra: dict[str, str] | None = None) -> list[dict]:
         out: list[dict] = []
+        extra = extra or {}
         for b in bindings:
             val = str(b.get("value", ""))
-            if val.startswith("@photo"):
+            if val in extra:                        # mis. @photo1_zoom (sudah diunggah terpisah)
+                val = extra[val]
+            elif val.startswith("@photo"):
                 idx = int(val.replace("@photo", "") or "1") - 1
                 val = uploaded[idx] if idx < len(uploaded) else ""
             elif val == "@prompt":
@@ -143,6 +149,35 @@ class RunningHubBackend:
                         "fieldValue": val})
         return out
 
+    ZOOM_FACTOR = 1.12          # push-in halus untuk "frame akhir" i2v
+
+    def _zoom_variant(self, src: Path, ratio: str, tag: str) -> Path | None:
+        """Foto yang sama di-zoom ~1.12x (ke arah tengah) → dipakai sebagai frame akhir.
+
+        Hasil tes nyata: dengan frame awal = frame akhir = foto identik, model cuma
+        me-morph ekspresi (nyaris statis); kalau frame akhir di-zoom, gerakannya jadi
+        push-in kamera yang natural. Foto ASLI tetap dipakai di frame awal.
+        """
+        try:
+            from PIL import Image
+        except ImportError:                     # Pillow tak ada → lewati (pakai foto asli)
+            return None
+        w, h = RATIO_SIZES.get((ratio or "").replace(" ", ""), (480, 832))
+        try:
+            im = Image.open(src).convert("RGB")
+            sw, sh = im.size
+            sc = max(w / sw, h / sh)
+            im = im.resize((max(int(sw * sc), w), max(int(sh * sc), h)), Image.LANCZOS)
+            x, y = (im.width - w) // 2, (im.height - h) // 2
+            im = im.crop((x, y, x + w, y + h))
+            zw, zh = int(w / self.ZOOM_FACTOR), int(h / self.ZOOM_FACTOR)
+            zx, zy = (w - zw) // 2, (h - zh) // 2
+            out = self.work_dir / f"{tag}.jpg"
+            im.crop((zx, zy, zx + zw, zy + zh)).resize((w, h), Image.LANCZOS).save(out, quality=92)
+            return out
+        except Exception:                       # noqa: BLE001
+            return None
+
     # ---------- kontrak Backend ----------
     async def submit(self, req: GenRequest) -> str:
         wf = self._workflow_id(req.feature_key)
@@ -154,8 +189,24 @@ class RunningHubBackend:
         for p in assets:
             uploaded.append(await self.upload(Path(p)))
 
+        # Placeholder @photoN_zoom → foto ke-N di-zoom (bukti: "frame akhir" ber-zoom
+        # bikin gerakan push-in; kalau identik, video jadi nyaris statis).
+        extra: dict[str, str] = {}
+        for b in self._node_bindings(req.feature_key):
+            val = str(b.get("value", ""))
+            if val.startswith("@photo") and val.endswith("_zoom"):
+                idx = int(val[len("@photo"):-len("_zoom")] or "1") - 1
+                if 0 <= idx < len(req.photos):
+                    zv = self._zoom_variant(Path(req.photos[idx]), req.ratio,
+                                            f"{Path(req.photos[idx]).stem}-zoom")
+                    if zv:
+                        try:
+                            extra[val] = await self.upload(zv)
+                        except Exception as e:          # noqa: BLE001
+                            log.warning("upload zoom-variant gagal (%s) → pakai foto asli", e)
+
         payload = {"apiKey": self.api_key, "workflowId": wf,
-                   "nodeInfoList": self._bind(self._node_bindings(req.feature_key), req, uploaded)}
+                   "nodeInfoList": self._bind(self._node_bindings(req.feature_key), req, uploaded, extra)}
         js = await self._post("/task/openapi/create", payload)
         task_id = ""
         if isinstance(js, dict):

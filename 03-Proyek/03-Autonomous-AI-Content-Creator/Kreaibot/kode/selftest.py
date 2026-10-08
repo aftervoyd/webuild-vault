@@ -29,27 +29,45 @@ async def main() -> int:
     res.append(ok("katalog 7 fitur (termasuk UGC)", len(catalog.FEATURES) == 7, ", ".join(catalog.FEATURES)))
     f = catalog.get("allinone")
     res.append(ok("harga All-in-One (15 dtk) = 2.5 token", f is not None and f.cost == 2.5))
+    # Konversi Rp: 10 token = Rp10.000 → 1 token = Rp1.000 (i2v 5 dtk = 0,5 token = Rp500)
     i2v = catalog.get("i2v")
     res.append(ok("konversi Rp (10 tok = Rp10.000 → 1 tok = Rp1.000)",
-                  catalog.price_rp(i2v, 10, 10_000) == 1000,
-                  f"Rp{catalog.price_rp(i2v, 10, 10_000)}"))
-    # HARGA SEHAT: biaya koin terukur × Rp/koin harus di bawah harga jual (margin ≥ 40%).
-    # Angka koin dari render NYATA di RunningHub (5 dtk 4:3 = 70 · 15 dtk 9:16 = 269).
-    RUPIAH_PER_KOIN, KOIN_TERUKUR = 4.46, {"i2v": 70, "allinone": 269, "ugc": 269}
-    for key, koin in KOIN_TERUKUR.items():
-        ft = catalog.get(key)
-        harga = catalog.price_rp(ft, 10, 10_000)
+                  catalog.price_rp(i2v, 10, 10_000) * 2 == 1000,
+                  f"i2v 5 dtk = Rp{catalog.price_rp(i2v, 10, 10_000)}"))
+    # HARGA SEHAT (per fitur × durasi): koin terukur × Rp/koin harus di bawah harga jual.
+    # Angka koin dari render NYATA di RunningHub (5 dtk = 55–66 koin · 15 dtk = 269 koin).
+    RUPIAH_PER_KOIN = 4.46
+    KOIN_TERUKUR = {("i2v", 5): 66, ("i2v", 10): 150, ("i2v", 15): 210,
+                    ("allinone", 5): 66, ("allinone", 15): 269, ("ugc", 15): 269}
+    for (key, dur), koin in KOIN_TERUKUR.items():
+        harga = catalog.cost_for(key, dur) / 10 * 10_000
         biaya = koin * RUPIAH_PER_KOIN
         margin = (harga - biaya) / harga * 100
-        res.append(ok(f"margin {key} sehat ({margin:.0f}%)", margin >= 40,
-                      f"harga Rp{harga:,} vs biaya Rp{biaya:,.0f}"))
+        batas = 35 if (key == "i2v" and dur <= 5) else 50     # 5 dtk = produk pintu masuk
+        res.append(ok(f"margin {key} {dur} dtk sehat ({margin:.0f}% ≥ {batas}%)", margin >= batas,
+                      f"harga Rp{harga:,.0f} vs biaya Rp{biaya:,.0f}"))
     res.append(ok("durasi render dalam batas workflow (4..15 dtk)",
                   all(4 <= ft.duration <= 15 for ft in catalog.enabled_features()),
                   ", ".join(f"{ft.key}={ft.duration}s" for ft in catalog.enabled_features())))
+    res.append(ok("durasi yang dijual semua dalam batas workflow",
+                  all(all(4 <= d <= 15 for d in ft.durations) for ft in catalog.enabled_features()),
+                  ", ".join(f"{ft.key}:{ft.durations}" for ft in catalog.enabled_features())))
     ugc = catalog.get("ugc")
     res.append(ok("fitur UGC ada & bertingkat", bool(ugc and ugc.kind == "ugc" and ugc.need_style
                                                      and ugc.char_first and ugc.product_slot),
                   f"{ugc.cost:g} token, Rp{catalog.price_rp(ugc, 10, 10_000)}" if ugc else ""))
+
+    # 1b) alur TANPA TOMBOL (gaya @KuzushiGenBot): setelah foto, langsung ketik prompt
+    src = Path(__file__).with_name("bot.py").read_text(encoding="utf-8")
+    for needle, label in (("on_prompt_in_photos", "teks di tahap foto = prompt (tanpa tombol)"),
+                          ("ugc_brief_text", "teks di tahap produk = brief (tanpa tombol)"),
+                          ('"a:ratio:"', "tombol ganti RASIO di layar konfirmasi"),
+                          ('"a:dur:"', "tombol ganti DURASI di layar konfirmasi"),
+                          ('"u:stylemenu"', "tombol ganti GAYA (UGC)"),
+                          ("cost_for(f.key, dur)", "biaya render ikut durasi terpilih")):
+        res.append(ok(label, needle in src))
+    res.append(ok('tombol "✅ Lanjut" sudah dihapus dari alur',
+                  "✅ Lanjut" not in src and "Lanjut ke Brief" not in src))
 
     # 2) PromptSmith
     res.append(ok("6 gaya UGC tersedia", len(promptsmith.STYLES) == 6, ", ".join(promptsmith.STYLES)))
