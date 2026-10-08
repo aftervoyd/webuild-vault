@@ -42,8 +42,12 @@ class RunningHubBackend:
     name = "runninghub"
 
     def __init__(self, api_key: str = "", base: str = DEFAULT_BASE,
-                 work_dir: str = ".", **_: object):
+                 work_dir: str = ".", upload_key: str = "", **_: object):
         self.api_key = api_key or os.getenv("RUNNINGHUB_API_KEY", "")
+        # Upload memakai key SHARED (uji 9 Okt: key platform DITOLAK untuk upload,
+        # sementara task workflow tetap harus pakai key platform supaya dibayar KOIN).
+        self.upload_key = (upload_key or os.getenv("RUNNINGHUB_UPLOAD_KEY", "")
+                           or self.api_key)
         self.base = (base or DEFAULT_BASE).rstrip("/")
         self.work_dir = Path(work_dir)
 
@@ -55,6 +59,17 @@ class RunningHubBackend:
         raw = os.getenv(f"RUNNINGHUB_NODES_{feature_key.upper()}", "[]")
         try:
             return json.loads(raw)
+        except json.JSONDecodeError:
+            return []
+
+    def _app_id(self, feature_key: str) -> str:
+        """webappId AI App. Jalur app uji 9 Okt: 165s/33 koin (workflow 324s/61 koin)."""
+        return os.getenv(f"RUNNINGHUB_APP_{feature_key.upper()}", "")
+
+    def _app_bindings(self, feature_key: str) -> list[dict]:
+        raw = os.getenv(f"RUNNINGHUB_APP_NODES_{feature_key.upper()}", "")
+        try:
+            return json.loads(raw) if raw else []
         except json.JSONDecodeError:
             return []
 
@@ -84,13 +99,13 @@ class RunningHubBackend:
         for path in ("/task/openapi/upload", "/task/openapi/fileUpload"):
             try:
                 data = aiohttp.FormData()
-                data.add_field("apiKey", self.api_key)
+                data.add_field("apiKey", self.upload_key)
                 data.add_field("fileType", kind)
                 data.add_field("file", p.read_bytes(), filename=p.name,
                                content_type="application/octet-stream")
                 async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=300)) as s:
                     async with s.post(f"{self.base}{path}", data=data,
-                                      headers={"Authorization": f"Bearer {self.api_key}"}) as r:
+                                      headers={"Authorization": f"Bearer {self.upload_key}"}) as r:
                         js = await r.json(content_type=None)
             except Exception as e:                      # noqa: BLE001
                 last_err = e
@@ -186,10 +201,11 @@ class RunningHubBackend:
 
     # ---------- kontrak Backend ----------
     async def submit(self, req: GenRequest) -> str:
+        app_id = self._app_id(req.feature_key)
         wf = self._workflow_id(req.feature_key)
-        if not wf:
-            raise RuntimeError(f"workflowId untuk '{req.feature_key}' belum diisi "
-                               f"(RUNNINGHUB_WF_{req.feature_key.upper()})")
+        if not app_id and not wf:
+            raise RuntimeError(f"workflowId/webappId untuk '{req.feature_key}' belum diisi "
+                               f"(RUNNINGHUB_WF_{req.feature_key.upper()} / RUNNINGHUB_APP_...)")
         assets = list(req.photos) + ([req.video_in] if req.video_in else [])
         uploaded: list[str] = []
         for p in assets:
@@ -211,9 +227,19 @@ class RunningHubBackend:
                         except Exception as e:          # noqa: BLE001
                             log.warning("upload zoom-variant gagal (%s) → pakai foto asli", e)
 
-        payload = {"apiKey": self.api_key, "workflowId": wf,
-                   "nodeInfoList": self._bind(self._node_bindings(req.feature_key), req, uploaded, extra)}
-        js = await self._post("/task/openapi/create", payload)
+        if app_id:
+            # Jalur AI APP (biasanya lebih cepat & lebih murah): kirim gambar + prompt
+            # ke node yang diekspos app. Upload tetap pakai key SHARED, task pakai key
+            # platform supaya dibayar KOIN (bukan wallet $).
+            nodes = self._bind(self._app_bindings(req.feature_key)
+                               or self._node_bindings(req.feature_key), req, uploaded, extra)
+            js = await self._post("/task/openapi/ai-app/run",
+                                  {"apiKey": self.api_key, "webappId": int(app_id),
+                                   "nodeInfoList": nodes})
+        else:
+            payload = {"apiKey": self.api_key, "workflowId": wf,
+                       "nodeInfoList": self._bind(self._node_bindings(req.feature_key), req, uploaded, extra)}
+            js = await self._post("/task/openapi/create", payload)
         task_id = ""
         if isinstance(js, dict):
             d = js.get("data")

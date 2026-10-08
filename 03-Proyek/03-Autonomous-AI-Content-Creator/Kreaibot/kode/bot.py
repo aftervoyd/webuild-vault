@@ -38,7 +38,8 @@ log = logging.getLogger("kreaibot")
 
 db = Database(settings.db_path)
 backend = make_backend(settings.backend, api_key=settings.runninghub_api_key,
-                       base=settings.runninghub_base, work_dir=settings.work_dir)
+                       base=settings.runninghub_base, work_dir=settings.work_dir,
+                       upload_key=settings.runninghub_upload_key)
 router = Router()
 pay_gw = make_client(settings)            # None kalau AULAA_API_KEY belum diisi
 bot: Bot = None                            # type: ignore[assignment]  # di-set di main(), dipakai handler

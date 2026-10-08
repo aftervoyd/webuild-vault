@@ -103,6 +103,11 @@ async def main() -> int:
                   "def running_jobs" in (Path(__file__).with_name("db.py")).read_text(encoding="utf-8")))
     res.append(ok("alat pemulihan job tersedia (tools/deliver_job.py)",
                   (Path(__file__).with_name("tools") / "deliver_job.py").exists()))
+    res.append(ok("upload pakai key SHARED (key platform ditolak upload 9 Okt)",
+                  "self.upload_key" in _rh and "RUNNINGHUB_UPLOAD_KEY" in _rh
+                  and "runninghub_upload_key" in (Path(__file__).with_name("config.py")).read_text(encoding="utf-8")))
+    res.append(ok("backend bisa jalur AI App (webappId + ai-app/run)",
+                  "_app_id" in _rh and "ai-app/run" in _rh and "RUNNINGHUB_APP_" in _rh))
 
     # 2) PromptSmith
     res.append(ok("6 gaya UGC tersedia", len(promptsmith.STYLES) == 6, ", ".join(promptsmith.STYLES)))

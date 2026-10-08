@@ -30,7 +30,8 @@ async def main() -> int:
     photo = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "work/job_3/ref1.bin"
     prompt = (ROOT / "work/tests/prompt_h3.txt").read_text(encoding="utf-8").strip()
     out = ROOT / "work/tests/backend_i2v.mp4"
-    be = RunningHubBackend(os.getenv("RUNNINGHUB_API_KEY", ""), os.getenv("RUNNINGHUB_BASE", ""))
+    be = RunningHubBackend(os.getenv("RUNNINGHUB_API_KEY", ""), os.getenv("RUNNINGHUB_BASE", ""),
+                           upload_key=os.getenv("RUNNINGHUB_UPLOAD_KEY", ""))
     req = GenRequest(job_id=999, feature_key="i2v", workflow="", photos=[photo],
                      prompt=prompt, ratio="9:16", duration=5, out_path=out)
     t0 = time.time()

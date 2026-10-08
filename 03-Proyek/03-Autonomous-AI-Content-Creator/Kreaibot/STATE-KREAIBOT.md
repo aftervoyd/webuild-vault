@@ -91,6 +91,22 @@ Uji `empty2` = workflow yang **sama** (FL2VA) tapi **frame-akhir dikosongkan eks
 - Kalau butuh kualitas/jalur khusus, pakai API hanya untuk eksperimen terbatas (wallet tipis).
 - Endpoint `ltx-2.3/image-to-video` **tidak ada di host `.ai`** (katalog mencantumkan $0,01/s tapi URL panggilan invalid).
 
+## 7. 🏆 JALUR AI APP — PILIHAN PRODUKSI (uji 9 Okt 01:34–01:57)
+
+**Aturan main (WAJIB):** `--api-key <key platform>` (supaya dibayar **KOIN**) + `--upload-key <key SHARED>` (**upload DITOLAK key platform**, "ApiKey verification failed"). Format node: `nodeId:fieldName=value` (pakai `=`, bukan `:`).
+
+| App (webappId) | Node | Waktu | Koin | Wajah | Badan | Putusan |
+|---|---|---|---|---|---|---|
+| **Wan2.2 2075128386959265793** | 292 image · 293 text · 336 durasi · 339 width | 305s | 61 | **39,2** | 22,3 | ✅ **DIPAKAI (i2v)** — 720×1280, wajah ≈ Kuzushi (42,7) |
+| LTX2.3 2072511984289017857 | 7 image · 4 text | **165s** | **33** | 24,6 | 24,6 | ⏳ kandidat **tier "Hemat"** (nyaris statis + artefak ekor) |
+| bernini 2074672423118663682 | 30 image · 56 text | 476s | 96 | — | — | ❌ mahal & lambat |
+| workflow FL2VA (@empty) | 6 foto · 4 kosong | 324s | 61 | 31,7 | 19,0 | fallback (allinone/ugc) |
+
+**Aktif sekarang:** `.env` → `RUNNINGHUB_APP_I2V=2075128386959265793` + `RUNNINGHUB_APP_NODES_I2V` (292 image @photo1 · 293 text @prompt · 336 value @duration) ✓
+**Cara daftar app:** `rh-skills/scripts/runninghub_app.py --list --sort HOTTEST --size 30` · input: `--info <webappId>` (app harus pernah dijalankan di web dulu).
+**Backend:** `backends/runninghub.py` branch `RUNNINGHUB_APP_<FEATURE>` → `POST /task/openapi/ai-app/run` (webappId + nodeInfoList) ✓ selftest 80/80.
+**Terbuka:** durasi 10/15s di app belum terbukti (default 5s) — jangan jual durasi yang belum bisa dipenuhi.
+
 **Kesimpulan terkunci**: biang kerok gerakan beku = **jenis workflow (FL2VA)**, bukan prompt. Solusi = **i2v murni / Ref2VA**.
 
 ## 5. KEPUTUSAN TERKUNCI (jangan dibuka lagi tanpa temuan baru)

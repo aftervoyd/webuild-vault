@@ -53,6 +53,7 @@ class Settings:
     # === Backend generate (pluggable) ===
     backend: str = _env("KREAIBOT_BACKEND", "mock")                 # mock | runninghub | fal | minimax
     runninghub_api_key: str = _env("RUNNINGHUB_API_KEY")
+    runninghub_upload_key: str = _env("RUNNINGHUB_UPLOAD_KEY", "")
     runninghub_base: str = _env("RUNNINGHUB_BASE", "https://www.runninghub.ai")
     fal_key: str = _env("FAL_KEY")
     minimax_key: str = _env("MINIMAX_API_KEY")
