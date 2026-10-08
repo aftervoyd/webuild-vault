@@ -221,7 +221,12 @@ async def cb_paket(cb: CallbackQuery):
 
     db.pay_set(order_id, payment_id=p.id, invoice=p.number, is_test=1 if p.is_test else 0)
     exp = f"\n⏳ Berlaku sampai: {p.expired_at}" if p.expired_at else ""
-    sand = "\n🧪 <b>MODE SANDBOX</b> — pembayaran uji coba" if p.is_test else ""
+    sand = ""
+    if p.is_test:                   # sandbox → sertakan kode (bisa disalin) untuk halaman simulasi
+        sand = ("\n\n🧪 <b>MODE SANDBOX — uji coba, tidak ada uang sungguhan</b>\n"
+                "Bayar lewat <a href=\"https://api.aulaa.co/payment-simulation\">halaman simulasi</a>, "
+                "tempel kode ini di tab <b>QRIS Code</b>:\n"
+                f"<code>{p.number}</code>")
     cap = ((f"💳 <b>Rp{rp:,}</b> → <b>{tok:g} Token</b>\n\n"
             f"Scan QR ini pakai <b>m-banking / e-wallet apa saja</b> (QRIS).\n"
             f"Token masuk <b>otomatis</b> begitu pembayaran berhasil — gak perlu kirim bukti.{exp}{sand}\n\n"
@@ -237,11 +242,13 @@ async def cb_paket(cb: CallbackQuery):
     if p.number and len(p.number) > 24:     # QRIS = string panjang → render jadi gambar QR
         try:
             qp = Aulaa.qr_png(p.number, Path(settings.work_dir) / f"qr-{order_id}.png")
-            await cb.message.answer_photo(FSInputFile(qp), caption=cap, reply_markup=kb)
+            m = await cb.message.answer_photo(FSInputFile(qp), caption=cap, reply_markup=kb)
+            db.pay_set(order_id, msg_id=m.message_id, chat_id=m.chat.id)
             return
         except Exception as e:              # noqa: BLE001
             log.warning("render QR gagal: %s", e)
-    await cb.message.answer(cap, reply_markup=kb)
+    m = await cb.message.answer(cap, reply_markup=kb)
+    db.pay_set(order_id, msg_id=m.message_id, chat_id=m.chat.id)
 
 
 @router.callback_query(F.data.startswith("t:klaim:"))
@@ -274,10 +281,66 @@ async def cb_klaim(cb: CallbackQuery):
 
 # ============================ QRIS otomatis (Aulaa) ============================
 
-async def _credit_topup(order_id: str) -> float | None:
+_LAST_CHECK: dict[str, float] = {}          # jeda cek per-order (API Aulaa: maks 30x/menit)
+CHECK_MIN_GAP = 5.0                         # detik antar-cek untuk order yang sama
+
+
+async def _notify_expired(row) -> None:
+    try:
+        await bot.send_message(int(row["telegram_id"]),
+                               "⌛ <b>Waktu pembayaran habis.</b>\n\nKalau kamu sudah bayar, hubungi admin ya.",
+                               reply_markup=main_menu_kb())
+    except Exception:                       # noqa: BLE001
+        pass
+
+
+async def _check_order(order_id: str, via: str = "poller") -> bool:
+    """Cek 1 order ke gateway; kalau lunas → kredit token. True = lunas."""
+    if pay_gw is None:
+        return False
+    row = db.pay_get(order_id)
+    if not row:
+        return False
+    if row["status"] == "paid":
+        return True
+    if row["status"] != "pending" or not row["payment_id"]:
+        return False
+    now = time.time()
+    if now - _LAST_CHECK.get(order_id, 0.0) < CHECK_MIN_GAP:
+        return False
+    _LAST_CHECK[order_id] = now
+    try:
+        p = await pay_gw.get(str(row["payment_id"]))
+    except Exception as e:                      # noqa: BLE001
+        log.debug("cek %s gagal: %s", order_id, e)
+        return False
+    if p.paid:
+        await _credit_topup(order_id, via=via, p=p)
+        return True
+    if p.dead:
+        db.pay_set(order_id, status="expired")
+        await _notify_expired(row)
+    return False
+
+
+async def _credit_topup(order_id: str, via: str = "poller", p=None) -> float | None:
     """Kredit token setelah pembayaran Aulaa lunas. Idempoten (aman dipanggil berulang)."""
     row = db.pay_get(order_id)
     if not row or row["status"] == "paid":
+        return None
+    # 🔒 pengaman uang nyata: nominal dari gateway HARUS sama dengan yang kita tagih
+    if p is not None and int(getattr(p, "amount", 0) or 0) not in (0, int(row["amount"])):
+        log.error("NOMINAL BEDA! order=%s gateway=%s lokal=%s → TIDAK dikredit",
+                  order_id, getattr(p, "amount", "?"), row["amount"])
+        db.pay_set(order_id, note=f"nominal beda: gateway={getattr(p, 'amount', '?')} lokal={row['amount']}")
+        for adm in settings.admin_ids:
+            try:
+                await bot.send_message(int(adm),
+                                       f"🚨 <b>Nominal tidak cocok</b>\norder <code>{order_id}</code>\n"
+                                       f"gateway={getattr(p, 'amount', '?')} · lokal={row['amount']}\n"
+                                       f"Token TIDAK dikredit. Cek dashboard Aulaa.")
+            except Exception:                   # noqa: BLE001
+                pass
         return None
     uid, tok = int(row["telegram_id"]), float(row["tokens"])
     db.ledger_add(uid, tok, "topup_aulaa", ref=order_id)   # ledger dulu → baru tandai lunas
@@ -292,7 +355,18 @@ async def _credit_topup(order_id: str) -> float | None:
             reply_markup=main_menu_kb())
     except Exception as e:                      # noqa: BLE001
         log.warning("gagal kabari user %s: %s", uid, e)
-    log.info("topup lunas: order=%s user=%s token=+%s", order_id, uid, tok)
+    # pesan QR di chat user → otomatis berubah jadi "LUNAS"
+    try:
+        keys = row.keys()
+        mid = row["msg_id"] if "msg_id" in keys else None
+        if mid:
+            await bot.edit_message_caption(
+                chat_id=uid, message_id=int(mid),
+                caption=(f"✅ <b>LUNAS</b> — +{tok:g} Token masuk!\n"
+                         f"Saldo: <b>{bal:g} Token</b> 💚\n\n<i>Token siap dipakai.</i>"))
+    except Exception as e:                      # noqa: BLE001
+        log.debug("edit caption QR gagal: %s", e)
+    log.info("topup lunas (via %s): order=%s user=%s token=+%s", via, order_id, uid, tok)
     await _ref_on_purchase(uid)                 # mode aman referral
     return bal
 
@@ -312,60 +386,29 @@ async def cb_cek(cb: CallbackQuery):
         await cb.answer("Belum bisa dicek otomatis. Hubungi admin ya.", show_alert=True)
         return
     await cb.answer("Mengecek ke gateway…")
-    try:
-        p = await pay_gw.get(str(row["payment_id"]))
-    except Exception as e:                      # noqa: BLE001
-        log.warning("cek status %s gagal: %s", order_id, e)
-        await cb.answer("Gagal cek status, coba lagi sebentar lagi 🙏", show_alert=True)
-        return
-    if p.paid:
-        bal = await _credit_topup(order_id)
-        txt = (f"🎉 <b>Lunas!</b> +{float(row['tokens']):g} Token masuk.\n"
-               f"Saldo: <b>{bal if bal is not None else db.balance(int(row['telegram_id'])):g} Token</b>")
-        try:
-            if cb.message.photo:
-                await cb.message.edit_caption(caption=txt, reply_markup=main_menu_kb())
-            else:
-                await cb.message.edit_text(txt, reply_markup=main_menu_kb())
-        except Exception:                       # noqa: BLE001
-            await cb.message.answer(txt, reply_markup=main_menu_kb())
-    elif p.dead:
-        db.pay_set(order_id, status="expired")
-        await cb.answer("⌛ Sesi pembayaran sudah berakhir — buat QR baru ya", show_alert=True)
-    else:
-        await cb.answer("⏳ Belum masuk. Kalau baru bayar, tunggu ±10 detik lalu cek lagi.", show_alert=True)
+    _LAST_CHECK.pop(order_id, 0.0)              # tombol = cek paksa, abaikan jeda
+    lunas = await _check_order(order_id, via="tombol")
+    if not lunas:
+        r2 = db.pay_get(order_id)
+        if r2 and r2["status"] == "expired":
+            await cb.answer("⌛ Sesi pembayaran sudah berakhir — buat QR baru ya", show_alert=True)
+        else:
+            await cb.answer("⏳ Belum masuk. Kalau baru bayar, tunggu ±10 detik lalu cek lagi.", show_alert=True)
 
 
 async def poller_payments() -> None:
-    """Cek status QRIS pending tiap 12 detik → token masuk otomatis (tanpa webhook publik)."""
+    """Cek status QRIS pending tiap 6 detik → token masuk otomatis (tanpa webhook publik)."""
     if pay_gw is None:
         log.info("poller pembayaran nonaktif (AULAA_API_KEY belum diisi)")
         return
-    log.info("poller pembayaran Aulaa AKTIF (interval 12s)")
+    log.info("poller pembayaran Aulaa AKTIF (interval 6s)")
     while True:
         try:
             for row in db.pay_pending(20):
-                if not row["payment_id"]:
-                    continue
-                try:
-                    p = await pay_gw.get(str(row["payment_id"]))
-                except Exception as e:          # noqa: BLE001
-                    log.debug("poll %s gagal: %s", row["order_id"], e)
-                    continue
-                if p.paid:
-                    await _credit_topup(str(row["order_id"]))
-                elif p.dead:
-                    db.pay_set(str(row["order_id"]), status="expired")
-                    try:
-                        await bot.send_message(
-                            int(row["telegram_id"]),
-                            "⌛ <b>Waktu pembayaran habis.</b>\n\nKalau kamu sudah bayar, hubungi admin ya.",
-                            reply_markup=main_menu_kb())
-                    except Exception:           # noqa: BLE001
-                        pass
+                await _check_order(str(row["order_id"]), via="poller")
         except Exception as e:                  # noqa: BLE001
             log.warning("poller pembayaran error: %s", e)
-        await asyncio.sleep(12)
+        await asyncio.sleep(6)
 
 
 @router.callback_query(F.data.startswith("adm:ok:"))

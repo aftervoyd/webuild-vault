@@ -89,6 +89,14 @@ class Database:
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA journal_mode=WAL")
         self.conn.executescript(SCHEMA)
+        # migrasi ringan: SQLite tak punya "ADD COLUMN IF NOT EXISTS"
+        for _sql in ("ALTER TABLE payments ADD COLUMN msg_id INTEGER",   # pesan QR → bisa di-edit jadi LUNAS
+                     "ALTER TABLE payments ADD COLUMN chat_id INTEGER"):
+            try:
+                self.conn.execute(_sql)
+            except sqlite3.OperationalError:      # kolom sudah ada
+                pass
+        self.conn.commit()
         self._migrate()
         self.conn.commit()
 
@@ -233,7 +241,7 @@ class Database:
         self.conn.commit()
 
     def pay_set(self, order_id: str, **f: Any) -> None:
-        allowed = {"payment_id", "status", "is_test", "invoice", "note", "paid_at"}
+        allowed = {"payment_id", "status", "is_test", "invoice", "note", "paid_at", "msg_id", "chat_id"}
         f = {k: v for k, v in f.items() if k in allowed}
         if not f:
             return
