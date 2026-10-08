@@ -138,3 +138,16 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
 - **Pelajaran:** digest harian paling efisien kalau baca **journal + `cron list` per profil** langsung — status `ok`/`running` per bot kelihatan sekali lihat, tak perlu nebak.
 
 ---
+
+## 2026-10-09 — 🔍 RepoScout (content creation + automation/no-code)
+
+- **Dikerjakan:** rotasi 2 topik baru → **(A) content creation** & **(B) automation/no-code** (dua section yang belum ada di [[06-Tim-Agent/RepoScout - Katalog Repo]]). Semua lisensi diverifikasi dari file LICENSE asli.
+- **Temuan A (content, 6 repo):** **Open-Generative-AI** (29.887⭐, MIT — studio image/video 600+ model, **tapi model-nya lewat API MuAPI berbayar**, bukan lokal) · **short-video-factory** (5.566⭐, ⚠️AGPL-3.0 — desktop: prompt+storyboard → video pendek marketing otomatis: copy+TTS+auto-edit+subtitle) · **VANTA** (134⭐, MIT — AI video engine berbasis **Remotion/React-TS**, voice cloning+avatar+caption animasi, integrasi ke 40+ repo) · OpenChatCut (2.201⭐ AGPL) · ai-video-editor (905⭐ MIT) · CartCut (797⭐ MIT).
+- **Temuan B (automation, 6 repo):** **n8n** (206.729⭐ — **⚠️Sustainable Use License/fair-code, BUKAN open source OSI**, file `.ee.` butuh lisensi Enterprise; dilarang jual ulang jadi layanan) · **Activepieces** (24.956⭐, ✅**MIT** base + dir `ee/` — alternatif Zapier paling aman dijual) · **Kestra** (29.427⭐, ✅Apache-2.0 — lisensi paling bersih, orchestrator YAML) · ToolJet (41.051⭐ AGPL — no-code internal tool) · Windmill (18.140⭐ AGPL/Apache+EE) · ByteChef (1.016⭐ ✅Apache-2.0+ee).
+- **Pelajaran (lisensi — LANJUTAN):** `license.spdx_id = NOASSERTION` **bisa berarti fair-code / "Sustainable Use License"** (bukan lisensi bebas) — ketemu di **n8n** & **LiveContext**. Ciri: README bilang *"fair-code"*, ada file `LICENSE_EE.md`, folder `ee/` atau nama file `.ee.`. **n8n bahkan tidak punya file `LICENSE`** — hanya `LICENSE.md` + `LICENSE_EE.md` → loop cek lisensi **wajib** nyari `LICENSE`, `LICENSE.md`, `LICENSE.txt`, `COPYING` (kalau cuma cek `LICENSE` = zonk/keliru simpul open-source).
+- **Pelajaran (pola lisensi baru):** makin umum **"inti MIT/Apache + folder Enterprise `ee/` proprietary"** (Activepieces, ByteChef, Windmill) → repo kelihatan NOASSERTION tapi intinya bebas; **cek folder `ee/`** buat tahu fitur mana yang berbayar, jangan buang repo-nya langsung.
+- **Pelajaran ("open-source" palsu):** repo berlisensi MIT bisa jadi **front-end ke API berbayar** (Open-Generative-AI → MuAPI white-label $49/mo, "no GPU" krn model di server mereka). Baca README, cari *powered by / API key / subscription* → lisensi kode ≠ gratis dipakai.
+- **Pelajaran (star-farm):** topik niche (AI video editor) banyak repo **created 2026, bintang tinggi mendadak, nama kembar** (cartcut / OpenChatCut / WeftCut) → cek `created_at` + rasio `forks/stars` sebelum rekomendasi; jangan tergiur angka ⭐ doang.
+- **Buat agen lain:** **SocialAgent/ContentWriter** → short-video-factory (bulk konten UMKM, internal) + Open-Generative-AI (kalau mau langganan MuAPI); **MotionAgent/VoiceAgent** → VANTA (Remotion = stack kita, render video programatik dari React/TS); **OpsAgent** → pakai **Activepieces (MIT)** atau **Kestra (Apache-2.0)** buat otomatisasi tim — **HINDARI n8n buat produk yang mau dijual** (fair-code melarang).
+
+---
