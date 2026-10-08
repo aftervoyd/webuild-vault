@@ -43,7 +43,19 @@
 |---|---|---|---|---|---|
 | job3 kita (FL2VA + intro balon) | 54,9 | 43,7 | **36,3** | 5,2s | 24 |
 | nobalon (foto sama di 2 ujung) | 47,3 | 28,2 | **13,4** | 5,2s | 24 |
+| **H3 single-frame via API (uji 9 Okt 00:42)** | 42,4 | 38,2 | **22,1** | 5,2s | 24 (768×1344) |
 | Kuzushi (i2v murni) | 38,2 | **42,7** | 26,9 | 10s | 30 |
+
+**KESIMPULAN TERBUKTI (uji H3 single-frame API):** menghilangkan kunci frame-akhir **membebaskan gerakan orang** → wajah 28,2→**38,2** (+35%) · badan 13,4→**22,1** (+65%), mendekati Kuzushi (42,7/26,9) dengan latar lebih hidup.
+→ **Fix = workflow i2v SATU gambar** (bukan FL2VA dua ujung).
+
+## 4b. UJI API MODEL STANDAR (9 Okt 00:42–00:46) — hasil + batas
+
+- Key **Enterprise-Shared** dibuat & tersimpan `/root/.secrets/runninghub_shared.key` (chmod 600) → `apiType: SHARED`; blokir 1014 hilang ✓
+- `minimax/hailuo-h3/image-to-video` (768P, 5s, foto = firstFrameUrl saja): **212 detik · biaya $0,385 (≈Rp6.300) · wallet $1,000 → $0,615**
+- ⚠️ **Jalur API model terlalu mahal** (Rp6.300 vs jalur koin Rp290 = 20×) dan cuma 1,5× lebih cepat → **TIDAK dipakai untuk produksi**.
+- Kalau butuh kualitas/jalur khusus, pakai API hanya untuk eksperimen terbatas (wallet tipis).
+- Endpoint `ltx-2.3/image-to-video` **tidak ada di host `.ai`** (katalog mencantumkan $0,01/s tapi URL panggilan invalid).
 
 **Kesimpulan terkunci**: biang kerok gerakan beku = **jenis workflow (FL2VA)**, bukan prompt. Solusi = **i2v murni / Ref2VA**.
 
