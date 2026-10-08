@@ -114,6 +114,11 @@ Uji `empty2` = workflow yang **sama** (FL2VA) tapi **frame-akhir dikosongkan eks
 - **UGC (produk berubah bentuk):** belum ada app Ref2VA di katalog → rencana **2 tahap**: app image-edit (gabung foto orang + foto produk → 1 gambar) → lalu i2v Wan2.2 ✓ (bukan dua-ujung workflow)
 - **Ekonomi terukur:** 1 koin ≈ Rp4,46 · 5s=61 koin (Rp272) · 10s=112 koin (Rp500) → harga jual sekarang 0,5T/1,5T (Rp500/1.500) = margin ~45-65% ✓; **Kuzushi 10s=1T** → kita masih lebih mahal di 10s
 
+### ❌ 15s i2v GAGAL & HARGA FINAL (9 Okt 03:17–03:30)
+- **App Wan2.2 GAGAL di 15s** (status FAILED, 384s, **0 koin** — RunningHub tak menagih task gagal) → **i2v 15s DIMATIKAN** dari katalog (aturan: jangan jual durasi yang belum terbukti). allinone & UGC 15s TETAP (jalur workflow, terbukti 269 koin).
+- **HARGA FINAL i2v: 5s = 0,5T · 10s = 1T** (paritas Kuzushi; margin terukur 46% & 50%). User tak menjawab pertanyaan harga dalam 1 jam → keputusan diambil otomatis (kontrol penuh sudah diberikan).
+- `selftest` 79/79 · `ux_audit` bersih · commit `7ea264a`.
+
 **Kesimpulan terkunci**: biang kerok gerakan beku = **jenis workflow (FL2VA)**, bukan prompt. Solusi = **i2v murni / Ref2VA**.
 
 ## 5. KEPUTUSAN TERKUNCI (jangan dibuka lagi tanpa temuan baru)
