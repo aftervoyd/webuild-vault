@@ -55,3 +55,5 @@ KREAIBOT_REF_INVITER_AFTER_PURCHASE=0
 - `KREAIBOT_CHANNEL=KreeaCommunity` → gate "wajib join" AKTIF
 - Dibuat otomatis via otomasi GUI Telegram Desktop (xdotool + OCR tesseract, server headless DISPLAY=:99)
 - Uji: owner → LOLOS (creator) · non-member → DITOLAK (member not found) · `tools/channel_gate_test.py`
+- Deskripsi channel di-set via `set_chat_description`; 3 post (created + sambutan + promo pin)
+- Preview publik terverifikasi: https://t.me/s/KreeaCommunity
