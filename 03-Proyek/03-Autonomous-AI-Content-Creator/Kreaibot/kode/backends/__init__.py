@@ -19,6 +19,7 @@ class GenRequest:
     video_in: Path | None = None
     prompt: str = ""
     ratio: str = "9:16"
+    duration: int = 5
     out_path: Path = Path("out.mp4")
 
 

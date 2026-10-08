@@ -27,6 +27,15 @@ from . import GenRequest, GenStatus
 DEFAULT_BASE = "https://www.runninghub.ai"
 
 
+RATIO_SIZES: dict[str, tuple[int, int]] = {
+    "9:16": (480, 832),
+    "16:9": (832, 480),
+    "1:1": (640, 640),
+    "4:3": (832, 480),      # default workflow FL2VA
+    "3:4": (480, 640),
+}
+
+
 class RunningHubBackend:
     name = "runninghub"
 
@@ -116,6 +125,15 @@ class RunningHubBackend:
                 val = req.prompt
             elif val == "@ratio":
                 val = req.ratio
+            elif val == "@duration":
+                d = getattr(req, "duration", 0) or 0
+                if not d:
+                    d = int(os.getenv(f"RUNNINGHUB_DURATION_{req.feature_key.upper()}",
+                                      os.getenv("RUNNINGHUB_DEFAULT_DURATION", "5")) or 5)
+                val = str(d)
+            elif val in ("@width", "@height"):
+                w, h = RATIO_SIZES.get(req.ratio.replace(" ", ""), (480, 832))
+                val = str(w if val == "@width" else h)
             elif val == "@video":
                 val = uploaded[-1] if uploaded else ""
             if val == "":
