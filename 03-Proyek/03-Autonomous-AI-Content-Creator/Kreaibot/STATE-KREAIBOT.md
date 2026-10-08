@@ -70,6 +70,19 @@ Uji `empty2` = workflow yang **sama** (FL2VA) tapi **frame-akhir dikosongkan eks
 - **JANGAN** kembali ke "foto di dua ujung" untuk i2v — itu yang membekukan gerakan. Untuk UGC (produk berubah bentuk) solusinya workflow Ref2VA, BUKAN dua ujung.
 - Jalur API model standar (key SHARED) **mahal** → hanya untuk eksperimen terbatas.
 
+## 5. PERBAIKAN PENTING (9 Okt 01:20–01:30) — sudah LIVE
+
+1. **Bug video hilang setelah restart** — service yang restart kehilangan loop poll, jadi render yang sudah jalan (dan sudah dibayar) tak pernah terkirim. Bukti: **job 5 user (15s, 242 koin) nyangkut**.
+   → FIX: `_resume_jobs()`/`_resume_one()` di `bot.py` (dipanggil saat startup) + `db.running_jobs()` + alat manual **`tools/deliver_job.py <job_id>`** (job 5 sudah dikirim pakai ini).
+2. **`rh-skills/scripts/runninghub_app.py`: `API_HOST` `.cn` → `.ai`** (host `.cn` tolak key kita: "ApiKey verification failed"). Format argumen `--node` = `nodeId:fieldName=value` (**pakai `=`**, bukan `:` — prompt ber-":" bikin gagal).
+3. **`tools/sync_vault.sh`** — sinkron kode server → vault `kode/` + commit/push (JANGAN copy .env/venv/work/db).
+4. **`.env`**: `KREAIBOT_JOB_TIMEOUT=3600` (render 20 menit pernah kejadian), `KREAIBOT_REF_INVITER=1.5` (sempat kehapus patch fuzzy — **hati-hati patch .env, pakai Python**).
+5. `selftest.py` **78/78**. Commit vault: `165d7c9`.
+
+## 6. CATATAN JALAN PINTAS
+- **Jam bebas H3 RH Enhanced (member):** 13 jam/hari gratis (6 AM–7 PM PT ≈ **21:00–10:00 WIB**) — belum diverifikasi apakah berlaku untuk workflow kita.
+- **AI App (jalur koin, tanpa key SHARED):** daftar app `--list`, input app `--info <webappId>` (butuh app pernah dijalankan di web). Kandidat LTX2.3 i2v: `2072511984289017857`, `2073941041631293442`, `2074067101232488449`; dipercepat/e-commerce: `2074672423118663682`.
+
 ## 4b. UJI API MODEL STANDAR (9 Okt 00:42–00:46) — hasil + batas
 
 - Key **Enterprise-Shared** dibuat & tersimpan `/root/.secrets/runninghub_shared.key` (chmod 600) → `apiType: SHARED`; blokir 1014 hilang ✓
