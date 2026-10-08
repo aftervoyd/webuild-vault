@@ -28,14 +28,15 @@ async def main() -> int:
     from backends.runninghub import RunningHubBackend  # noqa: E402
 
     photo = Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "work/job_3/ref1.bin"
+    dur = int(sys.argv[2]) if len(sys.argv) > 2 else 5
     prompt = (ROOT / "work/tests/prompt_h3.txt").read_text(encoding="utf-8").strip()
-    out = ROOT / "work/tests/backend_i2v.mp4"
+    out = ROOT / f"work/tests/backend_i2v_{dur}s.mp4"
     be = RunningHubBackend(os.getenv("RUNNINGHUB_API_KEY", ""), os.getenv("RUNNINGHUB_BASE", ""),
                            upload_key=os.getenv("RUNNINGHUB_UPLOAD_KEY", ""))
     req = GenRequest(job_id=999, feature_key="i2v", workflow="", photos=[photo],
-                     prompt=prompt, ratio="9:16", duration=5, out_path=out)
+                     prompt=prompt, ratio="9:16", duration=dur, out_path=out)
     t0 = time.time()
-    print(f"▶️ submit lewat backend PRODUKSI · {time.strftime('%H:%M:%S')}", flush=True)
+    print(f"▶️ submit lewat backend PRODUKSI · durasi={dur}s · {time.strftime('%H:%M:%S')}", flush=True)
     task = await be.submit(req)
     print(f"   taskId: {task}", flush=True)
     st = None

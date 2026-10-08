@@ -107,6 +107,13 @@ Uji `empty2` = workflow yang **sama** (FL2VA) tapi **frame-akhir dikosongkan eks
 **Backend:** `backends/runninghub.py` branch `RUNNINGHUB_APP_<FEATURE>` → `POST /task/openapi/ai-app/run` (webappId + nodeInfoList) ✓ selftest 80/80.
 **Terbuka:** durasi 10/15s di app belum terbukti (default 5s) — jangan jual durasi yang belum bisa dipenuhi.
 
+### VERIFIKASI LANJUT (9 Okt 02:04–02:15)
+- ✅ **5s lewat backend produksi** (jalur app): 263s · 720×1280 · wajah 37,4 · badan 23,4 (koin 61)
+- ✅ **10s TERBUKTI BISA**: hasil **10,06s** · 720×1280 · 566s · **112 koin** (≈Rp500) — binding node336 @duration dihormati app ✓
+- ⏳ 15s belum diuji (estimasi ~160 koin ≈ Rp715)
+- **UGC (produk berubah bentuk):** belum ada app Ref2VA di katalog → rencana **2 tahap**: app image-edit (gabung foto orang + foto produk → 1 gambar) → lalu i2v Wan2.2 ✓ (bukan dua-ujung workflow)
+- **Ekonomi terukur:** 1 koin ≈ Rp4,46 · 5s=61 koin (Rp272) · 10s=112 koin (Rp500) → harga jual sekarang 0,5T/1,5T (Rp500/1.500) = margin ~45-65% ✓; **Kuzushi 10s=1T** → kita masih lebih mahal di 10s
+
 **Kesimpulan terkunci**: biang kerok gerakan beku = **jenis workflow (FL2VA)**, bukan prompt. Solusi = **i2v murni / Ref2VA**.
 
 ## 5. KEPUTUSAN TERKUNCI (jangan dibuka lagi tanpa temuan baru)
