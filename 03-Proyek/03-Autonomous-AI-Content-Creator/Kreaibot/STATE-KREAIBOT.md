@@ -49,6 +49,27 @@
 **KESIMPULAN TERBUKTI (uji H3 single-frame API):** menghilangkan kunci frame-akhir **membebaskan gerakan orang** → wajah 28,2→**38,2** (+35%) · badan 13,4→**22,1** (+65%), mendekati Kuzushi (42,7/26,9) dengan latar lebih hidup.
 → **Fix = workflow i2v SATU gambar** (bukan FL2VA dua ujung).
 
+### ✅ SOLUSI TERKUNCI (9 Okt 00:55) — JALUR KOIN, TANPA WORKFLOW BARU
+
+Uji `empty2` = workflow yang **sama** (FL2VA) tapi **frame-akhir dikosongkan eksplisit**:
+
+| Video | Latar | Wajah | Badan | Biaya |
+|---|---|---|---|---|
+| FL2VA (foto 2 ujung) | 47,3 | 28,2 | 13,4 | 64 koin (Rp290) |
+| **FL2VA frame-akhir KOSONG** | 41,7 | **38,0** | **25,8** | **61 koin (Rp270)** |
+| H3 single-frame via API | 42,4 | 38,2 | 22,1 | **$0,385 (Rp6.300)** |
+| Kuzushi | 38,2 | **42,7** | 26,9 | — |
+
+**Gerakan badan +93% · wajah +35% DENGAN BIAYA SAMA** → setara Kuzushi, 20× lebih murah dari jalur API.
+
+**Implementasi (SUDAH LIVE):**
+1. `backends/runninghub.py` — sentinel **`@empty`**: kirim `fieldValue:""` **eksplisit** (jangan dilewati; melewati node = workflow pakai contoh bawaan → bug balon).
+2. `.env` — `RUNNINGHUB_NODES_I2V` node4: `@photo1` → **`@empty`**.
+3. `selftest.py` — 2 tes baru (**75/75 lulus**); service direstart.
+4. Verifikasi end-to-end lewat backend produksi: `tools/backend_i2v_test.py` (tool baru).
+- **JANGAN** kembali ke "foto di dua ujung" untuk i2v — itu yang membekukan gerakan. Untuk UGC (produk berubah bentuk) solusinya workflow Ref2VA, BUKAN dua ujung.
+- Jalur API model standar (key SHARED) **mahal** → hanya untuk eksperimen terbatas.
+
 ## 4b. UJI API MODEL STANDAR (9 Okt 00:42–00:46) — hasil + batas
 
 - Key **Enterprise-Shared** dibuat & tersimpan `/root/.secrets/runninghub_shared.key` (chmod 600) → `apiType: SHARED`; blokir 1014 hilang ✓
