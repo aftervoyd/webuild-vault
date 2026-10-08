@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Kreaibot — bot Telegram studio konten AI (karakter konsisten → video).
+"""KREE.AI (Kreaibot) — bot Telegram studio konten AI: karakter konsisten → video, plus UGC Ads.
 
 Jalankan:  python3 bot.py            (produksi)
-           python3 bot.py --check    (validasi konfigurasi + isi katalog, tanpa Telegram)
+           python3 bot.py --check    (validasi konfigurasi + katalog, tanpa Telegram)
 """
 from __future__ import annotations
 
@@ -23,6 +23,7 @@ from aiogram.types import (CallbackQuery, FSInputFile, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
 
 import catalog
+import promptsmith
 from backends import GenRequest, GenStatus, make_backend
 from config import settings
 from db import Database
@@ -66,10 +67,28 @@ def back_kb(extra: list[list[InlineKeyboardButton]] | None = None) -> InlineKeyb
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
+def style_kb() -> InlineKeyboardMarkup:
+    rows = [[InlineKeyboardButton(text=label, callback_data=f"u:style:{key}")]
+            for key, label in promptsmith.style_list_kb_rows()]
+    rows.append([InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")])
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+def ratio_kb() -> InlineKeyboardMarkup:
+    rows = [[InlineKeyboardButton(text=v, callback_data=f"f:ratio:{k}")] for k, v in catalog.RATIOS.items()]
+    rows.append([InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")])
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
 class Flow(StatesGroup):
     photos = State()
     prompt = State()
     ratio = State()
+    # --- alur UGC (bertingkat) ---
+    ugc_char = State()      # 1/5 character sheet
+    ugc_prod = State()      # 2/5 foto produk
+    ugc_brief = State()     # 3/5 brief produk
+    ugc_style = State()     # 4/5 pilih gaya
 
 
 # ============================ menu ============================
@@ -81,10 +100,10 @@ async def cmd_start(msg: Message, state: FSMContext):
                    msg.from_user.full_name or "", settings.signup_bonus)
     await msg.answer(
         f"👋 Selamat datang di <b>{settings.bot_name}</b> — studio konten AI!\n\n"
-        f"Bikin video karakter yang <b>konsisten</b> dari foto kamu, ganti outfit/scene, "
-        f"image→video, pose transfer, sampai lip-sync. Semua tanpa watermark.\n\n"
-        f"{saldo_txt(msg.from_user.id)}\n\n"
-        f"Pilih fitur 👇",
+        f"Video karakter <b>konsisten</b> dari foto kamu, ganti outfit/scene, image→video, "
+        f"pose transfer, sampai lip-sync.\n"
+        f"🆕 <b>UGC Video Iklan</b>: foto kamu + foto produk → video iklan siap posting.\n\n"
+        f"{saldo_txt(msg.from_user.id)}\n\nPilih fitur 👇",
         reply_markup=main_menu_kb())
 
 
@@ -110,7 +129,11 @@ async def cb_saldo(cb: CallbackQuery):
 
 
 @router.callback_query(F.data == "m:topup")
-async def cb_topup(cb: CallbackQuery):
+async def cb_topup(cb: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    rows: list[list[InlineKeyboardButton]] = []
+    if data.get("feature"):
+        rows.append([InlineKeyboardButton(text="🔁 Sudah Top Up — Lanjut Render", callback_data="f:recheck")])
     await cb.message.edit_text(
         f"⚡ <b>Top Up Token</b>\n\n"
         f"Rp{settings.harga_per_10k:,} = {settings.tokens_per_10k} Token (1 Token = Rp{settings.harga_per_10k // max(1, settings.tokens_per_10k):,})".replace(",", ".") + "\n\n"
@@ -120,7 +143,7 @@ async def cb_topup(cb: CallbackQuery):
         f"3. Admin isi token → langsung bisa dipakai\n\n"
         f"<i>Integrasi QRIS otomatis (Midtrans/Xendit) menyusul.</i>\n\n"
         f"ID kamu: <code>{cb.from_user.id}</code>",
-        reply_markup=back_kb())
+        reply_markup=back_kb(rows))
     await cb.answer()
 
 
@@ -128,13 +151,17 @@ async def cb_topup(cb: CallbackQuery):
 async def cb_help(cb: CallbackQuery):
     await cb.message.edit_text(
         "📖 <b>Panduan</b>\n\n"
-        "1. Pilih fitur → kirim foto referensi (1–6 sesuai fitur)\n"
-        "2. Ketik prompt gerakan/adegan\n"
-        "3. Pilih rasio → render (estimasi 2–5 menit)\n"
-        "4. Hasil dikirim otomatis, tanpa watermark\n\n"
-        "Perintah: /start · /saldo · /topup · /cancel · /help\n"
-        "Ganti outfit: pakai fitur All-in-One, foto 3–6 = outfit/properti.\n"
-        "Konsistensi wajah: kirim foto tajam, muka jelas, tanpa watermark.",
+        "<b>Video karakter:</b>\n"
+        "1. Pilih fitur → kirim foto referensi (1–6)\n"
+        "2. Ketik prompt gerakan/adegan → pilih rasio → render\n\n"
+        "<b>UGC Video Iklan (jualan produk):</b>\n"
+        "1. Kirim <b>character sheet</b> (foto kamu / wajah brand)\n"
+        "2. Kirim <b>foto produk</b> (1–3)\n"
+        "3. Tulis <b>brief</b>: nama produk, harga, keunggulan, maunya video seperti apa\n"
+        "4. Pilih <b>gaya</b>: review / unboxing / problem-solution / testimoni / promo / sinematik\n"
+        "5. Pilih rasio → render\n"
+        "<i>Prompt videonya dirakit otomatis & diperhalus sistem — kamu cukup kasih brief santai.</i>\n\n"
+        "Perintah: /start · /saldo · /topup · /cancel · /help",
         reply_markup=back_kb())
     await cb.answer()
 
@@ -149,7 +176,7 @@ async def cb_ref(cb: CallbackQuery):
     await cb.answer()
 
 
-# ============================ fitur: mulai ============================
+# ============================ detail fitur ============================
 
 @router.callback_query(F.data.startswith("m:feat:"))
 async def cb_feature(cb: CallbackQuery, state: FSMContext):
@@ -174,8 +201,19 @@ async def cb_go(cb: CallbackQuery, state: FSMContext):
     if not f:
         await cb.answer("Fitur tidak dikenal", show_alert=True)
         return
-    await state.set_state(Flow.photos)
     await state.update_data(feature=key, photos=[])
+    if f.kind == "ugc":
+        await state.set_state(Flow.ugc_char)
+        await state.update_data(prod_photos=[], char_photo="", brief="", style="")
+        await cb.message.edit_text(
+            f"{f.label}\n\n🖼 <b>Langkah 1/5: kirim CHARACTER SHEET</b>\n"
+            f"Foto wajah/tubuh yang mau dipakai jadi kreator di videonya.\n"
+            f"Kirim yang tajam, wajah jelas, tanpa watermark.",
+            reply_markup=back_kb([[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]))
+        await cb.answer()
+        return
+
+    await state.set_state(Flow.photos)
     await cb.message.edit_text(
         f"{f.label}\n\n📸 <b>Langkah 1/3: kirim foto referensi</b>\n"
         f"Kirim {f.min_photos}–{f.max_photos} foto.\n"
@@ -184,6 +222,79 @@ async def cb_go(cb: CallbackQuery, state: FSMContext):
         reply_markup=back_kb([[InlineKeyboardButton(text="✅ Lanjut", callback_data="f:next")]]))
     await cb.answer()
 
+
+# ============================ alur UGC ============================
+
+@router.message(Flow.ugc_char, F.photo | F.document)
+async def ugc_char(msg: Message, state: FSMContext):
+    fid = msg.photo[-1].file_id if msg.photo else msg.document.file_id  # type: ignore[union-attr]
+    await state.update_data(char_photo=fid)
+    await state.set_state(Flow.ugc_prod)
+    await msg.answer(
+        "✅ Character sheet diterima.\n\n🛍 <b>Langkah 2/5: kirim FOTO PRODUK</b>\n"
+        "Foto produk yang jelas (label terbaca, latar bersih). Boleh 1–3 foto.",
+        reply_markup=back_kb([[InlineKeyboardButton(text="✅ Lanjut ke Brief", callback_data="u:prod:next")]]))
+
+
+@router.message(Flow.ugc_prod, F.photo | F.document)
+async def ugc_prod(msg: Message, state: FSMContext):
+    data = await state.get_data()
+    prod = data.get("prod_photos", [])
+    if len(prod) >= 3:
+        await msg.answer("Sudah 3 foto produk (maksimal) — tekan ✅ Lanjut ke Brief.")
+        return
+    prod.append(msg.photo[-1].file_id if msg.photo else msg.document.file_id)  # type: ignore[union-attr]
+    await state.update_data(prod_photos=prod)
+    await msg.answer(
+        f"✅ Foto produk #{len(prod)} diterima ({len(prod)}/3).\n"
+        + ("Kirim foto produk lain, atau tekan ✅ Lanjut ke Brief." if len(prod) < 3 else "Sudah cukup."),
+        reply_markup=back_kb([[InlineKeyboardButton(text="✅ Lanjut ke Brief", callback_data="u:prod:next")]]))
+
+
+@router.callback_query(F.data == "u:prod:next", Flow.ugc_prod)
+async def ugc_to_brief(cb: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    if not data.get("prod_photos"):
+        await cb.answer("Kirim minimal 1 foto produk dulu", show_alert=True)
+        return
+    await state.set_state(Flow.ugc_brief)
+    await cb.message.edit_text(
+        "📝 <b>Langkah 3/5: jelaskan produk & maunya videonya</b>\n\n"
+        "Tulis bebas aja (santai gak apa-apa), contoh:\n"
+        "<i>Skincare GlowUp serai, harga Rp79.000, promo beli 2 gratis 1. "
+        "Aku mau video aku lagi review jujur sambil pegang produknya, "
+        "bahasa santai kayak ngobrol sama temen.</i>\n\n"
+        "Usahakan sebut: <b>nama produk</b>, <b>harga</b>, <b>keunggulan</b>, "
+        "dan <b>maunya videonya seperti apa</b>.",
+        reply_markup=back_kb([[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]))
+
+
+@router.message(Flow.ugc_brief, F.text)
+async def ugc_brief(msg: Message, state: FSMContext):
+    await state.update_data(brief=msg.text.strip()[:1500])
+    await state.set_state(Flow.ugc_style)
+    await msg.answer(
+        "✅ Brief diterima.\n\n🎨 <b>Langkah 4/5: pilih GAYA video</b>\n"
+        "Sistem bakal rakit prompt profesional dari brief kamu sesuai gaya ini.",
+        reply_markup=style_kb())
+
+
+@router.callback_query(F.data.startswith("u:style:"), Flow.ugc_style)
+async def ugc_style(cb: CallbackQuery, state: FSMContext):
+    key = cb.data.split(":")[2]
+    if key not in promptsmith.STYLES:
+        await cb.answer("Gaya tidak dikenal", show_alert=True)
+        return
+    await state.update_data(style=key)
+    await state.set_state(Flow.ratio)
+    await cb.message.edit_text(
+        f"🎨 Gaya dipilih: <b>{promptsmith.STYLES[key].label}</b>\n\n"
+        f"📐 <b>Langkah 5/5: pilih rasio video</b>",
+        reply_markup=ratio_kb())
+    await cb.answer()
+
+
+# ============================ alur umum: foto → prompt → rasio ============================
 
 @router.message(Flow.photos, F.photo | F.document | F.video)
 async def on_photo(msg: Message, state: FSMContext):
@@ -234,17 +345,15 @@ async def on_prompt(msg: Message, state: FSMContext):
     f = catalog.get(data["feature"])
     if f and f.need_ratio:
         await state.set_state(Flow.ratio)
-        rows = [[InlineKeyboardButton(text=v, callback_data=f"f:ratio:{k}")] for k, v in catalog.RATIOS.items()]
-        await msg.answer(f"{f.label}\n\n📐 <b>Langkah 3/3: pilih rasio video</b>",
-                         reply_markup=InlineKeyboardMarkup(inline_keyboard=rows +
-                                                           [[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]))
+        await msg.answer(f"{f.label}\n\n📐 <b>Langkah 3/3: pilih rasio video</b>", reply_markup=ratio_kb())
     else:
         await _confirm(msg, state)
 
 
 @router.callback_query(F.data.startswith("f:ratio:"), Flow.ratio)
 async def cb_ratio(cb: CallbackQuery, state: FSMContext):
-    await state.update_data(ratio=cb.data.split(":")[2])
+    # ⚠️ rasio memuat titik dua ("9:16") → JANGAN pakai split(":")[2] (kepotong jadi "9")
+    await state.update_data(ratio=cb.data[len("f:ratio:"):])
     await _confirm(cb.message, state, cb.from_user.id)
     await cb.answer()
 
@@ -254,10 +363,8 @@ async def _ask_ratio_or_confirm(cb: CallbackQuery, state: FSMContext):
     f = catalog.get(data["feature"])
     if f and f.need_ratio:
         await state.set_state(Flow.ratio)
-        rows = [[InlineKeyboardButton(text=v, callback_data=f"f:ratio:{k}")] for k, v in catalog.RATIOS.items()]
         await cb.message.edit_text(f"{f.label}\n\n📐 <b>Langkah 3/3: pilih rasio video</b>",
-                                   reply_markup=InlineKeyboardMarkup(inline_keyboard=rows +
-                                     [[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]))
+                                   reply_markup=ratio_kb())
     else:
         await _confirm(cb.message, state, cb.from_user.id)
 
@@ -268,15 +375,38 @@ async def _confirm(target: Message, state: FSMContext, uid: int):
     assert f
     saldo = db.balance(uid)
     cukup = saldo >= f.cost
-    teks = (f"{f.label}\n\n🖼 Foto: <b>{len(data.get('photos', []))}</b>\n"
-            f"📝 Prompt: <i>{(data.get('prompt') or '-')[:200]}</i>\n"
-            f"📐 Rasio: <b>{data.get('ratio', '-')}</b>\n\n"
-            f"💠 Biaya: <b>{f.cost:g} Token</b>\n{saldo_txt(uid)}\n\n"
-            + ("Tekan 🚀 Render untuk mulai." if cukup else "⚠️ Saldo kurang — silakan Top Up dulu."))
+
+    if f.kind == "ugc":
+        # PENTING: prompt rakitan TIDAK ditampilkan — user hanya lihat pilihan & brief miliknya
+        teks = (f"{f.label}\n\n🖼 Character sheet: <b>✅</b>\n"
+                f"🛍 Foto produk: <b>{len(data.get('prod_photos', []))}</b>\n"
+                f"{promptsmith.summary_for_user(data.get('style', ''))}\n"
+                f"📝 Brief kamu: <i>{(data.get('brief') or '-')[:160]}</i>\n"
+                f"📐 Rasio: <b>{data.get('ratio', '-')}</b>\n\n"
+                f"💠 Biaya: <b>{f.cost:g} Token</b>\n{saldo_txt(uid)}\n\n"
+                + ("Tekan 🚀 Render — prompt video dirakit otomatis oleh sistem."
+                   if cukup else "⚠️ Saldo kurang — silakan Top Up dulu."))
+    else:
+        teks = (f"{f.label}\n\n🖼 Foto: <b>{len(data.get('photos', []))}</b>\n"
+                f"📝 Prompt: <i>{(data.get('prompt') or '-')[:200]}</i>\n"
+                f"📐 Rasio: <b>{data.get('ratio', '-')}</b>\n\n"
+                f"💠 Biaya: <b>{f.cost:g} Token</b>\n{saldo_txt(uid)}\n\n"
+                + ("Tekan 🚀 Render untuk mulai." if cukup else "⚠️ Saldo kurang — silakan Top Up dulu."))
+
     rows = [[InlineKeyboardButton(text="🚀 Render", callback_data="f:render")]] if cukup else \
            [[InlineKeyboardButton(text="⚡ Top Up", callback_data="m:topup")]]
-    await state.set_state(Flow.photos)  # state tetap; render lewat callback
     await target.answer(teks, reply_markup=back_kb(rows))
+
+
+@router.callback_query(F.data == "f:recheck")
+async def cb_recheck(cb: CallbackQuery, state: FSMContext):
+    """Setelah top up: kembali ke halaman konfirmasi tanpa mengulang alur."""
+    data = await state.get_data()
+    if not data.get("feature"):
+        await cb.answer("Tidak ada sesi aktif — mulai dari menu.", show_alert=True)
+        return
+    await _confirm(cb.message, state, cb.from_user.id)
+    await cb.answer("Saldo diperbarui")
 
 
 @router.callback_query(F.data == "f:cancel")
@@ -294,21 +424,46 @@ async def cmd_cancel(msg: Message, state: FSMContext):
 
 # ============================ render ============================
 
+def collect_photos(data: dict, f) -> list[str]:
+    """Ambil daftar file_id sesuai jenis fitur."""
+    if f.kind == "ugc":
+        return [p for p in [data.get("char_photo", "")] + list(data.get("prod_photos", [])) if p]
+    return list(data.get("photos", []))
+
+
+def build_final_prompt(data: dict, f, ratio: str) -> tuple[str, str, str]:
+    """Kembalikan (prompt_final, brief, style). UGC → dirakit PromptSmith."""
+    if f.kind == "ugc":
+        brief = data.get("brief", "")
+        style = data.get("style", "review")
+        return promptsmith.build_ugc_prompt(brief, style, product_hint="", ratio=ratio), brief, style
+    return data.get("prompt", ""), "", ""
+
+
 @router.callback_query(F.data == "f:render")
 async def cb_render(cb: CallbackQuery, state: FSMContext):
     data = await state.get_data()
     f = catalog.get(data.get("feature", ""))
-    photos = data.get("photos", [])
-    if not f or not photos:
+    if not f:
+        await cb.answer("Sesi kadaluarsa — mulai ulang dari menu.", show_alert=True)
+        return
+    photos = collect_photos(data, f)
+    if not photos:
         await cb.answer("Sesi kadaluarsa — mulai ulang dari menu.", show_alert=True)
         return
     if db.balance(cb.from_user.id) < f.cost:
         await cb.answer("Saldo kurang", show_alert=True)
         return
-    job_id = db.create_job(cb.from_user.id, f.key, f.cost, photos,
-                           data.get("prompt", ""), data.get("ratio", "9:16"))
+
+    ratio = data.get("ratio", "9:16")
+    prompt, brief, style = build_final_prompt(data, f, ratio)
+    job_id = db.create_job(cb.from_user.id, f.key, f.cost, photos, prompt, ratio,
+                           brief=brief, style=style)
     db.ledger_add(cb.from_user.id, -f.cost, "render", ref=str(job_id))
     await state.clear()
+
+    # prompt hanya untuk internal/admin — TIDAK pernah ditampilkan ke user
+    log.info("job %s [%s] prompt internal (%d char): %s", job_id, f.key, len(prompt), prompt[:180])
     await cb.message.edit_text(
         f"🎬 <b>{f.label}</b> 🚀\n\n🆔 Job: <code>{job_id}</code>\n"
         f"{bar(2)} 2%\n💬 Status: menyerahkan tugas ke backend...\n"
@@ -326,6 +481,17 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
         work = Path(settings.work_dir) / f"job_{job_id}"
         work.mkdir(parents=True, exist_ok=True)
         try:
+            # 0) UGC: haluskan prompt lewat LLM (opsional; gagal → pakai template)
+            if f and f.kind == "ugc":
+                refined = await promptsmith.refine_with_llm(
+                    job["prompt"] or "", job["brief"] or "", job["style"] or "review",
+                    base_url=settings.promptsmith_base, api_key=settings.promptsmith_key,
+                    model=settings.promptsmith_model)
+                if refined and refined != job["prompt"]:
+                    log.info("job %s prompt dihaluskan LLM (%d → %d char)", job_id,
+                             len(job["prompt"] or ""), len(refined))
+                    db.set_job(job_id, prompt=refined)
+
             # 1) unduh aset referensi
             photos = json.loads(job["ref_photos"] or "[]")
             local: list[Path] = []
@@ -402,8 +568,27 @@ async def cmd_admin(msg: Message):
     await msg.answer(
         f"🛠 <b>Admin</b>\n\n👥 User: {s['users']}\n🎬 Job: {s['jobs']} (selesai {s['done']}, antre {s['queued']})\n"
         f"💸 Token terpakai: {s['tokens_spent']:.1f}\n\n"
-        f"/give &lt;id&gt; &lt;token&gt; · /voucher &lt;code&gt; &lt;token&gt; [max]\n/cek",
+        f"/give &lt;id&gt; &lt;token&gt; · /voucher &lt;code&gt; &lt;token&gt; [max]\n"
+        f"/prompt &lt;job_id&gt; (prompt internal) · /cek",
         parse_mode=ParseMode.HTML)
+
+
+@router.message(Command("prompt"))
+async def cmd_prompt(msg: Message):
+    """Admin: lihat prompt internal hasil rakitan PromptSmith."""
+    if not is_admin(msg.from_user.id):
+        return
+    parts = (msg.text or "").split()
+    if len(parts) != 2:
+        await msg.answer("Format: /prompt <job_id>")
+        return
+    job = db.get_job(int(parts[1]))
+    if not job:
+        await msg.answer("Job tidak ditemukan.")
+        return
+    await msg.answer(
+        f"🧠 <b>Prompt internal job {job['id']}</b> ({job['feature']}, gaya: {job['style'] or '-'})\n\n"
+        f"<code>{(job['prompt'] or '')[:3500]}</code>", parse_mode=ParseMode.HTML)
 
 
 @router.message(Command("give"))
@@ -456,23 +641,28 @@ async def cmd_cek(msg: Message):
 
 @router.message(Command("help"))
 async def cmd_help(msg: Message):
-    await msg.answer("📖 /start · /saldo · /topup · /cancel\nFitur: All-in-One, Image→Video, Face Swap, Pose, Lip Sync, Image Editor")
+    await msg.answer("📖 /start · /saldo · /topup · /cancel\n"
+                     "Fitur: UGC Ads, All-in-One, Image→Video, Face Swap, Pose, Lip Sync, Image Editor")
 
 
 # ============================ entrypoint ============================
 
 def check() -> int:
     errs = settings.validate()
-    print("=== Kreaibot — pemeriksaan konfigurasi ===")
-    print(f"backend  : {settings.backend}")
-    print(f"db       : {settings.db_path}")
-    print(f"work     : {settings.work_dir}")
-    print(f"admin    : {settings.admin_ids}")
-    print(f"harga    : Rp{settings.harga_per_10k} = {settings.tokens_per_10k} token")
+    print("=== KREE.AI — pemeriksaan konfigurasi ===")
+    print(f"backend   : {settings.backend}")
+    print(f"db        : {settings.db_path}")
+    print(f"work      : {settings.work_dir}")
+    print(f"admin     : {settings.admin_ids}")
+    print(f"harga     : Rp{settings.harga_per_10k} = {settings.tokens_per_10k} token")
+    print(f"prompt LLM: {'aktif' if (settings.promptsmith_key and settings.promptsmith_model) else 'template offline'}")
     print("\n=== Katalog fitur ===")
     for f in catalog.FEATURES.values():
         print(f"  {f.label:34s} {f.cost:>4g} token  (Rp{catalog.price_rp(f, settings.tokens_per_10k, settings.harga_per_10k)})  "
-              f"foto {f.min_photos}-{f.max_photos}")
+              f"foto {f.min_photos}-{f.max_photos}" + ("  [UGC bertingkat]" if f.kind == "ugc" else ""))
+    print("\n=== Gaya UGC (PromptSmith) ===")
+    for s in promptsmith.STYLES.values():
+        print(f"  {s.label:28s} {s.duration}s  {'(tanpa bicara)' if not s.talk else ''}")
     print("\n=== Statistik DB ===")
     print(f"  {db.stats()}")
     if errs:
@@ -493,7 +683,8 @@ async def main() -> None:
     dp = Dispatcher()
     dp.include_router(router)
     me = await bot.get_me()
-    log.info("Kreaibot jalan sebagai @%s (backend=%s)", me.username, settings.backend)
+    log.info("KREE.AI jalan sebagai @%s (backend=%s, promptsmith=%s)", me.username, settings.backend,
+             "llm" if settings.promptsmith_key else "template")
     await dp.start_polling(bot)
 
 

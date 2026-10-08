@@ -15,9 +15,27 @@ class Feature:
     need_ratio: bool
     desc: str
     backend_workflow: str    # nama workflow di backend (ComfyUI/RunningHub)
+    kind: str = "generic"    # generic | ugc
+    need_style: bool = False # wajib pilih gaya (UGC)
+    char_first: bool = False # foto ke-1 = character sheet
+    product_slot: bool = False  # ada slot foto produk
 
 
 FEATURES: dict[str, Feature] = {
+    "ugc": Feature(
+        key="ugc",
+        label="🛍️ UGC Video Iklan",
+        cost=1.5,
+        min_photos=2, max_photos=2,
+        need_prompt=True, need_ratio=True,
+        desc=("Video iklan gaya kreator (UGC) untuk jualan produk.\n"
+              "· Character sheet (foto wajah/tubuh kamu) + foto produk\n"
+              "· Tulis brief: nama produk, harga, keunggulan, atau maunya video seperti apa\n"
+              "· Pilih gaya (Review / Unboxing / Problem-Solution / Testimoni / Promo / Sinematik)\n"
+              "· Prompt video dirakit otomatis jadi lebih rapi & natural"),
+        backend_workflow="krea_ugc_h3",
+        kind="ugc", need_style=True, char_first=True, product_slot=True,
+    ),
     "allinone": Feature(
         key="allinone",
         label="🌌 Video All-in-One (30s)",

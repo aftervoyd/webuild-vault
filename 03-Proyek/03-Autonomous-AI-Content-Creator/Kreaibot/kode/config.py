@@ -51,6 +51,12 @@ class Settings:
     midtrans_server_key: str = _env("MIDTRANS_SERVER_KEY")
     xendit_secret_key: str = _env("XENDIT_SECRET_KEY")
 
+    # === PromptSmith (perakit prompt UGC) ===
+    # Kalau diisi, prompt dirapikan lagi oleh LLM. Kosong → pakai template offline (tetap jalan).
+    promptsmith_base: str = _env("PROMPTSMITH_BASE_URL")
+    promptsmith_key: str = _env("PROMPTSMITH_API_KEY")
+    promptsmith_model: str = _env("PROMPTSMITH_MODEL")
+
     # === Storage / sistem ===
     db_path: str = _env("KREAIBOT_DB", str(BASE_DIR / "kreaibot.sqlite3"))
     work_dir: str = _env("KREAIBOT_WORK", str(BASE_DIR / "work"))

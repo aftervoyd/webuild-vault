@@ -2,11 +2,28 @@
 from __future__ import annotations
 
 import asyncio
+import os
+import shutil
 import subprocess
 import uuid
 from pathlib import Path
 
 from . import GenRequest, GenStatus
+
+
+def ffmpeg_bin() -> str:
+    """Cari ffmpeg: env FFMPEG_BIN → PATH → lokasi umum.
+
+    systemd punya PATH minimal, dan di VPS ini ffmpeg hidup di folder tools Hermes,
+    jadi jangan cuma andalkan `which`.
+    """
+    candidates = (os.environ.get("FFMPEG_BIN"), shutil.which("ffmpeg"),
+                  "/usr/local/bin/ffmpeg", "/usr/bin/ffmpeg",
+                  "/root/.hermes/tools/ffmpeg-9.0.1-linux-x64/bin/ffmpeg")
+    for c in candidates:
+        if c and Path(c).exists():
+            return c
+    return "ffmpeg"
 
 
 class MockBackend:
@@ -33,7 +50,7 @@ class MockBackend:
         # video uji: 5 detik pakai testsrc2 (tanpa font/drawtext → tahan di server minimal)
         size = "720x1280" if req.ratio == "9:16" else ("1280x720" if req.ratio == "16:9" else "720x720")
         cmd = [
-            "ffmpeg", "-y", "-f", "lavfi", "-i", f"testsrc2=size={size}:rate=24:duration=5",
+            ffmpeg_bin(), "-y", "-f", "lavfi", "-i", f"testsrc2=size={size}:rate=24:duration=5",
             "-c:v", "libx264", "-pix_fmt", "yuv420p", "-movflags", "+faststart", str(out),
         ]
         try:
@@ -42,5 +59,6 @@ class MockBackend:
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"ffmpeg gagal: {e.stderr.decode()[-300:]}") from e
         except FileNotFoundError as e:
-            raise RuntimeError("ffmpeg tidak terpasang di server") from e
+            raise RuntimeError("ffmpeg tidak ditemukan — set FFMPEG_BIN di .env "
+                               "atau buat symlink /usr/local/bin/ffmpeg") from e
         return GenStatus(state="done", progress=100, result_path=out, message="selesai (mock)")

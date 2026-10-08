@@ -34,6 +34,8 @@ CREATE TABLE IF NOT EXISTS jobs (
     task_id     TEXT,
     ref_photos  TEXT,                              -- JSON list file_id
     prompt      TEXT,
+    brief       TEXT,
+    style       TEXT,
     ratio       TEXT,
     result_path TEXT,
     error       TEXT,
@@ -62,7 +64,15 @@ class Database:
         self.conn.row_factory = sqlite3.Row
         self.conn.execute("PRAGMA journal_mode=WAL")
         self.conn.executescript(SCHEMA)
+        self._migrate()
         self.conn.commit()
+
+    def _migrate(self) -> None:
+        """Tambah kolom baru ke DB lama tanpa menghapus data."""
+        cols = {r["name"] for r in self.conn.execute("PRAGMA table_info(jobs)")}
+        for name, ddl in (("brief", "TEXT"), ("style", "TEXT")):
+            if name not in cols:
+                self.conn.execute(f"ALTER TABLE jobs ADD COLUMN {name} {ddl}")
 
     # ---------- user ----------
     def ensure_user(self, telegram_id: int, username: str = "", name: str = "",
@@ -108,12 +118,13 @@ class Database:
 
     # ---------- job ----------
     def create_job(self, telegram_id: int, feature: str, cost: float,
-                   ref_photos: Iterable[str], prompt: str, ratio: str) -> int:
+                   ref_photos: Iterable[str], prompt: str, ratio: str,
+                   brief: str = "", style: str = "") -> int:
         import json
         cur = self.conn.execute(
-            "INSERT INTO jobs (telegram_id, feature, cost, ref_photos, prompt, ratio, created_at, updated_at)"
-            " VALUES (?,?,?,?,?,?,?,?)",
-            (telegram_id, feature, cost, json.dumps(list(ref_photos)), prompt, ratio, _now(), _now()))
+            "INSERT INTO jobs (telegram_id, feature, cost, ref_photos, prompt, brief, style, ratio, created_at, updated_at)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?)",
+            (telegram_id, feature, cost, json.dumps(list(ref_photos)), prompt, brief, style, ratio, _now(), _now()))
         self.conn.commit()
         return int(cur.lastrowid)
 
