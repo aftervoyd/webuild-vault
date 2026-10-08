@@ -37,6 +37,15 @@ JSON mentah: `minimax-h3-fl2va.json` (di folder ini). Cara ambil ulang: buka hal
 5. Tombol **Download** di halaman workflow memberi JSON lengkap **tanpa login** → sumber intel terbaik (dipakai buat bikin node map ini).
 
 ## ✅ Status integrasi
-- `RUNNINGHUB_WF_ALLINONE=2084116925483151361` (sudah diisi di `.env.example`).
-- Binding awal: node 4 `image` ← @photo1, node 6 `image` ← @photo2, node 8 `text` ← @prompt.
-- **Nama field node 7 & 8 belum 100% pasti** → wajib dicek dengan `tools/rh_inspect.py <workflowId>` begitu API key ada (endpoint "Get Workflow JSON"), biar binding gak nebak.
+- `RUNNINGHUB_WF_ALLINONE=2084116925483151361` (sudah diisi di `.env`).
+- **Binding FINAL (terverifikasi jalan):**
+  - node 4 `image` ← `@photo1` (frame awal)
+  - node 6 `image` ← `@photo2` (frame akhir)
+  - node **8 `prompt`** ← `@prompt` ⚠️ nama field-nya **`prompt`, BUKAN `text`** (kalau salah: error `803 NODE_INFO_MISMATCH ... field_not_found_in_node_inputs`)
+- **Upload**: `POST /task/openapi/upload` (form: apiKey + fileType + file) → balikin `api/<sha256>.png`. Berhasil tanpa membership.
+- **Create task**: `POST /task/openapi/create` (`apiKey` + `workflowId` + `nodeInfoList`) → balikin `data.taskId`.
+- **Poll**: `POST /task/openapi/status` → `POST /task/openapi/outputs` (output = URL → harus diunduh).
+- ⚠️ `POST /task/openapi/getWorkflowJson` **balikin code 404** untuk ID post komunitas → pakai tombol **Download** di halaman workflow sebagai gantinya.
+- 🔎 Kalau ada error `field_not_found_in_node_inputs`: jalankan **`tools/rh_probe_fields.py`** (brute-force nama field kandidat sampai ketemu).
+
+**Tes render pertama:** taskId `2108059227392602114` (2 foto frame awal/akhir, prompt gaya H3 2 segmen) — status: jalan di cloud.
