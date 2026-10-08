@@ -1,0 +1,75 @@
+"""Kreaibot — konfigurasi terpusat (semua dari environment / .env)."""
+from __future__ import annotations
+
+import os
+from dataclasses import dataclass, field
+from pathlib import Path
+
+try:
+    from dotenv import load_dotenv  # type: ignore
+    load_dotenv()
+except Exception:  # dotenv opsional
+    pass
+
+BASE_DIR = Path(__file__).resolve().parent
+
+
+def _env(key: str, default: str = "") -> str:
+    return (os.getenv(key) or default).strip()
+
+
+def _env_int(key: str, default: int) -> int:
+    try:
+        return int(_env(key, str(default)))
+    except ValueError:
+        return default
+
+
+@dataclass
+class Settings:
+    # === Telegram ===
+    bot_token: str = _env("KREAIBOT_TOKEN")
+    admin_ids: list[int] = field(default_factory=lambda: [
+        int(x) for x in _env("KREAIBOT_ADMIN_IDS", "8886993492").replace(" ", "").split(",") if x
+    ])
+    bot_name: str = _env("KREAIBOT_NAME", "Kreaibot")
+
+    # === Ekonomi token ===
+    tokens_per_10k: int = _env_int("KREAIBOT_TOKENS_PER_10K", 10)   # Rp10.000 = 10 token
+    harga_per_10k: int = _env_int("KREAIBOT_HARGA_10K", 10_000)
+    signup_bonus: int = _env_int("KREAIBOT_SIGNUP_BONUS", 1)
+
+    # === Backend generate (pluggable) ===
+    backend: str = _env("KREAIBOT_BACKEND", "mock")                 # mock | runninghub | fal | minimax
+    runninghub_api_key: str = _env("RUNNINGHUB_API_KEY")
+    runninghub_base: str = _env("RUNNINGHUB_BASE", "https://www.runninghub.ai")
+    fal_key: str = _env("FAL_KEY")
+    minimax_key: str = _env("MINIMAX_API_KEY")
+
+    # === Pembayaran QRIS (stub) ===
+    payment_provider: str = _env("KREAIBOT_PAYMENT", "manual")      # manual | midtrans | xendit | mayar
+    midtrans_server_key: str = _env("MIDTRANS_SERVER_KEY")
+    xendit_secret_key: str = _env("XENDIT_SECRET_KEY")
+
+    # === Storage / sistem ===
+    db_path: str = _env("KREAIBOT_DB", str(BASE_DIR / "kreaibot.sqlite3"))
+    work_dir: str = _env("KREAIBOT_WORK", str(BASE_DIR / "work"))
+    concurrency: int = _env_int("KREAIBOT_CONCURRENCY", 3)
+    poll_interval: int = _env_int("KREAIBOT_POLL_INTERVAL", 5)
+    job_timeout: int = _env_int("KREAIBOT_JOB_TIMEOUT", 900)
+
+    def ensure_dirs(self) -> None:
+        Path(self.work_dir).mkdir(parents=True, exist_ok=True)
+
+    def validate(self) -> list[str]:
+        errs: list[str] = []
+        if not self.bot_token:
+            errs.append("KREAIBOT_TOKEN belum diisi (dari @BotFather)")
+        if self.backend == "runninghub" and not self.runninghub_api_key:
+            errs.append("BACKEND=runninghub tapi RUNNINGHUB_API_KEY kosong")
+        if self.backend == "fal" and not self.fal_key:
+            errs.append("BACKEND=fal tapi FAL_KEY kosong")
+        return errs
+
+
+settings = Settings()
