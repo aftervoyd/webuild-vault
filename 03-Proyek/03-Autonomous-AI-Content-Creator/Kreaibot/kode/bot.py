@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import re
 import shutil
 import logging
 import sys
@@ -20,7 +21,7 @@ from aiogram.enums import ParseMode
 from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import (CallbackQuery, FSInputFile, InlineKeyboardButton,
+from aiogram.types import (BotCommand, CallbackQuery, FSInputFile, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
 
 import catalog
@@ -633,22 +634,38 @@ async def cb_feature(cb: CallbackQuery, state: FSMContext):
         await cb.answer("Fitur tidak dikenal", show_alert=True)
         return
     await state.clear()
-    harga = catalog.price_rp(f, settings.tokens_per_10k, settings.harga_per_10k)
+    # Layar detail = tempat harga ditampilkan → durasi HARUS bisa dipilih di sini
+    # (dulu cuma ada tombol "🚀 Mulai", user jadi ngetik "15 detik" tanpa tombol).
+    rows: list[list[InlineKeyboardButton]] = []
+    if len(f.durations) > 1:
+        rows += [[InlineKeyboardButton(text=f"▶️ {d} detik · {catalog.cost_for(key, d):g} Token",
+                                       callback_data=f"m:go:{key}:{d}")] for d in f.durations]
+    else:
+        rows.append([InlineKeyboardButton(text="🚀 Mulai", callback_data=f"m:go:{key}")])
+    saldo = db.balance(cb.from_user.id)
     await cb.message.edit_text(
-        f"{f.label}\n\n{f.desc}\n\n"
-        f"💠 Biaya: <b>{f.cost:g} Token</b> (≈ Rp{harga:,})".replace(",", "."),
-        reply_markup=back_kb([[InlineKeyboardButton(text="🚀 Mulai", callback_data=f"m:go:{key}")]]))
+        f"{f.label}\n\n{f.desc}\n\n💰 Saldo kamu: <b>{saldo:g} Token</b>\n\n"
+        + ("👇 Pilih durasi buat mulai:" if len(f.durations) > 1 else "👇 Tekan Mulai ya:"),
+        reply_markup=back_kb(rows))
     await cb.answer()
 
 
 @router.callback_query(F.data.startswith("m:go:"))
 async def cb_go(cb: CallbackQuery, state: FSMContext):
-    key = cb.data.split(":")[2]
+    parts = cb.data.split(":")
+    key = parts[2]
     f = catalog.get(key)
     if not f:
         await cb.answer("Fitur tidak dikenal", show_alert=True)
         return
     dur = f.duration
+    if len(parts) > 3:                      # tombol durasi dari layar detail: m:go:<key>:<dur>
+        try:
+            d = int(parts[3])
+            if d in f.durations:
+                dur = d
+        except ValueError:
+            pass
     await state.update_data(feature=key, photos=[], ratio="9:16", duration=dur,
                             prompt="", brief="", prod_photos=[], char_photo="",
                             style="review" if f.kind == "ugc" else "")
@@ -1151,6 +1168,37 @@ async def cmd_help(msg: Message):
                      "Segera hadir: Face Swap, Pose Transfer, Lip Sync, Image Editor")
 
 
+# ============================ teks bebas ============================
+# Didaftarkan PALING AKHIR supaya tidak menabrak handler ber-FSM di atas.
+
+_DUR_RE = re.compile(r"^\s*(\d{1,2})\s*(?:d(?:tk|etik)?|s(?:ec|dtk|econd)?)?\s*$", re.I)
+
+
+@router.message(F.text)
+async def on_free_text(msg: Message, state: FSMContext):
+    """Teks di luar alur — mis. user ngetik '15 detik' di layar menu (kasus nyata).
+
+    Kalau angkanya cocok dengan pilihan durasi fitur aktif, langsung dipakai.
+    """
+    m = _DUR_RE.match((msg.text or "").strip())
+    if m:
+        want = int(m.group(1))
+        data = await state.get_data()
+        f = catalog.get(data.get("feature", ""))
+        if f and want in f.durations:
+            await state.update_data(duration=want)
+            photos = collect_photos(data, f)
+            if photos or data.get("prod_photos") or data.get("prompt") or data.get("brief"):
+                await _confirm(msg, state, msg.from_user.id)
+            else:
+                await msg.answer(
+                    f"✅ Oke, <b>{want} detik</b> ({catalog.cost_for(f.key, want):g} Token).\n\n"
+                    f"{f.hint or 'Kirim fotonya sekarang.'}\n\n"
+                    f"<i>Kirim foto → langsung ketik prompt → tekan Render.</i>")
+            return
+    await msg.answer("Ketik /start buat buka menu ya 🙂  (atau /help kalau bingung)")
+
+
 # ============================ entrypoint ============================
 
 def check() -> int:
@@ -1193,6 +1241,19 @@ async def main() -> None:
     log.info("KREE.AI jalan sebagai @%s (backend=%s, promptsmith=%s, bayar=%s)",
              me.username, settings.backend, "llm" if settings.promptsmith_key else "template",
              "aulaa-qris" if pay_gw else "manual")
+    # Daftar perintah → Telegram menampilkan tombol "Menu" di kiri kolom ketik,
+    # jadi user tidak perlu hafal/ketik /start manual.
+    try:
+        await bot.set_my_commands([
+            BotCommand(command="start", description="🎬 Menu & bikin video"),
+            BotCommand(command="saldo", description="💰 Cek saldo Token"),
+            BotCommand(command="topup", description="⚡ Beli Token (QRIS)"),
+            BotCommand(command="help", description="📖 Bantuan & cara pakai"),
+            BotCommand(command="cancel", description="❌ Batalkan sesi"),
+        ])
+        log.info("perintah bot di-set → tombol Menu Telegram aktif")
+    except Exception as e:                      # noqa: BLE001
+        log.warning("gagal set perintah bot: %s", e)
     asyncio.create_task(poller_payments())      # cek QRIS pending tanpa perlu webhook publik
     await dp.start_polling(bot)
 
