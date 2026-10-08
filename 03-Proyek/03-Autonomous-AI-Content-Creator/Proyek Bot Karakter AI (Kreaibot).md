@@ -5,12 +5,10 @@ segmen: umum/creator
 posisi-webuild: Proyek 3 — Autonomous AI untuk Content Creator
 ---
 
-# 🤖 Proyek 3 — Bot Telegram Karakter AI buat Content Creator
+# 🤖 Proyek 3 — Bot Telegram Karakter AI untuk Content Creator — KREAIBOT
 
-**Nama kandidat:**
-- **WAYANG.AI** (rekomendasi) — wayang = karakter yang bisa dipentaskan ulang dengan kostum/scene berbeda tapi tetap "orang" yang sama. Metafora pas banget.
-- **KARVA** (karakter + avatar) — pendek, brandable, internasional.
-- **Rupa** — dari "rupa" (wajah/tampilan). Lokal tapi mungkin ambigu.
+**Nama project (keputusan user, 8 Okt 2026): Kreaibot** — krea(ktif) + bot.
+Alternatif yang sempat diajukan (tidak dipakai): Wayang.AI, KARVA, Rupa.
 
 ## Konsep inti (satu kalimat)
 User upload **master character sheet** (foto), bot mengunci identitas wajahnya jadi satu "karakter", lalu user bisa: ganti baju/scene (struktur wajah tetap identik), generate foto konsisten dalam jumlah banyak, ubah foto jadi video, dan transfer pose — semua dari dalam Telegram.
