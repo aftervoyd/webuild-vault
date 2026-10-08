@@ -53,6 +53,21 @@ RUNNINGHUB_NODES_ALLINONE=[{"nodeId":"4","fieldName":"image","value":"@photo1"},
 | `@width` / `@height` | dipetakan dari rasio (`RATIO_SIZES`): 9:16→480×832 · 16:9→832×480 · 1:1→640×640 · 4:3→832×480 |
 | `@video` | input video (untuk fitur video-to-video) |
 
+## ⚠️ BATAS NILAI (dari validasi API — gratis, gak makan koin)
+Kalau mengirim nilai di luar batas, API balas `code 433 prompt_outputs_failed_validation` **beserta `input_config` lengkap**:
+```
+node_errors: {"7": {"errors": [{"type": "value_bigger_than_max",
+  "message": "Value 30.0 bigger than max of 15.0", "details": "duration_seconds",
+  "input_config": ["FLOAT", {"default": 5.0, "min": 4.0, "max": 15.0, "step": 0.1}]}]}}
+```
+| Field (node 7) | Tipe | default | min | max |
+|---|---|---|---|---|
+| `duration_seconds` | FLOAT | 5,0 | **4,0** | **15,0** |
+| `aspect_ratio` | COMBO | "4:3" | – | (9:16 / 16:9 / 1:1 terverifikasi jalan) |
+| `width` / `height` | INT | 832 / 480 | – | – |
+
+⇒ **Workflow FL2VA maksimal 15 detik per render.** Video lebih panjang = **beberapa klip disambung (chaining)**, bukan satu render. Task yang gagal validasi **tidak menagih koin**.
+
 ## Verifikasi
 - Dry-run (tanpa API/koin) sudah lolos: `9:16 + 15s → aspect_ratio 9:16, duration_seconds 15, width 480, height 832` ✅
 - Ukur biaya nyata: `.venv/bin/python tools/rh_measure.py --ratio 9:16 --duration 15 --photo a.png --photo b.png`

@@ -40,10 +40,12 @@ tanggal: 2026-10-08
 |---|---|---|---|---|
 | 5 detik | 70 | Rp312 | Rp1.000 | 69% |
 | 10 detik | 140 | Rp624 | Rp1.500 | 58% |
-| **15 detik (UGC)** | 210 | **Rp935** | **Rp2.000** | **53%** |
-| 30 detik | 420 | Rp1.872 | Rp3.000 | 38% |
+| 15 detik (UGC) | 269 (terukur) | **Rp1.200** | Rp2.500 | 52% |
+| 30 detik (**2 klip 15 dtk disambung**) | ~538 | ~Rp2.400 | Rp4.000 | 40% |
 
-Kapasitas 36.000 koin → **~514 video 5 dtk** · **~171 video 15 dtk** · **~85 video 30 dtk** per bulan.
+**DATA TERUKUR (bukan asumsi):** 5 dtk 4:3 = **70 koin** · 15 dtk 9:16 = **269 koin**. Biaya per detik **naik** (14,0 → 17,9 koin/s) → **tidak linear**. Workflow FL2VA **maksimal 15 detik/render**; video 30 detik = 2 klip disambung.
+
+Kapasitas 36.000 koin → **~514 video 5 dtk** · **~133 video 15 dtk** · **~66 video "30 dtk" (2 klip)** per bulan.
 
 ## 4. PERBANDINGAN KOMPETITOR
 - @KuzushiGenBot: Rp10.000 = 10 token → **1 token = Rp1.000**; video All-in-One **30 detik** = 1 token.
