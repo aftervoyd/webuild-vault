@@ -89,13 +89,40 @@ def style_list_kb_rows():
 
 
 # ------------------------------------------------------- template (offline)
+def h3_timeline(st: "Style", duration: int) -> str:
+    """Timeline gaya H3 (MiniMax/Hailuo FL2VA): prompt dipecah per segmen waktu.
+
+    Ini format yang dipakai workflow H3 (contoh resmi komunitas):
+        0-2s: <aksi + kamera>
+        2-5s: <aksi + kamera lanjutan>
+    Model membacanya sebagai SATU shot kontinu dengan perubahan bertahap.
+    """
+    d = max(4, min(30, int(duration or 15)))
+    hook = max(1, round(d * 0.25))
+    body = max(1, round(d * 0.45))
+    cta = max(1, d - hook - body)
+    rows, t = [], 0
+    for length, text in ((hook, st.hook), (body, st.body), (cta, st.cta)):
+        rows.append(f"{t}-{t + length}s: {text}, {st.camera}")
+        t += length
+    return ("TIMELINE (ONE continuous shot; the model must read it as consecutive beats — "
+            "same person, same outfit, same product, same location throughout, "
+            "only action/camera/framing change):\n" + "\n".join(rows))
+
+
 def build_ugc_prompt(brief: str, style_key: str, product_hint: str = "",
-                     ratio: str = "9:16", char_desc: str = "") -> str:
-    """Rakit prompt UGC dari brief user + gaya. Tanpa perlu API apa pun."""
+                     ratio: str = "9:16", char_desc: str = "",
+                     duration: int | None = None, fmt: str = "h3") -> str:
+    """Rakit prompt UGC dari brief user + gaya. Tanpa perlu API apa pun.
+
+    fmt='h3' → sertakan timeline per-segmen (format MiniMax H3 / Hailuo),
+    fmt='plain' → prompt deskriptif saja.
+    """
     st = STYLES.get(style_key) or STYLES["review"]
+    dur = int(duration or st.duration)
     parts: list[str] = []
 
-    head = f"Create a {st.duration}-second vertical {ratio} UGC-style advertisement video"
+    head = f"Create a {dur}-second vertical {ratio} UGC-style advertisement video"
     if not st.talk:
         head += " (no dialogue; ambient music mood only)"
     parts.append(head + ".")
@@ -112,6 +139,9 @@ def build_ugc_prompt(brief: str, style_key: str, product_hint: str = "",
         "held in realistic hands, never warped or duplicated.")
 
     parts.append(f"STORY BEATS: the video {st.hook}; then {st.body}; finally {st.cta}.")
+
+    if fmt == "h3":
+        parts.append(h3_timeline(st, dur))
 
     if st.talk:
         parts.append(
@@ -130,13 +160,16 @@ def build_ugc_prompt(brief: str, style_key: str, product_hint: str = "",
 
 # --------------------------------------------------- penyempurnaan via LLM
 REFINE_SYSTEM = (
-    "You are a senior prompt engineer for AI video models (Hailuo/MiniMax, Kling, Veo, LTX). "
+    "You are a senior prompt engineer for AI video models (MiniMax H3 / Hailuo, Kling, Veo, LTX). "
     "Take the creator's messy brief and the target style, then output ONE single, natural, "
     "well-structured English prompt that will produce a high-quality UGC advertisement video "
     "with a consistent character and a faithful product. "
     "Keep every factual detail (product name, price, claims). Never invent facts. "
-    "Structure it as: overall description, CHARACTER, PRODUCT, STORY BEATS, SPEECH (if any), "
-    "CAMERA & LIGHT, MOOD, AVOID. "
+    "Structure it as: overall description, CHARACTER, PRODUCT, STORY BEATS, "
+    "TIMELINE as ONE continuous shot broken into time segments (MiniMax H3 format, e.g. "
+    "'0-3s: ...' / '3-9s: ...' / '9-15s: ...', covering action + camera + lighting per segment, "
+    "keeping the same person, outfit, product and location throughout), "
+    "SPEECH (if any), CAMERA & LIGHT, MOOD, AVOID. "
     "Reply with the prompt text ONLY - no preamble, no quotes, no markdown."
 )
 

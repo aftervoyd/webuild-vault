@@ -43,6 +43,8 @@ async def main() -> int:
     for need, label in (("CHARACTER", "prompt memuat blok CHARACTER"),
                         ("PRODUCT", "prompt memuat blok PRODUCT"),
                         ("STORY BEATS", "prompt memuat STORY BEATS"),
+                        ("TIMELINE", "prompt memuat TIMELINE gaya H3"),
+                        ("0-", "timeline pakai format per-segmen waktu (0-3s)"),
                         ("Rp79.000", "fakta harga user ikut masuk"),
                         ("AVOID", "prompt punya NEGATIVE prompt"),
                         ("9:16", "rasio ikut masuk")):

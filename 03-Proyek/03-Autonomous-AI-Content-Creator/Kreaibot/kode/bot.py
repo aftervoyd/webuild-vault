@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import asyncio
 import json
+import shutil
 import logging
 import sys
 import time
@@ -472,6 +473,19 @@ async def cb_render(cb: CallbackQuery, state: FSMContext):
     await cb.answer("Render dimulai")
 
 
+async def fetch_url(url: str, dest: Path) -> Path:
+    """Unduh hasil dari backend cloud (RunningHub/fal balikin URL, bukan file lokal)."""
+    def _dl() -> None:
+        import urllib.request
+        req = urllib.request.Request(url, headers={"User-Agent": "kreaibot/1.0"})
+        with urllib.request.urlopen(req, timeout=900) as r, open(dest, "wb") as f:
+            shutil.copyfileobj(r, f)
+
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    await asyncio.to_thread(_dl)
+    return dest
+
+
 async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
     async with SEM:
         job = db.get_job(job_id)
@@ -521,7 +535,17 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                 if st.state == "failed":
                     raise RuntimeError(st.error or "backend gagal")
                 if st.state == "done":
-                    result = st.result_path if (st.result_path and Path(st.result_path).exists()) else out
+                    rp = str(st.result_path or "")
+                    if rp.startswith("http"):
+                        try:
+                            result = await fetch_url(rp, out)     # cloud → unduh ke lokal
+                        except Exception as dl_err:
+                            log.warning("job %s gagal unduh hasil: %s", job_id, dl_err)
+                            result = out
+                    elif rp and Path(rp).exists():
+                        result = Path(rp)
+                    else:
+                        result = out
                     break
                 pct = min(95, max(pct + 7, st.progress))
                 try:
