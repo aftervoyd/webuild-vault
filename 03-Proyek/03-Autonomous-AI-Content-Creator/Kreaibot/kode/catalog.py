@@ -62,9 +62,9 @@ FEATURES: dict[str, Feature] = {
         cost=0.5,
         min_photos=1, max_photos=1,
         need_prompt=True, need_ratio=True,
-        duration=5, durations=(5, 10, 15),
+        duration=5, durations=(5, 10),
         desc=("Foto → video pendek.\n"
-              "· 5 detik = 0,5 Token · 10 detik = 1,5 Token · 15 detik = 2,5 Token\n"
+              "· 5 detik = 0,5 Token · 10 detik = 1 Token\n"
               "· Cocok buat teaser, loop, dan bikin cepat"),
         backend_workflow="krea_i2v_ltx",
         hint="Kirim 1 foto (wajah, produk, atau scene apa saja).",
@@ -113,7 +113,9 @@ RATIOS = {"9:16": "📱 9:16 (TikTok/Reels/Shorts)", "16:9": "🎬 16:9 (YouTube
 # Harga token per (fitur, durasi) — acuan pasar @KuzushiGenBot, margin kita 40–70%.
 # Ubah di sini kalau mau naik/turunin harga; kode lain ngikut otomatis.
 DURATION_COST: dict[tuple[str, int], float] = {
-    ("i2v", 5): 0.5, ("i2v", 10): 1.5, ("i2v", 15): 2.5,
+    # 15s i2v DIMATIKAN: app Wan2.2 gagal pada 15s (uji 9 Okt 03:24) & tak ada biaya.
+    # Jangan jual durasi yang belum terbukti. i2v 10s = 1 Token (samakan Kuzushi).
+    ("i2v", 5): 0.5, ("i2v", 10): 1.0,
     ("allinone", 5): 1.0, ("allinone", 15): 2.5,
     ("ugc", 15): 2.5,
 }

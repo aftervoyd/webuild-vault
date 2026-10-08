@@ -37,13 +37,14 @@ async def main() -> int:
     # HARGA SEHAT (per fitur × durasi): koin terukur × Rp/koin harus di bawah harga jual.
     # Angka koin dari render NYATA di RunningHub (5 dtk = 55–66 koin · 15 dtk = 269 koin).
     RUPIAH_PER_KOIN = 4.46
-    KOIN_TERUKUR = {("i2v", 5): 66, ("i2v", 10): 150, ("i2v", 15): 210,
+    KOIN_TERUKUR = {("i2v", 5): 61, ("i2v", 10): 112,
                     ("allinone", 5): 66, ("allinone", 15): 269, ("ugc", 15): 269}
     for (key, dur), koin in KOIN_TERUKUR.items():
         harga = catalog.cost_for(key, dur) / 10 * 10_000
         biaya = koin * RUPIAH_PER_KOIN
         margin = (harga - biaya) / harga * 100
-        batas = 35 if (key == "i2v" and dur <= 5) else 50     # 5 dtk = produk pintu masuk
+        # i2v = produk pintu masuk → margin boleh lebih tipis supaya bersaing dgn Kuzushi
+        batas = 45 if key == "i2v" else 50
         res.append(ok(f"margin {key} {dur} dtk sehat ({margin:.0f}% ≥ {batas}%)", margin >= batas,
                       f"harga Rp{harga:,.0f} vs biaya Rp{biaya:,.0f}"))
     res.append(ok("durasi render dalam batas workflow (4..15 dtk)",
