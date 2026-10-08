@@ -1,10 +1,17 @@
 ---
-project: Kreaibot
-status: fondasi selesai & teruji (11/11 tes) — menunggu kredensial
+project: KREE.AI (kode: Kreaibot)
+status: 🟢 BOT LIVE di VPS — @kreeaibot, tinggal kredensial backend render
 tanggal: 2026-10-08
 ---
 
-# 🚀 Kreaibot — Rencana Build sampai BISA JUALAN
+# 🚀 KREE.AI — Rencana Build sampai BISA JUALAN
+
+## 🟢 STATUS LIVE (8 Okt 2026)
+- **Bot:** `@kreeaibot` · nama **KREE.AI** · token di `/root/projects/kreaibot/.env` (chmod 600)
+- **Service:** `systemd kreaibot` (enabled + auto-restart) · log `/var/log/kreaibot.log`
+- **Terbukti jalan:** `/start` → user terdaftar otomatis + **bonus 1 token** (cek DB: `users`), menu 6 fitur + Top Up/Saldo/Panduan/Referral tampil
+- **Backend:** `mock` (render video uji via ffmpeg) — belum nyala biaya API
+- **Auto-download Telegram Desktop dimatikan** (folder `/root/Downloads/Telegram Desktop` dikunci `chattr +i`)
 
 ## ✅ Yang SUDAH jadi (8 Okt 2026)
 Fondasi produksi **jalan & teruji** di VPS → `/root/projects/kreaibot` (copy di folder ini):
@@ -21,7 +28,7 @@ Tes yang lulus: katalog · konversi Rp · bonus daftar · top-up · potong biaya
 ## 🔑 YANG GUE BUTUH DARI LO (checklist)
 | # | Yang dikirim | Dari mana | Buat apa |
 |---|---|---|---|
-| 1 | **Token bot** (format `1234:AA...`) | @BotFather → `/newbot` (nama: Kreaibot) | bot hidup |
+| 1 | ~~**Token bot**~~ ✅ **SUDAH** | @BotFather | `@kreeaibot` hidup & teruji |
 | 2 | **Akun + API key RunningHub** | runninghub.ai (isi saldo) | mesin render (ComfyUI cloud) |
 | 3 | **Workflow ComfyUI** (All-in-One dkk) | dibuat di RunningHub (gue bisa bantu susun) | pipeline model |
 | 4 | *(opsional, sebagai cadangan)* **fal.ai key** | fal.ai | model MiniMax Hailuo 3 / LTX |
