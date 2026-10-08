@@ -913,11 +913,10 @@ def build_final_prompt(data: dict, f, ratio: str) -> tuple[str, str, str]:
         brief = data.get("brief", "")
         style = data.get("style", "review")
         return promptsmith.build_ugc_prompt(brief, style, product_hint="", ratio=ratio), brief, style
-    # Fitur video biasa: prompt user + klausa "latar hidup". Tanpa ini, workflow FL2VA
-    # (frame awal & akhir = foto yang sama) cenderung mengunci latar jadi beku
-    # — gejalanya persis seperti "lautnya nggak gerak".
-    p = " ".join(str(data.get("prompt") or "").split())
-    return f"{p} {promptsmith.AMBIENT_MOTION}".strip(), "", ""
+    # Prompt user dikirim APA ADANYA (tanpa klausa tambahan) — sama seperti
+    # @KuzushiGenBot. Menempel klausa karangan (mis. "LIVING BACKGROUND") terbukti
+    # bikin model lebih agresif menggerakkan seluruh frame → wajah/badan ikut warp.
+    return " ".join(str(data.get("prompt") or "").split()), "", ""
 
 
 @router.callback_query(F.data == "f:render")

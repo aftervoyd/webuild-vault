@@ -68,13 +68,16 @@ async def main() -> int:
         res.append(ok(label, needle in src))
     res.append(ok('tombol "✅ Lanjut" sudah dihapus dari alur',
                   "✅ Lanjut" not in src and "Lanjut ke Brief" not in src))
-    res.append(ok("klausa 'latar hidup' tersedia di promptsmith",
-                  "LIVING BACKGROUND" in promptsmith.AMBIENT_MOTION))
-    res.append(ok("prompt UGC memuat klausa latar hidup",
-                  "LIVING BACKGROUND" in promptsmith.build_ugc_prompt(
+    res.append(ok("prompt fitur video dikirim APA ADANYA (tanpa klausa tambahan)",
+                  "AMBIENT_MOTION" not in src and 'data.get("prompt", "")' in src))
+    res.append(ok("tidak ada klausa karangan 'LIVING BACKGROUND' (dihapus 8 Okt)",
+                  not hasattr(promptsmith, "AMBIENT_MOTION")))
+    res.append(ok("prompt UGC tanpa klausa karangan",
+                  "LIVING BACKGROUND" not in promptsmith.build_ugc_prompt(
                       "produk uji, harga Rp1.000", "review", ratio="9:16")))
-    res.append(ok("prompt fitur video (i2v/allinone) ditempeli klausa latar hidup",
-                  "AMBIENT_MOTION" in src))
+    res.append(ok("frame i2v = foto asli di dua ujung (tanpa gambar sintetis)",
+                  "photo1_zoom" not in (Path(__file__).with_name(".env").read_text(encoding="utf-8")
+                                        if (Path(__file__).with_name(".env")).exists() else "")))
 
     # 2) PromptSmith
     res.append(ok("6 gaya UGC tersedia", len(promptsmith.STYLES) == 6, ", ".join(promptsmith.STYLES)))
