@@ -48,6 +48,9 @@ class Settings:
 
     # === Pembayaran QRIS (stub) ===
     payment_provider: str = _env("KREAIBOT_PAYMENT", "manual")      # manual | midtrans | xendit | mayar
+    pay_info: str = _env(
+        "KREAIBOT_PAY_INFO",
+        "💳 QRIS / transfer ke admin — tulis detail pembayaran di .env (KREAIBOT_PAY_INFO)")
     midtrans_server_key: str = _env("MIDTRANS_SERVER_KEY")
     xendit_secret_key: str = _env("XENDIT_SECRET_KEY")
 

@@ -135,17 +135,95 @@ async def cb_topup(cb: CallbackQuery, state: FSMContext):
     rows: list[list[InlineKeyboardButton]] = []
     if data.get("feature"):
         rows.append([InlineKeyboardButton(text="🔁 Sudah Top Up — Lanjut Render", callback_data="f:recheck")])
+    harga_token = max(1, settings.harga_per_10k // max(1, settings.tokens_per_10k))
+    for rp in (10_000, 25_000, 50_000, 100_000):
+        rows.append([InlineKeyboardButton(text=f"Rp{rp:,} → {rp // harga_token} Token".replace(",", "."),
+                                          callback_data=f"t:paket:{rp}")])
     await cb.message.edit_text(
-        f"⚡ <b>Top Up Token</b>\n\n"
-        f"Rp{settings.harga_per_10k:,} = {settings.tokens_per_10k} Token (1 Token = Rp{settings.harga_per_10k // max(1, settings.tokens_per_10k):,})".replace(",", ".") + "\n\n"
-        f"Cara isi (sementara manual):\n"
-        f"1. Transfer/QRIS ke admin\n"
-        f"2. Kirim bukti + ID Telegram kamu\n"
-        f"3. Admin isi token → langsung bisa dipakai\n\n"
-        f"<i>Integrasi QRIS otomatis (Midtrans/Xendit) menyusul.</i>\n\n"
-        f"ID kamu: <code>{cb.from_user.id}</code>",
+        (f"⚡ <b>Top Up Token</b>\n\n"
+         f"1 Token = <b>Rp{harga_token:,}</b>\n"
+         f"Pilih paket → bayar → tekan “✅ Sudah Bayar”. Token masuk setelah admin verifikasi.\n\n"
+         f"<b>Cara bayar</b>\n{settings.pay_info}\n\n"
+         f"ID kamu: <code>{cb.from_user.id}</code>").replace(",", "."),
         reply_markup=back_kb(rows))
     await cb.answer()
+
+
+@router.callback_query(F.data.startswith("t:paket:"))
+async def cb_paket(cb: CallbackQuery):
+    rp = int(cb.data.split(":")[2])
+    harga_token = max(1, settings.harga_per_10k // max(1, settings.tokens_per_10k))
+    tok = rp // harga_token
+    rows = [[InlineKeyboardButton(text="✅ Sudah Bayar — Minta Diisi", callback_data=f"t:klaim:{rp}")],
+            [InlineKeyboardButton(text="⬅️ Kembali", callback_data="m:topup")]]
+    await cb.message.edit_text(
+        (f"💳 <b>Pembayaran Rp{rp:,}</b> → <b>{tok} Token</b>\n\n"
+         f"{settings.pay_info}\n\n"
+         f"Sudah bayar? Tekan tombol di bawah — admin langsung dapat notifikasi "
+         f"dan tinggal 1 klik buat isiin token kamu.\n\n"
+         f"ID kamu: <code>{cb.from_user.id}</code>").replace(",", "."),
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
+    await cb.answer()
+
+
+@router.callback_query(F.data.startswith("t:klaim:"))
+async def cb_klaim(cb: CallbackQuery):
+    rp = int(cb.data.split(":")[2])
+    harga_token = max(1, settings.harga_per_10k // max(1, settings.tokens_per_10k))
+    tok = rp // harga_token
+    u = cb.from_user
+    kb = InlineKeyboardMarkup(inline_keyboard=[[
+        InlineKeyboardButton(text=f"✅ Setujui {tok} token", callback_data=f"adm:ok:{u.id}:{tok}"),
+        InlineKeyboardButton(text="❌ Tolak", callback_data=f"adm:no:{u.id}")]])
+    for aid in settings.admin_ids:
+        try:
+            await bot.send_message(
+                aid,
+                (f"💰 <b>KLAIM TOP UP</b>\n\n"
+                 f"User: <b>{u.full_name}</b> (@{u.username or '-'})\n"
+                 f"ID: <code>{u.id}</code>\n"
+                 f"Paket: <b>Rp{rp:,}</b> → {tok} Token\n\n"
+                 f"Cek pembayaran (yang masuk Rp{rp:,}), lalu tekan ✅/❌.").replace(",", "."),
+                reply_markup=kb)
+        except Exception as e:                      # noqa: BLE001
+            log.warning("gagal kirim notif topup ke admin %s: %s", aid, e)
+    await cb.message.edit_text(
+        f"✅ <b>Permintaan terkirim ke admin.</b>\n\n"
+        f"Token masuk begitu pembayaran diverifikasi.\nSaldo sekarang: {saldo_txt(u.id)}",
+        reply_markup=back_kb())
+    await cb.answer("Terkirim ke admin")
+
+
+@router.callback_query(F.data.startswith("adm:ok:"))
+async def cb_adm_ok(cb: CallbackQuery):
+    if not is_admin(cb.from_user.id):
+        await cb.answer("Khusus admin", show_alert=True)
+        return
+    _, _, uid, tok = cb.data.split(":")
+    uid, tok = int(uid), int(tok)
+    bal = db.ledger_add(uid, tok, "topup_approve", ref=str(cb.from_user.id))
+    try:
+        await bot.send_message(uid, f"🎉 <b>Token masuk: {tok:g} Token</b>\n"
+                                    f"Saldo sekarang: <b>{bal:g} Token</b>\n\nSelamat berkarya! 🚀")
+    except Exception as e:                          # noqa: BLE001
+        log.warning("gagal kabari user %s: %s", uid, e)
+    await cb.message.edit_text(f"✅ Disetujui <b>{tok:g} token</b> untuk <code>{uid}</code>\n"
+                               f"Saldo mereka: <b>{bal:g}</b>")
+    await cb.answer("Tersimpan")
+
+
+@router.callback_query(F.data.startswith("adm:no:"))
+async def cb_adm_no(cb: CallbackQuery):
+    if not is_admin(cb.from_user.id):
+        await cb.answer("Khusus admin", show_alert=True)
+        return
+    uid = int(cb.data.split(":")[2])
+    try:
+        await bot.send_message(uid, "❌ Klaim top up belum bisa disetujui. Hubungi admin ya 🙏")
+    except Exception as e:                          # noqa: BLE001
+        log.warning("gagal kabari user %s: %s", uid, e)
+    await cb.message.edit_text(f"❌ Ditolak untuk <code>{uid}</code>")
+    await cb.answer("Ditolak")
 
 
 @router.callback_query(F.data == "m:help")
