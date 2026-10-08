@@ -1,0 +1,16 @@
+{
+  "name": "Desa Digital Pamekaran",
+  "short_name": "Desa Pamekaran",
+  "description": "Aplikasi Desa Digital Pamekaran: administrasi, pasar UMKM, berita, dan pelayanan desa.",
+  "start_url": "app.html",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#DDEBFF",
+  "theme_color": "#1E4E9C",
+  "lang": "id",
+  "icons": [
+    { "src": "img/ikon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "img/ikon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
