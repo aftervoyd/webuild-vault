@@ -10,6 +10,7 @@ from pathlib import Path
 import catalog
 import promptsmith
 from backends import GenRequest, make_backend
+from config import settings
 from db import Database
 
 WORK = Path("/root/projects/kreaibot/work/selftest")
@@ -91,6 +92,33 @@ async def main() -> int:
                   job["brief"] == "produk A harga 10rb" and job["style"] == "promo" and len(job["prompt"]) > 300))
     db.ledger_add(123, 1.5, "refund", ref=str(jid))
     res.append(ok("refund gagal render", db.balance(123) == 10.0, f"saldo={db.balance(123)}"))
+
+    # 3b) referral (anti-farming)
+    db.ensure_user(900, "inviter", "Inviter", signup_bonus=1.0)
+    db.ensure_user(901, "teman", "Teman", signup_bonus=1.0)
+    res.append(ok("registrasi referral pengundang→teman", db.ref_register(900, 901)))
+    res.append(ok("invitee ganda DITOLAK (1 akun = 1 bonus seumur hidup)",
+                  not db.ref_register(902, 901)))
+    res.append(ok("self-referral DITOLAK", not db.ref_register(901, 901)))
+    res.append(ok("users.referred_by tercatat", db.get_user(901)["referred_by"] == 900))
+    db.ledger_add(901, 2.5, "ref_bonus_invitee", ref="900")
+    db.ref_mark(901, invitee_paid=1, status="paid")
+    db.ledger_add(900, 1.5, "ref_bonus_inviter", ref="901")
+    db.ref_mark(901, inviter_paid=1)
+    res.append(ok("bonus invitee = 2,5 token", db.balance(901) == 3.5, f"saldo={db.balance(901)}"))
+    res.append(ok("bonus pengundang = 1,5 token", db.balance(900) == 2.5, f"saldo={db.balance(900)}"))
+    st = db.ref_summary(900)
+    res.append(ok("rekap referral (1 undang · 1 cair · 1,5 token)",
+                  st["total"] == 1 and st["paid"] == 1 and st["earned"] == 1.5, str(st)))
+    res.append(ok("hitungan cap harian/bulanan jalan", db.ref_count_since(900, 0) == 1))
+    res.append(ok("tidak ada bonus pengundang menggantung", db.ref_pending_inviter(901) is None))
+    res.append(ok("mode aman (pengundang nunggu top up) bisa dibaca",
+                  isinstance(settings.ref_inviter_after_purchase, bool)))
+    res.append(ok("nominal referral sesuai permintaan user (2,5 / 1,5)",
+                  settings.ref_invitee == 2.5 and settings.ref_inviter == 1.5,
+                  f"invitee={settings.ref_invitee} inviter={settings.ref_inviter}"))
+    res.append(ok("cap default 10/hari · 30/bulan",
+                  settings.ref_max_day == 10 and settings.ref_max_month == 30))
 
     # 4) backend mock → render video nyata
     be = make_backend("mock", work_dir=str(WORK))

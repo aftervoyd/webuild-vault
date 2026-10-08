@@ -25,6 +25,17 @@ def _env_int(key: str, default: int) -> int:
         return default
 
 
+def _env_float(key: str, default: float) -> float:
+    try:
+        return float(_env(key, str(default)))
+    except ValueError:
+        return default
+
+
+def _env_bool(key: str, default: bool = False) -> bool:
+    return _env(key, "1" if default else "0").lower() in ("1", "true", "yes", "on")
+
+
 @dataclass
 class Settings:
     # === Telegram ===
@@ -53,6 +64,21 @@ class Settings:
         "💳 QRIS / transfer ke admin — tulis detail pembayaran di .env (KREAIBOT_PAY_INFO)")
     midtrans_server_key: str = _env("MIDTRANS_SERVER_KEY")
     xendit_secret_key: str = _env("XENDIT_SECRET_KEY")
+    aulaa_api_key: str = _env("AULAA_API_KEY")
+    aulaa_base: str = _env("AULAA_BASE", "https://api.aulaa.co/v1")
+    aulaa_pay_base: str = _env("AULAA_PAY_BASE", "https://payment.aulaa.co")
+    aulaa_project_id: str = _env("AULAA_PROJECT_ID")
+    aulaa_webhook_secret: str = _env("AULAA_WEBHOOK_SECRET")
+
+    # === Referral & channel komunitas (anti-farming) ===
+    channel: str = _env("KREAIBOT_CHANNEL")                  # username channel TANPA @ (kosong = gate nonaktif)
+    channel_title: str = _env("KREAIBOT_CHANNEL_TITLE", "Kreativ Community")
+    channel_link: str = _env("KREAIBOT_CHANNEL_LINK", "https://t.me/kreativcommunity")
+    ref_invitee: float = _env_float("KREAIBOT_REF_INVITEE", 2.5)
+    ref_inviter: float = _env_float("KREAIBOT_REF_INVITER", 1.5)
+    ref_max_day: int = _env_int("KREAIBOT_REF_MAX_DAY", 10)
+    ref_max_month: int = _env_int("KREAIBOT_REF_MAX_MONTH", 30)
+    ref_inviter_after_purchase: bool = _env_bool("KREAIBOT_REF_INVITER_AFTER_PURCHASE", False)
 
     # === PromptSmith (perakit prompt UGC) ===
     # Kalau diisi, prompt dirapikan lagi oleh LLM. Kosong → pakai template offline (tetap jalan).

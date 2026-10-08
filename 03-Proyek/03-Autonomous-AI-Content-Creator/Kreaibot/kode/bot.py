@@ -17,7 +17,7 @@ from pathlib import Path
 from aiogram import Bot, Dispatcher, F, Router
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
-from aiogram.filters import Command, CommandStart
+from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
 from aiogram.types import (CallbackQuery, FSInputFile, InlineKeyboardButton,
@@ -94,18 +94,48 @@ class Flow(StatesGroup):
 
 # ============================ menu ============================
 
-@router.message(CommandStart())
+def _welcome(tid: int) -> str:
+    return (f"👋 Selamat datang di <b>{settings.bot_name}</b> — studio konten AI!\n\n"
+            f"Video karakter <b>konsisten</b> dari foto kamu, ganti outfit/scene, image→video, "
+            f"pose transfer, sampai lip-sync.\n"
+            f"🆕 <b>UGC Video Iklan</b>: foto kamu + foto produk → video iklan siap posting.\n\n"
+            f"🎁 <b>Program Referral</b>: ajak teman, kamu dapat <b>{settings.ref_inviter:g} Token</b> "
+            f"per teman (menu 👥 Referral).\n\n"
+            f"{saldo_txt(tid)}\n\nPilih fitur 👇")
+
+
+@router.message(CommandStart(deep_link=True))
+async def cmd_start_ref(msg: Message, command: CommandObject, state: FSMContext):
+    """Pendaftaran lewat link referral: t.me/<bot>?start=ref_<id>"""
+    await state.clear()
+    u = msg.from_user
+    payload = (command.args or "").strip()
+    digits = (payload[4:] if payload.startswith("ref_")
+              else payload[3:] if payload.startswith("ref") else "")
+    inviter = int(digits) if digits.isdigit() else 0
+    is_new = db.get_user(u.id) is None
+    db.ensure_user(u.id, u.username or "", u.full_name or "", settings.signup_bonus,
+                   referred_by=inviter or None)
+    if inviter and inviter != u.id and is_new and db.ref_register(inviter, u.id):
+        kode = await _claim_invitee(u.id)
+        if kode == "ok":
+            await msg.answer(
+                f"🎉 <b>Selamat datang + bonus referral!</b>\n\n"
+                f"<b>+{settings.ref_invitee:g} Token</b> sudah masuk ke akunmu.\n"
+                f"{saldo_txt(u.id)}\n\nYuk bikin video pertamamu 👇",
+                reply_markup=main_menu_kb())
+            return
+        await msg.answer(_join_txt("🎁 <b>Kamu dapat bonus referral!</b>"), reply_markup=_join_kb())
+        return
+    await msg.answer(_welcome(u.id), reply_markup=main_menu_kb())
+
+
+@router.message(CommandStart(deep_link=False))
 async def cmd_start(msg: Message, state: FSMContext):
     await state.clear()
     db.ensure_user(msg.from_user.id, msg.from_user.username or "",
                    msg.from_user.full_name or "", settings.signup_bonus)
-    await msg.answer(
-        f"👋 Selamat datang di <b>{settings.bot_name}</b> — studio konten AI!\n\n"
-        f"Video karakter <b>konsisten</b> dari foto kamu, ganti outfit/scene, image→video, "
-        f"pose transfer, sampai lip-sync.\n"
-        f"🆕 <b>UGC Video Iklan</b>: foto kamu + foto produk → video iklan siap posting.\n\n"
-        f"{saldo_txt(msg.from_user.id)}\n\nPilih fitur 👇",
-        reply_markup=main_menu_kb())
+    await msg.answer(_welcome(msg.from_user.id), reply_markup=main_menu_kb())
 
 
 @router.callback_query(F.data == "m:home")
@@ -202,6 +232,7 @@ async def cb_adm_ok(cb: CallbackQuery):
     _, _, uid, tok = cb.data.split(":")
     uid, tok = int(uid), int(tok)
     bal = db.ledger_add(uid, tok, "topup_approve", ref=str(cb.from_user.id))
+    await _ref_on_purchase(uid)                     # mode aman: cairkan bonus pengundang
     try:
         await bot.send_message(uid, f"🎉 <b>Token masuk: {tok:g} Token</b>\n"
                                     f"Saldo sekarang: <b>{bal:g} Token</b>\n\nSelamat berkarya! 🚀")
@@ -245,14 +276,163 @@ async def cb_help(cb: CallbackQuery):
     await cb.answer()
 
 
+# ============================ referral (anti-farming) ============================
+# Aturan anti-farming:
+#   1) 1 akun Telegram = 1 invitee SEKALI seumur hidup (DB: invitee_id UNIQUE)
+#   2) wajib join channel komunitas (Telegram = akun ber-nomor HP → bikin akun palsu mahal)
+#   3) bonus pengundang dibatasi harian + bulanan (default 10/hari, 30/bulan)
+#   4) tidak bisa mengundang diri sendiri
+#   5) (opsional) bonus pengundang baru cair setelah invitee TOP UP pertama
+
+async def _channel_ok(uid: int) -> bool:
+    """True kalau user sudah join channel komunitas (bot WAJIB admin di channel itu)."""
+    ch = settings.channel
+    if not ch:
+        return True                       # gate dimatikan (channel belum di-set)
+    try:
+        m = await bot.get_chat_member(chat_id=f"@{ch}", user_id=uid)
+        return m.status in ("creator", "administrator", "member", "restricted")
+    except Exception as e:                # noqa: BLE001
+        log.warning("cek keanggotaan channel @%s gagal: %s", ch, e)
+        return False
+
+
+def _ref_link(username: str, uid: int) -> str:
+    return f"https://t.me/{username}?start=ref_{uid}"
+
+
+def _join_kb() -> InlineKeyboardMarkup:
+    rows: list[list[InlineKeyboardButton]] = []
+    if settings.channel_link:
+        rows.append([InlineKeyboardButton(text=f"📢 Join {settings.channel_title}",
+                                          url=settings.channel_link)])
+    rows.append([InlineKeyboardButton(text="✅ Sudah Join — Klaim Bonus", callback_data="r:claim")])
+    rows.append([InlineKeyboardButton(text="🔙 Menu Utama", callback_data="m:home")])
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+def _join_txt(prefix: str) -> str:
+    return (f"{prefix}\n\n"
+            f"Yang kamu dapat: <b>+{settings.ref_invitee:g} Token</b> gratis\n\n"
+            f"<b>Cara klaim (2 langkah)</b>\n"
+            f"1. Masuk channel <b>{settings.channel_title}</b> — tekan tombol di bawah\n"
+            f"2. Balik ke sini, tekan <b>✅ Sudah Join — Klaim Bonus</b>\n\n"
+            f"<i>Wajib join supaya bonus tidak disalahgunakan, sekaligus biar kamu dapat "
+            f"info promo & update konten di channel.</i>")
+
+
+async def _give_inviter_bonus(inviter_id: int, invitee_id: int) -> None:
+    """Bayar bonus pengundang (sekali saja; dibatasi harian/bulanan)."""
+    r = db.ref_get(invitee_id)
+    if not r or r["inviter_paid"]:
+        return
+    now = int(time.time())
+    if (db.ref_count_since(inviter_id, now - 86_400) >= settings.ref_max_day
+            or db.ref_count_since(inviter_id, now - 30 * 86_400) >= settings.ref_max_month):
+        log.info("bonus pengundang %s ditahan (limit tercapai)", inviter_id)
+        return
+    db.ledger_add(inviter_id, settings.ref_inviter, "ref_bonus_inviter", ref=str(invitee_id))
+    db.ref_mark(invitee_id, inviter_paid=1)
+    try:
+        await bot.send_message(
+            inviter_id,
+            f"🎉 <b>Bonus referral +{settings.ref_inviter:g} Token</b>\n"
+            f"Teman yang kamu undang sudah bergabung.\n{saldo_txt(inviter_id)}",
+            reply_markup=main_menu_kb())
+    except Exception as e:                # noqa: BLE001
+        log.warning("gagal kabari pengundang %s: %s", inviter_id, e)
+
+
+async def _claim_invitee(uid: int) -> str:
+    """Klaim bonus invitee → 'ok' | 'sudah' | 'bukan' | 'belum_join'."""
+    r = db.ref_get(uid)
+    if not r:
+        return "bukan"
+    if r["invitee_paid"]:
+        return "sudah"
+    if not await _channel_ok(uid):
+        return "belum_join"
+    db.ledger_add(uid, settings.ref_invitee, "ref_bonus_invitee", ref=str(r["inviter_id"]))
+    db.ref_mark(uid, invitee_paid=1, status="paid")
+    if not settings.ref_inviter_after_purchase:
+        await _give_inviter_bonus(int(r["inviter_id"]), uid)
+    return "ok"
+
+
+async def _ref_on_purchase(uid: int) -> None:
+    """Dipanggil setelah top up: mode aman → cairkan bonus pengundang di sini."""
+    if not settings.ref_inviter_after_purchase:
+        return
+    inv = db.ref_pending_inviter(uid)
+    if inv:
+        await _give_inviter_bonus(inv, uid)
+
+
 @router.callback_query(F.data == "m:ref")
 async def cb_ref(cb: CallbackQuery):
-    link = f"https://t.me/{(await cb.bot.me()).username}?start=ref{cb.from_user.id}"
-    await cb.message.edit_text(
-        f"👥 <b>Program Referral</b>\n\nBagikan link ini:\n<code>{link}</code>\n\n"
-        f"Setiap teman yang daftar & first top-up, kamu dapat bonus token.",
-        reply_markup=back_kb())
+    uid = cb.from_user.id
+    me = await cb.bot.me()
+    link = _ref_link(me.username or "kreeaibot", uid)
+    st, r = db.ref_summary(uid), db.ref_get(uid)
+    txt = (f"👥 <b>Program Referral {settings.bot_name}</b>\n\n"
+           f"🎁 Temanmu dapat <b>{settings.ref_invitee:g} Token</b> gratis\n"
+           f"💰 Kamu dapat <b>{settings.ref_inviter:g} Token</b> tiap teman yang ikut\n\n"
+           f"<b>Link kamu</b> (tekan untuk salin):\n<code>{link}</code>\n\n"
+           f"📊 Diundang: <b>{st['total']}</b> · berhasil: <b>{st['paid']}</b>\n"
+           f"💰 Token dari referral: <b>{st['earned']:.1f}</b>\n"
+           f"📅 Batas: {settings.ref_max_day}/hari · {settings.ref_max_month}/bulan\n\n"
+           f"📢 Komunitas: <a href=\"{settings.channel_link}\">{settings.channel_title}</a>\n\n"
+           f"<i>Syarat: teman harus akun Telegram yang belum pernah pakai bot ini dan wajib join "
+           f"channel komunitas. 1 bonus per akun — jadi tidak bisa di-farming.</i>")
+    rows: list[list[InlineKeyboardButton]] = []
+    if r and not r["invitee_paid"]:
+        rows.append([InlineKeyboardButton(
+            text=f"🎁 Klaim bonus kamu (+{settings.ref_invitee:g} Token)", callback_data="r:claim")])
+    share = (f"https://t.me/share/url?url={link}&text="
+             f"Coba {settings.bot_name}! Bikin video iklan dari foto, langsung di Telegram")
+    rows.append([InlineKeyboardButton(text="📤 Bagikan ke teman", url=share)])
+    await cb.message.edit_text(txt, reply_markup=back_kb(rows))
     await cb.answer()
+
+
+@router.callback_query(F.data == "r:claim")
+async def cb_claim(cb: CallbackQuery):
+    uid = cb.from_user.id
+    kode = await _claim_invitee(uid)
+    if kode == "ok":
+        await cb.message.edit_text(
+            f"🎉 <b>Bonus referral masuk: +{settings.ref_invitee:g} Token!</b>\n\n"
+            f"{saldo_txt(uid)}\n\nLangsung coba fiturnya 👇",
+            reply_markup=main_menu_kb())
+        await cb.answer("Bonus masuk!")
+    elif kode == "sudah":
+        await cb.answer("Bonus referral kamu sudah pernah diklaim 🙂", show_alert=True)
+    elif kode == "belum_join":
+        await cb.message.edit_text(_join_txt("Sebentar lagi 🙂"), reply_markup=_join_kb())
+        await cb.answer("Kamu belum join channel")
+    else:
+        await cb.message.edit_text(
+            "ℹ️ Kamu belum terdaftar di program referral.\n\n"
+            "Kalau ada teman mengundangmu, buka link undangannya ya.",
+            reply_markup=back_kb())
+        await cb.answer()
+
+
+@router.message(Command("refstats"))
+async def cmd_refstats(msg: Message):
+    """Admin: rekap referral (deteksi farming)."""
+    if not is_admin(msg.from_user.id):
+        return
+    rows = db.ref_top(10)
+    total = sum(int(r["total"]) for r in rows)
+    paid = sum(int(r["paid"] or 0) for r in rows)
+    lines = ["👥 <b>Statistik Referral</b>",
+             f"Tercatat: <b>{total}</b> · berhasil: <b>{paid}</b>", ""]
+    for r in rows:
+        lines.append(f"· <code>{r['inviter_id']}</code> — {int(r['total'])} undang · "
+                     f"{int(r['paid'] or 0)} cair")
+    lines.append(f"\nTotal user: {db.stats()['users']}")
+    await msg.answer("\n".join(lines))
 
 
 # ============================ detail fitur ============================

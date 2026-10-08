@@ -49,6 +49,17 @@ CREATE TABLE IF NOT EXISTS vouchers (
     used        INTEGER NOT NULL DEFAULT 0,
     created_at  INTEGER NOT NULL
 );
+CREATE TABLE IF NOT EXISTS referrals (
+    id           INTEGER PRIMARY KEY AUTOINCREMENT,
+    inviter_id   INTEGER NOT NULL,
+    invitee_id   INTEGER NOT NULL UNIQUE,          -- 1 akun hanya bisa jadi invitee SEKALI seumur hidup
+    status       TEXT NOT NULL DEFAULT 'pending',  -- pending | paid | blocked
+    invitee_paid INTEGER NOT NULL DEFAULT 0,
+    inviter_paid INTEGER NOT NULL DEFAULT 0,
+    created_at   INTEGER NOT NULL,
+    paid_at      INTEGER
+);
+CREATE INDEX IF NOT EXISTS idx_ref_inviter ON referrals(inviter_id, status);
 """
 
 
@@ -142,6 +153,62 @@ class Database:
     def pending_jobs(self) -> list[sqlite3.Row]:
         return list(self.conn.execute(
             "SELECT * FROM jobs WHERE status IN ('queued','running') ORDER BY id"))
+
+    # ---------- referral (anti-farming) ----------
+    def ref_register(self, inviter_id: int, invitee_id: int) -> bool:
+        """Catat invitee (1 akun = 1 kali seumur hidup). False kalau tidak valid/duplikat."""
+        if inviter_id <= 0 or inviter_id == invitee_id:
+            return False
+        if self.conn.execute("SELECT 1 FROM referrals WHERE invitee_id=?", (invitee_id,)).fetchone():
+            return False
+        self.conn.execute(
+            "INSERT INTO referrals (inviter_id, invitee_id, created_at) VALUES (?,?,?)",
+            (inviter_id, invitee_id, _now()))
+        self.conn.execute("UPDATE users SET referred_by=? WHERE telegram_id=?", (inviter_id, invitee_id))
+        self.conn.commit()
+        return True
+
+    def ref_get(self, invitee_id: int) -> sqlite3.Row | None:
+        return self.conn.execute("SELECT * FROM referrals WHERE invitee_id=?", (invitee_id,)).fetchone()
+
+    def ref_mark(self, invitee_id: int, **f: Any) -> None:
+        allowed = {"invitee_paid", "inviter_paid", "status"}
+        f = {k: v for k, v in f.items() if k in allowed}
+        if not f:
+            return
+        if f.get("invitee_paid") or f.get("status") == "paid":
+            f["paid_at"] = _now()
+        cols = ", ".join(f"{k}=?" for k in f)
+        self.conn.execute(f"UPDATE referrals SET {cols} WHERE invitee_id=?", (*f.values(), invitee_id))
+        self.conn.commit()
+
+    def ref_count_since(self, inviter_id: int, since_ts: int) -> int:
+        return int(self.conn.execute(
+            "SELECT COUNT(*) n FROM referrals WHERE inviter_id=? AND status='paid' AND created_at>=?",
+            (inviter_id, since_ts)).fetchone()["n"])
+
+    def ref_summary(self, inviter_id: int) -> dict[str, Any]:
+        c = self.conn
+        total = c.execute("SELECT COUNT(*) n FROM referrals WHERE inviter_id=?",
+                          (inviter_id,)).fetchone()["n"]
+        paid = c.execute("SELECT COUNT(*) n FROM referrals WHERE inviter_id=? AND status='paid'",
+                         (inviter_id,)).fetchone()["n"]
+        earned = c.execute("SELECT COALESCE(SUM(delta),0) s FROM ledger"
+                           " WHERE telegram_id=? AND reason='ref_bonus_inviter'",
+                           (inviter_id,)).fetchone()["s"]
+        return {"total": int(total), "paid": int(paid), "earned": float(earned)}
+
+    def ref_top(self, limit: int = 10) -> list[sqlite3.Row]:
+        return list(self.conn.execute(
+            "SELECT inviter_id, COUNT(*) total, SUM(status='paid') paid,"
+            " SUM(inviter_paid) paid_inviter FROM referrals"
+            " GROUP BY inviter_id ORDER BY total DESC LIMIT ?", (limit,)))
+
+    def ref_pending_inviter(self, invitee_id: int) -> int | None:
+        r = self.ref_get(invitee_id)
+        if r and r["invitee_paid"] and not r["inviter_paid"]:
+            return int(r["inviter_id"])
+        return None
 
     def stats(self) -> dict[str, Any]:
         c = self.conn
