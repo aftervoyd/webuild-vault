@@ -88,6 +88,10 @@ class Settings:
     promptsmith_key: str = _env("PROMPTSMITH_API_KEY")
     promptsmith_model: str = _env("PROMPTSMITH_MODEL")
 
+    # Fitur video biasa (i2v / all-in-one): prompt user dirapikan LLM sebelum render.
+    # AMAN: gagal / hasil aneh / kosong → otomatis pakai prompt ASLI user (render tak pernah gagal).
+    refine_video: bool = _env_bool("KREAIBOT_REFINE_VIDEO", True)
+
     # === Storage / sistem ===
     db_path: str = _env("KREAIBOT_DB", str(BASE_DIR / "kreaibot.sqlite3"))
     work_dir: str = _env("KREAIBOT_WORK", str(BASE_DIR / "work"))

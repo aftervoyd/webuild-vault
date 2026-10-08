@@ -174,6 +174,30 @@ REFINE_SYSTEM = (
 )
 
 
+# --------------------------------------------------- penyempurnaan prompt VIDEO (i2v/all-in-one)
+# Pelajaran penting (8 Okt): menempel klausa "seluruh frame harus bergerak" membuat model
+# ikut me-warp wajah & badan → hasilnya lebih rusak. Aturan di bawah sengaja KETAT:
+# identitas & latar dipertahankan, gerakan kecil & natural, dilarang menambah objek baru.
+VIDEO_REFINE_SYSTEM = (
+    "You are a senior prompt engineer for IMAGE-TO-VIDEO models (MiniMax H3/Hailuo, Kling, LTX, Veo). "
+    "You get the user's raw prompt (may be Indonesian, messy, or very short) and rewrite it into ONE "
+    "single, natural, high-quality English prompt that animates the user's uploaded photo.\n"
+    "HARD RULES:\n"
+    "1. Keep the user's intent exactly: same person, same scene, same action. NEVER invent new "
+    "objects, people, places, brands or events the user did not ask for.\n"
+    "2. Identity must stay stable: say the person's face, hair, glasses, skin and outfit stay exactly "
+    "as in the photo, photoreal skin texture, no morphing, no identity drift.\n"
+    "3. Keep the background faithful to the photo. You may describe only the motion that naturally "
+    "belongs to what the user described (e.g. sea waves moving gently, hair and fabric in a light "
+    "breeze). NEVER say the whole frame moves, never ask for constant motion everywhere.\n"
+    "4. Motion must be smooth, calm and believable (small natural movement), not chaotic.\n"
+    "5. Include: subject + action, subtle camera movement, lighting/mood, realism cues.\n"
+    "6. ONE paragraph, max 90 words. No bullet points, no quotes, no markdown, no preamble.\n"
+    "7. Never mention text, watermark, logo, subtitles, or any duration/timeline.\n"
+    "Reply with the rewritten prompt text ONLY."
+)
+
+
 async def refine_with_llm(base_prompt: str, brief: str, style_key: str,
                           base_url: str = "", api_key: str = "", model: str = "") -> str:
     """Coba rapikan prompt pakai LLM (opsional). Gagal → kembalikan base_prompt."""
@@ -201,6 +225,45 @@ async def refine_with_llm(base_prompt: str, brief: str, style_key: str,
         return txt or base_prompt
     except Exception:
         return base_prompt
+
+
+async def refine_video_prompt(raw: str, ratio: str = "9:16", duration: int = 5,
+                              base_url: str = "", api_key: str = "", model: str = "",
+                              timeout: int = 30) -> str:
+    """Rapikan prompt user untuk fitur video (i2v / all-in-one).
+
+    Aman: gagal / kosong / hasilnya aneh → kembalikan prompt ASLI. Render tidak boleh
+    gagal cuma karena perapian prompt.
+    """
+    raw = " ".join(str(raw or "").split())
+    if len(raw) < 3:
+        return raw
+    base_url = (base_url or os.getenv("PROMPTSMITH_BASE_URL", "")).rstrip("/")
+    api_key = api_key or os.getenv("PROMPTSMITH_API_KEY", "")
+    model = model or os.getenv("PROMPTSMITH_MODEL", "")
+    if not (base_url and api_key and model):
+        return raw
+    try:
+        import aiohttp
+        user = (f"USER PROMPT (may be Indonesian, may be messy):\n{raw}\n\n"
+                f"CONTEXT: image-to-video from the user's uploaded photo, aspect ratio {ratio}, "
+                f"about {duration} seconds.\nREWRITTEN PROMPT:")
+        payload = {"model": model, "temperature": 0.4, "max_tokens": 400,
+                   "messages": [{"role": "system", "content": VIDEO_REFINE_SYSTEM},
+                                {"role": "user", "content": user}]}
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=timeout)) as s:
+            async with s.post(f"{base_url}/chat/completions", json=payload,
+                              headers={"Authorization": f"Bearer {api_key}",
+                                       "Content-Type": "application/json"}) as r:
+                js = await r.json(content_type=None)
+        txt = ((js.get("choices") or [{}])[0].get("message", {}) or {}).get("content", "") or ""
+        txt = " ".join(txt.strip().strip('"').strip("`").split())[:1200]
+        # Jaring pengaman: jawaban ngawur / kependekan → pakai prompt ASLI.
+        if len(txt) < 20 or txt.lower().startswith(("i ", "here", "sure", "prompt:", "asal")):
+            return raw
+        return txt
+    except Exception:                       # noqa: BLE001
+        return raw
 
 
 def summary_for_user(style_key: str, brief: str = "") -> str:

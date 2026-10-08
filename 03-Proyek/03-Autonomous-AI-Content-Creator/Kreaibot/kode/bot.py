@@ -870,7 +870,9 @@ async def _confirm(target: Message, state: FSMContext, uid: int, edit: bool = Fa
         teks = (f"{f.label}\n\n🖼 Foto: <b>{len(data.get('photos', []))}</b>\n"
                 f"📝 Prompt: <i>{(data.get('prompt') or '-')[:200]}</i>\n"
                 f"📐 Rasio: <b>{ratio}</b> · ⏱ Durasi: <b>{dur} dtk</b>\n\n"
-                f"💠 Biaya: <b>{cost:g} Token</b>\n{saldo_txt(uid)}")
+                f"💠 Biaya: <b>{cost:g} Token</b>\n{saldo_txt(uid)}"
+                + ("\n✨ Prompt kamu dirapikan otomatis biar hasilnya lebih rapi."
+                   if settings.refine_video else ""))
 
     teks += "\n\n" + ("Tekan 🚀 Render kalau sudah pas (bisa ganti rasio/durasi di bawah)."
                       if cukup else "⚠️ Saldo kurang — Top Up dulu ya.")
@@ -1016,6 +1018,18 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                 if refined and refined != job["prompt"]:
                     log.info("job %s prompt dihaluskan LLM (%d → %d char)", job_id,
                              len(job["prompt"] or ""), len(refined))
+                    db.set_job(job_id, prompt=refined)
+            elif f and settings.refine_video and (job["prompt"] or "").strip():
+                # 0b) fitur video biasa (i2v/all-in-one): rapikan prompt user.
+                #     Gagal / hasil aneh → refine_video_prompt mengembalikan prompt ASLI.
+                refined = await promptsmith.refine_video_prompt(
+                    job["prompt"] or "", ratio=job["ratio"] or "9:16",
+                    duration=int(job["duration"] or f.duration),
+                    base_url=settings.promptsmith_base, api_key=settings.promptsmith_key,
+                    model=settings.promptsmith_model)
+                if refined and refined != job["prompt"]:
+                    log.info("job %s prompt video dirapikan LLM (%d → %d char)",
+                             job_id, len(job["prompt"] or ""), len(refined))
                     db.set_job(job_id, prompt=refined)
 
             # 1) unduh aset referensi

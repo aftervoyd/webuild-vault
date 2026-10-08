@@ -78,6 +78,18 @@ async def main() -> int:
     res.append(ok("frame i2v = foto asli di dua ujung (tanpa gambar sintetis)",
                   "photo1_zoom" not in (Path(__file__).with_name(".env").read_text(encoding="utf-8")
                                         if (Path(__file__).with_name(".env")).exists() else "")))
+    # 1d) PERAPIAN PROMPT VIDEO — wajib aman (fallback ke prompt asli)
+    res.append(ok("fungsi perapian prompt video tersedia",
+                  hasattr(promptsmith, "refine_video_prompt")))
+    res.append(ok("perapian prompt: input pendek → prompt asli (tanpa panggilan LLM)",
+                  "if len(raw) < 3:" in (Path(__file__).with_name("promptsmith.py")).read_text(encoding="utf-8")
+                  and "return raw" in (Path(__file__).with_name("promptsmith.py")).read_text(encoding="utf-8")))
+    res.append(ok("aturannya melarang 'whole frame' bergerak (pelajaran 8 Okt)",
+                  "whole frame" in promptsmith.VIDEO_REFINE_SYSTEM.lower()))
+    res.append(ok("bot merapikan prompt video sebelum render (dengan saklar)",
+                  "refine_video_prompt" in src and "settings.refine_video" in src))
+    res.append(ok("saklar perapian bisa dimatikan lewat env",
+                  "KREAIBOT_REFINE_VIDEO" in (Path(__file__).with_name("config.py")).read_text(encoding="utf-8")))
 
     # 2) PromptSmith
     res.append(ok("6 gaya UGC tersedia", len(promptsmith.STYLES) == 6, ", ".join(promptsmith.STYLES)))

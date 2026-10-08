@@ -111,6 +111,7 @@ def main() -> int:
         "handler pilih rasio": 'startswith("a:ratio:")',
         "handler render": 'F.data == "f:render"',
         "handler top-up": 'F.data == "m:topup"',
+        "perapian prompt video (aman, ada fallback)": "refine_video_prompt",
     }
     for label, needle in wajib.items():
         okk = needle in SRC or needle.replace("{key}", "").replace("{d}", "") in SRC
