@@ -49,3 +49,9 @@ KREAIBOT_REF_INVITER_AFTER_PURCHASE=0
 - `python3 selftest.py` — 12 tes referral (DB: duplikat, self-ref, cap, rekap).
 - `python3 tools/ref_e2e.py` — 10 tes E2E memanggil handler asli `/start ref_<id>`
   (pakai DB terisolasi `/tmp/reftest.sqlite3`, DB produksi tidak tersentuh).
+## ✅ Channel komunitas AKTIF (8 Okt 2026)
+- Channel: **Kreativ Community** — https://t.me/KreeaCommunity (id `-1003974283863`)
+- Bot `@kreeaibot` = **administrator** channel; owner = creator
+- `KREAIBOT_CHANNEL=KreeaCommunity` → gate "wajib join" AKTIF
+- Dibuat otomatis via otomasi GUI Telegram Desktop (xdotool + OCR tesseract, server headless DISPLAY=:99)
+- Uji: owner → LOLOS (creator) · non-member → DITOLAK (member not found) · `tools/channel_gate_test.py`
