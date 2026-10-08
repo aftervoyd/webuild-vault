@@ -69,7 +69,7 @@ async def main() -> int:
     res.append(ok('tombol "✅ Lanjut" sudah dihapus dari alur',
                   "✅ Lanjut" not in src and "Lanjut ke Brief" not in src))
     res.append(ok("prompt fitur video dikirim APA ADANYA (tanpa klausa tambahan)",
-                  "AMBIENT_MOTION" not in src and 'data.get("prompt", "")' in src))
+                  "AMBIENT_MOTION" not in src and 'str(data.get("prompt") or "").split()' in src))
     res.append(ok("tidak ada klausa karangan 'LIVING BACKGROUND' (dihapus 8 Okt)",
                   not hasattr(promptsmith, "AMBIENT_MOTION")))
     res.append(ok("prompt UGC tanpa klausa karangan",
