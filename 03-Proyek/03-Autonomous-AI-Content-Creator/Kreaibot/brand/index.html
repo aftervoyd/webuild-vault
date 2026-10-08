@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kreea.ai — Studio Konten AI di Telegram</title>
+<meta name="description" content="Kreea.ai adalah studio konten AI di Telegram. Bikin video iklan (UGC), video dari foto, dan konten sosial media langsung dari chat. Bayar pakai QRIS." />
+<meta property="og:title" content="Kreea.ai — Studio Konten AI di Telegram" />
+<meta property="og:description" content="Bikin video iklan (UGC) & video konten dari foto kamu — langsung dari Telegram." />
+<meta property="og:type" content="website" />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#070B14; --bg2:#0C1322; --card:#111A2E; --line:#1E2A44;
+    --fg:#E8EEF9; --muted:#93A3BF; --accent:#22D3EE; --accent2:#A3E635;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:
+      radial-gradient(900px 500px at 12% -8%, rgba(34,211,238,.16), transparent 60%),
+      radial-gradient(800px 480px at 88% 8%, rgba(163,230,53,.12), transparent 60%),
+      var(--bg);
+    color:var(--fg); font-family:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1060px;margin:0 auto;padding:22px}
+  header{display:flex;align-items:center;justify-content:space-between;padding:6px 0 26px}
+  .brand{display:flex;align-items:center;gap:11px;font-weight:800;letter-spacing:.3px;font-size:19px}
+  .mark{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));color:#06101F;font-weight:800;font-size:18px}
+  .badge{font-size:12px;color:var(--muted);border:1px solid var(--line);padding:6px 11px;border-radius:99px;white-space:nowrap}
+  h1{font-size:clamp(30px,5.4vw,52px);line-height:1.08;margin:6px 0 14px;font-weight:800;letter-spacing:-.5px}
+  .grad{background:linear-gradient(120deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{color:var(--muted);font-size:clamp(15px,2.1vw,18px);max-width:640px}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;margin:26px 0 8px}
+  .btn{display:inline-flex;align-items:center;gap:9px;padding:13px 20px;border-radius:13px;font-weight:600;
+    text-decoration:none;border:1px solid transparent;transition:.15s transform,.15s box-shadow}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-p{background:linear-gradient(120deg,var(--accent),var(--accent2));color:#06101F;box-shadow:0 10px 26px rgba(34,211,238,.18)}
+  .btn-s{border-color:var(--line);color:var(--fg);background:rgba(255,255,255,.02)}
+  section{margin:44px 0}
+  h2{font-size:20px;margin:0 0 16px;font-weight:700}
+  .grid{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(255px,1fr))}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.035),rgba(255,255,255,.01));
+    border:1px solid var(--line);border-radius:16px;padding:18px}
+  .card h3{margin:12px 0 6px;font-size:16.5px}
+  .card p{margin:0;color:var(--muted);font-size:14.3px}
+  .ico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;background:rgba(34,211,238,.11);border:1px solid rgba(34,211,238,.25)}
+  .ico svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  ol.steps{margin:0;padding-left:0;list-style:none;counter-reset:s}
+  ol.steps li{counter-increment:s;position:relative;padding:11px 0 11px 46px;border-bottom:1px dashed var(--line);color:var(--muted)}
+  ol.steps li:last-child{border-bottom:0}
+  ol.steps li::before{content:counter(s);position:absolute;left:0;top:9px;width:29px;height:29px;border-radius:9px;
+    display:grid;place-items:center;font-weight:700;font-size:13.5px;color:#06101F;background:linear-gradient(135deg,var(--accent),var(--accent2))}
+  ol.steps b{color:var(--fg)}
+  .price{width:100%;border-collapse:collapse;font-size:14.5px;overflow:hidden;border-radius:14px;border:1px solid var(--line)}
+  .price th,.price td{padding:12px 14px;text-align:left;border-bottom:1px solid var(--line)}
+  .price th{background:rgba(255,255,255,.03);font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .price tr:last-child td{border-bottom:0}
+  .price td:last-child{color:var(--accent2);font-weight:600;white-space:nowrap}
+  .note{color:var(--muted);font-size:13.2px;margin-top:11px}
+  footer{border-top:1px solid var(--line);margin-top:52px;padding:22px 0 34px;color:var(--muted);font-size:13.3px;
+    display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center}
+  a{color:var(--accent)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="brand"><div class="mark">K</div> Kreea.ai</div>
+    <div class="badge">Studio Konten AI · Telegram</div>
+  </header>
+
+  <main>
+    <h1>Bikin <span class="grad">video iklan &amp; konten</span> dari foto kamu — langsung dari Telegram.</h1>
+    <p class="lead">
+      Kreea.ai mengubah foto kamu dan foto produk menjadi video pendek siap posting:
+      video iklan gaya kreator (UGC), video sinematik dari foto, sampai konten rasio vertikal untuk
+      TikTok, Reels, dan Shorts. Semua dikerjakan otomatis oleh AI, hasilnya dikirim balik ke chat kamu.
+    </p>
+
+    <div class="cta">
+      <a class="btn btn-p" href="https://t.me/kreeaibot">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.3 18.9 19c-.2 1-.8 1.3-1.7.8l-4.6-3.4-2.2 2.2c-.3.3-.6.6-1.1.6l.4-4.8L18 6.7c.4-.3-.1-.5-.6-.2L6.8 13.4 2.4 12c-1-.3-1-1 .2-1.4l17.6-6.8c.8-.3 1.6.2 1.4 1.1z"/></svg>
+        Buka bot di Telegram
+      </a>
+      <a class="btn btn-s" href="#harga">Lihat harga</a>
+    </div>
+    <p class="note">Bot Telegram: <a href="https://t.me/kreeaibot">@kreeaibot</a> · Pembayaran QRIS · Proses otomatis</p>
+
+    <section>
+      <h2>Yang bisa kamu bikin</h2>
+      <div class="grid">
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M6 7h12l1.5 12H4.5L6 7z"/><path d="M9 7V6a3 3 0 0 1 6 0v1"/></svg></div>
+          <h3>UGC Video Iklan</h3>
+          <p>Kirim foto kreator + foto produk, tulis brief singkat, pilih gaya (review, unboxing, promo, testimoni, problem–solution, sinematik). Sistem merakit naskah videonya otomatis.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="M10 9.5l5 2.5-5 2.5z"/></svg></div>
+          <h3>Video dari Foto</h3>
+          <p>Foto kamu atau produk jadi video bergerak dengan kamera dan gerakan natural. Bisa pakai frame awal + frame akhir untuk transisi yang halus.</p>
+        </div>
+        <div class="card">
+          <div class="ico"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="9"/></svg></div>
+          <h3>Siap Sosial Media</h3>
+          <p>Rasio <b>9:16</b> vertikal (TikTok/Reels/Shorts), <b>16:9</b> (YouTube), atau <b>1:1</b> (feed). Durasi hingga 15 detik dengan audio, kualitas siap posting.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Caranya gampang</h2>
+      <div class="card">
+        <ol class="steps">
+          <li>Buka bot <b>@kreeaibot</b> di Telegram, tekan <b>/start</b>.</li>
+          <li>Pilih jenis video, lalu <b>kirim fotonya</b> (wajah/kreator + produk).</li>
+          <li>Tulis <b>brief singkat</b> — produk apa, harga, mau gaya seperti apa.</li>
+          <li>Pilih <b>gaya &amp; rasio</b>, lalu konfirmasi. Sistem merakit prompt videonya.</li>
+          <li>Video jadi dikirim otomatis ke chat kamu. Tinggal posting. 🎬</li>
+        </ol>
+      </div>
+    </section>
+
+    <section id="harga">
+      <h2>Harga</h2>
+      <div class="card" style="padding:0;border:0;background:none">
+        <table class="price">
+          <thead><tr><th>Fitur</th><th>Durasi</th><th>Harga</th></tr></thead>
+          <tbody>
+            <tr><td>Image to Video</td><td>5 detik</td><td>1 Token — Rp1.000</td></tr>
+            <tr><td>Video All-in-One</td><td>15 detik</td><td>2,5 Token — Rp2.500</td></tr>
+            <tr><td>UGC Video Iklan</td><td>15 detik</td><td>2,5 Token — Rp2.500</td></tr>
+          </tbody>
+        </table>
+        <p class="note">
+          Token dibeli di dalam bot. Paket top up mulai <b>Rp10.000 (10 Token)</b>.
+          Pembayaran via <b>QRIS</b> (semua bank &amp; e-wallet). Token masuk otomatis setelah pembayaran berhasil.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2>Untuk siapa</h2>
+      <div class="grid">
+        <div class="card"><h3>UMKM &amp; online shop</h3><p>Bikin video iklan produk tanpa perlu videografer — cukup foto produk dari HP.</p></div>
+        <div class="card"><h3>Kreator &amp; affiliate</h3><p>Produksi konten harian lebih cepat, banyak variasi gaya dalam satu brief.</p></div>
+        <div class="card"><h3>Brand &amp; agensi</h3><p>Bikin variasi materi kampanye dalam jumlah banyak untuk uji performa iklan.</p></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div>© <span id="y">2026</span> Kreea.ai — studio konten AI.</div>
+    <div>Kontak: <a href="https://t.me/kreeaibot">@kreeaibot</a> (Telegram)</div>
+  </footer>
+</div>
+<script>document.getElementById('y').textContent=new Date().getFullYear();</script>
+</body>
+</html>
