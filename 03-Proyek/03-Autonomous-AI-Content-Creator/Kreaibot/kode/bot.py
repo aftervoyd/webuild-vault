@@ -52,7 +52,7 @@ def saldo_txt(tid: int) -> str:
 
 def main_menu_kb() -> InlineKeyboardMarkup:
     rows = []
-    for f in catalog.FEATURES.values():
+    for f in catalog.enabled_features():
         rows.append([InlineKeyboardButton(text=f"{f.label} — {f.cost:g} Token",
                                           callback_data=f"m:feat:{f.key}")])
     rows.append([InlineKeyboardButton(text="⚡ Top Up Token", callback_data="m:topup"),
@@ -523,7 +523,8 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
             req = GenRequest(job_id=job_id, feature_key=job["feature"],
                              workflow=f.backend_workflow if f else "", photos=local,
                              video_in=video_in, prompt=job["prompt"] or "",
-                             ratio=job["ratio"] or "9:16", out_path=out)
+                             ratio=job["ratio"] or "9:16",
+                             duration=(f.duration if f else 5), out_path=out)
             task_id = await backend.submit(req)
             db.set_job(job_id, status="running", task_id=task_id)
             t0 = time.time()

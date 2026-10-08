@@ -19,15 +19,17 @@ class Feature:
     need_style: bool = False # wajib pilih gaya (UGC)
     char_first: bool = False # foto ke-1 = character sheet
     product_slot: bool = False  # ada slot foto produk
+    duration: int = 5         # durasi render (detik) — batas workflow 4..15
 
 
 FEATURES: dict[str, Feature] = {
     "ugc": Feature(
         key="ugc",
         label="🛍️ UGC Video Iklan",
-        cost=1.5,
+        cost=2.5,
         min_photos=2, max_photos=2,
         need_prompt=True, need_ratio=True,
+        duration=15,
         desc=("Video iklan gaya kreator (UGC) untuk jualan produk.\n"
               "· Character sheet (foto wajah/tubuh kamu) + foto produk\n"
               "· Tulis brief: nama produk, harga, keunggulan, atau maunya video seperti apa\n"
@@ -38,10 +40,11 @@ FEATURES: dict[str, Feature] = {
     ),
     "allinone": Feature(
         key="allinone",
-        label="🌌 Video All-in-One (30s)",
-        cost=1.0,
+        label="🌌 Video All-in-One (15 dtk)",
+        cost=2.5,
         min_photos=1, max_photos=6,
         need_prompt=True, need_ratio=True,
+        duration=15,
         desc=("Video 30 detik dari 1–6 foto referensi.\n"
               "· Foto 1 = frame awal · Foto 2 = frame akhir (opsional)\n"
               "· Foto 3–6 = elemen tambahan (outfit/properti/scene)"),
@@ -50,7 +53,7 @@ FEATURES: dict[str, Feature] = {
     "i2v": Feature(
         key="i2v",
         label="🎬 Image to Video",
-        cost=0.5,
+        cost=1.0,
         min_photos=1, max_photos=1,
         need_prompt=True, need_ratio=True,
         desc="Foto → video pendek (5 detik). Cocok buat teaser & loop.",
@@ -96,6 +99,15 @@ FEATURES: dict[str, Feature] = {
 }
 
 RATIOS = {"9:16": "📱 9:16 (TikTok/Reels/Shorts)", "16:9": "🎬 16:9 (YouTube)", "1:1": "🔲 1:1 (Feed IG)"}
+
+
+# Fitur yang SUDAH tersambung ke mesin render nyata (RunningHub workflow FL2VA).
+# Fitur lain tetap ada di katalog tapi belum tampil ke user sampai workflow-nya siap.
+SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v")
+
+
+def enabled_features() -> list[Feature]:
+    return [f for f in FEATURES.values() if f.key in SIAP_JUAL]
 
 
 def get(key: str) -> Feature | None:

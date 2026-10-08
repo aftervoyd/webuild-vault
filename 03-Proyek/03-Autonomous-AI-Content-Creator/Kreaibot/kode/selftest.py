@@ -27,9 +27,24 @@ async def main() -> int:
     # 1) katalog
     res.append(ok("katalog 7 fitur (termasuk UGC)", len(catalog.FEATURES) == 7, ", ".join(catalog.FEATURES)))
     f = catalog.get("allinone")
-    res.append(ok("harga All-in-One = 1 token", f is not None and f.cost == 1.0))
+    res.append(ok("harga All-in-One (15 dtk) = 2.5 token", f is not None and f.cost == 2.5))
+    i2v = catalog.get("i2v")
     res.append(ok("konversi Rp (10 tok = Rp10.000 → 1 tok = Rp1.000)",
-                  catalog.price_rp(f, 10, 10_000) == 1000, f"Rp{catalog.price_rp(f, 10, 10_000)}"))
+                  catalog.price_rp(i2v, 10, 10_000) == 1000,
+                  f"Rp{catalog.price_rp(i2v, 10, 10_000)}"))
+    # HARGA SEHAT: biaya koin terukur × Rp/koin harus di bawah harga jual (margin ≥ 40%).
+    # Angka koin dari render NYATA di RunningHub (5 dtk 4:3 = 70 · 15 dtk 9:16 = 269).
+    RUPIAH_PER_KOIN, KOIN_TERUKUR = 4.46, {"i2v": 70, "allinone": 269, "ugc": 269}
+    for key, koin in KOIN_TERUKUR.items():
+        ft = catalog.get(key)
+        harga = catalog.price_rp(ft, 10, 10_000)
+        biaya = koin * RUPIAH_PER_KOIN
+        margin = (harga - biaya) / harga * 100
+        res.append(ok(f"margin {key} sehat ({margin:.0f}%)", margin >= 40,
+                      f"harga Rp{harga:,} vs biaya Rp{biaya:,.0f}"))
+    res.append(ok("durasi render dalam batas workflow (4..15 dtk)",
+                  all(4 <= ft.duration <= 15 for ft in catalog.enabled_features()),
+                  ", ".join(f"{ft.key}={ft.duration}s" for ft in catalog.enabled_features())))
     ugc = catalog.get("ugc")
     res.append(ok("fitur UGC ada & bertingkat", bool(ugc and ugc.kind == "ugc" and ugc.need_style
                                                      and ugc.char_first and ugc.product_slot),
