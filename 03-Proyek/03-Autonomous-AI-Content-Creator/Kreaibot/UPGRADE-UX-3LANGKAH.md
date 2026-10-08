@@ -78,6 +78,51 @@ Ada di katalog tapi **belum tampil** karena butuh workflow RunningHub sendiri (n
 | 🌌 All-in-One "Star Trail" | 1,0 T | ✅ sudah jalan (H3) |
 
 ## 7. Bukti uji
-- `selftest.py`: **64/64 lulus** (termasuk 11 tes baru: alur tanpa tombol, harga × durasi, margin sehat)
+- `selftest.py`: **67/67 lulus** (termasuk 11 tes baru: alur tanpa tombol, harga × durasi, margin sehat, klausa latar hidup)
 - `tools/rh_zoom_test.py`: 4/4 ✅ (0 koin)
 - Render nyata terakhir: `fix_dup` 276 dtk/55 koin · `bug_none` 332 dtk/66 koin · `fix_zoom` 332 dtk/66 koin
+- Uji latar beku: `sea_same` 324 dtk/64 koin · `sea_zoom` 300 dtk/59 koin (paralel)
+
+## 8. Kasus "lautnya nggak gerak" — akar masalah & obat (8 Okt, malam)
+
+**Gejala (laporan user):** video i2v — laut di latar **beku**, cuma badan/wanita yang bergerak.
+
+**Diagnosis terukur:**
+- Diff frame pertama vs terakhir: perubahan **100% di badan**, area laut **identik** (mask diffs gelap total).
+- Heat-map gerakan: baris tengah 1,2–3,7 (beku); gerakan hanya di kepala/badan.
+
+**Dua akar masalah:**
+1. **Struktur:** workflow-nya **FL2VA** (frame awal + frame akhir). Karena frame akhir ≈ foto yang sama
+   (zoom 1,12x), model "mengunci" latar supaya kedua ujungnya konsisten → air laut dilarang berubah.
+2. **Prompt:** prompt fitur video **dikirim mentah** tanpa permintaan gerakan latar; bahkan NEGATIVE
+   berisi `no jitter or morphing` dan gaya bahasa memakai "subtle/slight" → model memilih diam.
+
+**Obat (sudah dipasang di produksi):**
+- `promptsmith.AMBIENT_MOTION` — klausa **LIVING BACKGROUND** (gerakan ambient: air, cahaya, air laut,
+  dedaunan, kain, rambut) ditempel otomatis ke **semua prompt** (bot: `build_final_prompt`; UGC: `build_ugc_prompt`).
+- NEGATIVE diperjelas: `no flicker or warping artifacts (natural motion is wanted — keep it)`.
+- Config frame terbaik dari 3 render uji: node 6 = foto asli (frame pertama), node 4 = foto **auto-zoom**
+  (push-in) — sekaligus paling banyak gerakan air menurut penilaian visual.
+
+**Hasil uji (perbandingan langsung, prompt sama-sama minta air bergerak):**
+
+| Varian | Gerakan 2 baris atas | Penilaian visual air | Kesimpulan |
+|---|---|---|---|
+| lama (`fix_zoom`, tanpa klausa) | 19,0 | **beku** | ✗ |
+| `sea_same` (frame awal = akhir) | **27,9** | air bergerak | ✓ (tapi tanpa gerak kamera) |
+| `sea_zoom` (push-in + klausa) | 17,7 | **paling banyak gerak** | ✓ **dipakai produksi** |
+
+**Pelajaran umum:** untuk workflow berjenis FL2VA (first+last), ujung yang identik *memang* mengunci
+latar. Mau latar hidup → (a) minta eksplisit di prompt, dan/atau (b) bedakan frame awal vs akhir
+(push-in/warp), dan/atau (c) pakai workflow i2v murni (bukan FL2VA) kalau ketemu di RunningHub.
+
+## 9. Temuan kualitas UGC (perlu keputusan, belum diperbaiki)
+
+Hasil bedah render UGC 15 dtk (`work/hasil-9x16-15s.mp4`) + 2 foto input:
+- Wanita & ruangan **konsisten** sepanjang video ✓ (tidak me-morph jadi produk).
+- **Produk salah:** di video muncul **jar bulat** bergambar label **huruf ngawur**; foto input-nya
+  **botol persegi panjang hijau muda** ✗. Produk cuma muncul di tengah (≈7,5 dtk) lalu hilang.
+- Sebab: workflow FL2VA hanya punya slot **frame awal/akhir**, bukan slot **referensi produk**.
+  Jadi foto produk dipakai sebagai *frame transisi*, bukan objek yang dipertahankan.
+- Opsi perbaikan: cari workflow RunningHub yang punya **reference image** (multi-image) untuk UGC,
+  atau terima produk hanya dijelaskan lewat teks (fidelitas produk turun tapi tidak salah bentuk).
