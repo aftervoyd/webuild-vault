@@ -1,0 +1,11 @@
+=== MULAI 14:43:32 ===
+→ rasio=9:16 durasi=15s fitur=allinone foto=2
+  upload: ['api/db5b58716c013e69ec439b68ab3383fef85f701d01ebe9d8c57563015d2d159d.png', 'api/5c9401cf9baed1423b9956c08b6641633a9b2673865db852359c3ac1ddd6dff3.png']
+  nodeInfoList: [{'nodeId': '4', 'fieldName': 'image', 'fieldValue': 'api/db5b58716c013e69ec439b68ab3383fef85f701d01ebe9d8c57563015d2d159d.png'}, {'nodeId': '6', 'fieldName': 'image', 'fieldValue': 'api/5c9401cf9baed1423b9956c08b6641633a9b2673865db852359c3ac1ddd6dff3.png'}, {'nodeId': '8', 'fieldName': 'prompt', 'fieldValue': '0-3s: handheld medium shot, the creator lifts the product toward the camera, warm light. 3-7s: gentle push-in, product label becomes sharp and readable, natural movement, consistent person.'}, {'nodeId': '7', 'fieldName': 'aspect_ratio', 'fieldValue': '9:16'}, {'nodeId': '7', 'fieldName': 'duration_seconds', 'fieldValue': '15'}, {'nodeId': '7', 'fieldName': 'width', 'fieldValue': '480'}, {'nodeId': '7', 'fieldName': 'height', 'fieldValue': '832'}]
+  taskId: 2108085879848370178 — menunggu render…
+
+✅ SELESAI dalam 1345s
+   💰 consumeCoins = 269  (≈ Rp1,200 @ Rp4.46/koin)
+   ⏱  taskCostTime = 1343s
+   🔗 https://rh-hk-images.xiaoyaoyou.com/8a307454e568f156cbb169c985ae0a45/output/minimax_h3/fl2va_first_last_frame_00001_hscna_1791443147.mp4
+   ⬇ tersimpan: work/hasil-9x16-15s.mp4 3611081 bytes
