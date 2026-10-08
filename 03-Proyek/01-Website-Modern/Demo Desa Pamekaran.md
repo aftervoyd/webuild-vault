@@ -248,3 +248,9 @@ Berkas: `/root/projects/desa-mobile/app.html` — LIVE `http://100.115.213.21:80
 ### 📱 Mobile (final)
 - Cover berita **1:1** (`.kartu-berita{aspect-ratio:1/1}` + `.geser{align-items:flex-start}` — tanpa `flex-start`, `align-items:stretch` mengalahkan `aspect-ratio`).
 - **PWA:** `manifest.webmanifest` + ikon 192/512/64 + `apple-mobile-web-app-*` → bisa di-install ke home screen.
+
+
+### 🔔 Revisi navbar + temuan render (8 Okt 2026)
+10. **Judul "Dashboard" + ikon lonceng dihapus dari bar atas versi website** (`body.web:not(.frame) #s-dash .bar{display:none}`) → isi dashboard **rata ke atas** (`.isi{padding-top:34px}`). Bar halaman Pasar tetap, karena di situ ada tombol keranjang yang berfungsi.
+11. **Lonceng pindah ke navbar kiri**: item "Pemberitahuan" + badge merah "3" (`.menulist a .lencana{margin-left:auto;…}` — `.menulist a` sudah `display:flex`, jadi badge terdorong ke kanan).
+12. **⚠️ Temuan besar: preview drawer SELAMA INI TIDAK PERNAH BENAR-BENAR TERBUKA.** `--virtual-time-budget` **tidak menjalankan transisi CSS** → `setTimeout(buka,120)` + `transition:transform .28s` berhenti di posisi AWAL. Terukur: panel 272px hanya tampil **~25px** (96% tertutup) padahal di DOM kelasnya sudah terbuka; tidak ada yang sadar karena papannya kecil. **FIX: query `&nofx=1`** → `body.nofx *{transition:none!important;animation:none!important}` yang di-set SEBELUM `show()`. Terukur sesudah: panel terang sampai **x≈300** ✓. **Aturan baru: semua screenshot pakai `&nofx=1`.**
