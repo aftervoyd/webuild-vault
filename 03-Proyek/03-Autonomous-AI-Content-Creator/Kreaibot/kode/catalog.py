@@ -211,8 +211,16 @@ SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "faceswap", "edi
                               "motion", "lipsync", "pose")
 
 
+# Urutan tombol di menu — disusun biar FAMILIAR buat user yang datang dari Kuzushi
+# (Face Swap & Motion → i2v → Editor → Pose → Lip Sync → All-in-One), UGC kita taruh paling atas.
+URUTAN_MENU: tuple[str, ...] = ("ugc", "motion", "i2v", "long", "editor",
+                                "pose", "lipsync", "allinone", "faceswap")
+
+
 def enabled_features() -> list[Feature]:
-    return [f for f in FEATURES.values() if f.key in SIAP_JUAL]
+    feats = [f for f in FEATURES.values() if f.key in SIAP_JUAL]
+    urut = {k: i for i, k in enumerate(URUTAN_MENU)}
+    return sorted(feats, key=lambda f: urut.get(f.key, 99))
 
 
 def get(key: str) -> Feature | None:
