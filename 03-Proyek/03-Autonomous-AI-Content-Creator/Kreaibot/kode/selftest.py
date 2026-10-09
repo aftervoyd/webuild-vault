@@ -431,6 +431,13 @@ async def main() -> int:
     res.append(ok("creator: sheet hasil creator bisa DIBACA bot (geometri panel cocok)",
                   bool(_okb) and _sf3.panel_for(_cc_sheet, "body") is not None
                   and len(_sf3.layout_panels(_I.open(_cc_sheet).size) or []) == 2))
+    res.append(ok("creator: langkah opsional 'foto tubuh' → proporsi PERSIS foto user",
+                  "body_ref" in _cg.run.__code__.co_varnames
+                  and 'cc:skipbody' in _bsrc6 and 'Flow.cc_body' in _bsrc6
+                  and 'body_ref=Path(body_ref) if body_ref else None' in _bsrc6))
+    res.append(ok("creator: kalau 'tempel wajah' gagal → otomatis balik ke cara AI (tidak bikin user gagal)",
+                  'pakai foto tubuh gagal' in (Path(__file__).with_name("chargen.py")).read_text(encoding="utf-8")
+                  and 'face_prompt' in (Path(__file__).with_name("chargen.py")).read_text(encoding="utf-8")))
     res.append(ok("bot: kunci identitas ambil PANEL WAJAH dari sheet",
                   'analyze_sync, face_local' in _bsrc5 and '_wajah.jpg' in _bsrc5))
 

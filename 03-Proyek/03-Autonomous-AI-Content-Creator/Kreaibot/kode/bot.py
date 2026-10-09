@@ -144,7 +144,8 @@ class Flow(StatesGroup):
     cc_bust = State()       # 5/8 bentuk dada
     cc_slim = State()       # 6/8 langsing
     cc_hips = State()       # 7/8 pinggul–bawah
-    cc_outfit = State()     # 8/8 outfit → konfirmasi
+    cc_outfit = State()     # 8/8 outfit → tawaran foto tubuh (opsional)
+    cc_body = State()       # 9/9 (opsional) kirim foto tubuh
 
 
 # ============================ menu ============================
@@ -2010,7 +2011,10 @@ async def cc_step(cb: CallbackQuery, state: FSMContext):
 
 
 def cc_confirm_text(uid: int, cc: dict) -> str:
-    return ("🧬 <b>Rangkuman Karakter</b>\n\n" + chargen.summary(cc) + "\n\n"
+    body = ("🧍 Proporsi badan: <b>dari FOTO kamu</b> (wajah ditempel ke foto itu — paling akurat)\n"
+            if cc.get("body_ref") else
+            "🧍 Proporsi badan: <b>digambar AI</b> dari pilihan di atas\n")
+    return ("🧬 <b>Rangkuman Karakter</b>\n\n" + chargen.summary(cc) + "\n" + body + "\n"
             f"💰 Biaya: <b>{chargen.COST:g} Token</b> · saldo kamu: <b>{db.balance(uid):.1f} Token</b>\n"
             "⏱️ Proses ±1,5–4 menit (4 gambar). Hasil: 1 sheet master + otomatis disimpan jadi karakter.\n\n"
             f"{chargen.DISCLAIMER}")
@@ -2030,8 +2034,46 @@ async def cc_outfit(cb: CallbackQuery, state: FSMContext):
     cc = data.get(CC_KEY, {})
     cc["outfit"] = key
     await state.update_data(**{CC_KEY: cc})
-    await cb.message.edit_text(cc_confirm_text(cb.from_user.id, cc), reply_markup=cc_confirm_kb())
+    await state.set_state(Flow.cc_body)
+    await cb.message.edit_text(
+        ("<b>Langkah 9/9 (opsional)</b> · Mau proporsi badan <b>PERSIS</b> dari foto?\n\n"
+         "📷 Kirim 1 <b>FOTO TUBUH</b> (full body, dari kepala sampai kaki) → gue tempel wajah kamu "
+         "ke foto itu. Jadi dada, pinggul, kaki & posturnya sama seperti foto — bukan karangan AI.\n\n"
+         "⏭️ Atau tekan <b>Lewati</b>: badan digambar AI dari pilihan kamu di atas (dada 1–3, "
+         "langsing 1–3, pinggul 1–3)."),
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+            [InlineKeyboardButton(text="⏭️ Lewati (biar AI yang gambar)", callback_data="cc:skipbody")],
+            [InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]))
     await cb.answer(chargen.label("outfit", key))
+
+
+@router.callback_query(F.data == "cc:skipbody")
+async def cc_skipbody(cb: CallbackQuery, state: FSMContext):
+    data = await state.get_data()
+    await cb.message.edit_text(cc_confirm_text(cb.from_user.id, data.get(CC_KEY, {})),
+                               reply_markup=cc_confirm_kb())
+    await cb.answer("Oke, AI yang gambar")
+
+
+@router.message(Flow.cc_body, F.photo | F.document)
+async def cc_body_ref(msg: Message, state: FSMContext):
+    uid = msg.from_user.id if msg.from_user else 0
+    fid = msg.photo[-1].file_id if msg.photo else msg.document.file_id
+    dest = Path(settings.work_dir) / "chargen" / str(uid) / "body.jpg"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        tg = await bot.get_file(fid)
+        await bot.download_file(tg.file_path, dest)
+    except Exception as e:                                   # noqa: BLE001
+        log.warning("chargen: unduh foto tubuh gagal: %s", e)
+        await msg.answer("⚠️ Gagal mengunduh fotonya — kirim ulang, atau tekan ⏭️ Lewati.")
+        return
+    data = await state.get_data()
+    cc = data.get(CC_KEY, {})
+    cc["body_ref"] = True
+    await state.update_data(**{CC_KEY: cc, "cc_body": str(dest)})
+    await msg.answer("✅ Foto tubuh diterima — proporsi badannya bakal PERSIS ikut foto ini.\n\n"
+                     + cc_confirm_text(uid, cc), reply_markup=cc_confirm_kb())
 
 
 @router.callback_query(F.data == "cc:go")
@@ -2057,13 +2099,14 @@ async def cc_go(cb: CallbackQuery, state: FSMContext):
     ref = f"cc:{uid}:{int(time.time())}"
     db.ledger_add(uid, -chargen.COST, "chargen", ref=ref)
     await cb.message.edit_text("🧬 <b>Mulai bikin karakter…</b>\n\n🎨 Menggambar wajah master…\n\n"
-                               "⏳ ±5–8 menit — jangan tutup bot, hasil dikirim otomatis.")
+                               "⏳ ±1,5–4 menit — jangan tutup bot, hasil dikirim otomatis.")
     asyncio.create_task(_cc_run(cb.message.chat.id, cb.message.message_id, uid, cc,
-                               Path(str(face)), ref))
-    await cb.answer("Mulai! ±5–8 menit")
+                                Path(str(face)), ref, data.get("cc_body")))
+    await cb.answer("Mulai! ±1,5–4 menit")
 
 
-async def _cc_run(chat_id: int, msg_id: int, uid: int, cc: dict, face: Path, ref: str) -> None:
+async def _cc_run(chat_id: int, msg_id: int, uid: int, cc: dict, face: Path, ref: str,
+                  body_ref: str | None = None) -> None:
     """Jalankan Character Creator di latar belakang + progress + simpan jadi karakter."""
     out_dir = Path(settings.work_dir) / "chargen" / str(uid)
 
@@ -2076,7 +2119,8 @@ async def _cc_run(chat_id: int, msg_id: int, uid: int, cc: dict, face: Path, ref
             pass
 
     try:
-        res = await chargen.run(backend, face, cc, out_dir, on_step=on_step)
+        res = await chargen.run(backend, face, cc, out_dir, on_step=on_step,
+                                body_ref=Path(body_ref) if body_ref else None)
         sheet = res["sheet"]
         sent = await bot.send_document(chat_id, FSInputFile(sheet),
                                        caption=("🧬 <b>Karakter kamu jadi!</b>\n\n" + chargen.summary(cc)

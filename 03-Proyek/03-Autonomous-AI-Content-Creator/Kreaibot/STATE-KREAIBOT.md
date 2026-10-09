@@ -807,6 +807,56 @@ Tapi penilaian jujur = **BELUM LAYAK JUAL**, 3 cacat nyata:
 **Pelajaran:** kalau panel sheet digambar semua dari satu wajah, atribut (baju/sepatu) akan bervariasi →
 selalu RANTAI dari panel tubuh pertama. Fon PIL tidak punya emoji → jangan taruh emoji di gambar.
 
+### 7a. CHARACTER CREATOR — PERBAIKAN PROPORSI TUBUH (9 Okt 20:0x)
+
+**Keluhan user:** "belum, ini proporsi tubuh paling ideal buat master karakter wanita"
+(kirim foto full-body dress merah + heels) → badan hasil AI **belum** sesuai.
+
+**Diagnosa (dibuktikan, bukan opini):** dibandingkan 3 panel berdampingan
+(1 = foto user, 2 = wajah user ditempel ke badan foto user, 3 = badan digambar AI murni):
+- panel 2 (tempel wajah) = **hampir identik** dengan foto user — proporsi, postur, kaki panjang ✓
+- panel 3 (AI murni) = lebih pendek/lebar, pinggang kurang tegas, kaki lebih pendek, pose kaku ✗
+→ **AKAR: model bahasa-teks tidak bisa meniru proporsi spesifik; harus pakai FOTO sebagai badan.**
+
+**SOLUSI (terpasang):** langkah **9/9 OPSIONAL — "foto proporsi tubuh"**.
+Kalau user kirim foto tubuh full-body: panel DEPAN dibuat dengan **menempel wajah user ke foto itu**
+(app identitas 93% `2020760401977282562`, image1=foto tubuh, image2=wajah), lalu samping & belakang
+dirantai dari panel depan → proporsi/baju/postur **PERSIS** foto user.
+Kalau gagal → otomatis balik ke cara AI (user tidak pernah gagal).
+
+**Catatan ukur:** percobaan mengukur proporsi pakai pixel GAGAL (latar bergradasi; deteksi orang ambruk)
+→ jalur yang dipakai: garis ukur di gambar + model vision baca posisi sendi (bahu 22%, pinggang 41%,
+pinggul 51%, kaki 48% tinggi). Pelajaran: **jangan buang waktu bikin segmentasi klasik di latar
+bergradasi; pakai grid + vision atau langsung pakai foto sebagai acuan.**
+
+### 7b. CHARACTER CREATOR — VERSI FINAL + HARGA (9 Okt 20:3x)
+
+**Perbaikan tambahan:** panel WAJAH sekarang **DITURUNKAN dari panel badan** (`face_from_body_prompt()`),
+bukan digambar terpisah dari foto wajah. Sebab: panel wajah terpisah → rambut & baju beda dari panel
+badan (dinilai vision). Sekarang rambut/kacamata/baju SAMA di 4 panel ✓.
+
+**Bukti uji bertingkat:**
+- v1 (semua dari wajah): baju & sepatu beda antar panel ❌ + tofu di judul ❌
+- v2 (rantai dari panel depan): baju/sepatu konsisten ✅ tapi panel wajah masih beda ❌
+- v3 (badan dari FOTO user): proporsi persis foto user ✅ tapi panel wajah masih beda ❌
+- **v4 FINAL**: badan dari foto user + panel wajah dari panel badan → **4 panel konsisten** ✅
+  (1 sisa catatan kecil: panjang gaun depan sedikit lebih mini dari samping/belakang)
+
+**Dimensi sheet bisa berubah** (1778×2880 atau 1522×2880) tergantung rasio panel — TIDAK masalah karena
+`sheetbuild` = satu sumber tata letak yang dipakai penulis sheet DAN pembaca (`sheetfix`) ✓ terverifikasi
+bot tetap membaca 4 panel.
+
+**HARGA FINAL = `chargen.COST = 4.0` Token (Rp4.000).** Alasan (biaya mesin TERUKUR nyata):
+| jalur | render | koin | ≈ Rp |
+|---|---|---|---|
+| pakai foto tubuh | 5 | **361** | Rp1.227 |
+| tanpa foto tubuh | 4 | 200–250 | Rp700–850 |
+→ margin 69% (paling berat) s/d 80%. (Catatan: `remainCoins` dari API bisa LAG — pengukuran
+"sebelum/sesudah" di dalam skrip sempat melaporkan 111 koin padahal nyatanya 361; ukur ulang
+setelah ±5 menit.)
+
+**Waktu:** 208–290 dtk (3,5–5 menit) dengan foto tubuh; 93–174 dtk tanpa.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

@@ -24,10 +24,12 @@ log = logging.getLogger("kreaibot.chargen")
 DISCLAIMER = "Setiap panel yang digambar AI adalah orang DEWASA (18+)."
 
 # HARGA fitur Character Creator (token). Diukur NYATA 9 Okt (selisih koin sebelum/sesudah):
-#   4 render (1 wajah + 3 badan) ≈ 200–220 koin ≈ Rp700–760 (harga koin RunningHub ≈ Rp3,4)
-#   dijual 3 Token = Rp3.000  →  margin ± 75%
+#   dengan foto tubuh (5 render: anchor + tempel wajah + panel wajah + samping + belakang)
+#   = 361 koin ≈ Rp1.227  (harga koin RunningHub ≈ Rp3,4)
+#   tanpa foto tubuh (4 render) ≈ 200–250 koin ≈ Rp700–850
+#   dijual 4 Token = Rp4.000  →  margin 69% (paling berat) s/d 80%
 # Kalau biaya mesin naik/turun, cuma angka ini yang diubah.
-COST = 3.0
+COST = 4.0
 
 # ---------------------------------------------------------------- pilihan user (label UI + frasa prompt)
 GENDER: dict[str, tuple[str, str]] = {
@@ -125,6 +127,17 @@ SHOES: dict[str, str] = {
 }
 
 
+# Prompt panel WAJAH yang diturunkan DARI panel badan (biar rambut/baju/identitas 100% sama).
+# Temuan uji 9 Okt: kalau panel wajah digambar terpisah dari foto wajah, rambut & baju bisa beda
+# dari panel badan → sheet jadi tidak konsisten.
+def face_from_body_prompt() -> str:
+    return ("Head and shoulders close-up photograph of the EXACT SAME person as the reference image — "
+            "identical face, identical glasses if any, identical hairstyle and hair colour, same outfit "
+            "visible on the shoulders, same lighting. Facing the camera and looking straight at the "
+            "lens, calm neutral expression, sharp focus on the face, photorealistic, no text, "
+            "no watermark")
+
+
 def body_prompt(opts: dict, view: str) -> str:
     g = _word("gender", opts.get("gender", "wanita"), "woman")
     r = _word("race", opts.get("race", "asia_tenggara"), "Southeast Asian facial features")
@@ -190,10 +203,14 @@ async def _gen(backend, feature: str, photos: list[Path], prompt: str, out_path:
 
 
 # ---------------------------------------------------------------- alur utama
-async def run(backend, face_photo: Path, opts: dict, out_dir: Path, on_step=None) -> dict:
+async def run(backend, face_photo: Path, opts: dict, out_dir: Path, on_step=None,
+              body_ref: Path | None = None) -> dict:
     """Bikin sheet master. Balikin {"sheet": Path, "panels": [(label, Path)]}.
 
     `on_step(teks)` dipanggil tiap tahap (buat update pesan progress di bot).
+    `body_ref` = foto tubuh opsional: kalau ada, panel DEPAN dibikin dengan MENEMPEL wajah user ke
+    foto itu (mesin identitas 93%) → proporsi/postur/baju PERSIS seperti foto referensi user,
+    bukan karangan model.
     """
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -208,18 +225,45 @@ async def run(backend, face_photo: Path, opts: dict, out_dir: Path, on_step=None
                 log.warning("on_step gagal: %s", e)
 
     panels: list[tuple[str, Path]] = []
-    await step("🎨 Menggambar wajah master…")
-    face_out = out_dir / "cc_face.png"
-    face_out = await _gen(backend, "chargen", [Path(face_photo)], face_prompt(opts), face_out)
-    panels.append(("FACE CLOSE UP", face_out))
+    # 1) ANCHOR wajah: dipakai sebagai patokan identitas untuk menggambar panel badan.
+    #    (kalau user kirim foto tubuh, wajah langsung ditempel ke foto itu — anchor tetap dibuat
+    #     sebagai cadangan kalau tempelan gagal, dan tetap dipakai saat tanpa foto tubuh)
+    await step("🎨 Menyiapkan wajah master…")
+    face_anchor = out_dir / "cc_face_anchor.png"
+    face_anchor = await _gen(backend, "chargen", [Path(face_photo)], face_prompt(opts), face_anchor)
 
     # PENTING: panel depan digambar dari WAJAH, lalu samping & belakang digambar dari PANEL DEPAN.
     # Temuan uji 9 Okt: kalau semua digambar dari wajah, outfit/sepatu beda-beda antar panel.
     # Rantai begini bikin baju, sepatu, rambut & proporsi ikut konsisten.
-    await step("🧍 Menggambar badan (depan)…")
     front_out = out_dir / "cc_front.png"
-    front_out = await _gen(backend, "chargen", [face_out], body_prompt(opts, "front"), front_out)
-    panels.append(("FULL BODY FRONT", front_out))
+    if body_ref:
+        # User kirim foto tubuh → TEMPEL wajah user ke foto itu (bukan dikarang model).
+        # Proporsi, postur, baju & latar ikut foto aslinya; wajah tetap milik user (mesin 93%).
+        await step("🧍 Menyiapkan badan dari FOTO yang kamu kirim (tempel wajah)…")
+        try:
+            front_out = await _gen(backend, "faceswap", [Path(body_ref), Path(face_photo)],
+                                   "Keep EVERYTHING from image1 exactly: same body proportions, same "
+                                   "figure, same waist, same hips, same legs, same pose, same outfit, "
+                                   "same background. Replace only the FACE with the face from image2 "
+                                   "and keep it the same person. Photorealistic, sharp, no text",
+                                   front_out, timeout=600)
+        except Exception as e:                               # noqa: BLE001
+            log.warning("chargen: pakai foto tubuh gagal (%s) — lanjut cara biasa", e)
+            front_out = await _gen(backend, "chargen", [face_anchor], body_prompt(opts, "front"), front_out)
+    else:
+        await step("🧍 Menggambar badan (depan)…")
+        front_out = await _gen(backend, "chargen", [face_anchor], body_prompt(opts, "front"), front_out)
+
+    # 2) Panel WAJAH diturunkan DARI panel badan → rambut, baju & identitas pasti seragam
+    #    (temuan uji 9 Okt: panel wajah yang digambar terpisah bikin rambut/baju beda dari panel badan).
+    await step("🎨 Menggambar panel wajah (dari panel badan)…")
+    face_out = out_dir / "cc_face.png"
+    try:
+        face_out = await _gen(backend, "chargen", [front_out], face_from_body_prompt(), face_out)
+    except Exception as e:                                   # noqa: BLE001
+        log.warning("chargen: panel wajah dari badan gagal (%s) — pakai anchor", e)
+        face_out = face_anchor
+    panels = [("FACE CLOSE UP", face_out), ("FULL BODY FRONT", front_out)]
 
     for view, label_id in (("side", "FULL BODY SIDE"), ("back", "FULL BODY BACK")):
         await step(f"🧍 Menggambar badan ({view})…")
