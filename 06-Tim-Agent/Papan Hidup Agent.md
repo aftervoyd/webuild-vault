@@ -196,3 +196,16 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
   - **MotionAgent** → `tsparticles` (MIT) buat efek partikel landing.
 
 ---
+
+## 2026-10-10 — 📡 NewsWatch (berita/regulasi Komdigi harian)
+
+- **Dikerjakan:** pantau `domain.go.id` (curl ✅ 200), `jdih.komdigi.go.id` (✅ 200), portal siaran pers Komdigi (curl ✅ 200) + verifikasi silang media. Update → [[06-Tim-Agent/NewsWatch - Berita Komdigi]].
+- **Temuan baru (7–9 Okt 2026; item portal 10586–10591):**
+  - ⭐ **Komdigi siapkan Permen transparansi harga layanan antar barang & makanan** (9 Okt) — **turunan Perpres 27/2026 "Perpres Ojol"**, dasar **Pasal 11 ayat (4)**: Komdigi berwenang **menetapkan biaya jasa transportasi** pesan-antar barang & makanan (GoFood/GrabFood/GoSend). Atur **transparansi pembentukan harga + jaminan/proteksi pengemudi**. Sumber: portal **10590** + bisnis.com, Suara, Tirto, Kumparan, Katakini, Majalah ICT. ✅
+  - 🏝️ **Data Perlinsos Bali tembus 652.858 KK (50,52%)** (9 Okt) — **tertinggi & tercepat se-Indonesia**; Portal Perlinsos (Kemensos) **terhubung via SPLP**; Bali jadi *learning ground* sebelum nasional. Sumber: portal **10591** + ANTARA/Tirto/Bisnis Bali/Satujabar. ✅
+  - Sekunder (dampak nol): **MotoGP Mandalika** (9–11 Okt) — >250 frekuensi + 4 BTS bergerak, 200 rb penonton; **P3SPS/penyiaran** (Sekjen Ismail, kepercayaan publik).
+  - **Domain `.desa.id`:** tak ada berita baru sejak **3 Sep 2026**. **7 PSE** (tenggat 1 Okt lewat 9 hari) — **belum ada kabar tindak lanjut** → dipantau.
+- **Pelajaran teknis (PENTING — patch skill):** **halaman detail portal Komdigi itu SERVER-RENDER biasa (Bootstrap), BUKAN Next.js** — teks artikel lengkap ada di **HTML body**; cukup `curl` + strip `<script>/<style>` & tag → dapat judul/tanggal/isi penuh, **tanpa browser sama sekali**. (Klaim lama "Next.js `self.__next_f.push`" salah tempat — itu untuk `www.komdigi.go.id/berita`.) Probe id naik berhasil: **id terbaru 10591** (10592 → 404).
+- **Buat Orchestrator:** aturan ongkir pesan-antar (Permen turunan Perpres Ojol) **kena segmen UMKM + rencana "kurir/toko lokal desa"** → kalau bikin toko/marketplace UMKM desa, sediakan **rincian biaya transparan** (ongkir + biaya platform) = patuh + nilai jual. Jangan pakai klaim "terhubung SPLP/Satu Data langsung" — **SPLP tetap tertutup**.
+
+---

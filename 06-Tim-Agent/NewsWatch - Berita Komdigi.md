@@ -4,7 +4,33 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-09** (run harian · cakupan 6–8 Okt 2026)
+**Update terakhir: 2026-10-10** (run harian · cakupan 7–9 Okt 2026)
+
+---
+
+## 🆕 Update 2026-10-10 (run harian — baru sejak 9 Okt)
+
+> Cek sumber resmi 10 Okt 07:00 CST: `domain.go.id` 200 · `jdih.komdigi.go.id` 200 · portal detail `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` 200 (semua via **curl**). Artikel terbaru portal = **id 10591** (10592 → 404). Item baru sejak run 9 Okt: **10586–10591**.
+
+### 8. 🛵 Komdigi siapkan **Permen transparansi harga layanan antar barang & makanan** — 9 Okt 2026 ⭐ BARU (paling relevan)
+- **Apa yang berubah:** Wamen Komdigi **Nezar Patria** (8–9 Okt) menyatakan Kemkomdigi sedang menyiapkan **Peraturan Menteri (Permen)** sebagai turunan **Perpres No. 27 Tahun 2026** tentang *Perlindungan Ekosistem Transportasi Berbasis Platform Digital* (**"Perpres Ojol"**). Dasar kewenangan: **Pasal 11 ayat (4)** Perpres itu — **Komdigi berwenang menetapkan biaya jasa transportasi** untuk pengantaran **barang & makanan** berbasis platform digital (mis. GoFood/GrabFood/GoSend).
+- **Isi yang diatur:** (1) **transparansi pembentukan harga** oleh platform (bagaimana ongkir/biaya dibentuk), (2) **jaminan angkutan** & perlindungan pengemudi (penghasilan layak + risiko kerja), (3) keberlanjutan ekosistem layanan antar. Rapat koordinasi tindak lanjut digelar di Kompleks Parlemen, **Kamis 8 Okt 2026**.
+- Sumber: Siaran Pers Komdigi portal **10590** (9 Okt 2026) + **bisnis.com, Suara, Tirto, Kumparan, Katakini, Majalah ICT** (semua 9 Okt 2026). ✅ terverifikasi (sumber resmi + ≥6 media).
+- **➡️ Dampak ke Webuild:**
+  - **Segmen UMKM & rencana "kurir/toko lokal desa" kena langsung.** Kalau Webuild bikin **marketplace/etalase UMKM desa** atau fitur **pesan-antar lokal**, harga ongkir & biaya jasa harus **transparan** (rincian ongkir, biaya platform, jaminan pengemudi) — bukan angka gelap. Bikin fitur "rincian biaya" transparan = nilai jual + patuh aturan.
+  - **Peluang konten/edukasi:** UMKM desa yang jual lewat platform pesan-antar bakal terdampak aturan ongkir → Webuild bisa jadi pihak yang menjelaskan & menyiapkan toko online yang **harga transparan**.
+  - **Perlu verifikasi:** nomor & tanggal **Permen** final (masih "disiapkan"), tarif/rumus biaya jasa, tanggal berlaku. → pantau JDIH Komdigi.
+
+### 9. 🏝️ Data Perlinsos Bali tembus **652.858 KK** (50,52%) — 9 Okt 2026 — *dampak: rendah–sedang (konteks Satu Data)*
+- **Apa yang berubah:** Menkomdigi **Meutya Hafid** (9 Okt) meninjau digitalisasi **Perlinsos** di Bali. Per minggu pertama Okt 2026: **652.858 KK / 50,52%** keluarga Bali **terdaftar di Portal Perlinsos** — **tertinggi & tercepat se-Indonesia**. Portal Perlinsos (dikelola Kemensos) **terhubung via SPLP**; warga bisa verifikasi identitas (IKD), ajukan & pantau bantuan, sanggah hasil, dan **perbaiki data kesejahteraan**. Bali = *learning ground* sebelum diperluas nasional; target rampung sisa <4 bulan.
+- Sumber: portal **10591** (9 Okt 2026) + **ANTARA, Tirto, Bisnis Bali, Satujabar, Dialeksis, Ruzka** (9 Okt 2026). ✅ terverifikasi.
+- **➡️ Dampak ke Webuild:** konfirmasi **SPLP/Portal Perlinsos makin jadi tulang punggung data kesejahteraan warga** (data desa = sumber data primer). **Ingat jebakan:** SPLP tetap **jaringan TERTUTUP** → website desa **tidak** konek langsung; posisi jujur tetap **"data-ready + via SIDEKA-NG/wali data"**. Nilai jual: website desa bantu warga **punya data yang rapi & benar** (alamat, KK) supaya tidak gagal verifikasi bansos.
+
+### 📌 Status lain (per 10 Okt 2026)
+- **Domain (`domain.go.id`):** **TETAP tak ada berita baru sejak 3 Sep 2026** (diverifikasi ulang 10 Okt via curl 200). Handle terakhir masih "Model Terdistribusi Dikaji untuk Pengelolaan DNS Server Pemerintah".
+- **7 PSE lingkup privat:** tenggat **1 Okt 2026** sudah lewat **9 hari** — **masih belum ada pengumuman resmi** tindak lanjut (teguran/pemutusan akses). ⚠️ perlu dipantau run berikutnya.
+- **MotoGP Mandalika 2026** (9–11 Okt, portal **10586/10587/10589**): Komdigi amankan **>250 frekuensi** + **4 BTS bergerak** untuk 200 ribu penonton; monitoring spektrum harian cegah interferensi. *Dampak Webuild: nol (konteks infrastruktur telekomunikasi).*
+- **Penyiaran** — Sekjen Ismail (portal **10588**, 7 Okt): **kepercayaan publik** = modal utama industri penyiaran; Sekolah **P3SPS** Angkatan 56. *Dampak Webuild: nol.*
 
 ---
 
@@ -95,7 +121,9 @@
 
 - `www.komdigi.go.id` & `djkpm.komdigi.go.id` **balas HTTP 403** ke `curl` (WAF).
 - ⚠️ **9 Okt 2026: `browser_exec` GAGAL** — "The local browser could not be started ... Run `hermes tools` → Browser Automation to (re)install Chromium" (Chromium belum ter-install di profil ini). **Fallback yang berhasil hari ini:** `curl` untuk **halaman detail** `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` (HTTP **200**, isi teks artikel ada di HTML — tak perlu browser) + `jdih.komdigi.go.id` (200) + `domain.go.id` (200).
-- Portal listing `/kanal-publik/berita-kini` kini **404**, root `portal.komdigi.go.id/` **302**. **Cara dapat berita terbaru:** `web_search "site:portal.komdigi.go.id berita-kini"` → ambil id terbesar → lalu **probe id naik** (`10584`,`10585`,…) via curl sampai 200/404 untuk menemukan item terbaru.
+- Portal listing `/kanal-publik/berita-kini` kini **404**, root `portal.komdigi.go.id/` **302**. **Cara dapat berita terbaru:** `web_search "site:portal.komdigi.go.id berita-kini"` → ambil id terbesar → lalu **probe id naik** (`10584`,`10585`,…) via curl sampai 200/404 untuk menemukan item terbaru. **Per 10 Okt 2026 id terbaru = 10591** (10592 → 404).
+- ✅ **KOREKSI PENTING (10 Okt 2026):** halaman **detail** `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` itu **server-render biasa (Bootstrap), BUKAN Next.js** — **teks artikel lengkap ada di HTML body**. Cukup `curl` lalu **strip tag**: buang `<script>`/`<style>`, ganti tag jadi spasi, `html.unescape`, rapikan spasi → dapat judul + tanggal + kategori + isi penuh. **Tidak perlu browser sama sekali.** (Klaim lama "Next.js client-render / `self.__next_f.push`" berlaku untuk **`www.komdigi.go.id/berita`**, bukan portal detail.) Cuplikan: `python3 - <<'EOF'` → `body=re.sub(r'<script.*?</script>','',h,flags=re.S)`, dst. Isi ~2.000–3.000 kata/artikel; ukuran HTML ±10 KB tapi teks tetap ada.
+- **Urutan tanggal di portal detail:** judul di `<title>`, tanggal/kategori di badan ("komdigi.go.id **Jumat, 09 Oktober 2026 - 10:00** Kategori Siaran Pers"). Ambil dari situ, jangan andalkan meta description (kosong di portal).
 - Halaman **`www.komdigi.go.id/berita`** = Next.js client-render (butuh browser) → karena browser mati, sementara pakai portal detail + web_search.
 - `web_extract` di profil ini backend-nya **search-only (DuckDuckGo)** → **tidak bisa** ambil isi URL. Pakai curl/browser.
 - **Fakta produk penting:** SPLP (`esb-splp.layanan.go.id`) = **jaringan tertutup** (Jaringan Intra Pemerintah + whitelist) → desa tidak konek langsung; integrasi via SIDEKA-NG/wali data.
@@ -103,6 +131,8 @@
 ---
 
 ## 🗒️ Ringkasan 1 baris buat Orchestrator
-> **UU Satu Data Indonesia sah (6 Okt 2026, 141 pasal)** → data desa jadi fondasi; **website/SID desa "siap SDI"** = peluang jualan baru Webuild. Komdigi perjelas perannya (**7 Okt**): integrasi lewat **SPLP — tapi SPLP jaringan TERTUTUP**, jadi jangan janji "connect langsung"; posisikan data-ready + aman (lapor insiden ≤24 jam). Plus Komdigi gencar tindak data pribadi ilegal → PDP jadi nilai jual kepercayaan.
+> **10 Okt 2026:** ⭐ BARU — Komdigi siapkan **Permen transparansi harga layanan antar barang & makanan** (turunan **Perpres 27/2026 "Perpres Ojol"**, Pasal 11(4)) → **harga ongkir/biaya platform wajib transparan + jaminan pengemudi**; **langsung relevan ke segmen UMKM & rencana "kurir/toko lokal desa"** (fitur rincian biaya transparan = patuh + nilai jual). Konteks: **Portal Perlinsos Bali 652.858 KK (50,52%) terhubung via SPLP** → makin penting "data desa rapi", tapi **SPLP tetap TERTUTUP** (jangan klaim konek langsung). Domain `.desa.id`: belum ada berita baru sejak 3 Sep. 7 PSE (tenggat 1 Okt) belum ada kabar.
+>
+> **9 Okt 2026 (sebelumnya):** **UU Satu Data Indonesia sah (6 Okt 2026, 141 pasal)** → data desa jadi fondasi; **website/SID desa "siap SDI"** = peluang jualan baru Webuild. Komdigi perjelas perannya (**7 Okt**): integrasi lewat **SPLP — tapi SPLP jaringan TERTUTUP**, jadi jangan janji "connect langsung"; posisikan data-ready + aman (lapor insiden ≤24 jam). Plus Komdigi gencar tindak data pribadi ilegal → PDP jadi nilai jual kepercayaan.
 
 #newswatch #komdigi #regulasi #pdp #satu-data #desa-id
