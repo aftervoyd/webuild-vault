@@ -586,6 +586,32 @@ admin & teks bebas, dengan guard `~F.text.startswith("/")`). Pesan/berkas yang t
 **Uji:** selftest **125/125** (6 tes baru: state & data bertahan di instance baru = simulasi restart,
 Dispatcher pakai storage file, fallback terdaftar & posisinya paling akhir).
 
+### 6r. "PAKAI KARAKTER ARUNIKA, WAJAH TIDAK IDENTIK" (9 Okt 16:40) — 2 SEBAB, 2 FIX
+
+**Laporan user:** bikin AI Image Editor pakai karakter tersimpan "Arunika" → struktur wajah tidak identik.
+Masih setelah perbaikan pertama: **"tetep gak mirip sama sekali"** (mata user = kebenaran; skor model vision ~70–90% TIDAK dipakai sebagai bukti).
+
+**SEBAB 1 — Arunika tersimpan sebagai CHARACTER SHEET 15 panel.** Dibuktikan vision atas `work/job_18/ref1.bin`
+(853×1280): MAIN VIEW / SIDE VIEW / BACK VIEW / EYES+NOSE+LIPS DETAIL / SKIN / 4 swatch.
+Model harus **mengarang wajah** dari kolase yang memuat sisi samping-belakang → wajah tak konsisten.
+Karakter disimpan sebelum sensor `sheetfix` ada, jadi lolos.
+*FIX:* `tools/fix_saved_chars.py` (migrasi) — unduh foto tiap karakter → deteksi sheet → potong panel → unggah ulang →
+`db.char_set_file_id()`. Dijalankan: **Arunika diperbaiki** (panel dikirim ke user, file_id DB diganti).
+Ditambah: `editor` masuk `SHEET_GUARD`; karakter tersimpan dijaga lagi saat DIPAKAI (`use:c:` / `u:ch:` →
+`_sheet_panel_from_file(fix_char_id=…)` = perbaikan permanen).
+
+**SEBAB 2 — model editor MENGGAMBAR ULANG wajah.** Render ulang editor pakai panel bersih: user tetap bilang
+tidak mirip. Model `RhinatImageNG31Flash Image2Image` (app "All-in-One Image V2 Image-to-Image") mengganti proporsi
+rahang/bibir; prompt "keep face identical" tidak menolong (sudah dicoba di job 15/18).
+
+**FIX 2 — KUNCI IDENTITAS (`identity.py`):** setelah render, wajah asli karakter **di-swap balik** ke hasil render
+(app Face Swap 极速换脸 yang sama dipakai fitur Face Swap Karakter) → hasil memakai **pixel wajah asli**.
+Nyala OTOMATIS kalau: fitur `editor` + foto referensi = karakter/produk **tersimpan** user (`db.char_by_file_id`)
++ hasil berupa gambar. Biaya internal +10 koin, +~60 dtk; harga jual tidak berubah. Gagal → hasil asli tetap dikirim.
+
+**Uji:** editor 41 dtk (11 koin) → face swap 10 koin → hasil dikirim ke user (msg 221) untuk **penilaian mata user**.
+Selftest **133/133** (8 tes baru). Prinsip: **"jangan jual yang belum terbukti"** — jangan klaim mirip sebelum user bilang mirip.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

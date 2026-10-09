@@ -312,6 +312,23 @@ class Database:
     # Nanti di fitur apa pun user tinggal sebut namanya → bot pakai karakter itu
     # secara identik (foto yang SAMA → hasil konsisten antar render).
 
+    def char_by_file_id(self, telegram_id: int, file_id: str) -> sqlite3.Row | None:
+        """Cari karakter/produk milik user dari file_id foto (dipakai kunci identitas)."""
+        return self.conn.execute(
+            "SELECT * FROM characters WHERE telegram_id=? AND file_id=? LIMIT 1",
+            (int(telegram_id), str(file_id))).fetchone()
+
+    def char_list_all(self) -> list[sqlite3.Row]:
+        """Semua karakter & produk semua user (untuk migrasi/perawatan)."""
+        return self.conn.execute(
+            "SELECT * FROM characters ORDER BY telegram_id, id").fetchall()
+
+    def char_set_file_id(self, cid: int, file_id: str) -> bool:
+        """Ganti foto master karakter/produk (dipakai migrasi sheet → panel)."""
+        with self.conn:
+            cur = self.conn.execute("UPDATE characters SET file_id=? WHERE id=?", (file_id, cid))
+        return cur.rowcount > 0
+
     def char_save(self, telegram_id: int, name: str, file_id: str,
                   note: str = "", kind: str = "char") -> int | None:
         """Simpan karakter baru. None kalau nama sudah dipakai (biar tidak kembar)."""

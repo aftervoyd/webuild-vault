@@ -30,6 +30,7 @@ import catalog
 import presets
 import sheetfix
 from fsmstore import SQLiteStorage
+from identity import lock_identity
 import promptsmith
 import storyboard
 from aulaa import Aulaa, make_client
@@ -749,7 +750,11 @@ async def cb_use_saved_char(cb: CallbackQuery, state: FSMContext):
     if not f:
         await cb.answer("Sesi kadaluarsa — mulai dari menu.", show_alert=True)
         return
-    await state.update_data(photos=[r["file_id"]], preset_sent=False)
+    fid = r["file_id"]
+    panel = await _sheet_panel_from_file(cb.message, fid, fix_char_id=r["id"])
+    if panel:
+        fid = panel                     # foto master sudah diperbaiki permanen di DB
+    await state.update_data(photos=[fid], preset_sent=False)
     db.char_bump(r["id"])
     rows = presets.kb_rows(f.key, lambda feat, dur: catalog.cost_for(
         feat, dur or (catalog.get(feat).duration if catalog.get(feat) else 5)))
@@ -769,7 +774,11 @@ async def cb_ugc_saved_char(cb: CallbackQuery, state: FSMContext):
     if not r:
         await cb.answer("Tidak ketemu", show_alert=True)
         return
-    await state.update_data(char_photo=r["file_id"])
+    cfid = r["file_id"]
+    panel = await _sheet_panel_from_file(cb.message, cfid, fix_char_id=r["id"])
+    if panel:
+        cfid = panel                        # foto master diperbaiki permanen
+    await state.update_data(char_photo=cfid)
     await state.set_state(Flow.ugc_prod)
     db.char_bump(r["id"])
     pr = inv_use_rows(cb.from_user.id, "produk", "u:pr")
@@ -897,12 +906,18 @@ async def ugc_style(cb: CallbackQuery, state: FSMContext):
 # Fitur yang butuh FOTO ORANG (asset ke-1). Kalau user kirim character sheet (kolase banyak panel),
 # bot otomatis memotong panel orangnya — kalau tidak, hasilnya jadi video berisi kotak-kotak panel
 # (kasus nyata job 13, 9 Okt). UGC di-skip: di sana sheet memang dipakai sebagai character sheet.
-SHEET_GUARD = {"i2v", "long", "allinone", "faceswap", "motion", "lipsync", "pose"}
+IDENTITY_LOCK = {"editor"}          # fitur gambar yang wajahnya dikunci balik
+SHEET_GUARD = {"i2v", "long", "allinone", "faceswap", "motion", "lipsync", "pose", "editor"}
 _SHEET_CACHE: dict[str, str] = {}          # file_id asli → file_id panel ("" = bukan sheet)
 
 
-async def _sheet_panel_from_file(msg: Message, file_id: str) -> str | None:
-    """Kalau file_id itu character sheet → balikin file_id PANEL orangnya (atau None)."""
+async def _sheet_panel_from_file(msg: Message, file_id: str,
+                                 fix_char_id: int | None = None) -> str | None:
+    """Kalau file_id itu character sheet → balikin file_id PANEL orangnya (atau None).
+
+    `fix_char_id` = id baris Karakter/Produk Saya: kalau diisi, foto master di DB ikut diperbaiki
+    (sekali untuk selamanya, bukan cuma render ini).
+    """
     if file_id in _SHEET_CACHE:
         return _SHEET_CACHE[file_id] or None
     tmp: Path | None = None
@@ -927,6 +942,12 @@ async def _sheet_panel_from_file(msg: Message, file_id: str) -> str | None:
                                     caption=sheetfix.reason_text(), parse_mode=ParseMode.HTML)
         fid = sent.photo[-1].file_id
         _SHEET_CACHE[file_id] = fid
+        if fix_char_id:
+            try:
+                db.char_set_file_id(int(fix_char_id), fid)   # permanen: sheet → panel
+                log.info("karakter #%s diperbaiki otomatis: sheet → panel", fix_char_id)
+            except Exception as e:                          # noqa: BLE001
+                log.warning("gagal simpan panel ke karakter #%s: %s", fix_char_id, e)
         log.info("sheet terdeteksi → panel dipotong (%s) box=%s", fid, info["box"])
         return fid
     except Exception as e:                                  # noqa: BLE001
@@ -1368,6 +1389,25 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                 except Exception as e:                        # noqa: BLE001
                     log.warning("job %s gagal baca durasi suara: %s", job_id, e)
 
+            # 1c) KUNCI IDENTITAS: kalau foto referensi = karakter/produk TERSIMPAN user, wajah aslinya
+            #     di-swap balik setelah render (model img2img suka "menggambar ulang" wajah).
+            #     Fitur gambar: editor. (Video menyusul, butuh app face swap video.)
+            if f and f.key in IDENTITY_LOCK:
+                try:
+                    fids = json.loads(job["ref_photos"] or "[]")
+                    cr = db.char_by_file_id(job["telegram_id"], fids[0]) if fids else None
+                    if cr:
+                        tgf = await bot.get_file(cr["file_id"])
+                        face_local = Path(settings.work_dir) / "locks" / f"char_{cr['id']}.jpg"
+                        face_local.parent.mkdir(parents=True, exist_ok=True)
+                        await bot.download_file(tgf.file_path, face_local)   # type: ignore[arg-type]
+                        log.info("job %s: kunci identitas aktif (karakter '%s')", job_id, cr["name"])
+                except Exception as e:                                  # noqa: BLE001
+                    log.warning("job %s: siapkan kunci identitas gagal: %s", job_id, e)
+                    face_local = None
+            else:
+                face_local = None
+
             # 2) submit ke backend + poll
             req = GenRequest(job_id=job_id, feature_key=job["feature"],
                              workflow=f.backend_workflow if f else "", photos=local,
@@ -1410,6 +1450,12 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
 
             result = await asyncio.to_thread(unwrap_media, result)  # kalau ZIP, ambil media
             result = await asyncio.to_thread(fix_ext, result)      # nama file ≠ isi → betulkan (PNG jadi .png)
+            if face_local and face_local.exists() and Path(result).suffix.lower() in IMG_EXT:
+                locked = await lock_identity(backend, Path(result), face_local, job_id,
+                                             out.with_name("hasil_lock.png"))
+                if locked and locked.exists():
+                    result = locked
+                    log.info("job %s: identitas dikunci (face swap balik) → %s", job_id, result)
             result = await asyncio.to_thread(smooth_fps, result)   # 16fps → 30fps halus (opsional)
             db.set_job(job_id, status="done", result_path=str(result))
             await send_result(bot, chat_id, result,

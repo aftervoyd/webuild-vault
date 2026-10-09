@@ -274,6 +274,25 @@ async def main() -> int:
     res.append(ok("fallback = handler pesan TERAKHIR (command admin tetap jalan)",
                   _hb and _hb[-1] == "fallback_tak_ditangani"))
 
+    # 3a-7) KUNCI IDENTITAS (face swap balik) — akar "tetep gak mirip sama sekali"
+    _bsrc4 = (Path(__file__).with_name("bot.py")).read_text(encoding="utf-8")
+    res.append(ok("identity-lock: modul ada & bisa dipakai",
+                  callable(__import__("identity").lock_identity)))
+    res.append(ok("identity-lock: nyala untuk fitur editor",
+                  'IDENTITY_LOCK = {"editor"}' in _bsrc4))
+    res.append(ok("identity-lock: hanya kalau foto = karakter TERSIMPAN user",
+                  "db.char_by_file_id(job[\"telegram_id\"], fids[0])" in _bsrc4))
+    res.append(ok("identity-lock: hanya untuk hasil GAMBAR (video butuh app lain)",
+                  "Path(result).suffix.lower() in IMG_EXT" in _bsrc4))
+    res.append(ok("identity-lock: gagal → hasil asli tetap dikirim (tidak bikin job gagal)",
+                  "if locked and locked.exists():" in _bsrc4 and "lock_identity" in _bsrc4))
+    res.append(ok("db: char_by_file_id ada (cari karakter dari file_id foto)",
+                  hasattr(__import__("db").Database, "char_by_file_id")))
+    res.append(ok("migrasi karakter lama: alat perbaikan sheet tersedia",
+                  (Path(__file__).with_name("tools") / "fix_saved_chars.py").exists()))
+    res.append(ok("sheet-guard juga jaga karakter tersimpan (use:c / u:ch)",
+                  "fix_char_id=r[\"id\"]" in _bsrc4))
+
     # 3b) referral (anti-farming)
     db.ensure_user(900, "inviter", "Inviter", signup_bonus=1.0)
     db.ensure_user(901, "teman", "Teman", signup_bonus=1.0)
