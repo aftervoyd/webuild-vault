@@ -180,6 +180,25 @@ async def main() -> int:
     res.append(ok("ganti nama karakter", db.char_rename(123, cid, "Rina Cantik") and
                   (db.char_get(123, cid) or {})["name"] == "Rina Cantik"))
     res.append(ok("hapus karakter", db.char_delete(123, cid) and db.char_count(123, "char") == 0))
+    # anti-bingung: salah kirim bahan → bot harus JAWAB, bukan diem
+    _bs = (Path(__file__).with_name("bot.py")).read_text(encoding="utf-8")
+    res.append(ok("inventory: kirim video/teks pas diminta foto → ada balasan",
+                  "async def inv_photo_bukan_foto" in _bs))
+    res.append(ok("inventory: kirim foto pas diminta nama → ada balasan",
+                  "async def inv_name_bukan_teks" in _bs))
+    res.append(ok("inventory: dokumen non-gambar ditolak jelas",
+                  "bukan gambar" in _bs))
+
+    # 3a-3) BUG FIX inventory: tombol ➕ Tambah baru dulu muncul "Jenis tidak dikenal"
+    import bot as _b
+    res.append(ok("inventory: 'm:inv:add:char' → tambah karakter (bukan error)",
+                  _b.inv_parse("m:inv:add:char") == ("char", "add")))
+    res.append(ok("inventory: 'm:inv:add:produk' → tambah produk",
+                  _b.inv_parse("m:inv:add:produk") == ("produk", "add")))
+    res.append(ok("inventory: 'm:inv:char' → buka daftar karakter",
+                  _b.inv_parse("m:inv:char") == ("char", "buka")))
+    res.append(ok("inventory: 'm:inv:produk' → buka daftar produk",
+                  _b.inv_parse("m:inv:produk") == ("produk", "buka")))
 
     # 3b) referral (anti-farming)
     db.ensure_user(900, "inviter", "Inviter", signup_bonus=1.0)

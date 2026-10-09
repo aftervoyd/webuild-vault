@@ -501,6 +501,23 @@ gambar **936×1664**. Kualitas uji belum meyakinkan (pose hanya sebagian pindah,
 bahan uji jelek** (foto orang rebahan + berkacamata hitam; "foto pose" dari frame hasil AI sebelumnya).
 Butuh 2 foto bersih dari user untuk verdict final.
 
+### 6n. BUG FIX: "➕ Tambah baru" muncul popup "Jenis tidak dikenal" (9 Okt 15:08)
+
+**Laporan user:** klik ➕ Tambah baru di Karakter/Produk Saya → popup **"Jenis tidak dikenal"**.
+
+**Akar masalah:** `cb_inv` membaca `parts[2]` dari callback. Untuk `m:inv:add:char` (4 bagian),
+`parts[2]` = `"add"` → tidak ada di `INV_ICON` → alert salah. Callback `m:inv:char` (3 bagian) kebetulan benar.
+
+**Perbaikan:** fungsi `inv_parse()` (bisa diuji) yang membaca aksi & jenis dengan benar:
+`m:inv:char` → ('char','buka') · `m:inv:add:char` → ('char','add').
+
+**Sekalian ditutup (anti-bingung, dulu bot DIEM):**
+- kirim video/stiker/teks padahal diminta foto → sekarang dijawab "Kirim FOTO ya".
+- kirim foto padahal diminta nama → dijawab "Ketik nama-nya ya".
+- kirim dokumen non-gambar (PDF) → ditolak jelas.
+
+**Uji:** selftest **104/104** (4 tes baru untuk parsing inventory + 3 tes anti-bingung), ux_audit bersih.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

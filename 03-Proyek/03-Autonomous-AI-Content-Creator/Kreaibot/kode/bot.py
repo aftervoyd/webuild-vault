@@ -1508,15 +1508,27 @@ def inv_use_rows(uid: int, kind: str, prefix: str) -> list:
             for r in db.char_list(uid, kind=kind)]
 
 
+def inv_parse(data: str) -> tuple[str, str]:
+    """Baca callback inventory: 'm:inv:char' → ('char','buka') · 'm:inv:add:char' → ('char','add').
+
+    (BUG 9 Okt: dulu 'm:inv:add:char' dibaca parts[2]='add' → user dapat popup
+     "Jenis tidak dikenal" waktu tekan ➕ Tambah baru.)
+    """
+    parts = (data or "").split(":")
+    aksi = parts[2] if len(parts) > 2 else ""
+    if aksi == "add":
+        return (parts[3] if len(parts) > 3 else ""), "add"
+    return aksi, "buka"
+
+
 @router.callback_query(F.data.startswith("m:inv:"))
 async def cb_inv(cb: CallbackQuery, state: FSMContext):
-    parts = cb.data.split(":")
+    kind, aksi = inv_parse(cb.data)
     uid = cb.from_user.id
-    kind = parts[2] if len(parts) > 2 else "char"
     if kind not in INV_ICON:
         await cb.answer("Jenis tidak dikenal", show_alert=True)
         return
-    if len(parts) == 3:                       # buka daftar
+    if aksi == "buka":                        # buka daftar
         await cb.message.edit_text(inv_text(uid, kind), reply_markup=inv_kb(uid, kind))
         await cb.answer()
         return
@@ -1535,7 +1547,11 @@ async def cb_inv(cb: CallbackQuery, state: FSMContext):
 async def inv_photo(msg: Message, state: FSMContext):
     data = await state.get_data()
     kind = data.get("inv_kind", "char")
-    fid = msg.photo[-1].file_id if msg.photo else msg.document.file_id   # type: ignore[union-attr]
+    doc = msg.document
+    if doc and not str(doc.mime_type or "").startswith("image/"):
+        await msg.answer("Itu bukan gambar 📄 — kirim sebagai <b>FOTO</b> ya (atau tekan ❌ Batal).")
+        return
+    fid = msg.photo[-1].file_id if msg.photo else doc.file_id   # type: ignore[union-attr]
     await state.update_data(inv_file_id=fid)
     await state.set_state(Flow.inv_name)
     contoh = "si rina" if kind == "char" else "kopi arabika"
@@ -1569,6 +1585,18 @@ async def inv_name(msg: Message, state: FSMContext):
         f"✅ <b>{nm}</b> tersimpan di {INV_TITLE[kind]}.\n\n"
         "Sekarang tinggal <b>sebut namanya</b> waktu bikin konten — bot otomatis pakai foto ini.",
         reply_markup=main_menu_kb(uid))
+
+
+@router.message(Flow.inv_photo)
+async def inv_photo_bukan_foto(msg: Message):
+    """Anti-bingung: user kirim video/stiker/teks padahal diminta foto."""
+    await msg.answer("📸 Kirim <b>FOTO</b> ya (bukan video/teks) — atau tekan ❌ Batal di layar sebelumnya.")
+
+
+@router.message(Flow.inv_name)
+async def inv_name_bukan_teks(msg: Message):
+    """Anti-bingung: user kirim foto padahal diminta nama."""
+    await msg.answer("✏️ Ketik <b>nama</b>-nya (huruf/teks) ya, misal: <i>si rina</i>")
 
 
 @router.callback_query(F.data.startswith("m:chr:"))          # ganti nama
