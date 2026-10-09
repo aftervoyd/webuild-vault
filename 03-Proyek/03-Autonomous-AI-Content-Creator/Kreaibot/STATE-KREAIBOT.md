@@ -7,7 +7,17 @@
 
 ---
 
-## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 01:14 WIB (BACA INI DULU; bagian di bawah = riwayat)
+## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 02:05 WIB (BACA INI DULU; bagian di bawah = riwayat)
+
+### 🔧 AUDIT & FIX 10 Okt 02:00–02:05 (SEMUA LIVE; service sudah direstart)
+- **Bug tombol mati (edit_safe)** — tombol "🔙 Kembali" dari layar detail karakter (pesan **FOTO**) & "⬅️ Menu Utama" dari pesan **QRIS** mati diam-diam (`TelegramBadRequest: there is no text in the message to edit`). → helper `edit_safe()` (foto→`edit_caption`, teks→`edit_text`, gagal→kirim baru); **34 call site** `cb.message.edit_text` dikonversi → seluruh kelas bug hilang.
+- **Error handler global** `@dp.errors()` — `TelegramBadRequest` jinak (klik tombol lama / `query is too old`) cukup di-log ringan; error serius tetap dicatat lengkap.
+- **`requirements.txt` RUSAK** — `python-dotenv>=1.0edge-tts` (satu baris, bikin `pip install -r` **ERROR**) → diperbaiki jadi 2 baris + `edge-tts>=6.1.9`.
+- **ffmpeg** — symlink `/usr/local/bin/ffmpeg` ✓ (sejak 8 Okt) + `storyboard._ffmpeg()` dijadikan resolver andal (env → folder tools Hermes), tak lagi bergantung PATH minimal systemd. `FFMPEG_BIN`/`FFPROBE_BIN` ditambahkan ke `.env`.
+- **Higiene**: 6 file `.env.bak*` (berisi rahasia) dipindah ke `/root/.secrets/kreaibot-env-bak/` (700/600) — folder project bersih. WAL DB di-checkpoint. `logrotate` untuk `/var/log/kreaibot.log` (mingguan, 4 rotasi).
+- **Verifikasi**: `--check` ✅ · import ✅ · unit offline `edit_safe` (foto→caption, teks→text) ✅ · restart 01:59:52 ✅ NRestarts 0 · **job 49 disambung otomatis** (`resume: 1 job berjalan ditemukan`).
+- Commit kode: **`ba88dd3`** (github aftervoyd/kreaibot) · sinkron vault: **`c32c165`**.
+- 🟠 **`webuild-vault` masih PUBLIK** — perlu izin user untuk flip ke private.
 
 ### Yang berubah malam ini (10 Okt)
 - **MODE MURNI = default**: prompt user dikirim **APA ADANYA** ke RunningHub (diterjemahkan jujur ke Inggris bila perlu via `translate_prompt`, "Add NOTHING"). Sistem **TIDAK BOLEH** membatalkan/mengedit perintah user (koreksi keras user, 9 Okt).
