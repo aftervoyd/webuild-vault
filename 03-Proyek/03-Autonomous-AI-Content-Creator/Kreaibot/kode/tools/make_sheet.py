@@ -81,7 +81,8 @@ def main() -> int:
     if head:
         d.text((MARGIN, MARGIN + 10), f"{name.upper()} — CHARACTER SHEET", font=_font(46), fill=INK)
         d.text((MARGIN, MARGIN + 66),
-               "Machine-readable reference · identical face & body proportions in every panel",
+               "Reference sheet for the bot · face close-up is the real photo; "
+               "full-body panels are AI views generated FROM that photo",
                font=_font(24), fill=SUB)
 
     for i, (lab, im) in enumerate(panels):

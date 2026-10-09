@@ -665,6 +665,27 @@ struktur wajah & proporsi body harus identik".
 
 Selftest **145/145**. Vault sync.
 
+### 6u. BUST/FIGUR FIDELITY — RESEP TERUKUR (9 Okt 18:0x)
+
+**Keluhan user:** "lihat ukuran dada nya ... percuma gua build bot kalo tetep pake kuzushi ujung ujungnya".
+
+**Fakta & angka (bukan opini):**
+- Referensi user = foto **dada-ke-atas**, dada **penuh/besar** (kardigan terbuka + atasan hitam low-cut).
+- Full body v1 (Qwen, prompt hoodie) → **dada kecil/tertutup** ✗ (salah saya: outfit hoodie menyembunyikan bentuk).
+- **三视图/多视图 app `2075468800715214850`** (input wajah maupun full body): **10 menit, 225–262 koin, hanya keluar 1 tampilan depan, dada 50–70%** → TIDAK dipakai lagi.
+- **Qwen 2511 (`2056741213926904`/`2056741213927206914`) + prompt eksplisit "same full bust size, same figure, no change to her body proportions" + outfit ASLI** →
+  **dada 85–95% mirip** (dinilai vision berulang), **21 koin / 51 dtk** (samping malah 8 koin / 21 dtk).
+  → **RESEP RESMI** untuk panel full body: mesin Qwen 2511 + prompt jaga-bentuk + outfit referensi.
+
+**Sheet v2 (`work/tests/arunika_sheet2.png`)**: FACE CLOSE UP = **foto asli user** (pixel asli, label dibuang),
+FRONT/SIDE/BACK = resep Qwen di atas, latar seragam, label DI LUAR panel, tanpa teks nyasar.
+Subjudul diubah jadi JUJUR ("face close-up is the real photo; full-body panels are AI views generated FROM that photo")
+— tidak lagi mengklaim "identical". Cacat jujur: dada antar panel belum persis sama (SIDE lebih penuh dari FRONT),
+artefak kecil di kepala panel BACK. Tersimpan sebagai karakter **"Arunika Sheet"** (id 3).
+
+**Kesimpulan produk:** IDENTIK 100% hanya dari **foto asli multi-sudut** (badan/dada nyata). Semua jalur generate
+= "mirip". Ini pembeda nyata vs Kuzushi: kumpulkan **bank foto asli** user → tiap render nembak foto paling cocok.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

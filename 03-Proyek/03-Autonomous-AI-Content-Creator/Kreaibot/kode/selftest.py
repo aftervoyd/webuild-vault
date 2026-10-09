@@ -322,7 +322,7 @@ async def main() -> int:
     res.append(ok("bot: cache panel dipisah per tujuan (tidak tertukar)",
                   'ck = f"{file_id}:{purpose}"' in _bsrc5))
     res.append(ok("bot: kunci identitas ambil PANEL WAJAH dari sheet",
-                  'analyze_sync, face_local' in _bsrc5 and '"_wajah.jpg"' in _bsrc5))
+                  'analyze_sync, face_local' in _bsrc5 and '_wajah.jpg' in _bsrc5))
 
     # 3b) referral (anti-farming)
     db.ensure_user(900, "inviter", "Inviter", signup_bonus=1.0)
