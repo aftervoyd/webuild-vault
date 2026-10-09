@@ -644,6 +644,27 @@ dan menjaga identitas. (Cadangan: `2056741213927206914` Qwen 2511 一致性.)
 per gambar cuma 2 koin ≈ Rp7), tinggal **isi saldo API $** di akun RunningHub; kalau tidak, semua fitur
 tetap jalan lewat app berkoin.
 
+### 6t. PANEL PER-TUJUAN + FULL BODY ARUNIKA (9 Okt 17:5x)
+
+**Masalah user:** "ukuran body nya nggak sesuai ... buatin gua karakter sheet full body yang mudah dibaca sistem,
+struktur wajah & proporsi body harus identik".
+
+**Yang dikerjakan:**
+1. **`sheetfix` dua mode (`purpose`)**: `body` → panel SATU ORANG SELURUH BADAN (referensi render → proporsi konsisten);
+   `face` → panel WAJAH CLOSE-UP (untuk face-swap/kunci identitas). Prompt vision berbeda per mode;
+   cache di bot dipisah per tujuan (`file_id:purpose`).
+2. **Kunci identitas ambil panel wajah**: worker kini menganalisa foto karakter dengan `purpose="face"` dan
+   memotong panel wajahnya sebelum face-swap (sebelumnya bisa memakai panel badan → swap jelek).
+3. **Full body Arunika (outfit asli)** dari app RunningHub **三视图/多视图** (`2075468800715214850`):
+   hasil **1080×2160**, kepala-sampai-sepatu, wajah tetap Arunika, outfit asli (kardigan putih/atasan hitam/celana hitam).
+   Biaya nyata: **10 menit + 262 koin** (app berat). Catatan: input foto WAJAH → output hanya 1 tampilan depan;
+   percobaan ke-2 dengan input FULL BODY dijalankan untuk memicu output multi-sudut.
+4. **Sheet 4 panel** (FACE CLOSE UP + FRONT/SIDE/BACK FULL BODY, latar seragam, label strip di luar panel,
+   tanpa teks di dalam panel) dibuat `tools/make_sheet.py`; panel wajah dibersihkan dari label sisa sheet lama.
+5. Tersimpan di bot: 🧑🎨 **Arunika** (wajah) · 🧍 **Arunika Full Body** (outfit asli) · 📋 **Arunika Sheet** (4 panel).
+
+Selftest **145/145**. Vault sync.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

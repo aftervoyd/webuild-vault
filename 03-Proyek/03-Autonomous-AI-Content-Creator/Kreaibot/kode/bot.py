@@ -912,14 +912,16 @@ _SHEET_CACHE: dict[str, str] = {}          # file_id asli → file_id panel ("" 
 
 
 async def _sheet_panel_from_file(msg: Message, file_id: str,
-                                 fix_char_id: int | None = None) -> str | None:
+                                 fix_char_id: int | None = None,
+                                 purpose: str = "body") -> str | None:
     """Kalau file_id itu character sheet → balikin file_id PANEL orangnya (atau None).
 
     `fix_char_id` = id baris Karakter/Produk Saya: kalau diisi, foto master di DB ikut diperbaiki
     (sekali untuk selamanya, bukan cuma render ini).
     """
-    if file_id in _SHEET_CACHE:
-        return _SHEET_CACHE[file_id] or None
+    ck = f"{file_id}:{purpose}"
+    if ck in _SHEET_CACHE:
+        return _SHEET_CACHE[ck] or None
     tmp: Path | None = None
     notice = None
     try:
@@ -929,19 +931,19 @@ async def _sheet_panel_from_file(msg: Message, file_id: str,
         tmp.parent.mkdir(parents=True, exist_ok=True)
         await bot.download_file(tg.file_path, tmp)      # type: ignore[arg-type]
         info = await asyncio.to_thread(sheetfix.analyze_sync, tmp, settings.promptsmith_base,
-                                       settings.promptsmith_key, settings.promptsmith_model)
+                                       settings.promptsmith_key, settings.promptsmith_model, purpose)
         if not (info.get("sheet") and info.get("box")):
-            _SHEET_CACHE[file_id] = ""
+            _SHEET_CACHE[ck] = ""
             return None
         panel = await asyncio.to_thread(sheetfix.crop_panel, tmp, info["box"],
                                         tmp.with_name(tmp.stem + "_panel.jpg"))
         if not panel:
-            _SHEET_CACHE[file_id] = ""
+            _SHEET_CACHE[ck] = ""
             return None
         sent = await bot.send_photo(msg.chat.id, FSInputFile(panel),
                                     caption=sheetfix.reason_text(), parse_mode=ParseMode.HTML)
         fid = sent.photo[-1].file_id
-        _SHEET_CACHE[file_id] = fid
+        _SHEET_CACHE[ck] = fid
         if fix_char_id:
             try:
                 db.char_set_file_id(int(fix_char_id), fid)   # permanen: sheet → panel
@@ -952,7 +954,7 @@ async def _sheet_panel_from_file(msg: Message, file_id: str,
         return fid
     except Exception as e:                                  # noqa: BLE001
         log.warning("sheet-guard dilewati: %s", e)
-        _SHEET_CACHE[file_id] = ""
+        _SHEET_CACHE[ck] = ""
         return None
     finally:
         if notice is not None:
@@ -1401,6 +1403,17 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                         face_local = Path(settings.work_dir) / "locks" / f"char_{cr['id']}.jpg"
                         face_local.parent.mkdir(parents=True, exist_ok=True)
                         await bot.download_file(tgf.file_path, face_local)   # type: ignore[arg-type]
+                        # kalau foto master-nya sheet → pakai PANEL WAJAH untuk face-swap
+                        fi = await asyncio.to_thread(
+                            sheetfix.analyze_sync, face_local, settings.promptsmith_base,
+                            settings.promptsmith_key, settings.promptsmith_model, "face")
+                        if fi.get("sheet") and fi.get("box"):
+                            pf = await asyncio.to_thread(
+                                sheetfix.crop_panel, face_local, fi["box"],
+                                face_local.with_name(f"char_{cr['id']}_wajah.jpg"))
+                            if pf:
+                                face_local = pf
+                                log.info("job %s: kunci identitas pakai PANEL WAJAH dari sheet", job_id)
                         log.info("job %s: kunci identitas aktif (karakter '%s')", job_id, cr["name"])
                 except Exception as e:                                  # noqa: BLE001
                     log.warning("job %s: siapkan kunci identitas gagal: %s", job_id, e)

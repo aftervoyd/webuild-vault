@@ -311,6 +311,19 @@ async def main() -> int:
     res.append(ok("alat uji fallback tersedia (tools/fallback_test.py)",
                   (Path(__file__).with_name("tools") / "fallback_test.py").exists()))
 
+    # 3a-9) PANEL PER-TUJUAN: sheet dibaca beda untuk render (badan) vs kunci identitas (wajah)
+    import sheetfix as _sf2
+    res.append(ok("sheetfix: mode 'face' (panel wajah) tersedia", hasattr(_sf2, "PROMPT_FACE")))
+    res.append(ok("sheetfix: prompt wajah & badan berbeda",
+                  _sf2.PROMPT_FACE != _sf2.PROMPT_BODY and "WAJAH CLOSE-UP" in _sf2.PROMPT_FACE))
+    _bsrc5 = (Path(__file__).with_name("bot.py")).read_text(encoding="utf-8")
+    res.append(ok("bot: helper panel menerima purpose (body/face)",
+                  'purpose: str = "body"' in _bsrc5))
+    res.append(ok("bot: cache panel dipisah per tujuan (tidak tertukar)",
+                  'ck = f"{file_id}:{purpose}"' in _bsrc5))
+    res.append(ok("bot: kunci identitas ambil PANEL WAJAH dari sheet",
+                  'analyze_sync, face_local' in _bsrc5 and '"_wajah.jpg"' in _bsrc5))
+
     # 3b) referral (anti-farming)
     db.ensure_user(900, "inviter", "Inviter", signup_bonus=1.0)
     db.ensure_user(901, "teman", "Teman", signup_bonus=1.0)
