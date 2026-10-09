@@ -1941,7 +1941,7 @@ async def cc_start(cb: CallbackQuery, state: FSMContext):
          "<b>Langkah 1/8</b> · Kirim <b>1 FOTO WAJAH</b> yang jelas (hadap depan).\n"
          "Foto ini jadi patokan identitas — badan, gaya & proporsi digambar dari sini.\n\n"
          f"💰 Biaya: <b>{chargen.COST:g} Token</b> — dibayar di AKHIR, setelah semua pilihan.\n"
-         "⏱️ Proses ±3–6 menit (4 gambar: wajah + badan depan/samping/belakang)\n\n"
+         "⏱️ Proses ±1,5–4 menit (4 gambar: wajah + badan depan/samping/belakang)\n\n"
          f"{chargen.DISCLAIMER}"),
         reply_markup=back_kb())
     await cb.answer()
@@ -2012,7 +2012,7 @@ async def cc_step(cb: CallbackQuery, state: FSMContext):
 def cc_confirm_text(uid: int, cc: dict) -> str:
     return ("🧬 <b>Rangkuman Karakter</b>\n\n" + chargen.summary(cc) + "\n\n"
             f"💰 Biaya: <b>{chargen.COST:g} Token</b> · saldo kamu: <b>{db.balance(uid):.1f} Token</b>\n"
-            "⏱️ Proses ±3–6 menit (4 gambar). Hasil: 1 sheet master + otomatis disimpan jadi karakter.\n\n"
+            "⏱️ Proses ±1,5–4 menit (4 gambar). Hasil: 1 sheet master + otomatis disimpan jadi karakter.\n\n"
             f"{chargen.DISCLAIMER}")
 
 

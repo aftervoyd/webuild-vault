@@ -800,9 +800,9 @@ Tapi penilaian jujur = **BELUM LAYAK JUAL**, 3 cacat nyata:
 - **RANTAI GENERASI**: wajah → **badan DEPAN** → samping & belakang digambar **DARI PANEL DEPAN**
   (bukan dari wajah). Ini yang mengunci baju, sepatu, rambut & proporsi supaya konsisten.
 
-**Uji kedua:** outfit + sepatu **konsisten**, tofu hilang, wajah konsisten antar panel ✓ (dinilai vision).
+**Uji kedua: 93 dtk** (lebih cepat dari uji pertama 174 dtk) — outfit + sepatu **konsisten**, tofu hilang, wajah konsisten antar panel ✓ (dinilai vision).
 **Harga disesuaikan:** `chargen.COST = 3.0` (Rp3.000) karena biaya mesin TERUKUR ±200–220 koin ≈ Rp700–760
-→ margin ±75%. Estimasi waktu di UI diperbaiki jadi "±3–6 menit" (terukur 174 dtk).
+→ margin ±75%. Estimasi waktu di UI jadi "±1,5–4 menit" (terukur 93–174 dtk).
 
 **Pelajaran:** kalau panel sheet digambar semua dari satu wajah, atribut (baju/sepatu) akan bervariasi →
 selalu RANTAI dari panel tubuh pertama. Fon PIL tidak punya emoji → jangan taruh emoji di gambar.
