@@ -321,6 +321,32 @@ async def main() -> int:
                   'purpose: str = "body"' in _bsrc5))
     res.append(ok("bot: cache panel dipisah per tujuan (tidak tertukar)",
                   'ck = f"{file_id}:{purpose}"' in _bsrc5))
+
+    # 3a-10) GEOMETRI SHEET: bot HITUNG SENDIRI kotak panel (dulu nebak dari koordinat model vision
+    #        → nyomot judul + potongan wajah sebagai "panel" = akar "wajah nggak mirip sama sekali")
+    import sheetfix as _sf3
+    _lay6 = _sf3.layout_panels((1778, 4248))
+    res.append(ok("sheetfix: geometri 6-panel dikenali (bukan nebak)",
+                  isinstance(_lay6, list) and len(_lay6) == 6
+                  and _lay6[0] == (24, 208, 853, 1280) and _lay6[1] == (901, 208, 853, 1280)))
+    _lay4 = _sf3.layout_panels((1778, 2880))
+    res.append(ok("sheetfix: geometri 4-panel dikenali", isinstance(_lay4, list) and len(_lay4) == 4))
+    res.append(ok("sheetfix: ukuran asing → None (pakai jalur lama, jangan salah potong)",
+                  _sf3.layout_panels((640, 480)) is None))
+    _sheet_uji = WORK / "sheet_asli_uji.png"
+    _I.new("RGB", (1778, 4248), (200, 200, 200)).save(_sheet_uji)
+    res.append(ok("sheetfix: mode face → panel 1 (kiri-atas)",
+                  _sf3.panel_for(_sheet_uji, "face") == (24, 208, 853, 1280)))
+    res.append(ok("sheetfix: mode body → panel 2 (full body, kanan-atas)",
+                  _sf3.panel_for(_sheet_uji, "body") == (901, 208, 853, 1280)))
+    _p2 = _sf3.crop_panel(_sheet_uji, [0, 0, 10, 10], WORK / "panel_geometri.jpg", purpose="body")
+    res.append(ok("sheetfix: box model ngawur DIABAIKAN → panel tepat 853×1280",
+                  bool(_p2) and _I.open(_p2).size == (853, 1280)))        # type: ignore[arg-type]
+    _wide = WORK / "wide_uji.jpg"
+    _I.new("RGB", (1600, 1000), (70, 70, 70)).save(_wide)
+    _p3 = _sf3.crop_panel(_wide, [0, 0, 500, 900], WORK / "wide_panel.jpg")
+    res.append(ok("sheetfix: sheet orang lain → koordinat model dinormalkan (500→800px, tidak salah skala)",
+                  bool(_p3) and _I.open(_p3).size == (768, 960)))         # type: ignore[arg-type]
     res.append(ok("bot: kunci identitas ambil PANEL WAJAH dari sheet",
                   'analyze_sync, face_local' in _bsrc5 and '_wajah.jpg' in _bsrc5))
 

@@ -686,6 +686,25 @@ artefak kecil di kepala panel BACK. Tersimpan sebagai karakter **"Arunika Sheet"
 **Kesimpulan produk:** IDENTIK 100% hanya dari **foto asli multi-sudut** (badan/dada nyata). Semua jalur generate
 = "mirip". Ini pembeda nyata vs Kuzushi: kumpulkan **bank foto asli** user → tiap render nembak foto paling cocok.
 
+### 6v. BUG KRITIS: BOT SALAH AMBIL PANEL SHEET (9 Okt 18:3x) — SUDAH DIPERBAIKI
+
+**Bukti nyata:** kotak yang dikasih model vision TIDAK sinkron dengan geometri sheet (koordinat balik
+di ruang ~1000px, sedangkan sheet 1778px). Akibatnya `crop_panel` memotong **judul + potongan wajah
+ekstrem** dan itu yang dipakai sebagai referensi render → ini AKAR "wajah nggak mirip sama sekali".
+Dibuktikan dengan komposit (kiri = hasil crop lama = teks "ARUNIKA — CHARA" + potongan mata; kanan = panel benar).
+
+**FIX (sheetfix.py):** bot TIDAK lagi nebak koordinat model.
+- `GRID` = konstanta tata letak `tools/make_sheet.py` (cols 2, margin 24, gutter 24, label_h 64, ph 1280, head 120).
+- `layout_panels(size)` → hitung kotak semua panel kalau gambar = sheet buatan kita (None kalau bukan).
+- `panel_for(path, purpose)` → `face` = panel 1 (FACE CLOSE UP), `body` = panel 2 (FULL BODY FRONT) — PASTI.
+- `crop_panel(..., purpose=)` → prioritas geometri; kalau bukan sheet kita baru pakai box model
+  (dinormalkan f = W/1000 kalau W>1200) → tidak salah skala lagi.
+- `bot.py` sekarang mengirim `purpose` ke `crop_panel`.
+- 7 tes baru; **selftest 152/152**.
+
+**Konsekuensi:** sheet 6-panel Arunika final sekarang benar-benar dipakai (mode badan = full body asli
+dengan proporsi & dada asli; mode wajah = close-up asli). Ini juga memperbaiki SEMUA karakter sheet lama.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

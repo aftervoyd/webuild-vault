@@ -109,9 +109,66 @@ def analyze_sync(path: Path, base_url: str, api_key: str, model: str,
         return {"sheet": False, "box": None, "err": str(e)[:120]}
 
 
+# ---- GEOMETRI SHEET (deterministik) ---------------------------------------------------------------
+# tools/make_sheet.py menata sheet dengan angka TETAP ini. Karena itu bot TIDAK perlu nebak koordinat
+# dari model vision (sering meleset → dulu bot nyomot judul + potongan wajah sebagai "panel", akar
+# masalah "wajah nggak mirip"). Bot cukup menghitung sendiri.
+GRID = {"cols": 2, "margin": 24, "gutter": 24, "label_h": 64, "ph": 1280, "head": 120}
+
+
+def layout_panels(size: tuple[int, int]) -> list[tuple[int, int, int, int]] | None:
+    """Kalau gambar ini sheet buatan tools/make_sheet.py → daftar kotak panel (kiri→kanan, atas→bawah).
+
+    None kalau ukurannya tidak cocok dengan tata letak kita (mis. sheet bikinan orang lain).
+    """
+    try:
+        W, H = int(size[0]), int(size[1])
+    except Exception:                                       # noqa: BLE001
+        return None
+    g = GRID
+    pw = (W - 2 * g["margin"] - (g["cols"] - 1) * g["gutter"]) // g["cols"]
+    if pw < 100:
+        return None
+    for head in (g["head"], 0):                             # 120 = ada judul, 0 = tanpa judul
+        for rows in range(1, 9):
+            if 2 * g["margin"] + head + rows * (g["label_h"] + g["ph"]) \
+               + (rows - 1) * g["gutter"] != H:
+                continue
+            out = []
+            for i in range(rows * g["cols"]):
+                r, c = divmod(i, g["cols"])
+                x = g["margin"] + c * (pw + g["gutter"])
+                y = g["margin"] + head + r * (g["label_h"] + g["ph"] + g["gutter"]) + g["label_h"]
+                out.append((x, y, pw, g["ph"]))
+            return out
+    return None
+
+
+def panel_for(path: Path, purpose: str = "body") -> tuple[int, int, int, int] | None:
+    """Kotak panel yang TEPAT untuk sheet buatan kita (tanpa nebak koordinat model).
+
+    purpose="face" → panel ke-1 (FACE CLOSE UP, kiri-atas).
+    purpose="body" → panel ke-2 (FULL BODY FRONT, kanan-atas).
+    """
+    try:
+        from PIL import Image
+        W, H = Image.open(path).size
+    except Exception:                                       # noqa: BLE001
+        return None
+    panels = layout_panels((W, H))
+    if not panels:
+        return None
+    idx = 0 if purpose == "face" else 1
+    return panels[idx] if len(panels) > idx else panels[0]
+
+
 def crop_panel(path: Path, box: list[int], out_path: Path,
-               min_side: int = 220) -> Path | None:
-    """Potong panel dari sheet. None kalau kotak tak masuk akal (biar foto asli tetap dipakai)."""
+               min_side: int = 220, purpose: str = "body") -> Path | None:
+    """Potong panel dari sheet. None kalau kotak tak masuk akal (biar foto asli tetap dipakai).
+
+    Urutan: (1) geometri sheet kita sendiri (pasti, tidak nebak) — kalau bukan sheet kita,
+    (2) kotak dari model vision, dinormalkan ke skala gambar lalu dijepit ke batas gambar.
+    """
     try:
         from PIL import Image
     except ImportError:
@@ -121,16 +178,21 @@ def crop_panel(path: Path, box: list[int], out_path: Path,
     except Exception:                                   # noqa: BLE001
         return None
     W, H = im.size
-    x, y, w, h = box
-    x, y = max(0, min(x, W - 1)), max(0, min(y, H - 1))
-    w, h = min(w, W - x), min(h, H - y)
-    if w < min_side or h < min_side:                    # kotak kekecilan → jangan dipakai
-        return None
-    # buang margin 2% biar garis panel/gutter tidak ikut
-    mx, my = int(w * 0.02), int(h * 0.02)
-    box2 = (x + mx, y + my, x + w - mx, y + h - my)
+    rect = panel_for(path, purpose)                     # (1) geometri pasti
+    if rect is None:                                    # (2) sheet orang lain → pakai box model
+        x, y, w, h = box
+        if w <= 1000 and W > 1200:                      # model balikin koordinat di ruang ~1000px
+            f = W / 1000.0
+            x, y, w, h = int(x * f), int(y * f), int(w * f), int(h * f)
+        x, y = max(0, min(x, W - 1)), max(0, min(y, H - 1))
+        w, h = min(w, W - x), min(h, H - y)
+        if w < min_side or h < min_side:                # kotak kekecilan → jangan dipakai
+            return None
+        mx, my = int(w * 0.02), int(h * 0.02)           # buang margin 2% (garis panel/gutter)
+        rect = (x + mx, y + my, w - 2 * mx, h - 2 * my)
     try:
-        im.crop(box2).save(out_path, quality=95)
+        x, y, w, h = rect
+        im.crop((x, y, x + w, y + h)).save(out_path, quality=95)
         return out_path
     except Exception:                                   # noqa: BLE001
         return None

@@ -936,7 +936,7 @@ async def _sheet_panel_from_file(msg: Message, file_id: str,
             _SHEET_CACHE[ck] = ""
             return None
         panel = await asyncio.to_thread(sheetfix.crop_panel, tmp, info["box"],
-                                        tmp.with_name(tmp.stem + "_panel.jpg"))
+                                        tmp.with_name(tmp.stem + "_panel.jpg"), 220, purpose)
         if not panel:
             _SHEET_CACHE[ck] = ""
             return None
