@@ -468,6 +468,39 @@ daftar fitur Kuzushi, pakai mesin original.
 motion+lipsync langsung ke konfirmasi tanpa preset; aset ke-2 → `video_in`; durasi lipsync dari suara),
 `selftest.py` (koin terukur motion/lipsync). Uji: **selftest 95/95**, ux_audit bersih, bot restart OK.
 
+### 6l. KEPUTUSAN: 100% MESIN RUNNINGHUB ORIGINAL (9 Okt 15:05)
+
+**Pertanyaan user:** *"pastiin pake model dari runninghub.ai doang kan atau ada opsi lain? kalo ngerusak
+kualitas mending pake dari ori runninghub aja."*
+
+**Jawaban teknis (terverifikasi):** SEMUA render pakai RunningHub original — `KREAIBOT_BACKEND=runninghub`,
+`RUNNINGHUB_BASE=https://www.runninghub.ai`, tiap fitur → AI App/workflow RunningHub (tidak ada provider
+generasi lain sama sekali).
+
+| Fitur | App RunningHub (orisinil) |
+|---|---|
+| 🎬 i2v + 30 dtk | LTX 2.3 `2065707741691334658` |
+| 🎭 Face Swap & Motion | Wan 2.2 Animate `2039639280896708610` |
+| 🎤 Lip Sync | LTX Digital Human `2031016553440878594` |
+| 🕺 Pose Transfer | 姿势迁移 `2038158176293494785` |
+| 🎭 Face Swap gambar | 极速换脸 `1889155568379092993` |
+| 🌌 All-in-One · 🛍️ UGC · 🖌️ Editor | workflow RunningHub |
+
+**3 hal NON-RunningHub (tak ada yang model generasi):**
+1. PromptSmith (LLM) — cuma **menulis teks prompt**, tidak bikin gambar/video. Saklar: `KREAIBOT_REFINE_VIDEO=0`.
+2. edge-tts — bikin **suara**; HANYA dipakai di skrip uji. Di bot, audio lip-sync = **voice note user** (original).
+3. ffmpeg — post-processing lokal. ⚠️ **DITEMUKAN MASALAH:** `smooth_fps()` dulu pakai `minterpolate`
+   (membuat FRAME SINTETIS) → bisa menurunkan kualitas. **Sudah DIMATIKAN secara default**
+   (`KREAIBOT_SMOOTH_FPS=0`): hasil keluar apa adanya dari RunningHub. Nyalakan hanya bila diminta.
+
+### 6m. POSE TRANSFER NYALA — PARITAS KUZUSHI LENGKAP 9/9 (9 Okt 15:00)
+
+App `2038158176293494785` (姿势迁移, node `24`=人物图←@photo1 · `31`=姿势图←@photo2), GPU default.
+Harga **0,5 Token** (sama Kuzushi). Uji produksi: **172 dtk, 32 koin ≈ Rp143 → margin 71%**, output
+gambar **936×1664**. Kualitas uji belum meyakinkan (pose hanya sebagian pindah, tangan aneh) — **penyebab:
+bahan uji jelek** (foto orang rebahan + berkacamata hitam; "foto pose" dari frame hasil AI sebelumnya).
+Butuh 2 foto bersih dari user untuk verdict final.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

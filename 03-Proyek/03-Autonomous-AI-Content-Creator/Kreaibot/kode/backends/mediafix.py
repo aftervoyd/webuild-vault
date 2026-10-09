@@ -83,6 +83,12 @@ def target_fps() -> float:
 def smooth_fps(path: Path | str, target: float | None = None, timeout: int = 1200) -> Path:
     """Ubah jadi versi `target` fps (interpolasi gerak). Balikin path asli kalau tak perlu/gagal."""
     p = Path(path)
+    # KEPUTUSAN USER (9 Okt): "kalau ngerusak kualitas, pakai hasil ORIGINAL RunningHub saja."
+    # minterpolate bikin FRAME SINTETIS → bisa memunculkan artefak. Jadi DEFAULT: JANGAN diinterpolasi;
+    # hasil keluar apa adanya dari model RunningHub. Nyalakan hanya kalau memang diminta:
+    #   KREAIBOT_SMOOTH_FPS=1
+    if os.getenv("KREAIBOT_SMOOTH_FPS", "0").strip().lower() not in ("1", "true", "yes", "on"):
+        return p
     tgt = target or target_fps()
     if not tgt or p.suffix.lower() not in VIDEO_EXT or not p.exists():
         return p

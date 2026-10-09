@@ -896,6 +896,7 @@ async def ugc_style(cb: CallbackQuery, state: FSMContext):
 ASSET_LABEL: dict[str, tuple[str, ...]] = {
     "motion": ("Foto orang", "Video gerakan"),
     "lipsync": ("Foto orang", "Suara"),
+    "pose": ("Foto orang", "Foto pose"),
     "faceswap": ("Foto orang", "Foto wajah/model"),
 }
 

@@ -43,7 +43,7 @@ async def main() -> int:
                     ("allinone", 5): 66, ("allinone", 15): 269, ("ugc", 15): 269,
                     # paritas Kuzushi (9 Okt): terukur di uji produksi
                     ("motion", 5): 121,        # Wan2.2 Animate, 308 s, 121 koin (GPU plus)
-                    ("lipsync", 10): 48}       # LTX digital human, 6 s = 29 koin → 10 s ≈ 48
+                    ("lipsync", 10): 48, ("pose", 5): 32}       # LTX digital human, 6 s = 29 koin → 10 s ≈ 48
     for (key, dur), koin in KOIN_TERUKUR.items():
         harga = catalog.cost_for(key, dur) / 10 * 10_000
         biaya = koin * RUPIAH_PER_KOIN
@@ -54,6 +54,9 @@ async def main() -> int:
         batas = 45 if key == "i2v" else (38 if key == "long" else 50)
         res.append(ok(f"margin {key} {dur} dtk sehat ({margin:.0f}% ≥ {batas}%)", margin >= batas,
                       f"harga Rp{harga:,.0f} vs biaya Rp{biaya:,.0f}"))
+    _mf = (Path(__file__).with_name("backends") / "mediafix.py").read_text(encoding="utf-8")
+    res.append(ok("interpolasi fps MATI secara default (hasil asli RunningHub, tanpa frame sintetis)",
+                  "KREAIBOT_SMOOTH_FPS" in _mf and 'os.getenv("KREAIBOT_SMOOTH_FPS", "0")' in _mf))
     res.append(ok("durasi render dalam batas mesin (4..30 dtk)",
                   all(4 <= ft.duration <= 30 for ft in catalog.enabled_features()),
                   ", ".join(f"{ft.key}={ft.duration}s" for ft in catalog.enabled_features())))

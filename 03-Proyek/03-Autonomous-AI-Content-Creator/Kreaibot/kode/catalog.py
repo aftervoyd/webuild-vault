@@ -107,9 +107,14 @@ FEATURES: dict[str, Feature] = {
         label="🕺 Pose Transfer & Style",
         cost=0.5,
         min_photos=2, max_photos=2,
-        need_prompt=True, need_ratio=False,
-        desc="Foto karakter + foto pose referensi → karakter mengikuti pose.",
+        need_prompt=False, need_ratio=False,
+        duration=5, durations=(5,),
+        desc=("Foto orang + foto POSE contoh → orang kamu diposekan seperti itu, wajahnya tetap mirip.\n"
+              "· Langkah 1: kirim FOTO orang (setengah badan, menghadap kamera = paling bagus)\n"
+              "· Langkah 2: kirim FOTO pose contoh (orang lain / gaya yang mau ditiru)\n"
+              "· Hasil: gambar orang kamu dalam pose itu"),
         backend_workflow="krea_pose",
+        hint="Kirim FOTO orangnya dulu, lalu FOTO pose contohnya",
     ),
     "lipsync": Feature(
         key="lipsync",
@@ -188,6 +193,7 @@ DURATION_COST: dict[tuple[str, int], float] = {
     ("ugc", 15): 2.5,
     ("motion", 5): 2.0, ("motion", 10): 2.5,          # Kuzushi: Face Swap & Motion = 2 Token (samain)
     ("lipsync", 10): 0.5,                            # Kuzushi: Lip Sync = 0,5 Token (samain)
+    ("pose", 5): 0.5,                                # Kuzushi: Pose Transfer = 0,5 Token (samain)
 }
 
 
@@ -202,7 +208,7 @@ def cost_for(key: str, duration: int) -> float:
 # Fitur yang SUDAH tersambung ke mesin render nyata (RunningHub workflow FL2VA).
 # Fitur lain tetap ada di katalog tapi belum tampil ke user sampai workflow-nya siap.
 SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "faceswap", "editor",
-                              "motion", "lipsync")
+                              "motion", "lipsync", "pose")
 
 
 def enabled_features() -> list[Feature]:
