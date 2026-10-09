@@ -28,7 +28,7 @@
   1. **Jumlah run** (termasuk panggilan API) · 2. **Favorit** · 3. **Orisinalitas**
 - Bisa juga **dijual** (set berbayar). Settlement **mingguan**; withdraw **bulanan** (tgl 15 kerja bulan berikutnya).
 - Wajib **Orisinal** + lolos review manusia. Konten sampah/meniru → ditolak/diturunkan.
-- **Status kita: $0.00** (belum pernah publish). → Ini ladang yang belum digarap.
+- **Status kita: $0,00** — tapi **workflow pertama sudah dibuat & JALAN** (`qwen-consistency-edit`, id 2108638842228461570). Tersisa aksi UI 1-klik untuk publish. Detail: **`RUNNINGHUB-CREATOR-PROGRAM.md`**.
 
 ### B. Program Undangan (Invite)
 - **Kode invite kita: `baaxhjzz`** · link: `https://www.runninghub.ai?inviteCode=baaxhjzz`

@@ -9,6 +9,13 @@
 
 ## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 02:05 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
+### 🏗️ SESI OTONOM 10 Okt 03:30 (lanjutan) — WORKFLOW PERTAMA SIAP TERBIT
+- **Workflow orisinal dibuat & JALAN**: `qwen-consistency-edit` (11 node: Qwen-Image-Edit-2511 + Lightning 4-step + consistency LoRA). workflowId RH **2108638842228461570**.
+- Alur terbukti: export contoh publik (tanpa login) → rakit JSON → **import** ke `/workspace` via CDP `setFileInputFiles` → **Save** di editor (wajib! kalau tidak: error `810 WORKFLOW_NOT_SAVED_OR_NOT_RUNNING`) → **run via API**: task `2108639276355883009` ✅ **73,7 dtk**, output PNG 848×1280. Validasi server `node_errors: {}`.
+- **Publish: tersisa 1 aksi UI** (route `/PublishView` tidak bisa dibuka via URL; harus dipicu dari editor). Endpoint terpetakan: `POST /api/workflow/publish` (publishType 1=workflow, 2=AI app), butuh cover+tags+deskripsi. Resep lengkap: **`RUNNINGHUB-CREATOR-PROGRAM.md`**.
+- Jebakan tercatat: `widgets_values` wajib ada; jangan tulis `link:null` di input widget; link harus tercatat dua sisi.
+- Kode: `cf3fabf` · vault `4850b3c`.
+
 ### 🌙 SESI OTONOM 10 Okt 03:00 (user tidur) — RunningHub & koin
 - **Login web RunningHub BERHASIL** ✓ (vault handle `vault_5e4871dcae31` · origin runninghub.ai · profil "Nimara Official" ID 2108050207926067202). Situs Nuxt SPA; login via modal nav ("Enter phone number or email" + password). Header API web = **`Authorization`** (token dari `localStorage['Rh-Accesstoken']`); endpoint web pakai `POST /uc/getUserInfo`.
 - **Saldo**: koin **27.912** (via `/uc/openapi/accountStatus`, apiKey) · wallet $0,010 · membership s/d 8 Nov.
