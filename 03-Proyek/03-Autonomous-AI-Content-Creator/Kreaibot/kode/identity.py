@@ -40,14 +40,17 @@ async def lock_identity(backend, result: Path, face_photo: Path, job_id: int,
         req = GenRequest(job_id=job_id, feature_key="faceswap", workflow="",
                          photos=[face_photo, result], prompt="", ratio="", duration=0,
                          out_path=out_path)
-        task = await backend.generate(req)
+        # CATATAN 9 Okt: dulu di sini dipanggil backend.generate() — metode itu TIDAK ADA di
+        # RunningHubBackend, jadi kunci identitas GAGAL SENYAP (tertangkap except, cuma warning),
+        # dan user selalu dapat hasil render yang wajahnya karangan model. API yang benar: submit/poll.
+        task = await backend.submit(req)
         import asyncio
         import time as _t
         t0 = _t.time()
         while True:
             st = await backend.poll(task)
             if st.state == "failed":
-                log.warning("identity-lock gagal: %s", st.error)
+                log.error("identity-lock GAGAL (wajah asli tidak terpasang): %s", st.error)
                 return None
             if st.state == "done":
                 rp = str(st.result_path or "")
@@ -61,11 +64,11 @@ async def lock_identity(backend, result: Path, face_photo: Path, job_id: int,
                     return Path(rp)
                 return out_path if out_path.exists() else None
             if _t.time() - t0 > 600:
-                log.warning("identity-lock timeout")
+                log.error("identity-lock timeout (>600s)")
                 return None
             await asyncio.sleep(4)
     except Exception as e:                                     # noqa: BLE001
-        log.warning("identity-lock dilewati: %s", e)
+        log.error("identity-lock error: %s", e)
         return None
     finally:
         if costs is not None:

@@ -290,6 +290,33 @@ async def main() -> int:
                   hasattr(__import__("db").Database, "char_by_file_id")))
     res.append(ok("migrasi karakter lama: alat perbaikan sheet tersedia",
                   (Path(__file__).with_name("tools") / "fix_saved_chars.py").exists()))
+    # 3a-8) BUG 9 Okt: lock_identity memanggil backend.generate() — METODE ITU TIDAK ADA
+    #        (API nyata = submit/poll) → kunci identitas gagal SENYAP, wajah selalu karangan model.
+    import identity as _idmod
+    _idsrc = (Path(__file__).with_name("identity.py")).read_text(encoding="utf-8")
+    _idcode = "\n".join(l for l in _idsrc.splitlines() if not l.strip().startswith("#"))
+    res.append(ok("identity-lock: tidak lagi memanggil metode hantu backend.generate()",
+                  ".generate(" not in _idcode and "backend.submit(" in _idcode))
+    _seen: dict = {}
+
+    class _FakeBackend:                                  # meniru API RunningHub: submit + poll
+        async def submit(self, req):                     # noqa: D401
+            _seen["req"] = req
+            return "t-1"
+
+        async def poll(self, task_id):
+            from backends import GenStatus
+            p = Path(_seen["req"].out_path)
+            Path(p.parent).mkdir(parents=True, exist_ok=True)
+            p.write_bytes(b"png")
+            return GenStatus(state="done", progress=100, result_path=p)
+
+    _fajah = WORK / "wajah_uji.jpg"
+    _fajah.write_bytes(b"jpg")
+    _outl = WORK / "locked_uji.png"
+    _rl = await _idmod.lock_identity(_FakeBackend(), WORK / "hasil_uji.png", _fajah, 1, _outl)
+    res.append(ok("identity-lock: face swap BENAR-BENAR jalan (submit+poll) & hasil dipakai",
+                  bool(_rl) and Path(_rl).exists()))
     res.append(ok("sheet-guard juga jaga karakter tersimpan (use:c / u:ch)",
                   "fix_char_id=r[\"id\"]" in _bsrc4))
 

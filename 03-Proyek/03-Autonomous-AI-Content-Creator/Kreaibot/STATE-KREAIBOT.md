@@ -705,6 +705,26 @@ Dibuktikan dengan komposit (kiri = hasil crop lama = teks "ARUNIKA — CHARA" + 
 **Konsekuensi:** sheet 6-panel Arunika final sekarang benar-benar dipakai (mode badan = full body asli
 dengan proporsi & dada asli; mode wajah = close-up asli). Ini juga memperbaiki SEMUA karakter sheet lama.
 
+### 6w. BUG KEDUA (LEBIH PARAH): KUNCI IDENTITAS GAGAL SENYAP SELALU (9 Okt 18:4x)
+
+**Bukti:** `identity.lock_identity` memanggil `backend.generate(req)`. `RunningHubBackend` **tidak punya**
+metode itu (API nyata: `submit(req) -> taskId`, `poll(taskId) -> GenStatus`). Karena seluruh blok dibungkus
+`try/except` yang cuma `log.warning`, kegagalan **tidak pernah kelihatan** → SEMUA render editor selalu
+memakai hasil mentah (wajah karangan model). Jadi akar "tetep gak mirip sama sekali" ada DUA:
+(1) panel sheet yang salah dipotong, (2) kunci identitas yang tidak pernah jalan.
+
+**FIX:** `identity.py` → `task = await backend.submit(req)` + loop `backend.poll(task)`.
+Log dinaikkan ke `log.error` (tidak senyap lagi). Diuji sungguhan: render editor (28 koin, 72 dtk)
+→ kunci identitas (极速换脸) **berhasil** menghasilkan `proof_locked.png`; panel 3 lebih dekat ke wajah asli
+(alis/mata/bibir/warna kulit), sisa cacat: warna kulit leher sedikit beda.
+
+**Tes anti-regresi (2):** (a) `identity.py` tidak boleh memanggil `.generate(` lagi, (b) backend palsu
+`submit/poll` → hasil lock benar-benar dipakai. **selftest 154/154.**
+
+**Pelajaran aturan:** semua penangkapan `except Exception` di jalur yang memengaruhi hasil user WAJIB
+`log.error` + ada tes fungsional yang memanggil backend/nama metode nyata. `warning` senyap menyembunyikan
+fitur mati total.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi
