@@ -10,6 +10,7 @@ import asyncio
 import json
 import re
 import shutil
+import subprocess
 import logging
 import sys
 import time
@@ -891,7 +892,20 @@ async def ugc_style(cb: CallbackQuery, state: FSMContext):
 
 # ============================ alur umum: foto → prompt → rasio ============================
 
-@router.message(Flow.photos, F.photo | F.document | F.video)
+# Nama bahan per fitur: aset ke-1 biasanya orangnya, ke-2 = video gerakan / suara.
+ASSET_LABEL: dict[str, tuple[str, ...]] = {
+    "motion": ("Foto orang", "Video gerakan"),
+    "lipsync": ("Foto orang", "Suara"),
+    "faceswap": ("Foto orang", "Foto wajah/model"),
+}
+
+
+def _asset_name(key: str, idx: int) -> str:
+    labels = ASSET_LABEL.get(key) or ()
+    return labels[idx] if 0 <= idx < len(labels) else f"Foto #{idx + 1}"
+
+
+@router.message(Flow.photos, F.photo | F.document | F.video | F.audio | F.voice)
 async def on_photo(msg: Message, state: FSMContext):
     data = await state.get_data()
     f = catalog.get(data.get("feature", ""))
@@ -903,22 +917,32 @@ async def on_photo(msg: Message, state: FSMContext):
         photos.append(msg.photo[-1].file_id)
     elif msg.video:
         photos.append(msg.video.file_id)
+    elif msg.audio:
+        photos.append(msg.audio.file_id)
+    elif msg.voice:
+        photos.append(msg.voice.file_id)
     else:
         photos.append(msg.document.file_id)      # type: ignore[union-attr]
     await state.update_data(photos=photos)
+    fkey = f.key if f else ""
     sisa = (f.max_photos - len(photos)) if f else 0
     kurang = (f.min_photos - len(photos)) if f else 0
-    t = f"✅ Foto #{len(photos)} masuk ({len(photos)}/{f.max_photos if f else '?'}).\n"
+    t = f"✅ {_asset_name(fkey, len(photos) - 1)} masuk ({len(photos)}/{f.max_photos if f else '?'}).\n"
     if kurang > 0:
-        t += f"Kirim {kurang} foto lagi."
+        t += f"Sekarang kirim <b>{_asset_name(fkey, len(photos))}</b>."
     elif sisa > 0:
-        t += "Kirim foto lain kalau perlu, atau <b>langsung ketik prompt</b>-nya."
+        t += "Kirim tambahan kalau perlu" + (", atau <b>langsung ketik prompt</b>-nya."
+                                             if (f and f.need_prompt) else ".")
     else:
-        t += "<b>Sekarang ketik prompt</b>-nya."
+        t += "<b>Sekarang ketik prompt</b>-nya." if (f and f.need_prompt) else "<b>Bahan sudah lengkap.</b>"
     await msg.answer(t)
 
     # ---- PRESET 1-TAP: user cukup tap satu tombol, tidak perlu ngetik prompt ----
     if f and len(photos) >= f.min_photos and not data.get("preset_sent"):
+        if not f.need_prompt:          # motion / lipsync / faceswap → tak ada prompt, langsung konfirmasi
+            await state.update_data(preset_sent=True)
+            await _confirm(msg, state, msg.from_user.id)
+            return
         rows = presets.kb_rows(f.key, lambda feat, dur: catalog.cost_for(
             feat, dur or (catalog.get(feat).duration if catalog.get(feat) else 5)))
         if rows:
@@ -1230,7 +1254,7 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                 tg = await bot.get_file(fid)
                 await bot.download_file(tg.file_path, p)   # type: ignore[arg-type]
                 local.append(p)
-                if f and f.key == "faceswap" and i == 2:
+                if f and f.key in ("faceswap", "motion", "lipsync") and i == 2:
                     video_in, local = local[-1], local[:-1]
             out = work / "hasil.mp4"
 
@@ -1271,6 +1295,21 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                     pass
                 log.info("job %s (cerita) selesai: %s", job_id, result)
                 return
+
+            # 1c) LIPSYNC: durasi = panjang suara yang dikirim (maks 10 dtk, sesuai harga 0,5T)
+            if f and f.key == "lipsync" and video_in and Path(video_in).exists():
+                try:
+                    from backends.mock import ffmpeg_bin
+                    fprobe = str(Path(ffmpeg_bin()).with_name("ffprobe"))
+                    pr = subprocess.run([fprobe, "-v", "error", "-show_entries", "format=duration",
+                                         "-of", "csv=p=0", str(video_in)],
+                                        capture_output=True, text=True, timeout=30)
+                    ln = float((pr.stdout or "0").strip() or 0)
+                    if ln > 0:
+                        job["duration"] = max(3, min(int(round(ln)), 10))
+                        log.info("job %s lipsync: suara %.1f dtk → durasi %s dtk", job_id, ln, job["duration"])
+                except Exception as e:                        # noqa: BLE001
+                    log.warning("job %s gagal baca durasi suara: %s", job_id, e)
 
             # 2) submit ke backend + poll
             req = GenRequest(job_id=job_id, feature_key=job["feature"],

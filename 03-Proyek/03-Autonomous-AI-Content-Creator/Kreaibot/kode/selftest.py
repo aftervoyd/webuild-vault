@@ -40,7 +40,10 @@ async def main() -> int:
     RUPIAH_PER_KOIN = 4.46
     KOIN_TERUKUR = {("i2v", 5): 45, ("i2v", 10): 68, ("i2v", 15): 89, ("long", 30): 135,
                     ("faceswap", 5): 10, ("story", 15): 135, ("story", 30): 270,
-                    ("allinone", 5): 66, ("allinone", 15): 269, ("ugc", 15): 269}
+                    ("allinone", 5): 66, ("allinone", 15): 269, ("ugc", 15): 269,
+                    # paritas Kuzushi (9 Okt): terukur di uji produksi
+                    ("motion", 5): 121,        # Wan2.2 Animate, 308 s, 121 koin (GPU plus)
+                    ("lipsync", 10): 48}       # LTX digital human, 6 s = 29 koin → 10 s ≈ 48
     for (key, dur), koin in KOIN_TERUKUR.items():
         harga = catalog.cost_for(key, dur) / 10 * 10_000
         biaya = koin * RUPIAH_PER_KOIN

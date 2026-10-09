@@ -438,6 +438,36 @@ Pasangan alaminya: **base Karakter Saya** (wajah konsisten) + **TTS Bahasa Indon
 (audio masuk lewat `@video` karena backend belum punya slot audio khusus), `tools/lipsync_test.py`.
 **Uji produksi:** `ref1.jpg` (719×1280) + TTS Indonesia 15 dtk → task `2108441505478221826`.
 
+### 6k. PARITAS FITUR KUZUSHI — 2 FITUR BARU NYALA (9 Okt 14:40)
+
+**Keputusan user:** *"tinggal pake fitur original aja kaya yang dipake kuzushi"* — stop eksperimen, samain
+daftar fitur Kuzushi, pakai mesin original.
+
+**Cek menu Kuzushi vs kita** (Kuzushi 8 item · kita 8 fitur):
+| # | Kuzushi | Harga | Kita |
+|---|---|---|---|
+| 1 | 🎭 Face Swap & Motion Video | 2T | ✅ **BARU NYALA** `motion` (app Wan2.2 Animate `2039639280896708610`) |
+| 2 | 🎬 Image to Video | 0,5–2T | ✅ `i2v` 5/10/15 + `long` 30 |
+| 3 | 🖌️ AI Image Editor | 0,3T | ✅ `editor` |
+| 4 | 🕺 Pose Transfer & Style | 0,5T | ⏳ masih DITAHAN (butuh app pose-dari-GAMBAR) |
+| 5 | 🎤 AI Video Lip Sync | 0,5T | ✅ **BARU NYALA** `lipsync` (app LTX digital human `2031016553440878594`) |
+| 6 | 🌌 Video All-in-One | 1T | ✅ `allinone` |
+| 7 | Top Up QRIS + Referral | — | ✅ |
+| 8 | Profil & Saldo, Voucher, Panduan | — | ✅ |
+
+**Harga DISAMAKAN dengan Kuzushi** (keputusan user: jangan lebih murah): motion 2T, lipsync 0,5T.
+**Margin terukur:** motion 5 dtk **73%** (121 koin) · lipsync 10 dtk **57%** (≈48 koin).
+
+**Cara pakai (di bot):**
+- 🎭 Face Swap & Motion: kirim **FOTO orang** → kirim **VIDEO gerakan contoh** → jadi (gerak asli dari video, wajah dari foto).
+- 🎤 Lip Sync: kirim **FOTO orang** → kirim **SUARA** (voice note/audio ≤10 dtk) → orang itu ngomong, mulutnya cocok.
+  Durasi otomatis ikut panjang suara (ffprobe, maks 10 dtk).
+
+**Perubahan kode:** `catalog.py` (fitur `motion` baru; `lipsync` 2 aset foto+suara; harga; SIAP_JUAL 8),
+`bot.py` (terima VIDEO & AUDIO sebagai aset; label per-aset "Foto orang / Video gerakan / Suara";
+motion+lipsync langsung ke konfirmasi tanpa preset; aset ke-2 → `video_in`; durasi lipsync dari suara),
+`selftest.py` (koin terukur motion/lipsync). Uji: **selftest 95/95**, ux_audit bersih, bot restart OK.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

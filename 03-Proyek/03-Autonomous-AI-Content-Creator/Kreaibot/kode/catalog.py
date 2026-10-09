@@ -88,6 +88,20 @@ FEATURES: dict[str, Feature] = {
         backend_workflow="krea_faceswap",
         hint="Kirim foto wajah kamu dulu, lalu kirim foto target/model-nya.",
     ),
+    "motion": Feature(
+        key="motion",
+        label="🎭 Face Swap & Motion Video",
+        cost=2.0,
+        min_photos=2, max_photos=2,
+        need_prompt=False, need_ratio=False,
+        duration=5, durations=(5, 10),
+        desc=("Wajah di foto kamu ditempel ke gerakan NYATA dari video contoh — gerak asli, bukan karangan AI.\n"
+              "· Langkah 1: kirim FOTO orang (wajah jelas, menghadap kamera)\n"
+              "· Langkah 2: kirim VIDEO gerakan contoh (5–10 detik, badan kelihatan penuh)\n"
+              "· Hasil: orang di foto kamu bergerak persis seperti video itu"),
+        backend_workflow="krea_motion",
+        hint="Kirim FOTO orangnya dulu, lalu VIDEO gerakan contohnya",
+    ),
     "pose": Feature(
         key="pose",
         label="🕺 Pose Transfer & Style",
@@ -99,12 +113,17 @@ FEATURES: dict[str, Feature] = {
     ),
     "lipsync": Feature(
         key="lipsync",
-        label="🎤 Video Lip Sync",
+        label="🎤 AI Video Lip Sync",
         cost=0.5,
-        min_photos=1, max_photos=1,
-        need_prompt=True, need_ratio=False,
-        desc="Foto wajah + teks/audio → video berbicara/bernyanyi.",
+        min_photos=2, max_photos=2,
+        need_prompt=False, need_ratio=False,
+        duration=10, durations=(10,),
+        desc=("Foto orang + SUARA → video orang itu bicara dengan mulut yang cocok sama suaranya.\n"
+              "· Langkah 1: kirim FOTO orang (wajah jelas, menghadap kamera)\n"
+              "· Langkah 2: kirim SUARA-nya (voice note / file audio, maks 10 detik)\n"
+              "· Cocok buat jualan: orang ngomongin produk kamu"),
         backend_workflow="krea_lipsync_h3",
+        hint="Kirim FOTO orangnya dulu, lalu kirim SUARAnya (voice note)",
     ),
     "long": Feature(
         key="long",
@@ -167,6 +186,8 @@ DURATION_COST: dict[tuple[str, int], float] = {
     ("faceswap", 5): 0.5,
     ("allinone", 5): 1.0, ("allinone", 15): 2.5,
     ("ugc", 15): 2.5,
+    ("motion", 5): 2.0, ("motion", 10): 2.5,          # Kuzushi: Face Swap & Motion = 2 Token (samain)
+    ("lipsync", 10): 0.5,                            # Kuzushi: Lip Sync = 0,5 Token (samain)
 }
 
 
@@ -180,7 +201,8 @@ def cost_for(key: str, duration: int) -> float:
 
 # Fitur yang SUDAH tersambung ke mesin render nyata (RunningHub workflow FL2VA).
 # Fitur lain tetap ada di katalog tapi belum tampil ke user sampai workflow-nya siap.
-SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "faceswap", "editor")
+SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "faceswap", "editor",
+                              "motion", "lipsync")
 
 
 def enabled_features() -> list[Feature]:
