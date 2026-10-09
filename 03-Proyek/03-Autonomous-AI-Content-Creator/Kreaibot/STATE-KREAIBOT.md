@@ -158,6 +158,29 @@ Uji `empty2` = workflow yang **sama** (FL2VA) tapi **frame-akhir dikosongkan eks
 4. Pasang **kode undangan RunningHub** di bot/kanal → koin gratis (500/orang).
 5. Fitur susulan: **lip sync** (INFINITETALK), **30 detik** (Seedance 2.5), pose transfer, face swap.
 
+## 6c. AKAR MASALAH "SLOW MOTION + TANPA SUARA" (9 Okt 10:15)
+
+**Diagnosa (bukti ffprobe, bukan dugaan):** hasil bot kita = **16 fps, tanpa trek audio**.
+Jalur lama (FL2VA) keluar 24 fps; app Wan2.2 (jalur koin yang dipakai sekarang) turun ke **16 fps**
+→ di layar 60 Hz terlihat patah-patah / seperti gerak lambat. Model Wan2.2 memang **tidak** menghasilkan audio.
+
+**Kenapa Kuzushi lebih cepat:** mereka pakai **LTX 2.3** (menu bot-nya sendiri menulis "Minimax / LTX 2.3").
+LTX-2.3 di katalog RunningHub **$0,01/detik**, "generates matching ambient sound effects … in a single pass",
+5–20 s, native 9:16. Model kita (Wan2.2) jauh lebih berat + antrean "low-cost channel".
+
+**PERBAIKAN TERPASANG (gratis, LIVE 10:23):** `backends/mediafix.py` → `smooth_fps()`
+interpolasi `minterpolate` 16 fps → **30 fps** TANPA mengubah durasi/kecepatan gerak.
+Saklar `KREAIBOT_FPS=30` di `.env` (isi 0 = mati). Biaya: **±1 mnt 55 s per video 10 s** (VPS 2 core).
+Dipakai di 2 titik pengiriman (`worker` + `_resume_one`). Hasil editor (PNG) otomatis dilewati.
+
+**OPSI PREMIUM (teruji, BELUM dipakai):** `alibaba/wan-2.6/image-to-video-flash` lewat API model
+→ **30 fps + audio AAC 44,1 kHz stereo**, durasi 2–15 s, 720p/1080p, `enableAudio=true` (default).
+Ukur: **5 s = 42 detik** (±6× lebih cepat dari app koin 263 s) tapi **$0,20 ≈ Rp3.240** (vs 61 koin ≈ Rp272).
+Di harga jual sekarang (5 s = Rp500) → **RUGI**. Layak hanya sebagai tier premium / harga 15 s dinaikkan.
+
+**Endpoint `ltx-2.3/image-to-video` masih TIDAK bisa dipanggil** dari daftar endpoint API kita
+(hanya muncul di katalog web). Kalau mau jalur LTX, opsi berikutnya: AI App / workflow ComfyUI LTX-2.3 (jalur koin).
+
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).

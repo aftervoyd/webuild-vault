@@ -29,6 +29,7 @@ import catalog
 import promptsmith
 from aulaa import Aulaa, make_client
 from backends import GenRequest, GenStatus, make_backend
+from backends.mediafix import smooth_fps
 from config import settings
 from db import Database
 
@@ -1103,6 +1104,7 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                     pass
                 await asyncio.sleep(settings.poll_interval)
 
+            result = await asyncio.to_thread(smooth_fps, result)   # 16fps → 30fps halus
             db.set_job(job_id, status="done", result_path=str(result))
             await send_result(bot, chat_id, result,
                               f"✨ <b>{f.label}</b> selesai tanpa watermark!\n"
@@ -1305,6 +1307,7 @@ async def _resume_one(bot: Bot, job: dict) -> None:
                     result = out
                 break
             await asyncio.sleep(settings.poll_interval)
+        result = await asyncio.to_thread(smooth_fps, result)   # 16fps → 30fps halus
         db.set_job(jid, status="done", result_path=str(result))
         await send_result(bot, uid, result,
                           f"✨ <b>{f.label if f else job['feature']}</b> selesai tanpa watermark!\n"
