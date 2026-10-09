@@ -890,6 +890,43 @@ membatalkan perintah user secara diam-diam. (2) Fitur yang mengubah hasil model 
 SAKLAR dan default-nya MATI. (3) Keluhan "nggak bebas" hampir selalu = ada lapisan bot yang
 menimpa keputusan model/user tanpa sepengetahuan user.
 
+### 7d. AUDIT NYATA "BELUM OPTIMAL" (9 Okt 21:xx) — DATA, BUKAN OPINI
+
+**Dari database & log (bukan tebakan):** 28 job total, **7 GAGAL (25%)**. Semua 7 sudah di-REFUND ✓
+(refund otomatis jalan 100%).
+
+| job | fitur | sebab gagal (dari DB) |
+|---|---|---|
+| 1 | ugc | ffmpeg belum terpasang |
+| 7 | i2v | `data: FAILED` dari mesin |
+| 14 | editor | koneksi putus (ServerDisconnected) |
+| 20 | editor | `data: FAILED` |
+| 25,26,27 | editor | **"Your API balance is insufficient"** = SALDO DOLAR RunningHub habis ($0,01) |
+
+**job 25-27 = 3 percobaan user beruntun** ("ganti outfit + dancing night club") gagal karena:
+(a) prompt video dipakai di editor (fix 7c) ✗, (b) kunci identitas nyala otomatis (fix 7c) ✗,
+(c) app saat itu butuh saldo $. Pesan ke user cuma JSON mentah → user merasa bot RUSAK.
+
+**PERBAIKAN (7d):**
+1. `humanize_error()` — error mesin → bahasa Indonesia (`Saldo DOLAR habis`, `mesin nolak prompt`,
+   `koneksi putus`, `mesin gagal proses`). Pesan gagal sekarang: nomor job + jumlah refund + sebab.
+2. Saldo $ rendah → log.error khusus ke admin.
+3. **BUG NameError** di `cb_claim` (klik tombol klaim bonus referral = CRASH) → `main_menu_kb(u.id)` → `uid` ✓
+4. **BUG "can't use file of type Document as Photo"** — tap karakter di inventori error karena foto
+   master tersimpan sebagai Document → ada cadangan `answer_document` ✓
+5. Editor utama → **Flux Kontext** (13 koin / 31 dtk, paling taat perintah) + cadangan Qwen 2511 ✓
+
+**DATA UJI 3 MESIN EDITOR (permintaan sama: bikini + pantai + wajah harus sama):**
+| mesin | koin | waktu | patuh perintah | kemiripan wajah | natural |
+|---|---|---|---|---|---|
+| Flux Kontext | 13 | 31 dtk | ✅ | sedang | sedang |
+| S20 双图编辑 | 31 | 301 dtk | ✅ | **paling mirip** | sedang |
+| Krea2 双图编辑 | 112 | 344 dtk | ✅ | kurang mirip | **paling natural** |
+→ belum ada yang sempurna: cepat+patuh (Kontext) ≠ wajah paling mirip (S20) ≠ paling natural (Krea2).
+**Usul:** tombol **"🔒 Perbaiki wajah (0,5 Token)"** di pesan hasil → user pilih sendiri (kebebasan).
+
+**selftest 184/184.**
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

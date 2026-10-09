@@ -460,6 +460,18 @@ async def main() -> int:
                   _prefs_rt(db)))
     res.append(ok("db: user belum punya setelan → default MATI (bot bebas)",
                   db.pref_on(999998, "idlock") is False))
+    _bsrc7 = (Path(__file__).with_name("bot.py")).read_text(encoding="utf-8")
+    res.append(ok("error mesin diterjemahkan ke bahasa manusia (bukan JSON mentah)",
+                  "def humanize_error" in _bsrc7 and "humanize_error(e)" in _bsrc7
+                  and "Saldo <b>DOLAR</b>" in _bsrc7))
+    res.append(ok("pesan gagal ke user memuat nomor job + jumlah refund + sebab",
+                  'job <code>{job_id}</code>' in _bsrc7 and "sudah dikembalikan ke saldo kamu" in _bsrc7))
+    res.append(ok("BUG referral: main_menu_kb(u.id) di handler callback (NameError) sudah hilang",
+                  "main_menu_kb(u.id))" not in _bsrc7.split("@router.callback_query(F.data == \"r:claim\")")[1][:400]))
+    res.append(ok("BUG foto master Document: answer_photo ada cadangan answer_document",
+                  'except TelegramBadRequest:' in _bsrc7 and "answer_document(r[\"file_id\"]" in _bsrc7))
+    res.append(ok("editor: mesin utama = Flux Kontext (taat perintah), cadangan Qwen 2511",
+                  "RUNNINGHUB_APP_EDITOR=2075393520445251586" in (Path(__file__).with_name(".env")).read_text(encoding="utf-8")))
     res.append(ok("bot: kunci identitas ambil PANEL WAJAH dari sheet",
                   'analyze_sync, face_local' in _bsrc5 and '_wajah.jpg' in _bsrc5))
 

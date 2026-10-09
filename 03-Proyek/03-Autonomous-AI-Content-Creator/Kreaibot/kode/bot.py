@@ -644,7 +644,7 @@ async def cb_claim(cb: CallbackQuery):
         await cb.message.edit_text(
             f"🎉 <b>Bonus referral masuk: +{settings.ref_invitee:g} Token!</b>\n\n"
             f"{saldo_txt(uid)}\n\nLangsung coba fiturnya 👇",
-            reply_markup=main_menu_kb(u.id))
+            reply_markup=main_menu_kb(uid))
         await cb.answer("Bonus masuk!")
     elif kode == "sudah":
         await cb.answer("Bonus referral kamu sudah pernah diklaim 🙂", show_alert=True)
@@ -1307,6 +1307,34 @@ async def fetch_url(url: str, dest: Path) -> Path:
     return dest
 
 
+def humanize_error(err) -> str:
+    """Ubah error mesin jadi bahasa manusia.
+
+    Akar keluhan user 9 Okt ("RUSAK BOT GUA"): 3 job gagal beruntun dengan pesan mentah
+    *"Your API balance is insufficient, please recharge and use it"* — user tidak tahu itu
+    saldo DOLAR RunningHub yang habis (bukan token dia), jadi dia merasa botnya rusak.
+    """
+    s = str(err or "")
+    low = s.lower()
+    if "balance is insufficient" in low or ("insufficient" in low and "balance" in low):
+        return ("Saldo <b>DOLAR</b> mesin rendering habis — model ini bayar pakai dolar, bukan koin. "
+                "Ini di sisi kami, bukan salah kamu. Token kamu <b>sudah dikembalikan</b>. "
+                "Coba lagi nanti atau pakai fitur lain dulu.")
+    if "prompt_outputs_failed_validation" in low:
+        return "Mesin menolak permintaannya (validasi gagal). Coba tulis lebih sederhana."
+    if "serverdisconnected" in low or "server disconnected" in low:
+        return "Koneksi ke mesin putus di tengah jalan. Coba kirim ulang — biasanya langsung jalan."
+    if '"data": "failed"' in low or 'data\\": \\"failed' in low:
+        return "Mesin gagal memproses permintaan ini (bukan token kamu). Coba ubah sedikit promptnya."
+    if "timeout" in low:
+        return "Mesin terlalu lama tidak menjawab. Coba lagi ya."
+    if "upload ke runninghub gagal" in low or "upload" in low:
+        return "Gagal mengunggah fotomu ke mesin. Coba kirim ulang fotonya."
+    if "ffmpeg" in low:
+        return "Alat video di server belum siap. Lapor ke admin ya."
+    return s[:180]
+
+
 async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
     async with SEM:
         job = db.get_job(job_id)
@@ -1514,9 +1542,13 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
             db.set_job(job_id, status="failed", error=str(e)[:400])
             if f:
                 db.ledger_add(job["telegram_id"], f.cost, "refund", ref=str(job_id))
+            _why = humanize_error(e)
+            if "saldo <b>DOLAR</b>" in _why:                 # masalah di sisi kami → catat keras
+                log.error("job %s: SALDO DOLAR RUNNINGHUB HABIS (app butuh $, bukan koin)", job_id)
             await bot.send_message(chat_id,
-                f"❌ <b>Render gagal</b> (job <code>{job_id}</code>).\nToken kamu <b>dikembalikan</b>.\n"
-                f"Alasan: <code>{str(e)[:200]}</code>", parse_mode=ParseMode.HTML)
+                f"❌ <b>Render gagal</b> (job <code>{job_id}</code>).\n"
+                f"Token <b>{f.cost:g}</b> sudah dikembalikan ke saldo kamu.\n\n"
+                f"📋 Sebab: {_why}", parse_mode=ParseMode.HTML)
 
 
 # ============================ admin ============================
@@ -1837,7 +1869,13 @@ async def cb_char_detail(cb: CallbackQuery, state: FSMContext):
         await cb.message.delete()
     except Exception:                        # noqa: BLE001
         pass
-    await cb.message.answer_photo(r["file_id"], caption=cap, reply_markup=kb)
+    try:
+        await cb.message.answer_photo(r["file_id"], caption=cap, reply_markup=kb)
+    except TelegramBadRequest:
+        # Bug 9 Okt: foto master bisa tersimpan sebagai DOCUMENT (PNG dikirim sebagai berkas) →
+        # answer_photo ditolak Telegram ("can't use file of type Document as Photo") dan user
+        # cuma lihat error. Sekarang otomatis dikirim sebagai dokumen.
+        await cb.message.answer_document(r["file_id"], caption=cap, reply_markup=kb)
     await cb.answer()
 
 
