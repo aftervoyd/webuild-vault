@@ -156,6 +156,25 @@ async def main() -> int:
     db.ledger_add(123, 1.5, "refund", ref=str(jid))
     res.append(ok("refund gagal render", db.balance(123) == 10.0, f"saldo={db.balance(123)}"))
 
+    # 3a-2) INVENTORY: karakter & produk tersimpan (fitur "tinggal sebut namanya")
+    cid = db.char_save(123, "Si Rina", "FILEID-rina", kind="char")
+    db.char_save(123, "Kopi Arabika", "FILEID-kopi", kind="produk")
+    res.append(ok("simpan karakter tersimpan", cid is not None and db.char_count(123, "char") == 1))
+    res.append(ok("simpan produk tersimpan", db.char_count(123, "produk") == 1))
+    res.append(ok("nama karakter tidak boleh kembar (per jenis)",
+                  db.char_save(123, "si rina", "X", kind="char") is None))
+    res.append(ok("panggil karakter dari NAMA (case-insensitive)",
+                  (db.char_get(123, "SI RINA") or {})["file_id"] == "FILEID-rina"))
+    res.append(ok("deteksi nama di teks bebas ('video si rina joget')",
+                  (db.char_find_in_text(123, "bikin video si rina joget", kind="char") or {})["name"] == "Si Rina"))
+    res.append(ok("deteksi produk di brief ('promo kopi arabika')",
+                  (db.char_find_in_text(123, "promo kopi arabika diskon", kind="produk") or {})["name"] == "Kopi Arabika"))
+    res.append(ok("tidak salah deteksi kalau nama tidak disebut",
+                  db.char_find_in_text(123, "bikin video orang jalan santai", kind="char") is None))
+    res.append(ok("ganti nama karakter", db.char_rename(123, cid, "Rina Cantik") and
+                  (db.char_get(123, cid) or {})["name"] == "Rina Cantik"))
+    res.append(ok("hapus karakter", db.char_delete(123, cid) and db.char_count(123, "char") == 0))
+
     # 3b) referral (anti-farming)
     db.ensure_user(900, "inviter", "Inviter", signup_bonus=1.0)
     db.ensure_user(901, "teman", "Teman", signup_bonus=1.0)

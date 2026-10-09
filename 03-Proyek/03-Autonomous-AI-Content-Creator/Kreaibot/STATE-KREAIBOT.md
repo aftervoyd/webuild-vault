@@ -384,6 +384,36 @@ Uji: `tools/motion_test.py`. Backup `.env.bak-before-motion`.
 orang yang sama (ref1, app_bernini, app_wan22) sehingga swap tidak bisa dibedakan secara visual.
 Perlu 1 uji dengan **video gerakan orang LAIN**.
 
+### 6i. INVENTORY: 🧑🎨 KARAKTER SAYA + 🛍️ PRODUK SAYA (9 Okt 13:45)
+
+**Permintaan user:** user bisa simpan master character sheet (dan produk untuk UGC), bisa ditambah/dihapus/
+dinamai sendiri, lalu **tinggal sebut namanya** → otomatis dipakai secara identik. Ditaruh di **paling atas
+inventory/menu**.
+
+**DB:** tabel `characters` + kolom `kind` (`char` | `produk`), `UNIQUE(telegram_id, kind, name_lower)`
+(nama tidak boleh kembar per jenis). Method: `char_save/list/count/get/find_in_text/rename/delete/bump`
+(+ migrasi `ALTER TABLE characters ADD COLUMN kind`).
+**Kunci identik:** yang disimpan adalah **file_id foto master**; dipakai ulang foto yang SAMA tiap render →
+wajah/karakter konsisten antar hasil.
+
+**UI:**
+- Menu utama: 2 tombol **di paling atas** → `🧑🎨 Karakter Saya (N)` · `🛍️ Produk Saya (N)`.
+- Daftar → tap item = lihat foto + `✏️ Ganti nama` / `🗑 Hapus`; tombol `➕ Tambah baru`.
+- Tambah: kirim foto → ketik nama (contoh "si rina" / "kopi arabika").
+- **Auto-pakai:** `db.char_find_in_text()` — user cukup menulis *"bikin video si rina joget"* di prompt
+  (atau *"promo kopi arabika diskon"* di brief UGC) → bot otomatis memakai aset tersimpan itu + menaikkan `uses`.
+- Tombol 1-tap juga disediakan di alur: `use:c:<id>` (video: karakter → lanjut pilih preset),
+  `u:ch:<id>` (UGC karakter), `u:pr:<id>` (UGC produk).
+
+**UGC jadi 2 langkah gampang:** langkah 1 karakter (tersimpan / baru) → langkah 2 produk (tersimpan / baru)
+→ ketik brief. Semua bisa 1 tap kalau asetnya sudah disimpan.
+
+**Uji:** `selftest` **93/93** (9 tes baru: simpan, anti-kembar, panggil dari nama, deteksi di teks,
+deteksi produk, rename, hapus).
+
+**KEPUTUSAN HARGA (user, 9 Okt):** **jangan** lebih murah dari Kuzushi — **samakan harganya**; kita menang di
+**KUALITAS**: kemiripan wajah, konsistensi karakter, dan gerakan yang natural seperti manusia.
+
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).

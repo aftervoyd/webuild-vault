@@ -59,8 +59,16 @@ def saldo_txt(tid: int) -> str:
     return f"💰 Sisa saldo: <b>{db.balance(tid):.1f} Token</b>"
 
 
-def main_menu_kb() -> InlineKeyboardMarkup:
+def main_menu_kb(uid: int | None = None) -> InlineKeyboardMarkup:
     rows = []
+    if uid:
+        # INVENTORY DI PALING ATAS: karakter & produk tersimpan (sekali simpan, pakai selamanya)
+        rows.append([InlineKeyboardButton(
+            text=f"🧑\u200d🎨 Karakter Saya ({db.char_count(uid, 'char')})",
+            callback_data="m:inv:char"),
+            InlineKeyboardButton(
+            text=f"🛍️ Produk Saya ({db.char_count(uid, 'produk')})",
+            callback_data="m:inv:produk")])
     for f in catalog.enabled_features():
         rows.append([InlineKeyboardButton(text=f"{f.label} — {f.cost:g} Token",
                                           callback_data=f"m:feat:{f.key}")])
@@ -116,6 +124,9 @@ class Flow(StatesGroup):
     ugc_prod = State()      # 2/5 foto produk
     ugc_brief = State()     # 3/5 brief produk
     ugc_style = State()     # 4/5 pilih gaya
+    # --- inventory: karakter & produk tersimpan ---
+    inv_photo = State()     # kirim foto master
+    inv_name = State()      # kasih nama (atau ganti nama)
 
 
 # ============================ menu ============================
@@ -150,11 +161,11 @@ async def cmd_start_ref(msg: Message, command: CommandObject, state: FSMContext)
                 f"🎉 <b>Selamat datang + bonus referral!</b>\n\n"
                 f"<b>+{settings.ref_invitee:g} Token</b> sudah masuk ke akunmu.\n"
                 f"{saldo_txt(u.id)}\n\nYuk bikin video pertamamu 👇",
-                reply_markup=main_menu_kb())
+                reply_markup=main_menu_kb(u.id))
             return
         await msg.answer(_join_txt("🎁 <b>Kamu dapat bonus referral!</b>"), reply_markup=_join_kb())
         return
-    await msg.answer(_welcome(u.id), reply_markup=main_menu_kb())
+    await msg.answer(_welcome(u.id), reply_markup=main_menu_kb(u.id))
 
 
 @router.message(CommandStart(deep_link=False))
@@ -162,7 +173,7 @@ async def cmd_start(msg: Message, state: FSMContext):
     await state.clear()
     db.ensure_user(msg.from_user.id, msg.from_user.username or "",
                    msg.from_user.full_name or "", settings.signup_bonus)
-    await msg.answer(_welcome(msg.from_user.id), reply_markup=main_menu_kb())
+    await msg.answer(_welcome(msg.from_user.id), reply_markup=main_menu_kb(msg.from_user.id))
 
 
 @router.callback_query(F.data == "m:home")
@@ -170,7 +181,7 @@ async def cb_home(cb: CallbackQuery, state: FSMContext):
     await state.clear()
     await cb.message.edit_text(
         f"🏠 <b>Menu Utama</b>\n\n{saldo_txt(cb.from_user.id)}\n\nPilih fitur 👇",
-        reply_markup=main_menu_kb())
+        reply_markup=main_menu_kb(cb.from_user.id))
     await cb.answer()
 
 
@@ -313,7 +324,7 @@ async def _notify_expired(row) -> None:
     try:
         await bot.send_message(int(row["telegram_id"]),
                                "⌛ <b>Waktu pembayaran habis.</b>\n\nKalau kamu sudah bayar, hubungi admin ya.",
-                               reply_markup=main_menu_kb())
+                               reply_markup=main_menu_kb(int(row["telegram_id"])))
     except Exception:                       # noqa: BLE001
         pass
 
@@ -376,7 +387,7 @@ async def _credit_topup(order_id: str, via: str = "poller", p=None) -> float | N
             f"🎉 <b>Pembayaran diterima!</b>\n\n"
             f"💚 +{tok:g} Token masuk\nSaldo sekarang: <b>{bal:g} Token</b>\n\n"
             f"Langsung bikin video 👇",
-            reply_markup=main_menu_kb())
+            reply_markup=main_menu_kb(uid))
     except Exception as e:                      # noqa: BLE001
         log.warning("gagal kabari user %s: %s", uid, e)
     # pesan QR di chat user → otomatis berubah jadi "LUNAS"
@@ -549,7 +560,7 @@ async def _give_inviter_bonus(inviter_id: int, invitee_id: int) -> None:
             inviter_id,
             f"🎉 <b>Bonus referral +{settings.ref_inviter:g} Token</b>\n"
             f"Teman yang kamu undang sudah bergabung.\n{saldo_txt(inviter_id)}",
-            reply_markup=main_menu_kb())
+            reply_markup=main_menu_kb(inviter_id))
     except Exception as e:                # noqa: BLE001
         log.warning("gagal kabari pengundang %s: %s", inviter_id, e)
 
@@ -614,7 +625,7 @@ async def cb_claim(cb: CallbackQuery):
         await cb.message.edit_text(
             f"🎉 <b>Bonus referral masuk: +{settings.ref_invitee:g} Token!</b>\n\n"
             f"{saldo_txt(uid)}\n\nLangsung coba fiturnya 👇",
-            reply_markup=main_menu_kb())
+            reply_markup=main_menu_kb(u.id))
         await cb.answer("Bonus masuk!")
     elif kode == "sudah":
         await cb.answer("Bonus referral kamu sudah pernah diklaim 🙂", show_alert=True)
@@ -694,24 +705,100 @@ async def cb_go(cb: CallbackQuery, state: FSMContext):
     batal = back_kb([[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]])
     if f.kind == "ugc":
         await state.set_state(Flow.ugc_char)
+        simpan = inv_use_rows(cb.from_user.id, "char", "u:ch")
+        rows = simpan + [[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]
         await cb.message.edit_text(
             f"{f.label}\n\n🖼 <b>Kirim FOTO KARAKTER</b>\n"
             f"Foto wajah/tubuh yang mau dipakai jadi kreator — tajam, wajah jelas, tanpa watermark.\n\n"
-            f"<i>Habislah langsung kirim foto produk, terus langsung ketik brief-nya. "
-            f"Gak perlu tekan tombol apa pun.</i>",
-            reply_markup=batal)
+            + ("🧑\u200d🎨 <b>Atau pakai karakter tersimpan</b> (1 tap):\n" if simpan else "")
+            + "<i>Habislah langsung kirim foto produk, terus langsung ketik brief-nya. "
+              "Gak perlu tekan tombol apa pun.</i>",
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
         await cb.answer()
         return
 
     hint = f.hint or f"Kirim {f.min_photos}–{f.max_photos} foto"
     await state.set_state(Flow.photos)
+    simpan = inv_use_rows(cb.from_user.id, "char", "use:c")
+    rows = list(batal.inline_keyboard)
+    if simpan:
+        rows = simpan + [[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]
     await cb.message.edit_text(
         f"{f.label}\n\n📸 <b>{hint}</b>\n"
         + ("· Foto 1 = frame awal · Foto 2 = frame akhir · Foto 3+ = elemen tambahan\n" if key == "allinone" else "")
         + f"💠 Biaya: <b>{catalog.cost_for(key, dur):g} Token</b>"
+        + ("\n\n🧑\u200d🎨 <b>Atau pakai karakter tersimpan</b> (1 tap, tanpa kirim foto):"
+           if simpan else "")
         + "\n\n<i>Kalau foto sudah cukup, <b>langsung ketik prompt</b>-nya — gak perlu tekan tombol.</i>",
-        reply_markup=batal)
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
     await cb.answer()
+
+
+@router.callback_query(F.data.startswith("use:c:"))
+async def cb_use_saved_char(cb: CallbackQuery, state: FSMContext):
+    """Pakai karakter tersimpan sebagai foto referensi → lanjut pilih situasi (preset)."""
+    r = db.char_get(cb.from_user.id, int(cb.data.split(":")[2]))
+    if not r:
+        await cb.answer("Karakter tidak ketemu", show_alert=True)
+        return
+    data = await state.get_data()
+    f = catalog.get(data.get("feature", ""))
+    if not f:
+        await cb.answer("Sesi kadaluarsa — mulai dari menu.", show_alert=True)
+        return
+    await state.update_data(photos=[r["file_id"]], preset_sent=False)
+    db.char_bump(r["id"])
+    rows = presets.kb_rows(f.key, lambda feat, dur: catalog.cost_for(
+        feat, dur or (catalog.get(feat).duration if catalog.get(feat) else 5)))
+    rows.append([InlineKeyboardButton(text="✍️ Tulis sendiri", callback_data="p:sendiri")])
+    rows.append([InlineKeyboardButton(text="⬅️ Menu Utama", callback_data="m:home")])
+    await cb.message.edit_text(
+        f"🧑\u200d🎨 Karakter <b>{r['name']}</b> dipakai.\n\n"
+        f"👇 <b>Mau diapain?</b> Pilih satu — nggak perlu ngetik apa-apa.",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
+    await cb.answer(f"Karakter {r['name']} dipakai")
+
+
+@router.callback_query(F.data.startswith("u:ch:"))
+async def cb_ugc_saved_char(cb: CallbackQuery, state: FSMContext):
+    """UGC langkah 1: pakai karakter tersimpan."""
+    r = db.char_get(cb.from_user.id, int(cb.data.split(":")[2]))
+    if not r:
+        await cb.answer("Tidak ketemu", show_alert=True)
+        return
+    await state.update_data(char_photo=r["file_id"])
+    await state.set_state(Flow.ugc_prod)
+    db.char_bump(r["id"])
+    pr = inv_use_rows(cb.from_user.id, "produk", "u:pr")
+    rows = pr + [[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]
+    await cb.message.edit_text(
+        f"✅ Karakter: <b>{r['name']}</b>\n\n🛍 <b>Kirim FOTO PRODUK</b>\n"
+        "Foto produk yang jelas (label terbaca, latar bersih). Boleh 1–3 foto.\n\n"
+        + ("🛍️ <b>Atau pakai produk tersimpan:</b>\n" if pr else "")
+        + "<i>Kalau sudah, <b>langsung ketik brief</b>-nya (nama produk, harga, keunggulan).</i>",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
+    await cb.answer(f"Karakter {r['name']} dipakai")
+
+
+@router.callback_query(F.data.startswith("u:pr:"))
+async def cb_ugc_saved_prod(cb: CallbackQuery, state: FSMContext):
+    """UGC langkah 2: pakai produk tersimpan."""
+    r = db.char_get(cb.from_user.id, int(cb.data.split(":")[2]))
+    if not r:
+        await cb.answer("Tidak ketemu", show_alert=True)
+        return
+    data = await state.get_data()
+    prod = data.get("prod_photos", [])
+    if r["file_id"] not in prod:
+        prod.append(r["file_id"])
+    await state.update_data(prod_photos=prod)
+    db.char_bump(r["id"])
+    await cb.message.edit_text(
+        f"✅ Produk: <b>{r['name']}</b> ({len(prod)} foto)\n\n"
+        "✍️ <b>Sekarang ketik brief</b>-nya (nama produk, harga, keunggulan, target pembeli).\n"
+        "<i>Bahasa Indonesia santai juga bisa.</i>",
+        reply_markup=back_kb([[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]))
+    await cb.answer(f"Produk {r['name']} dipakai")
 
 
 # ============================ alur UGC ============================
@@ -721,12 +808,15 @@ async def ugc_char(msg: Message, state: FSMContext):
     fid = msg.photo[-1].file_id if msg.photo else msg.document.file_id  # type: ignore[union-attr]
     await state.update_data(char_photo=fid)
     await state.set_state(Flow.ugc_prod)
+    pr = inv_use_rows(msg.from_user.id, "produk", "u:pr")
     await msg.answer(
         "✅ Foto karakter masuk.\n\n🛍 <b>Kirim FOTO PRODUK</b>\n"
         "Foto produk yang jelas (label terbaca, latar bersih). Boleh 1–3 foto.\n\n"
-        "<i>Kalau sudah, <b>langsung ketik brief</b>-nya (nama produk, harga, keunggulan) — "
-        "gak perlu tekan tombol.</i>",
-        reply_markup=back_kb([[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]))
+        + ("🛍️ <b>Atau pakai produk tersimpan:</b>\n" if pr else "")
+        + "<i>Kalau sudah, <b>langsung ketik brief</b>-nya (nama produk, harga, keunggulan) — "
+          "gak perlu tekan tombol.</i>",
+        reply_markup=InlineKeyboardMarkup(inline_keyboard=pr + [[InlineKeyboardButton(
+            text="❌ Batal", callback_data="f:cancel")]]))
 
 
 @router.message(Flow.ugc_prod, F.photo | F.document)
@@ -748,6 +838,21 @@ async def ugc_prod(msg: Message, state: FSMContext):
 async def ugc_brief_text(msg: Message, state: FSMContext):
     """Teks saat tahap foto produk = BRIEF → langsung ke layar konfirmasi (tanpa tombol)."""
     data = await state.get_data()
+    # "tinggal sebut namanya" untuk UGC: karakter & produk tersimpan otomatis dipakai
+    if not data.get("char_photo"):
+        rc = db.char_find_in_text(msg.from_user.id, msg.text, kind="char")
+        if rc:
+            await state.update_data(char_photo=rc["file_id"])
+            db.char_bump(rc["id"])
+            await msg.answer(f"🧑\u200d🎨 Pakai karakter tersimpan: <b>{rc['name']}</b>")
+            data = await state.get_data()
+    if not data.get("prod_photos"):
+        rp = db.char_find_in_text(msg.from_user.id, msg.text, kind="produk")
+        if rp:
+            await state.update_data(prod_photos=[rp["file_id"]])
+            db.char_bump(rp["id"])
+            await msg.answer(f"🛍️ Pakai produk tersimpan: <b>{rp['name']}</b>")
+            data = await state.get_data()
     if not data.get("prod_photos"):
         await msg.answer("Kirim minimal 1 <b>foto produk</b> dulu, baru ketik brief-nya ya.")
         return
@@ -835,6 +940,15 @@ async def on_prompt_in_photos(msg: Message, state: FSMContext):
         await msg.answer(f"Kirim minimal <b>{f.min_photos} foto</b> dulu ya, baru ketik prompt-nya.")
         return
     await state.update_data(prompt=msg.text.strip()[:1000])
+    # "tinggal sebut namanya": kalau belum ada foto & user menyebut nama karakter tersimpan,
+    # otomatis pakai character sheet itu (identik tiap kali).
+    d2 = await state.get_data()
+    if not d2.get("photos"):
+        r = db.char_find_in_text(msg.from_user.id, msg.text, kind="char")
+        if r:
+            await state.update_data(photos=[r["file_id"]])
+            db.char_bump(r["id"])
+            await msg.answer(f"🧑\u200d🎨 Pakai karakter tersimpan: <b>{r['name']}</b>")
     await _confirm(msg, state, msg.from_user.id)
 
 
@@ -997,7 +1111,7 @@ async def cb_recheck(cb: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "f:cancel")
 async def cb_cancel(cb: CallbackQuery, state: FSMContext):
     await state.clear()
-    await cb.message.edit_text("❌ Dibatalkan.\n\n🏠 Menu Utama", reply_markup=main_menu_kb())
+    await cb.message.edit_text("❌ Dibatalkan.\n\n🏠 Menu Utama", reply_markup=main_menu_kb(cb.from_user.id))
     await cb.answer()
 
 
@@ -1314,6 +1428,162 @@ async def cmd_help(msg: Message):
         f"Fitur siap pakai: {', '.join(f.label for f in catalog.enabled_features())}\n"
         "Segera hadir: Pose Transfer, Lip Sync\n\n"
         "Perintah: /start · /saldo · /topup · /cancel · /help")
+
+
+# ================= INVENTORY: KARAKTER & PRODUK SAYA =================
+# Ide user: simpan master (character sheet / produk) SEKALI, kasih nama sendiri,
+# nanti tinggal SEBUT NAMANYA → bot otomatis pakai secara identik. Taruh di paling atas menu.
+INV_ICON = {"char": "🧑\u200d🎨", "produk": "🛍️"}
+INV_TITLE = {"char": "Karakter Saya", "produk": "Produk Saya"}
+INV_HINT = {
+    "char": "Simpan 1 foto master (wajah/karakter). Nanti kamu tinggal <b>sebut namanya</b> "
+            "di fitur mana pun — bot otomatis pakai foto yang sama, jadi hasilnya konsisten.",
+    "produk": "Simpan foto produkmu (label jelas, latar bersih). Nanti tinggal sebut namanya "
+              "waktu bikin UGC — nggak perlu kirim ulang.",
+}
+
+
+def inv_kb(uid: int, kind: str) -> InlineKeyboardMarkup:
+    rows = [[InlineKeyboardButton(text=f"{INV_ICON[kind]} {r['name']} · {r['uses']}×",
+                                  callback_data=f"m:ch:{r['id']}")]
+            for r in db.char_list(uid, kind=kind)]
+    rows.append([InlineKeyboardButton(text="➕ Tambah baru", callback_data=f"m:inv:add:{kind}"),
+                 InlineKeyboardButton(text="⬅️ Menu Utama", callback_data="m:home")])
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+def inv_text(uid: int, kind: str) -> str:
+    lst = db.char_list(uid, kind=kind)
+    head = f"{INV_ICON[kind]} <b>{INV_TITLE[kind]}</b>\n\n{INV_HINT[kind]}\n\n"
+    if not lst:
+        return head + "<i>Belum ada yang disimpan.</i> Tekan ➕ Tambah baru."
+    return head + "\n".join(f"· <b>{r['name']}</b> — dipakai {r['uses']}×" for r in lst) + \
+        "\n\n👇 Tap salah satu buat ubah / hapus."
+
+
+def inv_use_rows(uid: int, kind: str, prefix: str) -> list:
+    """Baris tombol 'pakai yang tersimpan' untuk disisipkan di alur fitur."""
+    return [[InlineKeyboardButton(text=f"{INV_ICON[kind]} {r['name']}",
+                                  callback_data=f"{prefix}:{r['id']}")]
+            for r in db.char_list(uid, kind=kind)]
+
+
+@router.callback_query(F.data.startswith("m:inv:"))
+async def cb_inv(cb: CallbackQuery, state: FSMContext):
+    parts = cb.data.split(":")
+    uid = cb.from_user.id
+    kind = parts[2] if len(parts) > 2 else "char"
+    if kind not in INV_ICON:
+        await cb.answer("Jenis tidak dikenal", show_alert=True)
+        return
+    if len(parts) == 3:                       # buka daftar
+        await cb.message.edit_text(inv_text(uid, kind), reply_markup=inv_kb(uid, kind))
+        await cb.answer()
+        return
+    await state.clear()                        # m:inv:add:<kind>
+    await state.update_data(inv_kind=kind)
+    await state.set_state(Flow.inv_photo)
+    await cb.message.edit_text(
+        f"{INV_ICON[kind]} <b>Tambah {INV_TITLE[kind]}</b>\n\n📸 Kirim fotonya sekarang.\n\n"
+        f"<i>{INV_HINT[kind]}</i>",
+        reply_markup=back_kb([[InlineKeyboardButton(text="❌ Batal",
+                                                    callback_data=f"m:inv:{kind}")]]))
+    await cb.answer()
+
+
+@router.message(Flow.inv_photo, F.photo | F.document)
+async def inv_photo(msg: Message, state: FSMContext):
+    data = await state.get_data()
+    kind = data.get("inv_kind", "char")
+    fid = msg.photo[-1].file_id if msg.photo else msg.document.file_id   # type: ignore[union-attr]
+    await state.update_data(inv_file_id=fid)
+    await state.set_state(Flow.inv_name)
+    contoh = "si rina" if kind == "char" else "kopi arabika"
+    await msg.answer(
+        f"✅ Foto diterima.\n\n✏️ <b>Kasih nama</b> sekarang (bebas).\n"
+        f"<i>Contoh: {contoh}</i>\n\n"
+        "Nanti tinggal sebut nama ini di fitur mana pun.")
+
+
+@router.message(Flow.inv_name, F.text)
+async def inv_name(msg: Message, state: FSMContext):
+    data = await state.get_data()
+    uid = msg.from_user.id
+    nm = " ".join((msg.text or "").split())[:40]
+    rid = data.get("inv_rename_id")
+    if rid:
+        okr = db.char_rename(uid, int(rid), nm)
+        await state.clear()
+        await msg.answer(f"✅ Nama diganti jadi <b>{nm}</b>." if okr
+                         else "⚠️ Nama itu sudah dipakai. Coba nama lain.",
+                         reply_markup=main_menu_kb(uid))
+        return
+    kind = data.get("inv_kind", "char")
+    cid = db.char_save(uid, nm, data.get("inv_file_id") or "", kind=kind)
+    if not cid:
+        await state.update_data(inv_rename_id=None)
+        await msg.answer("⚠️ Nama itu sudah dipakai — ketik nama lain ya.")
+        return
+    await state.clear()
+    await msg.answer(
+        f"✅ <b>{nm}</b> tersimpan di {INV_TITLE[kind]}.\n\n"
+        "Sekarang tinggal <b>sebut namanya</b> waktu bikin konten — bot otomatis pakai foto ini.",
+        reply_markup=main_menu_kb(uid))
+
+
+@router.callback_query(F.data.startswith("m:chr:"))          # ganti nama
+async def cb_char_rename(cb: CallbackQuery, state: FSMContext):
+    cid = int(cb.data.split(":")[2])
+    r = db.char_get(cb.from_user.id, cid)
+    if not r:
+        await cb.answer("Tidak ketemu", show_alert=True)
+        return
+    await state.clear()
+    await state.update_data(inv_rename_id=cid, inv_kind=r["kind"] or "char")
+    await state.set_state(Flow.inv_name)
+    await cb.message.answer(f"✏️ Ketik <b>nama baru</b> untuk {INV_ICON[r['kind']]} <b>{r['name']}</b>:")
+    await cb.answer()
+
+
+@router.callback_query(F.data.startswith("m:chd:"))          # hapus
+async def cb_char_delete(cb: CallbackQuery, state: FSMContext):
+    cid = int(cb.data.split(":")[2])
+    r = db.char_get(cb.from_user.id, cid)
+    if not r:
+        await cb.answer("Tidak ketemu", show_alert=True)
+        return
+    kind = r["kind"] or "char"
+    db.char_delete(cb.from_user.id, cid)
+    try:
+        await cb.message.delete()
+    except Exception:                        # noqa: BLE001
+        pass
+    await cb.message.answer(f"🗑 <b>{r['name']}</b> dihapus dari {INV_TITLE[kind]}.",
+                            reply_markup=inv_kb(cb.from_user.id, kind))
+    await cb.answer("Dihapus")
+
+
+@router.callback_query(F.data.startswith("m:ch:"))
+async def cb_char_detail(cb: CallbackQuery, state: FSMContext):
+    cid = int(cb.data.split(":")[2])
+    r = db.char_get(cb.from_user.id, cid)
+    if not r:
+        await cb.answer("Tidak ketemu", show_alert=True)
+        return
+    kind = r["kind"] or "char"
+    kb = InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="✏️ Ganti nama", callback_data=f"m:chr:{cid}"),
+         InlineKeyboardButton(text="🗑 Hapus", callback_data=f"m:chd:{cid}")],
+        [InlineKeyboardButton(text=f"🔙 {INV_TITLE[kind]}", callback_data=f"m:inv:{kind}")]])
+    cap = (f"{INV_ICON[kind]} <b>{r['name']}</b>\n"
+           f"📊 Dipakai: {r['uses']}×\n"
+           f"📅 Disimpan: {time.strftime('%d %b %Y', time.localtime(r['created_at']))}")
+    try:
+        await cb.message.delete()
+    except Exception:                        # noqa: BLE001
+        pass
+    await cb.message.answer_photo(r["file_id"], caption=cap, reply_markup=kb)
+    await cb.answer()
 
 
 # ============================ teks bebas ============================

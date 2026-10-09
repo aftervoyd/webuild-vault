@@ -75,6 +75,19 @@ CREATE TABLE IF NOT EXISTS payments (
     paid_at     INTEGER
 );
 CREATE INDEX IF NOT EXISTS idx_pay_status ON payments(status, created_at);
+CREATE TABLE IF NOT EXISTS characters (
+    id          INTEGER PRIMARY KEY AUTOINCREMENT,
+    telegram_id INTEGER NOT NULL,
+    name        TEXT NOT NULL,                      -- nama pilihan user (bebas)
+    name_lower  TEXT NOT NULL,                      -- untuk pencocokan case-insensitive
+    kind        TEXT NOT NULL DEFAULT 'char',       -- 'char' = karakter · 'produk' = produk (UGC)
+    file_id     TEXT NOT NULL,                      -- foto master (file_id Telegram)
+    note        TEXT,                               -- catatan pengingat (opsional)
+    uses        INTEGER NOT NULL DEFAULT 0,
+    created_at  INTEGER NOT NULL,
+    UNIQUE(telegram_id, kind, name_lower)           -- 1 user tidak boleh punya 2 nama kembar (per jenis)
+);
+CREATE INDEX IF NOT EXISTS idx_chars_user ON characters(telegram_id, created_at);
 """
 
 
@@ -92,7 +105,8 @@ class Database:
         self.conn.executescript(SCHEMA)
         # migrasi ringan: SQLite tak punya "ADD COLUMN IF NOT EXISTS"
         for _sql in ("ALTER TABLE payments ADD COLUMN msg_id INTEGER",   # pesan QR → bisa di-edit jadi LUNAS
-                     "ALTER TABLE payments ADD COLUMN chat_id INTEGER"):
+                     "ALTER TABLE payments ADD COLUMN chat_id INTEGER",
+                     "ALTER TABLE characters ADD COLUMN kind TEXT NOT NULL DEFAULT 'char'"):
             try:
                 self.conn.execute(_sql)
             except sqlite3.OperationalError:      # kolom sudah ada
@@ -292,3 +306,96 @@ class Database:
     def top_balance(self, limit: int = 10) -> list[sqlite3.Row]:
         return list(self.conn.execute(
             "SELECT telegram_id, tokens FROM users ORDER BY tokens DESC LIMIT ?", (limit,)))
+
+    # ---------------- KARAKTER SAYA (master character sheet) ----------------
+    # Ide: user simpan 1 foto master (character sheet) + kasih NAMA sendiri.
+    # Nanti di fitur apa pun user tinggal sebut namanya → bot pakai karakter itu
+    # secara identik (foto yang SAMA → hasil konsisten antar render).
+
+    def char_save(self, telegram_id: int, name: str, file_id: str,
+                  note: str = "", kind: str = "char") -> int | None:
+        """Simpan karakter baru. None kalau nama sudah dipakai (biar tidak kembar)."""
+        nm = " ".join(str(name or "").split())[:40]
+        if not nm or not file_id:
+            return None
+        try:
+            cur = self.conn.execute(
+                "INSERT INTO characters (telegram_id, kind, name, name_lower, file_id, note, created_at)"
+                " VALUES (?,?,?,?,?,?,?)",
+                (telegram_id, kind, nm, nm.lower(), file_id, (note or "")[:120], _now()))
+            self.conn.commit()
+            return int(cur.lastrowid)
+        except sqlite3.IntegrityError:            # nama sudah ada
+            return None
+
+    def char_list(self, telegram_id: int, limit: int = 30,
+                  kind: str | None = None) -> list[sqlite3.Row]:
+        if kind:
+            return list(self.conn.execute(
+                "SELECT * FROM characters WHERE telegram_id=? AND kind=?"
+                " ORDER BY uses DESC, created_at DESC LIMIT ?", (telegram_id, kind, limit)))
+        return list(self.conn.execute(
+            "SELECT * FROM characters WHERE telegram_id=? ORDER BY uses DESC, created_at DESC LIMIT ?",
+            (telegram_id, limit)))
+
+    def char_count(self, telegram_id: int, kind: str | None = None) -> int:
+        if kind:
+            return int(self.conn.execute(
+                "SELECT COUNT(*) n FROM characters WHERE telegram_id=? AND kind=?",
+                (telegram_id, kind)).fetchone()["n"])
+        return int(self.conn.execute(
+            "SELECT COUNT(*) n FROM characters WHERE telegram_id=?", (telegram_id,)).fetchone()["n"])
+
+    def char_get(self, telegram_id: int, name_or_id) -> sqlite3.Row | None:
+        """Ambil karakter dari NAMA (case-insensitive) atau dari id numerik."""
+        s = str(name_or_id or "").strip()
+        if not s:
+            return None
+        if s.isdigit():
+            r = self.conn.execute("SELECT * FROM characters WHERE telegram_id=? AND id=?",
+                                  (telegram_id, int(s))).fetchone()
+            if r:
+                return r
+        return self.conn.execute(
+            "SELECT * FROM characters WHERE telegram_id=? AND name_lower=? "
+            "ORDER BY (kind='char') DESC LIMIT 1",
+            (telegram_id, s.lower())).fetchone()
+
+    def char_find_in_text(self, telegram_id: int, text: str,
+                          kind: str | None = None) -> sqlite3.Row | None:
+        """Cari nama karakter yang DISEBUT di dalam teks bebas user.
+
+        Dipakai supaya user cukup menulis 'bikin video si rina jalan di pantai'
+        → bot otomatis memakai character sheet bernama 'si rina'.
+        Nama terpanjang dicek lebih dulu (agar 'rina cantik' menang atas 'rina').
+        """
+        t = f" {(text or '').lower()} "
+        if not t.strip():
+            return None
+        for r in sorted(self.char_list(telegram_id, kind=kind), key=lambda x: -len(x["name_lower"])):
+            if f" {r['name_lower']} " in t or f" {r['name_lower']}," in t:
+                return r
+        return None
+
+    def char_delete(self, telegram_id: int, cid: int) -> bool:
+        cur = self.conn.execute("DELETE FROM characters WHERE telegram_id=? AND id=?",
+                                (telegram_id, int(cid)))
+        self.conn.commit()
+        return cur.rowcount > 0
+
+    def char_rename(self, telegram_id: int, cid: int, new_name: str) -> bool:
+        nm = " ".join(str(new_name or "").split())[:40]
+        if not nm:
+            return False
+        try:
+            cur = self.conn.execute(
+                "UPDATE characters SET name=?, name_lower=? WHERE telegram_id=? AND id=?",
+                (nm, nm.lower(), telegram_id, int(cid)))
+            self.conn.commit()
+            return cur.rowcount > 0
+        except sqlite3.IntegrityError:
+            return False
+
+    def char_bump(self, cid: int) -> None:
+        self.conn.execute("UPDATE characters SET uses=uses+1 WHERE id=?", (int(cid),))
+        self.conn.commit()
