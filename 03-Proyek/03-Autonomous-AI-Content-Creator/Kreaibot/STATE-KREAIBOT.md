@@ -414,7 +414,46 @@ deteksi produk, rename, hapus).
 **KEPUTUSAN HARGA (user, 9 Okt):** **jangan** lebih murah dari Kuzushi — **samakan harganya**; kita menang di
 **KUALITAS**: kemiripan wajah, konsistensi karakter, dan gerakan yang natural seperti manusia.
 
-## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
+### 6j. LIPSYNC / DIGITAL HUMAN — LTX 2.3 NGOMONG (9 Okt 14:20)
+
+**App ketemu:** `2031016553440878594` = *"LTX2.3数字人说话唱歌对口型 kj版"* — **foto + AUDIO → video orang ngomong lip-sync**,
+1280p, fps 25–30 (klaim app: ~5 menit per 10 detik).
+
+**Node (dari `apiCallDemo`):**
+| node | isi | catatan |
+|---|---|---|
+| `444` | image | 人物图 (9:16 / 16:9 lebih bagus) |
+| `1755` | audio | upload lagu/suara |
+| `1583` | seconds | durasi (≤35 dtk, 0 = seluruh audio) |
+| `1776` | float | audio mulai dari detik ke-berapa |
+| `1624` | text | 动作提示词 (motion prompt) — default "角色面向镜头深情的说话，固定镜头。" |
+| `1606` | int | resolusi maks (≤1600) = 1280 |
+| `1586` | float | fps = 25 |
+
+**Kenapa ini penting:** ini **separuh realisme** yang belum kita punya — orang yang *benar-benar ngomong*
+(prompt-based motion kita lemah lokomosi, tapi **talking-head** justru paling gampang terasa nyata).
+Pasangan alaminya: **base Karakter Saya** (wajah konsisten) + **TTS Bahasa Indonesia** (suara) + node prompt tetap.
+
+**Sudah dipasang:** `.env` `RUNNINGHUB_APP_LIPSYNC=2031016553440878594` + `RUNNINGHUB_APP_NODES_LIPSYNC`
+(audio masuk lewat `@video` karena backend belum punya slot audio khusus), `tools/lipsync_test.py`.
+**Uji produksi:** `ref1.jpg` (719×1280) + TTS Indonesia 15 dtk → task `2108441505478221826`.
+
+## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
+
+Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi
+hasilnya natural dan kaya realistis manusia asli, perilaku manusia, alam dll asli"*.
+
+**Empat prinsip:** (1) 0 ketik semua tap; (2) natural datang dari **gerak nyata** — video penggerak asli
+(motion transfer) & **suara nyata + lip-sync** (digital human), bukan gerak yang dikarang model dari teks;
+(3) konsistensi dari aset tersimpan (Karakter/Produk Saya — sudah live); (4) suara = separuh realisme.
+
+**Yang perlu dibangun:** (a) **Bank Naskah** 10/kategori (Indonesia, gaya TikTok) → TTS → digital human;
+(b) **Bank Gerakan** 10 klip penggerak nyata — **terblokir**: footage stok (Wikimedia/Pexels/Pixabay)
+ditolak dari server VPS (robot policy/Cloudflare) ⇒ jalan tercepat **user kirim 3–5 klip pendek**.
+
+**Aturan tetap:** jangan jual yang belum terbukti (wajib uji dulu) · harga **samakan** Kuzushi, menang di kualitas.
+
+## 9. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).
 - UX 3 langkah, tombol Menu Telegram, fix pesan berulang, perapian prompt (semua LIVE + teruji).
