@@ -7,6 +7,41 @@
 
 ---
 
+## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 01:14 WIB (BACA INI DULU; bagian di bawah = riwayat)
+
+### Yang berubah malam ini (10 Okt)
+- **MODE MURNI = default**: prompt user dikirim **APA ADANYA** ke RunningHub (diterjemahkan jujur ke Inggris bila perlu via `translate_prompt`, "Add NOTHING"). Sistem **TIDAK BOLEH** membatalkan/mengedit perintah user (koreksi keras user, 9 Okt).
+- **Kunci identitas (idlock) DEFAULT MATI** ✓ terverifikasi `prefs.idlock=0`. Mesin face-swap **BUKAN** jalur default (keputusan user 10 Okt: "ngapain mesin identitas sih?").
+- **Editor utama = Qwen 2511** `2056741213927206914` (nodes 52=@photo1 / 54=@prompt) — 8/10 ganti baju. **ALT** = Flux Kontext `2075393520445251586` (390/399) — 2/10 ✗.
+- **CHARGEN** = app sama (Qwen) + ALT Kontext ✓.
+- **Panel WAJAH master sheet = FOTO ASLI user** (`crop_face_photo()` OpenCV YuNet → `models/face_detection_yunet.onnx` + `face_recognition_sface.onnx` 38 MB, di-ignore dari git). Meta `face_source` = `foto_asli_user` | `ai_fallback`.
+- **Alat ukur kemiripan**: `face_similarity()` (SFace cosine; >0,363 = orang sama). Foto user vs panel Arunika = **0,884** ✓ (orang sama).
+- **KACAMATA = MUTLAK** di karakter user → jadi **tes penyaring app**. **S20双图 `2031671252443734018` GUGUR** untuk kacamata (frame berubah, 4/10) ✗.
+- App "high consistency" (即梦V8.0, Seedream-v5-pro, 换头换脸 `2020760401977282562`) semua di **channel berbayar DOLAR** ✗ — saldo $0,010 → ditolak.
+- **Hasil uji berbayar (koin)**: S20 2-foto **8/10** (32 koin/82s) · Qwen editor **7–8/10** (23 koin/61s) · 全能图片2.0-多图 **5/10** ✗ · 多图加强参考换脸 **1–2/10** ✗ · mesin identitas 93% = 换头换脸 (104s/71 koin).
+- **RunningHub: koin 29.217** (turun 1.084 koin ≈ Rp3.700 karena tes malam ini) · **saldo $0,010** (habis).
+- **Job gagal akun lain = code 421 `TASK_QUEUE_MAXED`** → akar: **TES kita rebutan 1 slot** ✗ BUKAN bug bot ✓. Retry antrean otomatis 9×50s sudah dipasang ✓. **Aturan baru: JANGAN tes berat saat user pakai bot.**
+- `selftest.py` **195/195 lulus** ✓ · service `kreaibot` active · NRestarts **0** ✓.
+- ⚠️ **DB karakter sekarang: `megu` + `Aruni`** — user minta final **HANYA "Arunika"**. Perlu dikonfirmasi: `megu` dihapus? `Aruni` di-rename `Arunika`?
+- **Foto user terbaru**: `/root/.hermes/cache/images/img_b99efe9b8142.jpg` (wanita berkacamata hitam persegi, "MAIN VIEW CLOSE UP").
+
+### Git & repo (baru, 10 Okt)
+- Kode bot sekarang **VERSIONED** ✓ → **https://github.com/aftervoyd/kreaibot** (private · 70 file · 1,4 MB — `.env`/.venv/work/models di-ignore, **0 kebocoran rahasia** ✓ terverifikasi).
+- Repo private lain: `desa-pamekaran` ✓ · `desa-redesign` ✓ · `desa-mobile` ✓ · `webuild-office` ✓ · `kreea-landing` → `aftervoyd/kreea` (publik) ✓
+- 🟠 **`webuild-vault` ternyata PUBLIK** ✗ (11 MB catatan bisnis kebuka) → perlu diflip ke **private** (perlu izin user).
+
+### Inventaris VPS (10 Okt)
+6 service: `kreaibot` ✓ · `desa-pamekaran` :8080 ✓ · `desa-redesign` :8085 ✓ · `desa-mobile` :8086 (⚠️ cuma directory listing ✗) · `webuild-office` :3334 ✓ · `tat_agent` (Tencent, bukan kita) — **tanpa nginx** ✗ → semua cuma bisa diakses lewat Tailscale ✓ · RAM 1,9G (sisa 130 MB free ⚠️) · disk 14G/39G ✓.
+
+### Prioritas sesi berikutnya (urutan disepakati)
+1. **Perbaikan project bot KREE.AI** ← user lanjut ini setelah `/new`.
+2. **Master karakter / Character Creator** (fokus yang belum maksimal) — alur target: master karakter dikirim **NATIVE sebagai referensi** ke app (tanpa mesin tambahan), kacamata mutlak, panel wajah dari foto asli ✓ (sudah ada).
+3. **Demo desa bisa diakses publik** (nginx + domain `pamekaran.com` + TLS) ← belum nyala ✗, ini ngeblok jualan.
+4. Benerin `desa-mobile` (belum ada `index.html`) ✗.
+5. Opsional: isi saldo dolar ±$5 buat tes app kelas "high consistency".
+
+---
+
 ## 1. STATUS SEKARANG (8 Okt 2026, dini hari WIB)
 
 - Bot **KREE.AI** `@kreeaibot` **LIVE** di VPS — `/root/projects/kreaibot`, systemd `kreaibot` (auto-restart), log `/var/log/kreaibot.log`.
