@@ -58,8 +58,10 @@ Publish form (`publishType:"1"` = workflow, `"2"` = AI app) butuh:
 `workflowName`, `description`, `tags[]`, `coverFiles[]` (**butuh gambar cover**),
 `englishCoverFiles[]`, `instanceType:"standard"`, `accessType`, `publishScope`.
 
-## 4. FREE WINDOW
-Render gratis **21:00–10:00 WIB** (9AM–10PM ET) → semua uji coba/produksi di jam itu = koin ~0.
+## 4. FREE WINDOW — ⚠️ TERNYATA SPESIFIK MODEL
+Promo "13 jam gratis/hari 21:00–10:00 WIB" berlaku untuk **model tertentu** (mis. MiniMax H3),
+**bukan semua**. Bukti: uji-jalan `qwen-consistency-edit` (73,7 dtk) **memakan ±632 koin**
+(27.912 → 27.280). → Jangan asumsikan render gratis; **cek delta koin** lewat `tools/rh_coin_check.py`.
 
 ## 5. RUNBOOK PUBLISH (tersisa — aksi UI, ~1 menit)
 1. Login `runninghub.ai` di browser **normal** (sesi web di VPS cepat expired).

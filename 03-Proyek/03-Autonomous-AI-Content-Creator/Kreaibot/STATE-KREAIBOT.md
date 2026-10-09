@@ -14,6 +14,7 @@
 - Alur terbukti: export contoh publik (tanpa login) → rakit JSON → **import** ke `/workspace` via CDP `setFileInputFiles` → **Save** di editor (wajib! kalau tidak: error `810 WORKFLOW_NOT_SAVED_OR_NOT_RUNNING`) → **run via API**: task `2108639276355883009` ✅ **73,7 dtk**, output PNG 848×1280. Validasi server `node_errors: {}`.
 - **Publish: tersisa 1 aksi UI** (route `/PublishView` tidak bisa dibuka via URL; harus dipicu dari editor). Endpoint terpetakan: `POST /api/workflow/publish` (publishType 1=workflow, 2=AI app), butuh cover+tags+deskripsi. Resep lengkap: **`RUNNINGHUB-CREATOR-PROGRAM.md`**.
 - Jebakan tercatat: `widgets_values` wajib ada; jangan tulis `link:null` di input widget; link harus tercatat dua sisi.
+- ⚠️ **Free window spesifik MODEL** — run uji Qwen di "jam gratis" tetap kena **±632 koin** (27.912→27.280).
 - Kode: `cf3fabf` · vault `4850b3c`.
 
 ### 🌙 SESI OTONOM 10 Okt 03:00 (user tidur) — RunningHub & koin
