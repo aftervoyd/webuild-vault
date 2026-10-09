@@ -26,7 +26,19 @@ SHOT_SECONDS = 5          # 1 klip = 5 detik (paling stabil & paling murah)
 
 
 def _ffmpeg() -> str:
-    return os.getenv("FFMPEG_BIN", "") or os.getenv("KREAIBOT_FFMPEG", "") or "ffmpeg"
+    """Cari ffmpeg dengan andal: env FFMPEG_BIN/KREAIBOT_FFMPEG → PATH → lokasi tools.
+
+    systemd punya PATH minimal, jadi jangan bergantung pada 'ffmpeg' polos:
+    pakai resolver yang sama dengan backends/mock.py (termasuk folder tools Hermes).
+    """
+    env = os.getenv("FFMPEG_BIN", "") or os.getenv("KREAIBOT_FFMPEG", "")
+    if env:
+        return env
+    try:
+        from backends.mock import ffmpeg_bin
+        return ffmpeg_bin()
+    except Exception:                          # noqa: BLE001 — fallback terakhir
+        return "ffmpeg"
 
 
 def last_frame(clip: Path, out: Path) -> Path:

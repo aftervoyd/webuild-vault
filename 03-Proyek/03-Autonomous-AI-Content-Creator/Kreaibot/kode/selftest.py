@@ -344,8 +344,8 @@ async def main() -> int:
     res.append(ok("fallback: taskId lama dipetakan ke task pengganti (alias)",
                   "_alias" in _rh and "self._alias.get(task_id, task_id)" in _rh))
     _envtxt = (Path(__file__).with_name(".env")).read_text(encoding="utf-8")
-    res.append(ok("editor pakai app yang bayar KOIN (bukan saldo $)",
-                  "RUNNINGHUB_APP_EDITOR=2075393520445251586" in _envtxt))
+    res.append(ok("editor pakai app yang bayar KOIN (bukan saldo $) — Qwen 2511, 23 koin/61 dtk",
+                  "RUNNINGHUB_APP_EDITOR=2056741213927206914" in _envtxt))
     res.append(ok("editor punya app cadangan",
                   "RUNNINGHUB_APP_EDITOR_ALT=" in _envtxt))
     res.append(ok("alat uji fallback tersedia (tools/fallback_test.py)",

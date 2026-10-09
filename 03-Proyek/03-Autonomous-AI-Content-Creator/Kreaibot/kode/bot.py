@@ -23,7 +23,7 @@ from aiogram.exceptions import TelegramBadRequest
 from aiogram.filters import Command, CommandObject, CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
-from aiogram.types import (BotCommand, CallbackQuery, FSInputFile, InlineKeyboardButton,
+from aiogram.types import (BotCommand, CallbackQuery, ErrorEvent, FSInputFile, InlineKeyboardButton,
                            InlineKeyboardMarkup, Message)
 
 import catalog
@@ -58,6 +58,23 @@ SEM = asyncio.Semaphore(settings.concurrency)
 def bar(pct: int, n: int = 10) -> str:
     fill = max(0, min(n, round(pct / 100 * n)))
     return "🟩" * fill + "⬜" * (n - fill)
+
+
+async def edit_safe(msg: Message, text: str, **kw: object):
+    """Edit pesan dengan aman: pesan ber-media (foto/video) diedit lewat CAPTION, bukan teks.
+
+    Bug 10 Okt: tombol '🔙 Kembali' dari layar detail karakter (pesan FOTO) dan
+    '⬅️ Menu Utama' dari pesan QRIS (juga FOTO) memanggil edit_text → Telegram menolak
+    dgn 'there is no text in the message to edit' → tombol jadi mati diam-diam.
+    Helper ini otomatis pilih edit_text / edit_caption, dan kalau pesan sudah tak bisa
+    diedit (mis. konten sama), kirim pesan baru supaya user tetap dapat respons.
+    """
+    try:
+        if msg.text is not None:
+            return await msg.edit_text(text, **kw)
+        return await msg.edit_caption(caption=text, **kw)
+    except TelegramBadRequest:
+        return await msg.answer(text, **kw)
 
 
 def saldo_txt(tid: int) -> str:
@@ -198,7 +215,8 @@ async def cmd_start(msg: Message, state: FSMContext):
 @router.callback_query(F.data == "m:home")
 async def cb_home(cb: CallbackQuery, state: FSMContext):
     await state.clear()
-    await cb.message.edit_text(
+    await edit_safe(
+        cb.message,
         f"🏠 <b>Menu Utama</b>\n\n{saldo_txt(cb.from_user.id)}\n\nPilih fitur 👇",
         reply_markup=main_menu_kb(cb.from_user.id))
     await cb.answer()
@@ -208,7 +226,7 @@ async def cb_home(cb: CallbackQuery, state: FSMContext):
 async def cb_saldo(cb: CallbackQuery):
     rows = db.ledger(cb.from_user.id, 5)
     hist = "\n".join(f"  · {r['delta']:+.1f} — {r['reason']}" for r in rows) or "  · (belum ada)"
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         f"💳 <b>Saldo & Riwayat</b>\n\n{saldo_txt(cb.from_user.id)}\n\n"
         f"<b>5 transaksi terakhir:</b>\n{hist}\n\n"
         f"Top up: Rp{settings.harga_per_10k:,} = {settings.tokens_per_10k} Token".replace(",", "."),
@@ -226,7 +244,7 @@ async def cb_topup(cb: CallbackQuery, state: FSMContext):
     for rp in (10_000, 25_000, 50_000, 100_000):
         rows.append([InlineKeyboardButton(text=f"Rp{rp:,} → {rp // harga_token} Token".replace(",", "."),
                                           callback_data=f"t:paket:{rp}")])
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         (f"⚡ <b>Top Up Token</b>\n\n"
          f"1 Token = <b>Rp{harga_token:,}</b>\n"
          f"Pilih paket → bayar → tekan “✅ Sudah Bayar”. Token masuk setelah admin verifikasi.\n\n"
@@ -247,7 +265,7 @@ async def cb_paket(cb: CallbackQuery):
         [InlineKeyboardButton(text="⬅️ Kembali", callback_data="m:topup")]])
 
     if pay_gw is None:                      # AULAA_API_KEY belum diisi → alur manual
-        await cb.message.edit_text(
+        await edit_safe(cb.message, 
             (f"💳 <b>Pembayaran Rp{rp:,}</b> → <b>{tok:g} Token</b>\n\n"
              f"{settings.pay_info}\n\n"
              f"Sudah bayar? Tekan tombol di bawah — admin dapat notifikasi & tinggal 1 klik.\n\n"
@@ -266,7 +284,7 @@ async def cb_paket(cb: CallbackQuery):
     except Exception as e:                  # noqa: BLE001
         log.warning("aulaa create gagal: %s", e)
         db.pay_set(order_id, status="error", note=str(e)[:180])
-        await cb.message.edit_text(
+        await edit_safe(cb.message, 
             (f"⚠️ <b>QRIS otomatis sedang gangguan.</b>\n\n"
              f"{settings.pay_info}\n\nNominal: <b>Rp{rp:,}</b> → {tok:g} Token\n"
              f"ID kamu: <code>{uid}</code>\n\nTransfer manual dulu, lalu tekan tombol di bawah.").replace(",", "."),
@@ -290,7 +308,7 @@ async def cb_paket(cb: CallbackQuery):
         [InlineKeyboardButton(text="📄 Buka Halaman Bayar", url=pay_gw.pay_url(p.id))],
         [InlineKeyboardButton(text="⬅️ Menu Utama", callback_data="m:home")]])
     try:
-        await cb.message.edit_text(f"💳 QRIS Rp{rp:,} — lihat pesan di bawah ⬇️".replace(",", "."))
+        await edit_safe(cb.message, f"💳 QRIS Rp{rp:,} — lihat pesan di bawah ⬇️".replace(",", "."))
     except Exception:                       # noqa: BLE001
         pass
     if p.number and len(p.number) > 24:     # QRIS = string panjang → render jadi gambar QR
@@ -326,7 +344,7 @@ async def cb_klaim(cb: CallbackQuery):
                 reply_markup=kb)
         except Exception as e:                      # noqa: BLE001
             log.warning("gagal kirim notif topup ke admin %s: %s", aid, e)
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         f"✅ <b>Permintaan terkirim ke admin.</b>\n\n"
         f"Token masuk begitu pembayaran diverifikasi.\nSaldo sekarang: {saldo_txt(u.id)}",
         reply_markup=back_kb())
@@ -479,7 +497,7 @@ async def cb_adm_ok(cb: CallbackQuery):
                                     f"Saldo sekarang: <b>{bal:g} Token</b>\n\nSelamat berkarya! 🚀")
     except Exception as e:                          # noqa: BLE001
         log.warning("gagal kabari user %s: %s", uid, e)
-    await cb.message.edit_text(f"✅ Disetujui <b>{tok:g} token</b> untuk <code>{uid}</code>\n"
+    await edit_safe(cb.message, f"✅ Disetujui <b>{tok:g} token</b> untuk <code>{uid}</code>\n"
                                f"Saldo mereka: <b>{bal:g}</b>")
     await cb.answer("Tersimpan")
 
@@ -494,13 +512,13 @@ async def cb_adm_no(cb: CallbackQuery):
         await bot.send_message(uid, "❌ Klaim top up belum bisa disetujui. Hubungi admin ya 🙏")
     except Exception as e:                          # noqa: BLE001
         log.warning("gagal kabari user %s: %s", uid, e)
-    await cb.message.edit_text(f"❌ Ditolak untuk <code>{uid}</code>")
+    await edit_safe(cb.message, f"❌ Ditolak untuk <code>{uid}</code>")
     await cb.answer("Ditolak")
 
 
 @router.callback_query(F.data == "m:help")
 async def cb_help(cb: CallbackQuery):
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         "📖 <b>Panduan</b>\n\n"
         "<b>Video karakter:</b>\n"
         "1. Pilih fitur → kirim foto referensi (1–6)\n"
@@ -632,7 +650,7 @@ async def cb_ref(cb: CallbackQuery):
     share = (f"https://t.me/share/url?url={link}&text="
              f"Coba {settings.bot_name}! Bikin video iklan dari foto, langsung di Telegram")
     rows.append([InlineKeyboardButton(text="📤 Bagikan ke teman", url=share)])
-    await cb.message.edit_text(txt, reply_markup=back_kb(rows))
+    await edit_safe(cb.message, txt, reply_markup=back_kb(rows))
     await cb.answer()
 
 
@@ -641,7 +659,7 @@ async def cb_claim(cb: CallbackQuery):
     uid = cb.from_user.id
     kode = await _claim_invitee(uid)
     if kode == "ok":
-        await cb.message.edit_text(
+        await edit_safe(cb.message, 
             f"🎉 <b>Bonus referral masuk: +{settings.ref_invitee:g} Token!</b>\n\n"
             f"{saldo_txt(uid)}\n\nLangsung coba fiturnya 👇",
             reply_markup=main_menu_kb(uid))
@@ -649,10 +667,10 @@ async def cb_claim(cb: CallbackQuery):
     elif kode == "sudah":
         await cb.answer("Bonus referral kamu sudah pernah diklaim 🙂", show_alert=True)
     elif kode == "belum_join":
-        await cb.message.edit_text(_join_txt("Sebentar lagi 🙂"), reply_markup=_join_kb())
+        await edit_safe(cb.message, _join_txt("Sebentar lagi 🙂"), reply_markup=_join_kb())
         await cb.answer("Kamu belum join channel")
     else:
-        await cb.message.edit_text(
+        await edit_safe(cb.message, 
             "ℹ️ Kamu belum terdaftar di program referral.\n\n"
             "Kalau ada teman mengundangmu, buka link undangannya ya.",
             reply_markup=back_kb())
@@ -695,7 +713,7 @@ async def cb_feature(cb: CallbackQuery, state: FSMContext):
     else:
         rows.append([InlineKeyboardButton(text="🚀 Mulai", callback_data=f"m:go:{key}")])
     saldo = db.balance(cb.from_user.id)
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         f"{f.label}\n\n{f.desc}\n\n💰 Saldo kamu: <b>{saldo:g} Token</b>\n\n"
         + ("👇 Pilih durasi buat mulai:" if len(f.durations) > 1 else "👇 Tekan Mulai ya:"),
         reply_markup=back_kb(rows))
@@ -726,7 +744,7 @@ async def cb_go(cb: CallbackQuery, state: FSMContext):
         await state.set_state(Flow.ugc_char)
         simpan = inv_use_rows(cb.from_user.id, "char", "u:ch")
         rows = simpan + [[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]
-        await cb.message.edit_text(
+        await edit_safe(cb.message, 
             f"{f.label}\n\n🖼 <b>Kirim FOTO KARAKTER</b>\n"
             f"Foto wajah/tubuh yang mau dipakai jadi kreator — tajam, wajah jelas, tanpa watermark.\n\n"
             + ("🧑\u200d🎨 <b>Atau pakai karakter tersimpan</b> (1 tap):\n" if simpan else "")
@@ -742,7 +760,7 @@ async def cb_go(cb: CallbackQuery, state: FSMContext):
     rows = list(batal.inline_keyboard)
     if simpan:
         rows = simpan + [[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         f"{f.label}\n\n📸 <b>{hint}</b>\n"
         + ("· Foto 1 = frame awal · Foto 2 = frame akhir · Foto 3+ = elemen tambahan\n" if key == "allinone" else "")
         + f"💠 Biaya: <b>{catalog.cost_for(key, dur):g} Token</b>"
@@ -775,7 +793,7 @@ async def cb_use_saved_char(cb: CallbackQuery, state: FSMContext):
         feat, dur or (catalog.get(feat).duration if catalog.get(feat) else 5)))
     rows.append([InlineKeyboardButton(text="✍️ Tulis sendiri", callback_data="p:sendiri")])
     rows.append([InlineKeyboardButton(text="⬅️ Menu Utama", callback_data="m:home")])
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         f"🧑\u200d🎨 Karakter <b>{r['name']}</b> dipakai.\n\n"
         f"👇 <b>Mau diapain?</b> Pilih satu — nggak perlu ngetik apa-apa.",
         reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
@@ -798,7 +816,7 @@ async def cb_ugc_saved_char(cb: CallbackQuery, state: FSMContext):
     db.char_bump(r["id"])
     pr = inv_use_rows(cb.from_user.id, "produk", "u:pr")
     rows = pr + [[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         f"✅ Karakter: <b>{r['name']}</b>\n\n🛍 <b>Kirim FOTO PRODUK</b>\n"
         "Foto produk yang jelas (label terbaca, latar bersih). Boleh 1–3 foto.\n\n"
         + ("🛍️ <b>Atau pakai produk tersimpan:</b>\n" if pr else "")
@@ -820,7 +838,7 @@ async def cb_ugc_saved_prod(cb: CallbackQuery, state: FSMContext):
         prod.append(r["file_id"])
     await state.update_data(prod_photos=prod)
     db.char_bump(r["id"])
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         f"✅ Produk: <b>{r['name']}</b> ({len(prod)} foto)\n\n"
         "✍️ <b>Sekarang ketik brief</b>-nya (nama produk, harga, keunggulan, target pembeli).\n"
         "<i>Bahasa Indonesia santai juga bisa.</i>",
@@ -893,13 +911,13 @@ async def ugc_to_brief(cb: CallbackQuery, state: FSMContext):
     if not data.get("prod_photos"):
         await cb.answer("Kirim minimal 1 foto produk dulu", show_alert=True)
         return
-    await cb.message.edit_text("📝 <b>Ketik brief</b>-nya sekarang (teks biasa) — nama produk, harga, keunggulan.")
+    await edit_safe(cb.message, "📝 <b>Ketik brief</b>-nya sekarang (teks biasa) — nama produk, harga, keunggulan.")
     await cb.answer()
 
 
 @router.callback_query(F.data == "u:stylemenu")
 async def ugc_style_menu(cb: CallbackQuery, state: FSMContext):
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         "🎨 <b>Pilih gaya video</b>\nSistem bakal rakit prompt profesional dari brief kamu.",
         reply_markup=style_kb())
     await cb.answer()
@@ -1080,7 +1098,7 @@ async def cb_preset(cb: CallbackQuery, state: FSMContext):
         await cb.answer("Sesi kadaluarsa — mulai dari menu utama.", show_alert=True)
         return
     if key == "sendiri":
-        await cb.message.edit_text(
+        await edit_safe(cb.message, 
             f"{f.label}\n\n✍️ <b>Ketik prompt kamu sekarang</b>\n"
             "<i>Teks biasa aja — bahasa Indonesia juga bisa, nanti dirapikan otomatis.</i>",
             reply_markup=back_kb([[InlineKeyboardButton(text="🎲 Kasih preset acak",
@@ -1101,7 +1119,7 @@ async def cb_preset(cb: CallbackQuery, state: FSMContext):
         upd["duration"] = pr.duration
     await state.update_data(**upd)
     if not upd.get("prompt"):        # preset cerita: user tetap menulis ceritanya
-        await cb.message.edit_text(
+        await edit_safe(cb.message, 
             f"{f.label}\n\n📖 <b>Tulis ceritanya sekarang</b>\n"
             "<i>Bebas & berantakan juga boleh — nanti bot yang mecah jadi beberapa adegan.</i>",
             reply_markup=back_kb([[InlineKeyboardButton(text="🎲 Kasih preset acak",
@@ -1124,7 +1142,7 @@ async def cb_next(cb: CallbackQuery, state: FSMContext):
         await cb.answer(f"Butuh minimal {f.min_photos} foto", show_alert=True)
         return
     if f.need_prompt and not data.get("prompt"):
-        await cb.message.edit_text(
+        await edit_safe(cb.message, 
             f"{f.label}\n\n📝 <b>Ketik prompt</b>-nya sekarang (teks biasa).",
             reply_markup=back_kb([[InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]]))
     else:
@@ -1229,7 +1247,7 @@ async def cb_recheck(cb: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "f:cancel")
 async def cb_cancel(cb: CallbackQuery, state: FSMContext):
     await state.clear()
-    await cb.message.edit_text("❌ Dibatalkan.\n\n🏠 Menu Utama", reply_markup=main_menu_kb(cb.from_user.id))
+    await edit_safe(cb.message, "❌ Dibatalkan.\n\n🏠 Menu Utama", reply_markup=main_menu_kb(cb.from_user.id))
     await cb.answer()
 
 
@@ -1286,7 +1304,7 @@ async def cb_render(cb: CallbackQuery, state: FSMContext):
 
     # prompt hanya untuk internal/admin — TIDAK pernah ditampilkan ke user
     log.info("job %s [%s] prompt internal (%d char): %s", job_id, f.key, len(prompt), prompt[:180])
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         f"🎬 <b>{f.label}</b> 🚀\n\n🆔 Job: <code>{job_id}</code>\n"
         f"{bar(2)} 2%\n💬 Status: menyerahkan tugas ke backend...\n"
         f"{saldo_txt(cb.from_user.id)}", parse_mode=ParseMode.HTML)
@@ -1754,7 +1772,7 @@ async def prompt_toggle(cb: CallbackQuery):
         await cb.answer("🧼 Prompt MURNI — tulisan kamu dikirim APA ADANYA ke mesin, tanpa "
                         "diketik ulang AI. Ini mode paling bebas.", show_alert=True)
     try:
-        await cb.message.edit_text(inv_text(uid, "char"), reply_markup=inv_kb(uid, "char"))
+        await edit_safe(cb.message, inv_text(uid, "char"), reply_markup=inv_kb(uid, "char"))
     except Exception:                                        # noqa: BLE001
         pass
 
@@ -1772,7 +1790,7 @@ async def idlock_toggle(cb: CallbackQuery):
         await cb.answer("🔓 Kunci identitas MATI — hasil apa adanya dari model. Bot nggak ngubah "
                         "wajah diam-diam. (Ini mode paling bebas.)", show_alert=True)
     try:
-        await cb.message.edit_text(inv_text(uid, "char"), reply_markup=inv_kb(uid, "char"))
+        await edit_safe(cb.message, inv_text(uid, "char"), reply_markup=inv_kb(uid, "char"))
     except Exception:                                        # noqa: BLE001
         pass
 
@@ -1798,13 +1816,14 @@ async def cb_inv(cb: CallbackQuery, state: FSMContext):
         await cb.answer("Jenis tidak dikenal", show_alert=True)
         return
     if aksi == "buka":                        # buka daftar
-        await cb.message.edit_text(inv_text(uid, kind), reply_markup=inv_kb(uid, kind))
+        await edit_safe(cb.message, inv_text(uid, kind), reply_markup=inv_kb(uid, kind))
         await cb.answer()
         return
     await state.clear()                        # m:inv:add:<kind>
     await state.update_data(inv_kind=kind)
     await state.set_state(Flow.inv_photo)
-    await cb.message.edit_text(
+    await edit_safe(
+        cb.message,
         f"{INV_ICON[kind]} <b>Tambah {INV_TITLE[kind]}</b>\n\n📸 Kirim fotonya sekarang.\n\n"
         f"<i>{INV_HINT[kind]}</i>",
         reply_markup=back_kb([[InlineKeyboardButton(text="❌ Batal",
@@ -2090,10 +2109,13 @@ async def cc_start(cb: CallbackQuery, state: FSMContext):
     await state.set_state(Flow.cc_photo)
     await state.update_data(**{CC_KEY: {"gender": "wanita", "race": "asia_tenggara", "vibe": "natural",
                                         "bust": "2", "slim": "2", "hips": "2", "outfit": "netral"}})
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         ("🧬 <b>Character Creator</b> — bikin master karakter (sheet siap dipakai bot)\n\n"
-         "<b>Langkah 1/8</b> · Kirim <b>1 FOTO WAJAH</b> yang jelas (hadap depan).\n"
-         "Foto ini jadi patokan identitas — badan, gaya & proporsi digambar dari sini.\n\n"
+         "<b>Langkah 1/8</b> · Kirim <b>1 FOTO WAJAH ASLI</b> kamu.\n"
+         "⚠️ Biar hasilnya MIRIP: <b>hadap depan</b>, <b>tanpa kacamata</b>, <b>tanpa masker/topi</b>, "
+         "<b>cahaya terang</b>, cuma 1 orang di foto, wajah jelas (bukan miring/blur).\n"
+         "✂️ Wajahnya diambil <b>apa adanya</b> dari foto ini (bukan digambar AI) → jadi <b>panel identitas</b> "
+         "master sheet, dan semua hasil berikutnya ikut mirip.\n\n"
          f"💰 Biaya: <b>{chargen.COST:g} Token</b> — dibayar di AKHIR, setelah semua pilihan.\n"
          "⏱️ Proses ±1,5–4 menit (4 gambar: wajah + badan depan/samping/belakang)\n\n"
          f"{chargen.DISCLAIMER}"),
@@ -2158,7 +2180,7 @@ async def cc_step(cb: CallbackQuery, state: FSMContext):
     cc[set_key] = key
     await state.update_data(**{CC_KEY: cc})
     await state.set_state(next_state)
-    await cb.message.edit_text(f"<b>Langkah {step_no}/8</b> · {_CC_Q[next_kind]}:",
+    await edit_safe(cb.message, f"<b>Langkah {step_no}/8</b> · {_CC_Q[next_kind]}:",
                                reply_markup=cc_kb(next_kind, next_prefix))
     await cb.answer(chargen.label(set_key, key))
 
@@ -2188,7 +2210,7 @@ async def cc_outfit(cb: CallbackQuery, state: FSMContext):
     cc["outfit"] = key
     await state.update_data(**{CC_KEY: cc})
     await state.set_state(Flow.cc_body)
-    await cb.message.edit_text(
+    await edit_safe(cb.message, 
         ("<b>Langkah 9/9 (opsional)</b> · Mau proporsi badan <b>PERSIS</b> dari foto?\n\n"
          "📷 Kirim 1 <b>FOTO TUBUH</b> (full body, dari kepala sampai kaki) → gue tempel wajah kamu "
          "ke foto itu. Jadi dada, pinggul, kaki & posturnya sama seperti foto — bukan karangan AI.\n\n"
@@ -2203,7 +2225,7 @@ async def cc_outfit(cb: CallbackQuery, state: FSMContext):
 @router.callback_query(F.data == "cc:skipbody")
 async def cc_skipbody(cb: CallbackQuery, state: FSMContext):
     data = await state.get_data()
-    await cb.message.edit_text(cc_confirm_text(cb.from_user.id, data.get(CC_KEY, {})),
+    await edit_safe(cb.message, cc_confirm_text(cb.from_user.id, data.get(CC_KEY, {})),
                                reply_markup=cc_confirm_kb())
     await cb.answer("Oke, AI yang gambar")
 
@@ -2240,7 +2262,7 @@ async def cc_go(cb: CallbackQuery, state: FSMContext):
         return
     bal = db.balance(uid)
     if bal < chargen.COST:
-        await cb.message.edit_text(
+        await edit_safe(cb.message, 
             (f"💳 Saldo kamu <b>{bal:.1f} Token</b> — kurang <b>{chargen.COST - bal:.1f} Token</b>.\n"
              f"Biaya Character Creator: <b>{chargen.COST:g} Token</b>.\n\n"
              "Top up dulu ya, terus tekan tombol di bawah."),
@@ -2251,7 +2273,7 @@ async def cc_go(cb: CallbackQuery, state: FSMContext):
         return
     ref = f"cc:{uid}:{int(time.time())}"
     db.ledger_add(uid, -chargen.COST, "chargen", ref=ref)
-    await cb.message.edit_text("🧬 <b>Mulai bikin karakter…</b>\n\n🎨 Menggambar wajah master…\n\n"
+    await edit_safe(cb.message, "🧬 <b>Mulai bikin karakter…</b>\n\n🎨 Menggambar wajah master…\n\n"
                                "⏳ ±1,5–4 menit — jangan tutup bot, hasil dikirim otomatis.")
     asyncio.create_task(_cc_run(cb.message.chat.id, cb.message.message_id, uid, cc,
                                 Path(str(face)), ref, data.get("cc_body")))
@@ -2339,6 +2361,22 @@ async def main() -> None:
     fsm_path = Path(settings.db_path).with_name(Path(settings.db_path).stem + "_fsm.sqlite3")
     dp = Dispatcher(storage=SQLiteStorage(fsm_path))
     dp.include_router(router)
+
+    @dp.errors()
+    async def _on_error(event: ErrorEvent) -> bool:
+        """Jinakkan error jinak + tetap catat yang serius (log jadi bersih & jujur).
+
+        - TelegramBadRequest (klik tombol lama / pesan sudah berubah / edit pesan ber-media)
+          → efek normal pemakaian, cukup dicatat ringan, bot tidak diem.
+        - Error lain → dicatat lengkap dengan traceback supaya kelihatan saat audit.
+        """
+        exc = event.exception
+        if isinstance(exc, TelegramBadRequest):
+            log.info("aksi lama/berubah diabaikan: %s", exc)
+            return True
+        log.error("error tak tertangani: %s", exc, exc_info=True)
+        return True
+
     me = await bot.get_me()
     log.info("KREE.AI jalan sebagai @%s (backend=%s, promptsmith=%s, bayar=%s)",
              me.username, settings.backend, "llm" if settings.promptsmith_key else "template",

@@ -205,6 +205,107 @@ async def _gen(backend, feature: str, photos: list[Path], prompt: str, out_path:
 
 
 # ---------------------------------------------------------------- alur utama
+# ── Panel WAJAH dari FOTO ASLI (bukan karangan model) ────────────────────────
+# Temuan 9 Okt (user): "masalahnya ada di master karakter" → panel wajah yang DIGAMBAR AI
+# bikin identitas melenceng, jadi semua fitur (editor, video, kunci wajah) hasilnya "nggak mirip".
+# Solusi: panel wajah = potongan FOTO ASLI user (deteksi wajah OpenCV), bukan gambar AI.
+_FACE_CASCADE = Path(__file__).with_name("models") / "haarcascade_frontalface_default.xml"
+_YUNET = Path(__file__).with_name("models") / "face_detection_yunet.onnx"
+_SFACE = Path(__file__).with_name("models") / "face_recognition_sface.onnx"
+
+
+def _face_det():
+    """Detektor wajah YuNet (OpenCV 5 tak punya CascadeClassifier lagi)."""
+    import cv2
+    if not _YUNET.exists():
+        return None, None
+    return cv2, cv2.FaceDetectorYN.create(str(_YUNET), "", (320, 320), 0.75, 0.3, 5000)
+
+
+def _biggest_face(cv2, det, img):
+    h, w = img.shape[:2]
+    det.setInputSize((w, h))
+    _n, faces = det.detect(img)
+    if faces is None or len(faces) == 0:
+        return None
+    # buang deteksi palsu/terlalu kecil (<7% lebar foto), lalu ambil skor keyakinan tertinggi.
+    ok = [f for f in faces if float(f[2]) >= 0.07 * w]
+    pool = ok or list(faces)
+    return max(pool, key=lambda f: float(f[-1]) if len(f) > 14 else float(f[2]) * float(f[3]))
+
+
+def crop_face_photo(src, out_path, pad: float = 0.55, aspect: float = 0.75):
+    """Potong wajah ASLI user dari fotonya → panel wajah master sheet (rasio tetap, center wajah).
+
+    Balikin None kalau wajah tidak terdeteksi (pemanggil pakai jalur AI, jangan asal potong).
+    """
+    cv2, det = _face_det()
+    if cv2 is None:
+        return None
+    im = cv2.imread(str(src))
+    if im is None:
+        return None
+    f = _biggest_face(cv2, det, im)
+    if f is None:
+        return None
+    x, y, w, h = (int(v) for v in f[:4])
+    H, W = im.shape[:2]
+    cx, cy = x + w / 2.0, y + h / 2.0
+    # jendela rasio tetap (lebar:tinggi) yang memuat wajah + rambut/bahu sedikit
+    box_w = max(w * (1 + 2 * pad), h * (1 + 2 * pad) * aspect)
+    box_h = box_w / aspect
+    cx = min(max(cx, box_w / 2), max(box_w / 2, W - box_w / 2))     # geser, jangan potong wajah
+    cy = min(max(cy, box_h / 2), max(box_h / 2, H - box_h / 2))
+    x0, y0 = int(cx - box_w / 2), int(cy - box_h / 2)
+    x1, y1 = int(cx + box_w / 2), int(cy + box_h / 2)
+    x0, y0 = max(0, x0), max(0, y0)
+    x1, y1 = min(W, x1), min(H, y1)
+    crop = im[y0:y1, x0:x1]
+    if crop.size == 0:
+        return None
+    if crop.shape[1] < 900:                                  # jaga ketajaman panel di sheet
+        k = 900 / crop.shape[1]
+        crop = cv2.resize(crop, (int(crop.shape[1] * k), int(crop.shape[0] * k)),
+                          interpolation=cv2.INTER_LANCZOS4)
+    out_path = Path(out_path)
+    cv2.imwrite(str(out_path), crop)
+    return out_path if out_path.exists() else None
+
+
+def face_similarity(a, b):
+    """Skor kemiripan wajah 0..1 antara 2 gambar (SFace cosine, ambang 0.363 = orang sama).
+
+    Dipakai buat MEMBUKTIKAN 'mirip atau nggak' dengan angka, bukan kira-kira mata AI.
+    Balikin None kalau salah satu foto wajahnya tak terdeteksi.
+    """
+    try:
+        import cv2
+        if not _SFACE.exists():
+            return None
+        rec = cv2.FaceRecognizerSF.create(str(_SFACE), "")
+    except Exception:                                        # noqa: BLE001
+        return None
+    cv2m, det = _face_det()
+    if cv2m is None:
+        return None
+    feats = []
+    for p in (a, b):
+        img = cv2.imread(str(p))
+        if img is None:
+            return None
+        f = _biggest_face(cv2, det, img)
+        if f is None:
+            return None
+        try:
+            feats.append(rec.feature(rec.alignCrop(img, f)))
+        except Exception:                                    # noqa: BLE001
+            return None
+    try:
+        return float(rec.match(feats[0], feats[1], cv2.FaceRecognizerSF_FR_COSINE))
+    except Exception:                                        # noqa: BLE001
+        return None
+
+
 async def run(backend, face_photo: Path, opts: dict, out_dir: Path, on_step=None,
               body_ref: Path | None = None) -> dict:
     """Bikin sheet master. Balikin {"sheet": Path, "panels": [(label, Path)]}.
@@ -256,16 +357,21 @@ async def run(backend, face_photo: Path, opts: dict, out_dir: Path, on_step=None
         await step("🧍 Menggambar badan (depan)…")
         front_out = await _gen(backend, "chargen", [face_anchor], body_prompt(opts, "front"), front_out)
 
-    # 2) Panel WAJAH diturunkan DARI panel badan → rambut, baju & identitas pasti seragam
-    #    (temuan uji 9 Okt: panel wajah yang digambar terpisah bikin rambut/baju beda dari panel badan).
-    await step("🎨 Menggambar panel wajah (dari panel badan)…")
+    # 2) Panel WAJAH = FOTO ASLI user (bukan digambar AI) → identitas nol drift di semua fitur
+    #    berikutnya (editor, video, kunci wajah). Keluhan user 9 Okt: "masalahnya ada di master karakter".
+    await step("🖼 Panel wajah pakai FOTO ASLI kamu (identitas nggak melenceng)…")
     face_out = out_dir / "cc_face.png"
-    try:
-        face_out = await _gen(backend, "chargen", [front_out], face_from_body_prompt(), face_out)
-    except Exception as e:                                   # noqa: BLE001
-        log.warning("chargen: panel wajah dari badan gagal (%s) — pakai anchor", e)
-        face_out = face_anchor
-    panels = [("FACE CLOSE UP", face_out), ("FULL BODY FRONT", front_out)]
+    real_face = await asyncio.to_thread(crop_face_photo, face_photo, face_out)
+    if real_face is None:
+        log.warning("chargen: wajah tak terdeteksi di %s → panel wajah digambar AI", face_photo)
+        try:
+            face_out = await _gen(backend, "chargen", [front_out], face_from_body_prompt(), face_out)
+        except Exception as e:                               # noqa: BLE001
+            log.warning("chargen: panel wajah dari badan gagal (%s) — pakai anchor", e)
+            face_out = face_anchor
+    else:
+        face_out = real_face
+    panels = [("FACE — FOTO ASLI (identitas)", face_out), ("FULL BODY FRONT", front_out)]
 
     for view, label_id in (("side", "FULL BODY SIDE"), ("back", "FULL BODY BACK")):
         await step(f"🧍 Menggambar badan ({view})…")
@@ -291,6 +397,8 @@ async def run(backend, face_photo: Path, opts: dict, out_dir: Path, on_step=None
         "created_at": int(time.time()),
         "opts": {k: opts.get(k) for k in ("gender", "race", "vibe", "bust", "slim", "hips", "outfit")},
         "body_ref_used": bool(body_ref),
+        "face_source": "foto_asli_user" if real_face else "ai_fallback",
+        "identity_file": Path(face_out).name,
         "panels": [{"role": roles[i] if i < len(roles) else f"panel{i+1}",
                     "label": str(lab), "file": Path(p).name}
                    for i, (lab, p) in enumerate(panels)],
