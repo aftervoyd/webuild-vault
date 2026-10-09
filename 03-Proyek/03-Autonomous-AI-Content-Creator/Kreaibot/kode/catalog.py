@@ -122,6 +122,23 @@ FEATURES: dict[str, Feature] = {
         backend_workflow="krea_i2v_ltx",
         hint="Kirim 1 foto + ketik mau videonya seperti apa (boleh cerita panjang).",
     ),
+    "story": Feature(
+        key="story",
+        label="🎬 Video Cerita (Multi-Scene)",
+        cost=1.5,
+        min_photos=1, max_photos=1,
+        need_prompt=True, need_ratio=True,
+        duration=15, durations=(15, 30),
+        desc=("Buat SKENARIO yang panjang/rumit (mis. lari dikejar kamera, noleh, hampir jatuh, terus ketawa).\n"
+              "· Ceritanya dipecah otomatis jadi beberapa scene pendek, tiap scene disambung\n"
+              "  pakai frame terakhir → hasil tetap nyambung & wajah konsisten\n"
+              "· 15 detik = 3 scene (1,5 Token) · 30 detik = 6 scene (2,5 Token)\n"
+              "· Boleh nulis PAKAI BAHASA INDONESIA, bebas & berantakan juga boleh\n"
+              "· Baca ulang: hasilnya LEBIH RAPI daripada minta 5 aksi dalam satu video\n"
+              "· Prosesnya lebih lama (tiap scene dirender sendiri) tapi hasilnya jauh lebih bagus"),
+        backend_workflow="krea_story",
+        hint="Kirim 1 foto + tulis ceritanya (bebas, pakai bahasa Indonesia juga bisa).",
+    ),
     "editor": Feature(
         key="editor",
         label="🖌️ AI Image Editor",
@@ -145,7 +162,8 @@ DURATION_COST: dict[tuple[str, int], float] = {
     # i2v 15s AKTIF sejak 9 Okt 11:20 (app LTX-2.3: 89 koin / 465 s, terbukti).
     # Catatan lama "15s dimatikan" itu untuk app Wan2.2 yang memang gagal.
     ("i2v", 5): 0.5, ("i2v", 10): 1.0, ("i2v", 15): 1.5,
-    ("long", 30): 1.0,          # 30 s sekali render: app LTX-2.3, terbukti 9 Okt 11:50 (135 koin)
+    ("long", 30): 1.0,
+    ("story", 15): 1.5, ("story", 30): 2.5,          # 30 s sekali render: app LTX-2.3, terbukti 9 Okt 11:50 (135 koin)
     ("faceswap", 5): 0.5,
     ("allinone", 5): 1.0, ("allinone", 15): 2.5,
     ("ugc", 15): 2.5,
@@ -162,7 +180,7 @@ def cost_for(key: str, duration: int) -> float:
 
 # Fitur yang SUDAH tersambung ke mesin render nyata (RunningHub workflow FL2VA).
 # Fitur lain tetap ada di katalog tapi belum tampil ke user sampai workflow-nya siap.
-SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "faceswap", "editor")
+SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "story", "faceswap", "editor")
 
 
 def enabled_features() -> list[Feature]:

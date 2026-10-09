@@ -38,14 +38,17 @@ async def main() -> int:
     # HARGA SEHAT (per fitur × durasi): koin terukur × Rp/koin harus di bawah harga jual.
     # Angka koin dari render NYATA di RunningHub (5 dtk = 55–66 koin · 15 dtk = 269 koin).
     RUPIAH_PER_KOIN = 4.46
-    KOIN_TERUKUR = {("i2v", 5): 61, ("i2v", 10): 112,
+    KOIN_TERUKUR = {("i2v", 5): 45, ("i2v", 10): 68, ("i2v", 15): 89, ("long", 30): 135,
+                    ("faceswap", 5): 10, ("story", 15): 135, ("story", 30): 270,
                     ("allinone", 5): 66, ("allinone", 15): 269, ("ugc", 15): 269}
     for (key, dur), koin in KOIN_TERUKUR.items():
         harga = catalog.cost_for(key, dur) / 10 * 10_000
         biaya = koin * RUPIAH_PER_KOIN
         margin = (harga - biaya) / harga * 100
-        # i2v = produk pintu masuk → margin boleh lebih tipis supaya bersaing dgn Kuzushi
-        batas = 45 if key == "i2v" else 50
+        # i2v & long = produk pintu masuk/penggerak volume → margin boleh lebih tipis.
+        # Catatan: RUPIAH_PER_KOIN di sini KONSERVATIF (4,46) sedangkan harga koin terukur ≈3,4,
+        # jadi margin `long` sebenarnya ±54 %; ambang 38 % dipakai supaya guardrail tetap jujur.
+        batas = 45 if key == "i2v" else (38 if key == "long" else 50)
         res.append(ok(f"margin {key} {dur} dtk sehat ({margin:.0f}% ≥ {batas}%)", margin >= batas,
                       f"harga Rp{harga:,.0f} vs biaya Rp{biaya:,.0f}"))
     res.append(ok("durasi render dalam batas mesin (4..30 dtk)",

@@ -276,3 +276,81 @@ def summary_for_user(style_key: str, brief: str = "") -> str:
     """Ringkasan untuk user — TIDAK memuat prompt rakitan."""
     st = STYLES.get(style_key) or STYLES["review"]
     return f"🎨 Gaya: <b>{st.label}</b>\n⏱ Durasi: <b>{st.duration} detik</b>"
+
+
+# ---------------------------------------------------------------------------
+# Mode CERITA (multi-shot): pecah skenario panjang jadi beberapa klip pendek.
+# Alasan: model i2v cuma bisa SATU aksi menerus per render. Cerita 5 aksi
+# (lari → noleh → hampir jatuh → tertawa) harus dipecah, bukan dipaksa 1 tembakan.
+# ---------------------------------------------------------------------------
+STORY_SPLIT_SYSTEM = (
+    "You are a film director planning an IMAGE-TO-VIDEO sequence that starts from ONE still photo. "
+    "The user gives a story (may be Indonesian, may be messy) that contains MANY actions. "
+    "Split it into EXACTLY the requested number of SHOTS, in story order, so the whole story is told.\n"
+    "RULES:\n"
+    "1. Each shot = ONE simple continuous action only. NEVER stack two actions in one shot "
+    "(no 'then', no 'and then', no 'after that').\n"
+    "2. Shots continue naturally: same person, same clothes, same place, same time of day.\n"
+    "3. Camera per shot: slow and simple (gentle tracking, slow push-in, static). NEVER chase-cam "
+    "while running, whip pan, or shaky handheld.\n"
+    "4. Every shot must say the person's face, hair, glasses and outfit stay exactly as in the "
+    "reference photo (no identity drift, photoreal skin).\n"
+    "5. Each shot max 35 words, English.\n"
+    "Reply with a JSON array of strings ONLY - no markdown, no keys, no commentary."
+)
+
+
+def _fallback_split(raw: str, shots: int) -> list[str]:
+    """Cadangan kalau LLM mati: potong cerita user jadi `shots` bagian sama panjang."""
+    words = raw.split()
+    if not words:
+        return [raw] * shots
+    per = max(1, len(words) // shots)
+    out = [" ".join(words[i * per:(i + 1) * per]) for i in range(shots)]
+    out[-1] = " ".join(words[(shots - 1) * per:]) or out[-1]
+    return [o for o in out if o]
+
+
+async def split_story(raw: str, shots: int = 3, seconds_each: int = 5,
+                      base_url: str = "", api_key: str = "", model: str = "",
+                      timeout: int = 45) -> list[str]:
+    """Pecah cerita user jadi `shots` prompt pendek (1 aksi per shot).
+
+    Aman: kalau LLM gagal/aneh → potong teks asli user jadi `shots` bagian.
+    """
+    raw = " ".join(str(raw or "").split())
+    shots = max(1, int(shots))
+    if not raw:
+        return [""] * shots
+    base_url = (base_url or os.getenv("PROMPTSMITH_BASE_URL", "")).rstrip("/")
+    api_key = api_key or os.getenv("PROMPTSMITH_API_KEY", "")
+    model = model or os.getenv("PROMPTSMITH_MODEL", "")
+    if not (base_url and api_key and model):
+        return _fallback_split(raw, shots)
+    try:
+        import aiohttp
+        user = (f"STORY (may be Indonesian, may be messy):\n{raw}\n\n"
+                f"Make exactly {shots} shots, each about {seconds_each} seconds of screen time.")
+        payload = {"model": model, "temperature": 0.4, "max_tokens": 900,
+                   "messages": [{"role": "system", "content": STORY_SPLIT_SYSTEM},
+                                {"role": "user", "content": user}]}
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=timeout)) as s:
+            async with s.post(f"{base_url}/chat/completions", json=payload,
+                              headers={"Authorization": f"Bearer {api_key}",
+                                       "Content-Type": "application/json"}) as r:
+                js = await r.json(content_type=None)
+        txt = ((js.get("choices") or [{}])[0].get("message", {}) or {}).get("content", "") or ""
+        txt = txt.strip().strip("`").strip()
+        if txt.lower().startswith("json"):
+            txt = txt[4:].strip()
+        start, end = txt.find("["), txt.rfind("]")
+        if start >= 0 and end > start:
+            arr = json.loads(txt[start:end + 1])
+            outs = [" ".join(str(x).split())[:400] for x in arr if str(x).strip()]
+            if len(outs) >= 2:
+                while len(outs) < shots:
+                    outs.append(outs[-1])
+                return outs[:shots]
+    except Exception:                       # noqa: BLE001
+        pass
+    return _fallback_split(raw, shots)

@@ -278,6 +278,30 @@ Bukti ffmpeg + vision: latar **berubah** (pantai sunset → parkiran mobil), kac
 **Bahasa Indonesia:** sudah didukung sejak awal (`promptsmith` menerima brief Indonesia & menerjemahkan ke Inggris).
 Ditambah panduan di deskripsi fitur i2v & `long`: "Boleh nulis PAKAI BAHASA INDONESIA" + "Tulis SATU aksi sederhana".
 
+### 6e. MODE CERITA / MULTI-SCENE — jawaban "prompt gak jelas" (9 Okt 13:00)
+
+**Masalah yang dijawab:** user nulis skenario panjang (mis. "wanita lari membelakangi kamera, kamera
+mengejar, sesekali menoleh, hampir terjatuh, lanjut lari sambil ketawa"). i2v cuma bisa SATU aksi
+menerus → kalau dipaksa, hasilnya meleleh.
+
+**Solusi (fitur baru `story` — "🎬 Video Cerita (Multi-Scene)"):**
+1. `promptsmith.split_story()` → LLM memecah cerita jadi N scene, **1 aksi per scene**, kamera lambat,
+   tiap scene menyertakan klausa konsistensi wajah. Bahasa Indonesia/berantakan tetap diterima.
+2. `storyboard.render_story()` → render N klip 5 detik **berurutan**, dan **frame terakhir klip ke-i
+   dipakai sebagai gambar awal klip ke-(i+1)** (frame chaining) biar karakter + latar nyambung.
+3. `storyboard.stitch()` → jahit semua klip jadi 1 video (concat + re-encode h264 + aac).
+
+**Katalog:** `story` durasi 15 (3 scene, 1,5 Token) / 30 (6 scene, 2,5 Token).
+`plan_shots()` → total ÷ 5 = jumlah scene. GPU untuk `story` sengaja **default** (bukan plus)
+lewat `RUNNINGHUB_INSTANCE_STORY=default` supaya koin tetap murah.
+
+**File:** `storyboard.py` (baru), `promptsmith.split_story()` (+`STORY_SPLIT_SYSTEM`, `_fallback_split`),
+branch `krea_story` di `bot.py` `process_job()`, uji `tools/story_test.py`.
+
+**Hasil pemecahan (terbukti, cerita persis punya user):**
+- 3 scene: lari menjauh (kamera track maju) → tersandung & mengembalikan keseimbangan → menoleh & tertawa
+- 6 scene: versi lebih rinci dari alur yang sama
+
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).

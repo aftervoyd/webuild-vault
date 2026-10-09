@@ -27,6 +27,7 @@ from aiogram.types import (BotCommand, CallbackQuery, FSInputFile, InlineKeyboar
 
 import catalog
 import promptsmith
+import storyboard
 from aulaa import Aulaa, make_client
 from backends import GenRequest, GenStatus, make_backend
 from backends.mediafix import smooth_fps, unwrap_media
@@ -1063,6 +1064,44 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                 if f and f.key == "faceswap" and i == 2:
                     video_in, local = local[-1], local[:-1]
             out = work / "hasil.mp4"
+
+            # 1b) MODE CERITA (multi-shot): skenario panjang → N klip pendek, frame terakhir
+            #     disambung ke klip berikutnya, lalu dijahit jadi 1 video.
+            if f and f.backend_workflow == "krea_story" and local:
+                n_shots, per_shot = storyboard.plan_shots(int(job["duration"] or f.duration))
+                shots = await promptsmith.split_story(
+                    job["prompt"] or "", shots=n_shots, seconds_each=per_shot,
+                    base_url=settings.promptsmith_base, api_key=settings.promptsmith_key,
+                    model=settings.promptsmith_model)
+                db.set_job(job_id, status="running", task_id=f"story:{len(shots)}x{per_shot}s")
+                log.info("job %s mode CERITA: %d scene × %ds", job_id, len(shots), per_shot)
+
+                async def _story_progress(i: int, total: int, msg: str, _c=chat_id, _m=msg_id):
+                    try:
+                        await bot.edit_message_text(
+                            f"🎬 <b>{f.label}</b>\n\n🎞 Scene {i}/{total}\n"
+                            f"✅ {i-1} scene selesai · ⏳ scene {i} sedang dirender\n"
+                            f"💬 {msg}\n🆔 Job <code>{job_id}</code>",
+                            chat_id=_c, message_id=_m, parse_mode=ParseMode.HTML)
+                    except Exception:
+                        pass
+
+                result = await storyboard.render_story(
+                    backend, photo=local[0], shots=shots, ratio=job["ratio"] or "9:16",
+                    work=work, dur_each=per_shot, job_id=job_id,
+                    poll_interval=settings.poll_interval, on_progress=_story_progress)
+                result = await asyncio.to_thread(unwrap_media, result)
+                result = await asyncio.to_thread(smooth_fps, result)
+                db.set_job(job_id, status="done", result_path=str(result))
+                await send_result(bot, chat_id, result,
+                                  f"✨ <b>{f.label}</b> selesai — {len(shots)} scene disambung!\n"
+                                  f"🆔 Job <code>{job_id}</code> · {saldo_txt(job['telegram_id'])}")
+                try:
+                    await bot.delete_message(chat_id, msg_id)
+                except Exception:
+                    pass
+                log.info("job %s (cerita) selesai: %s", job_id, result)
+                return
 
             # 2) submit ke backend + poll
             req = GenRequest(job_id=job_id, feature_key=job["feature"],
