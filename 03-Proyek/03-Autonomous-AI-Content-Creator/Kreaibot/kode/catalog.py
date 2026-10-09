@@ -180,7 +180,7 @@ def cost_for(key: str, duration: int) -> float:
 
 # Fitur yang SUDAH tersambung ke mesin render nyata (RunningHub workflow FL2VA).
 # Fitur lain tetap ada di katalog tapi belum tampil ke user sampai workflow-nya siap.
-SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "story", "faceswap", "editor")
+SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "faceswap", "editor")
 
 
 def enabled_features() -> list[Feature]:

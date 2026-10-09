@@ -26,6 +26,7 @@ from aiogram.types import (BotCommand, CallbackQuery, FSInputFile, InlineKeyboar
                            InlineKeyboardMarkup, Message)
 
 import catalog
+import presets
 import promptsmith
 import storyboard
 from aulaa import Aulaa, make_client
@@ -811,6 +812,18 @@ async def on_photo(msg: Message, state: FSMContext):
         t += "<b>Sekarang ketik prompt</b>-nya."
     await msg.answer(t)
 
+    # ---- PRESET 1-TAP: user cukup tap satu tombol, tidak perlu ngetik prompt ----
+    if f and len(photos) >= f.min_photos and not data.get("preset_sent"):
+        rows = presets.kb_rows(f.key, lambda feat, dur: catalog.cost_for(
+            feat, dur or (catalog.get(feat).duration if catalog.get(feat) else 5)))
+        if rows:
+            await state.update_data(preset_sent=True)
+            rows.append([InlineKeyboardButton(text="🔙 Menu Utama", callback_data="m:home")])
+            await msg.answer(
+                "👇 <b>Mau diapain?</b>\n"
+                "Pilih satu → langsung diproses. <i>(nggak perlu ngetik apa-apa)</i>",
+                reply_markup=InlineKeyboardMarkup(inline_keyboard=rows))
+
 
 @router.message(Flow.photos, F.text)
 async def on_prompt_in_photos(msg: Message, state: FSMContext):
@@ -823,6 +836,48 @@ async def on_prompt_in_photos(msg: Message, state: FSMContext):
         return
     await state.update_data(prompt=msg.text.strip()[:1000])
     await _confirm(msg, state, msg.from_user.id)
+
+
+@router.callback_query(F.data.startswith("p:"))
+async def cb_preset(cb: CallbackQuery, state: FSMContext):
+    """Preset 1-TAP: pilih situasi → langsung masuk layar konfirmasi (harga tampil)."""
+    key = cb.data[2:]
+    data = await state.get_data()
+    f = catalog.get(data.get("feature", ""))
+    if not f:
+        await cb.answer("Sesi kadaluarsa — mulai dari menu utama.", show_alert=True)
+        return
+    if key == "sendiri":
+        await cb.message.edit_text(
+            f"{f.label}\n\n✍️ <b>Ketik prompt kamu sekarang</b>\n"
+            "<i>Teks biasa aja — bahasa Indonesia juga bisa, nanti dirapikan otomatis.</i>",
+            reply_markup=back_kb([[InlineKeyboardButton(text="🎲 Kasih preset acak",
+                                                        callback_data="p:kejutan")]]))
+        await cb.answer()
+        return
+    pr = presets.resolve(key, twist=int(time.time()) % 997)
+    if not pr:
+        await cb.answer("Preset itu belum siap ya.", show_alert=True)
+        return
+    upd: dict = {"preset": pr.key, "prompt": pr.text()}
+    if pr.feature:
+        nf = catalog.get(pr.feature)
+        if nf and nf.key in catalog.SIAP_JUAL:
+            upd["feature"] = nf.key
+            f = nf
+    if pr.duration and pr.duration in f.durations:
+        upd["duration"] = pr.duration
+    await state.update_data(**upd)
+    if not upd.get("prompt"):        # preset cerita: user tetap menulis ceritanya
+        await cb.message.edit_text(
+            f"{f.label}\n\n📖 <b>Tulis ceritanya sekarang</b>\n"
+            "<i>Bebas & berantakan juga boleh — nanti bot yang mecah jadi beberapa adegan.</i>",
+            reply_markup=back_kb([[InlineKeyboardButton(text="🎲 Kasih preset acak",
+                                                        callback_data="p:kejutan")]]))
+        await cb.answer(f"{pr.emoji} {pr.label}")
+        return
+    await _confirm(cb.message, state, cb.from_user.id, edit=True)
+    await cb.answer(f"{pr.emoji} {pr.label} ✓")
 
 
 @router.callback_query(F.data == "f:next")          # tombol lama → tetap didukung
@@ -1255,9 +1310,9 @@ async def cmd_help(msg: Message):
         "📖 <b>Cara pakai KREE.AI</b>\n\n"
         "1️⃣ Buka menu (/start) → pilih fitur\n"
         "2️⃣ Pilih durasi lewat tombol (harga langsung kelihatan)\n"
-        "3️⃣ Kirim foto → <b>langsung ketik prompt</b> → tekan 🚀 Render\n\n"
+        "3️⃣ Kirim foto → <b>pilih situasi (1 tap, nggak perlu ngetik prompt)</b> → tekan 🚀 Render\n\n"
         f"Fitur siap pakai: {', '.join(f.label for f in catalog.enabled_features())}\n"
-        "Segera hadir: Face Swap, Pose Transfer, Lip Sync, Image Editor\n\n"
+        "Segera hadir: Pose Transfer, Lip Sync\n\n"
         "Perintah: /start · /saldo · /topup · /cancel · /help")
 
 

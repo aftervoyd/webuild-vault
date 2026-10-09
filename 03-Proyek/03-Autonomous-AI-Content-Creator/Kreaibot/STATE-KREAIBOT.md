@@ -302,6 +302,28 @@ branch `krea_story` di `bot.py` `process_job()`, uji `tools/story_test.py`.
 - 3 scene: lari menjauh (kamera track maju) → tersandung & mengembalikan keseimbangan → menoleh & tertawa
 - 6 scene: versi lebih rinci dari alur yang sama
 
+### 6f. PRESET 1-TAP LIVE (9 Okt 13:20) + hasil uji mode cerita
+
+**Preset 1-tap (permintaan user: "user dikasih pilihan situasi/pose")** — sudah terpasang:
+kirim foto → bot kirim **grid preset** (harga tampil di tiap tombol) → 1 tap → layar konfirmasi → 🚀 Render.
+File: `presets.py` (baru), `presets.kb_rows()`, handler `p:*` + grid di `on_photo()` (`bot.py`).
+Preset video: 😄 tertawa · 💃 menari · 🚶 vlog selfie · 😮 kaget · 💪 pose model · 🌬️ angin natural ·
+✍️ tulis sendiri · 🎲 kejutan. Preset editor: 👕 ganti baju · 🏝️ ganti latar · 🌆 cyberpunk · 🧽 hapus objek · 📸 studio.
+Dokumen rancangan: `RANCANGAN-UX-PRESET-9OKT.md`.
+
+**Uji mode cerita (3 scene, frame chaining, jahit) — SELESAI, hasil JUJUR:**
+- Mesinnya BEKERJA: 3 klip → frame terakhir dirantai ke klip berikutnya → jahit jadi
+  `hasil_cerita.mp4` **768×1280 · 24 fps · 14,1 detik · ada audio**, 561 s, **216 koin** (pakai GPU plus).
+- TAPI kualitas output **belum layak jual**: 3 scene-nya jadi selfie close-up semua, aksi "lari menjauh"
+  TIDAK muncul, dan latar berubah antar scene (indoor → luar malam → parkiran mobil).
+- **Keputusan sesuai aturan "jangan jual yang belum terbukti": `story` DIKELUARKAN dari SIAP_JUAL**
+  dan preset `larikejar` + `cerita` ditandai `beta=True` (tidak tampil di grid) sampai akar masalahnya beres.
+
+**Hipotesis akar masalah yang sedang diuji:** mungkin **prompt tidak benar-benar sampai ke model**
+(binding node `304.text` salah). Uji diagnostik: prompt mustahil-terlewat (wig badut merah + topi
+pelangi + bendera kuning + latar gunung salju) → `tools/prompt_probe.py`.
+Kalau output tidak memuat itu → binding prompt salah, bukan salah prompt user.
+
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).
