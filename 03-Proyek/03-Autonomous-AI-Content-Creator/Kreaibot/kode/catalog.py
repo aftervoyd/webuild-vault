@@ -72,13 +72,18 @@ FEATURES: dict[str, Feature] = {
     ),
     "faceswap": Feature(
         key="faceswap",
-        label="🎭 Face Swap & Motion",
-        cost=2.0,
+        label="🎭 Face Swap Karakter",
+        cost=0.5,
         min_photos=2, max_photos=2,
         need_prompt=False, need_ratio=False,
-        desc=("Foto wajah bersih + video gerakan sumber (.mp4) → wajah ditukar.\n"
-              "Disarankan video 15 dtk, maks 30 dtk."),
+        duration=5, durations=(5,),
+        desc=("Tempel wajah kamu ke foto model/scene lain — hasilnya foto, bukan video.\n"
+              "· Foto 1 = wajah kamu (jelas, tidak miring, tanpa kacamata gelap)\n"
+              "· Foto 2 = foto model/scene target\n"
+              "· Cocok biar karakter kamu KONSISTEN di banyak gambar\n"
+              "· 1 Token (Rp1.000) — lebih murah dari pasaran"),
         backend_workflow="krea_faceswap",
+        hint="Kirim foto wajah kamu dulu, lalu kirim foto target/model-nya.",
     ),
     "pose": Feature(
         key="pose",
@@ -136,6 +141,7 @@ DURATION_COST: dict[tuple[str, int], float] = {
     # Catatan lama "15s dimatikan" itu untuk app Wan2.2 yang memang gagal.
     ("i2v", 5): 0.5, ("i2v", 10): 1.0, ("i2v", 15): 1.5,
     ("long", 30): 1.0,          # 30 s sekali render: app LTX-2.3, terbukti 9 Okt 11:50 (135 koin)
+    ("faceswap", 5): 0.5,
     ("allinone", 5): 1.0, ("allinone", 15): 2.5,
     ("ugc", 15): 2.5,
 }
@@ -151,7 +157,7 @@ def cost_for(key: str, duration: int) -> float:
 
 # Fitur yang SUDAH tersambung ke mesin render nyata (RunningHub workflow FL2VA).
 # Fitur lain tetap ada di katalog tapi belum tampil ke user sampai workflow-nya siap.
-SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "editor")
+SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "faceswap", "editor")
 
 
 def enabled_features() -> list[Feature]:

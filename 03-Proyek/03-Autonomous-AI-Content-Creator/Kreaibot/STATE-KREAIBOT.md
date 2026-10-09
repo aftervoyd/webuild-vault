@@ -242,6 +242,21 @@ Semua fitur video = maksimal 15 s + satu fitur khusus 30 s, sesuai permintaan.
 
 **Margin terukur (koin ≈ Rp3,4):** i2v 5s 69% · 10s 77% · 15s 80% · 30s 54%.
 
+### 6d-3. FITUR BARU LIVE: 🎭 Face Swap Karakter (9 Okt 12:20)
+
+**App:** `1889155568379092993` — "极速换脸（最强光影适配）" (super cepat, adaptasi cahaya terbaik), jalur koin.
+Labels node dari `/api/webapp/detail`: **163 = 脸型/Face shape** (foto wajah) · **145 = 模特/Model** (foto target).
+Metadata app: success rate 100 %, rata-rata render 38 s.
+
+**Uji produksi nyata:** 2 foto (wajah + sheet model) → **PNG, 52 detik, hanya 10 koin (≈Rp34)**.
+→ Dijual **0,5 Token (Rp500)** = **margin ±93 %**, jauh di bawah harga Kuzushi (2T ≈ Rp1.334).
+
+Katalog sekarang (6 fitur jual): `ugc` 15s · `allinone` 5/15s · `i2v` 5/10/15s · `long` 30s · `faceswap` · `editor`.
+Aset: `RUNNINGHUB_APP_FACESWAP` + `RUNNINGHUB_APP_NODES_FACESWAP`. Uji: `tools/backend_faceswap_test.py`.
+
+**Catatan penting:** face swap kita = **hasil GAMBAR** (bukan video). Kuzushi menjual "Face Swap & Motion" (video).
+Kalau mau versi video: rangkai face swap → i2v (atau cari app "视频换脸" yang menerima input video).
+
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).
