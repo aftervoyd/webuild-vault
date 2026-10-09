@@ -326,8 +326,12 @@ def cmd_list(api_key: str, sort: str, size: int, page: int, days: int):
     data = list_apps(api_key, sort, size, page, days)
     records = data.get("records", [])
 
-    cover_dir = Path("/tmp/openclaw/rh-output/app_covers")
-    cover_dir.mkdir(parents=True, exist_ok=True)
+    # Cover images are cosmetic and were filling /tmp (tmpfs = RAM) with ~850 MB.
+    # Only download them when explicitly asked (RH_COVERS=1), and never into /tmp.
+    cover_dir = Path(os.environ.get("RH_COVERS_DIR", str(Path.home() / ".cache/rh_covers")))
+    want_covers = os.environ.get("RH_COVERS") == "1"
+    if want_covers:
+        cover_dir.mkdir(parents=True, exist_ok=True)
 
     apps = []
     for i, r in enumerate(records):
@@ -341,7 +345,7 @@ def cmd_list(api_key: str, sort: str, size: int, page: int, days: int):
         if webapp_id:
             app["webappId"] = webapp_id
 
-        if cover_url:
+        if cover_url and want_covers:
             ext = cover_url.split("?")[0].rsplit(".", 1)[-1].lower() if "." in cover_url.split("/")[-1] else "jpg"
             if ext not in ("jpg", "jpeg", "png", "webp", "gif"):
                 ext = "jpg"

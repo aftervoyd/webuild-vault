@@ -103,8 +103,12 @@ FEATURES: dict[str, Feature] = {
         cost=0.3,
         min_photos=1, max_photos=1,
         need_prompt=True, need_ratio=False,
-        desc="Edit foto dari prompt (ganti latar, gaya, pakaian).",
+        desc=("Edit foto dari instruksi teks (ganti latar, gaya, pakaian).\n"
+              "· Contoh: \"make it cyberpunk style, neon lighting, 8k\"\n"
+              "· Contoh: \"anime style, detailed background\"\n"
+              "· Hasil = gambar (bukan video)"),
         backend_workflow="krea_imgedit",
+        hint="Kirim 1 foto yang mau diedit — habis itu langsung ketik instruksi edit-nya.",
     ),
 }
 
@@ -131,7 +135,7 @@ def cost_for(key: str, duration: int) -> float:
 
 # Fitur yang SUDAH tersambung ke mesin render nyata (RunningHub workflow FL2VA).
 # Fitur lain tetap ada di katalog tapi belum tampil ke user sampai workflow-nya siap.
-SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v")
+SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "editor")
 
 
 def enabled_features() -> list[Feature]:

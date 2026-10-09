@@ -74,6 +74,23 @@ def back_kb(extra: list[list[InlineKeyboardButton]] | None = None) -> InlineKeyb
     return InlineKeyboardMarkup(inline_keyboard=rows)
 
 
+IMG_EXT = {".png", ".jpg", ".jpeg", ".webp"}
+
+
+async def send_result(bot: Bot, chat_id: int, result, caption: str) -> None:
+    """Kirim hasil render: berkas gambar → foto, selain itu → video.
+
+    Fitur editor mengembalikan GAMBAR (bukan video) — send_video akan gagal.
+    """
+    ext = Path(str(result)).suffix.lower()
+    if ext in IMG_EXT:
+        await bot.send_photo(chat_id, FSInputFile(result), caption=caption,
+                             parse_mode=ParseMode.HTML)
+    else:
+        await bot.send_video(chat_id, FSInputFile(result), caption=caption,
+                             parse_mode=ParseMode.HTML)
+
+
 def style_kb() -> InlineKeyboardMarkup:
     rows = [[InlineKeyboardButton(text=label, callback_data=f"u:style:{key}")]
             for key, label in promptsmith.style_list_kb_rows()]
@@ -1087,10 +1104,9 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                 await asyncio.sleep(settings.poll_interval)
 
             db.set_job(job_id, status="done", result_path=str(result))
-            await bot.send_video(chat_id, FSInputFile(result),
-                                 caption=f"✨ <b>{f.label}</b> selesai tanpa watermark!\n"
-                                         f"🆔 Job <code>{job_id}</code> · {saldo_txt(job['telegram_id'])}",
-                                 parse_mode=ParseMode.HTML)
+            await send_result(bot, chat_id, result,
+                              f"✨ <b>{f.label}</b> selesai tanpa watermark!\n"
+                              f"🆔 Job <code>{job_id}</code> · {saldo_txt(job['telegram_id'])}")
             try:
                 await bot.delete_message(chat_id, msg_id)
             except Exception:
@@ -1290,10 +1306,9 @@ async def _resume_one(bot: Bot, job: dict) -> None:
                 break
             await asyncio.sleep(settings.poll_interval)
         db.set_job(jid, status="done", result_path=str(result))
-        await bot.send_video(uid, FSInputFile(result),
-                             caption=(f"✨ <b>{f.label if f else job['feature']}</b> selesai tanpa watermark!\n"
-                                      f"🆔 Job <code>{jid}</code> · {saldo_txt(uid)}"),
-                             parse_mode=ParseMode.HTML)
+        await send_result(bot, uid, result,
+                          f"✨ <b>{f.label if f else job['feature']}</b> selesai tanpa watermark!\n"
+                          f"🆔 Job <code>{jid}</code> · {saldo_txt(uid)}")
         log.info("resume: job %s terkirim ke %s", jid, uid)
     except Exception as e:                      # noqa: BLE001
         log.exception("resume: job %s gagal", jid)

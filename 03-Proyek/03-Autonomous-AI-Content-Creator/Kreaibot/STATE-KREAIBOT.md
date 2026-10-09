@@ -16,6 +16,18 @@
 - **Pembayaran Aulaa QRIS LIVE** (teruji uang nyata), channel `@KreeaCommunity` + gate referral aktif.
 - **Backend render = RunningHub WORKFLOW `FL2VA`** (jalur koin). ⚠️ Lambat (276–340s per 5s) **dan mengunci gerakan orang** → ini yang sedang kita ganti.
 
+### ✅ FITUR BARU LIVE: AI Image Editor (9 Okt 09:49)
+- **Fitur ke-4 di katalog** (`SIAP_JUAL` = ugc, allinone, i2v, **editor**) · harga **0,3 Token**.
+- **Jalur AI APP** (bukan workflow): `RUNNINGHUB_APP_EDITOR=2061699451919618049` (All-in-One Image V2 I2I, low-cost channel).
+- **Binding:** node `2.image` ← `@photo1` · node `1.prompt` ← `@prompt` · node `1.resolution` = `1k` · node `1.aspectRatio` ← `@ratio`.
+  ⚠️ **Wajib pakai `resolution 1k` + `aspectRatio`.** `aspectRatio` sendirian (tanpa resolution) → task **FAILED**.
+  ⚠️ App ini **kadang flaky** (~1 gagal dari 4 percobaan) — bot sudah punya refund otomatis untuk kasus gagal.
+- **Hasil: GAMBAR PNG** 768×1376 (9:16) · **±31 detik** · tanpa zip.
+- **Delivery gambar:** helper baru `send_result()` di `bot.py` — ekstensi gambar (`.png/.jpg/.jpeg/.webp`) → `send_photo`, selain itu → `send_video` (dipakai 2 tempat: worker + `_resume_one`).
+- Alat uji: **`tools/backend_editor_test.py`** (+ `ref1.jpg`).
+- **App editor lain yang JALAN tapi hasilnya ZIP (jangan dipakai):** 2029825493565968385 (91s) · 2057860352582438914 (91s) · 2062724963311898626 (51s) · 2049488928721346561 (72s). App 2037019022239211522 & 2049465637889646594 → FAILED.
+- **`tools/rh_app.py --list` sekarang TIDAK mengunduh cover** (dulu mengisi `/tmp` tmpfs 851 MB sampai penuh) — cover hanya kalau `RH_COVERS=1`.
+
 ## 2. TEMUAN KUNCI RUNNINGHUB (ringkas)
 
 - Membership **Personal** aktif s/d **8 Nov 2026**: **36.000 RHCoins/bulan** ($9,9/bln) + $1 wallet. Saldo terakhir **34.993 koin**.
