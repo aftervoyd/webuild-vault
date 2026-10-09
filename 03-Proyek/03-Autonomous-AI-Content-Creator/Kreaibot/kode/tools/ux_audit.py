@@ -81,8 +81,8 @@ def main() -> int:
             print("      ✗ fitur tanpa pilihan durasi")
             bad += 1
         for d in f.durations:
-            if not (4 <= d <= 15):
-                print(f"      ✗ durasi {d} di luar batas workflow (4..15)")
+            if not (4 <= d <= 30):
+                print(f"      ✗ durasi {d} di luar batas mesin (4..30)")
                 bad += 1
             if catalog.cost_for(f.key, d) <= 0:
                 print(f"      ✗ harga durasi {d} tidak masuk akal")

@@ -62,9 +62,10 @@ FEATURES: dict[str, Feature] = {
         cost=0.5,
         min_photos=1, max_photos=1,
         need_prompt=True, need_ratio=True,
-        duration=5, durations=(5, 10),
+        duration=5, durations=(5, 10, 15),
         desc=("Foto → video pendek.\n"
-              "· 5 detik = 0,5 Token · 10 detik = 1 Token\n"
+              "· 5 detik = 0,5 Token · 10 detik = 1 Token · 15 detik = 1,5 Token\n"
+              "· Ada suara ambient otomatis, gerak halus 24 fps\n"
               "· Cocok buat teaser, loop, dan bikin cepat"),
         backend_workflow="krea_i2v_ltx",
         hint="Kirim 1 foto (wajah, produk, atau scene apa saja).",
@@ -97,6 +98,20 @@ FEATURES: dict[str, Feature] = {
         desc="Foto wajah + teks/audio → video berbicara/bernyanyi.",
         backend_workflow="krea_lipsync_h3",
     ),
+    "long": Feature(
+        key="long",
+        label="🎥 Video 30 Detik",
+        cost=1.0,
+        min_photos=1, max_photos=1,
+        need_prompt=True, need_ratio=True,
+        duration=30, durations=(30,),
+        desc=("Satu foto → video 30 detik sekali jalan (bukan sambung-sambungan).\n"
+              "· 1 Token (Rp1.000) — sama dengan pasaran\n"
+              "· Ada suara ambient, 24 fps, 768×1280\n"
+              "· Cocok buat cerita/iklan panjang"),
+        backend_workflow="krea_i2v_ltx",
+        hint="Kirim 1 foto + ketik mau videonya seperti apa (boleh cerita panjang).",
+    ),
     "editor": Feature(
         key="editor",
         label="🖌️ AI Image Editor",
@@ -117,9 +132,10 @@ RATIOS = {"9:16": "📱 9:16 (TikTok/Reels/Shorts)", "16:9": "🎬 16:9 (YouTube
 # Harga token per (fitur, durasi) — acuan pasar @KuzushiGenBot, margin kita 40–70%.
 # Ubah di sini kalau mau naik/turunin harga; kode lain ngikut otomatis.
 DURATION_COST: dict[tuple[str, int], float] = {
-    # 15s i2v DIMATIKAN: app Wan2.2 gagal pada 15s (uji 9 Okt 03:24) & tak ada biaya.
-    # Jangan jual durasi yang belum terbukti. i2v 10s = 1 Token (samakan Kuzushi).
-    ("i2v", 5): 0.5, ("i2v", 10): 1.0,
+    # i2v 15s AKTIF sejak 9 Okt 11:20 (app LTX-2.3: 89 koin / 465 s, terbukti).
+    # Catatan lama "15s dimatikan" itu untuk app Wan2.2 yang memang gagal.
+    ("i2v", 5): 0.5, ("i2v", 10): 1.0, ("i2v", 15): 1.5,
+    ("long", 30): 1.0,          # 30 s sekali render: app LTX-2.3, terbukti 9 Okt 11:50 (135 koin)
     ("allinone", 5): 1.0, ("allinone", 15): 2.5,
     ("ugc", 15): 2.5,
 }
@@ -135,7 +151,7 @@ def cost_for(key: str, duration: int) -> float:
 
 # Fitur yang SUDAH tersambung ke mesin render nyata (RunningHub workflow FL2VA).
 # Fitur lain tetap ada di katalog tapi belum tampil ke user sampai workflow-nya siap.
-SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "editor")
+SIAP_JUAL: tuple[str, ...] = ("ugc", "allinone", "i2v", "long", "editor")
 
 
 def enabled_features() -> list[Feature]:

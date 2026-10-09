@@ -26,7 +26,8 @@ async def main() -> int:
     res = []
 
     # 1) katalog
-    res.append(ok("katalog 7 fitur (termasuk UGC)", len(catalog.FEATURES) == 7, ", ".join(catalog.FEATURES)))
+    res.append(ok(f"katalog fitur lengkap ({len(catalog.FEATURES)} ≥ 7, termasuk UGC)",
+                  len(catalog.FEATURES) >= 7, ", ".join(catalog.FEATURES)))
     f = catalog.get("allinone")
     res.append(ok("harga All-in-One (15 dtk) = 2.5 token", f is not None and f.cost == 2.5))
     # Konversi Rp: 10 token = Rp10.000 → 1 token = Rp1.000 (i2v 5 dtk = 0,5 token = Rp500)
@@ -47,11 +48,11 @@ async def main() -> int:
         batas = 45 if key == "i2v" else 50
         res.append(ok(f"margin {key} {dur} dtk sehat ({margin:.0f}% ≥ {batas}%)", margin >= batas,
                       f"harga Rp{harga:,.0f} vs biaya Rp{biaya:,.0f}"))
-    res.append(ok("durasi render dalam batas workflow (4..15 dtk)",
-                  all(4 <= ft.duration <= 15 for ft in catalog.enabled_features()),
+    res.append(ok("durasi render dalam batas mesin (4..30 dtk)",
+                  all(4 <= ft.duration <= 30 for ft in catalog.enabled_features()),
                   ", ".join(f"{ft.key}={ft.duration}s" for ft in catalog.enabled_features())))
-    res.append(ok("durasi yang dijual semua dalam batas workflow",
-                  all(all(4 <= d <= 15 for d in ft.durations) for ft in catalog.enabled_features()),
+    res.append(ok("durasi yang dijual semua dalam batas mesin (4..30)",
+                  all(all(4 <= d <= 30 for d in ft.durations) for ft in catalog.enabled_features()),
                   ", ".join(f"{ft.key}:{ft.durations}" for ft in catalog.enabled_features())))
     ugc = catalog.get("ugc")
     res.append(ok("fitur UGC ada & bertingkat", bool(ugc and ugc.kind == "ugc" and ugc.need_style

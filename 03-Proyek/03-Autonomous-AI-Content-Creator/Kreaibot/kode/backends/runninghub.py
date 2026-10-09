@@ -248,9 +248,14 @@ class RunningHubBackend:
             # platform supaya dibayar KOIN (bukan wallet $).
             nodes = self._bind(self._app_bindings(req.feature_key)
                                or self._node_bindings(req.feature_key), req, uploaded, extra)
-            js = await self._post("/task/openapi/ai-app/run",
-                                  {"apiKey": self.api_key, "webappId": int(app_id),
-                                   "nodeInfoList": nodes})
+            payload: dict = {"apiKey": self.api_key, "webappId": int(app_id),
+                             "nodeInfoList": nodes}
+            # instanceType=plus → GPU 48G (lebih cepat untuk durasi panjang).
+            inst = (os.getenv(f"RUNNINGHUB_INSTANCE_{req.feature_key.upper()}")
+                    or os.getenv("RUNNINGHUB_INSTANCE_TYPE", ""))
+            if inst and inst != "default":
+                payload["instanceType"] = inst
+            js = await self._post("/task/openapi/ai-app/run", payload)
         else:
             payload = {"apiKey": self.api_key, "workflowId": wf,
                        "nodeInfoList": self._bind(self._node_bindings(req.feature_key), req, uploaded, extra)}

@@ -219,6 +219,29 @@ Bindings: `345.image ← @photo1` · `304.text ← @prompt` · `301.value ← @f
 
 **Belum dites:** durasi 15 s / 20 s (frame 360/480) — API LTX mendukung 5–20 s.
 
+### 6d-2. DURASI PANJANG: 15 s & 30 s TERBUKTI (9 Okt 11:20–12:00)
+
+App LTX-2.3 jalur koin ternyata **sanggup sampai 30 detik dalam satu render**
+(dugaan awal cuma 20 s dari dokumentasi API — ComfyUI app-nya lebih longgar).
+
+| Durasi | Frame (×24) | Koin | Biaya (Rp) | Waktu render |
+|---|---|---|---|---|
+| 5 s | 120 | 45 | ±Rp153 | 243 s (4 m) |
+| 10 s | 240 | 68 | ±Rp231 | 343 s (5,7 m) |
+| 15 s | 360 | 89 | ±Rp303 | 465 s (7,8 m) |
+| **30 s** | **720** | **135** | **±Rp459** | **688 s (11,5 m)** |
+
+Semua keluar **768×1280, 24 fps, ada audio AAC 48 kHz** — identik kualitasnya.
+
+**Fitur baru LIVE: 🎥 Video 30 Detik** (`key="long"`, 1 Token = Rp1.000, margin 54%).
+Katalog sekarang: `ugc` (15 s) · `allinone` (5/15 s) · `i2v` (**5/10/15 s**) · `long` (**30 s**) · `editor`.
+Semua fitur video = maksimal 15 s + satu fitur khusus 30 s, sesuai permintaan.
+
+**Catatan aset:** `RUNNINGHUB_APP_LONG` + `RUNNINGHUB_APP_NODES_LONG` = app LTX yang sama (bindings sama, `@frames` → 720).
+`instanceType: plus` (GPU 48G) sudah didukung backend via `RUNNINGHUB_INSTANCE_TYPE` — belum diuji kecepatannya.
+
+**Margin terukur (koin ≈ Rp3,4):** i2v 5s 69% · 10s 77% · 15s 80% · 30s 54%.
+
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).
