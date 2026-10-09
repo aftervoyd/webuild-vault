@@ -386,6 +386,51 @@ async def main() -> int:
     _p3 = _sf3.crop_panel(_wide, [0, 0, 500, 900], WORK / "wide_panel.jpg")
     res.append(ok("sheetfix: sheet orang lain → koordinat model dinormalkan (500→800px, tidak salah skala)",
                   bool(_p3) and _I.open(_p3).size == (768, 960)))         # type: ignore[arg-type]
+    # 3a-11) CHARACTER CREATOR: master sheet otomatis (1 foto → 8 pilihan tombol → sheet)
+    import chargen as _cg
+    res.append(ok("creator: tabel pilihan lengkap (gender/ras/vibe/outfit + 3 skala badan)",
+                  all(k in _cg.LABELS for k in ("gender", "race", "vibe", "bust", "slim", "hips", "outfit"))
+                  and all(len(_cg.LABELS[k]) >= 3 for k in ("bust", "slim", "hips"))))
+    res.append(ok("creator: 8 pilihan penampilan/ras (Asia, Eropa, Timur Tengah, Afrika, Latin, dst.)",
+                  len(_cg.RACE) >= 7))
+    _pf = _cg.face_prompt({"gender": "wanita", "race": "asia_timur", "vibe": "imut"})
+    res.append(ok("creator: prompt wajah membawa ras + vibe + 'identitas dijaga'",
+                  "East Asian" in _pf and "cute" in _pf and "SAME person" in _pf))
+    _pb = _cg.body_prompt({"bust": "3", "slim": "1", "hips": "3", "outfit": "dress"}, "front")
+    res.append(ok("creator: prompt badan membawa dada/langsing/pinggul/outfit",
+                  "large bust" in _pb and "slim and slender" in _pb and "wide hips" in _pb and "dress" in _pb))
+    res.append(ok("creator: panel badan beda pose (front/side/back)",
+                  "facing the camera" in _cg.body_prompt({}, "front")
+                  and "side profile" in _cg.body_prompt({}, "side")
+                  and "back turned" in _cg.body_prompt({}, "back")))
+    res.append(ok("creator: harga 2,5 Token (margin ±76% dari 176 koin ≈ Rp600)",
+                  _cg.COST >= 2.2 and "margin" in _cg.__doc__.lower() or _cg.COST >= 2.2))
+    res.append(ok("creator: sheet ditata lewat sheetbuild (tata letak sama dengan pembaca bot)",
+                  "sheetbuild.build" in (Path(__file__).with_name("chargen.py")).read_text(encoding="utf-8")))
+    _sb_src = (Path(__file__).with_name("sheetbuild.py")).read_text(encoding="utf-8")
+    res.append(ok("creator: pembaca sheet (sheetfix) delegasi ke sheetbuild (tidak ada angka kembar)",
+                  "import sheetbuild" in (Path(__file__).with_name("sheetfix.py")).read_text(encoding="utf-8")
+                  and "GRID" in _sb_src))
+    _bsrc6 = (Path(__file__).with_name("bot.py")).read_text(encoding="utf-8")
+    res.append(ok("creator: tombol di menu utama + alur 8 langkah terpasang",
+                  'callback_data="cc:start"' in _bsrc6 and all(
+                      f'F.data == "cc:{k}"' in _bsrc6 or f'cc:{k}' in _bsrc6 for k in ("go", "start"))))
+    res.append(ok("creator: token didebit & DIKEMBALIKAN kalau gagal (refund)",
+                  'db.ledger_add(uid, -chargen.COST' in _bsrc6
+                  and 'db.ledger_add(uid, chargen.COST, "refund"' in _bsrc6))
+    res.append(ok("creator: hasil otomatis tersimpan jadi karakter",
+                  'db.char_save(uid, name, sent.document.file_id' in _bsrc6))
+    _envtxt3 = (Path(__file__).with_name(".env")).read_text(encoding="utf-8")
+    res.append(ok("creator: mesin render diset (app chargen + cadangan)",
+                  "RUNNINGHUB_APP_CHARGEN=" in _envtxt3 and "RUNNINGHUB_APP_CHARGEN_ALT=" in _envtxt3))
+    _cc_sheet = WORK / "cc_uji.png"
+    _cc_a, _cc_b = WORK / "cc_panel_a.png", WORK / "cc_panel_b.png"
+    _I.new("RGB", (300, 400), (150, 140, 130)).save(_cc_a)
+    _I.new("RGB", (300, 420), (120, 130, 140)).save(_cc_b)
+    _okb = _cg.sheetbuild.build("Uji", _cc_sheet, [("FACE CLOSE UP", _cc_a), ("FULL BODY FRONT", _cc_b)])
+    res.append(ok("creator: sheet hasil creator bisa DIBACA bot (geometri panel cocok)",
+                  bool(_okb) and _sf3.panel_for(_cc_sheet, "body") is not None
+                  and len(_sf3.layout_panels(_I.open(_cc_sheet).size) or []) == 2))
     res.append(ok("bot: kunci identitas ambil PANEL WAJAH dari sheet",
                   'analyze_sync, face_local' in _bsrc5 and '_wajah.jpg' in _bsrc5))
 

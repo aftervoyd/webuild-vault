@@ -21,7 +21,10 @@ from __future__ import annotations
 import sys
 from pathlib import Path
 
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+import sheetbuild
 
 GUTTER = 24          # jarak antar panel (px)
 LABEL_H = 64         # tinggi strip label (px)
@@ -56,46 +59,19 @@ def fit(im: Image.Image, h: int) -> Image.Image:
 
 def main() -> int:
     name, out = sys.argv[1], Path(sys.argv[2])
-    items = []
+    panels = []
     for spec in sys.argv[3:]:
         label, _, path = spec.partition(":")
-        p = Path(path)
-        if p.exists():
-            items.append((label.strip().upper(), p))
+        if Path(path).exists():
+            panels.append((label.strip(), Path(path)))
         else:
             print("⚠️  lewat (tidak ada):", path)
-    if not items:
-        print("tidak ada panel")
-        return 1
-
-    panels = [(lab, fit(Image.open(p), PH)) for lab, p in items]
-    pw = max(im.width for _, im in panels)
-    cols = 2
-    rows = (len(panels) + cols - 1) // cols
-    head = 120 if len(panels) > 1 else 0
-    W = MARGIN * 2 + cols * pw + (cols - 1) * GUTTER
-    H = MARGIN * 2 + head + rows * (LABEL_H + PH) + (rows - 1) * GUTTER
-    sheet = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(sheet)
-
-    if head:
-        d.text((MARGIN, MARGIN + 10), f"{name.upper()} — CHARACTER SHEET", font=_font(46), fill=INK)
-        d.text((MARGIN, MARGIN + 66),
-               "Reference sheet for the bot \u00b7 every panel is a REAL reference photo of her "
-               "(no AI-generated body)",
-               font=_font(24), fill=SUB)
-
-    for i, (lab, im) in enumerate(panels):
-        r, c = divmod(i, cols)
-        x = MARGIN + c * (pw + GUTTER)
-        y = MARGIN + head + r * (LABEL_H + PH + GUTTER)
-        d.text((x, y + 12), lab, font=_font(32), fill=INK)
-        sheet.paste(im, (x, y + LABEL_H))
-
-    out.parent.mkdir(parents=True, exist_ok=True)
-    sheet.save(out, quality=96)
-    print(f"✅ sheet: {out} ({sheet.size[0]}×{sheet.size[1]}, {len(panels)} panel) "
-          f"{out.stat().st_size // 1024} KB")
+    res = sheetbuild.build(name, Path(out), panels)
+    if not res:
+        print("tidak ada panel"); return 1
+    from PIL import Image
+    im = Image.open(res)
+    print(f"✅ sheet: {res} ({im.size[0]}×{im.size[1]}, {len(panels)} panel) {res.stat().st_size // 1024} KB")
     return 0
 
 

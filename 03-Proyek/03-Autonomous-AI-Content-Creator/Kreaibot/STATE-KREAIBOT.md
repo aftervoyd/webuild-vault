@@ -754,6 +754,35 @@ ALT = `2044289076647432194` (真实自然, 18 koin) dengan binding 17=badan, 23=
 (≈Rp96) + kunci 71 koin (≈Rp244) = ±Rp340 untuk harga Rp300 → **RUGI**. Usul: opsi premium
 "🔒 Kunci wajah" (mis. editor+kunci 0.8T) ATAU pakai kunci hanya kalau user pilih sendiri.
 
+### 6y. FITUR BARU: CHARACTER CREATOR — MASTER SHEET OTOMATIS (9 Okt 19:4x)
+
+**Permintaan user:** fitur kreator karakter — user kirim referensi wajah, lalu dipandu pilih
+gender, penampilan/ras (Asia/Eropa/dst.), vibe wajah (imut/dst.), bentuk dada 1–3, langsing 1–3,
+pinggul-bawah 1–3 → mesin menggambar **master character sheet** yang mudah dibaca sistem.
+Biaya ditentukan sendiri; margin harus besar.
+
+**Desain (nol-prompt, semua tombol):** menu utama → **🧬 Bikin Karakter Baru (2,5 Token)**.
+Alur 8 langkah: foto wajah → gender → penampilan (8 pilihan) → vibe (7) → dada (1–3) → langsing (1–3)
+→ pinggul (1–3) → outfit (7) → rangkuman + harga → **✅ Generate**.
+Hasil: 1 panel WAJAH close-up + 3 panel BADAN (depan/samping/belakang) → disusun jadi sheet
+tata letak `sheetbuild.py` (sama dengan yang dibaca bot) → **otomatis disimpan sebagai karakter**.
+Token didebit di depan, **DIKEMBALIKAN otomatis kalau gagal**.
+
+**Ekonomi (margin 76%):**
+| item | koin | ≈ Rp |
+|---|---|---|
+| 1 wajah + 3 badan (Qwen 2511) | ±176 | ±600 |
+| **harga jual** | — | **Rp2.500 (2,5 Token)** |
+→ margin ±76%. Harga dinaikkan gampang: `chargen.COST`.
+
+**File baru:** `sheetbuild.py` (TATA LETAK TUNGGAL: GRID + build + layout_panels),
+`chargen.py` (tabel pilihan + prompt + `run()` + COST).
+**Refactor:** `sheetfix.py` & `tools/make_sheet.py` sekarang delegasi ke `sheetbuild` (angka tata letak
+tidak lagi ditulis dua kali — penyebab bug potong panel 9 Okt).
+**Env baru:** `RUNNINGHUB_APP_CHARGEN=2056741213927206914` (Qwen 2511 konsistensi, node 52=image/54=prompt),
+cadangan `..._CHARGEN_ALT=2075393520445251586` (Flux Kontext, node 390/399).
+**selftest 172/172** (13 tes baru untuk creator).
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

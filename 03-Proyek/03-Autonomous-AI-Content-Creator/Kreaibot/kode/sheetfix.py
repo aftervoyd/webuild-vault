@@ -110,38 +110,18 @@ def analyze_sync(path: Path, base_url: str, api_key: str, model: str,
 
 
 # ---- GEOMETRI SHEET (deterministik) ---------------------------------------------------------------
-# tools/make_sheet.py menata sheet dengan angka TETAP ini. Karena itu bot TIDAK perlu nebak koordinat
-# dari model vision (sering meleset → dulu bot nyomot judul + potongan wajah sebagai "panel", akar
-# masalah "wajah nggak mirip"). Bot cukup menghitung sendiri.
-GRID = {"cols": 2, "margin": 24, "gutter": 24, "label_h": 64, "ph": 1280, "head": 120}
+# tools/make_sheet.py + chargen.py menata sheet dengan angka TETAP (lihat `sheetbuild.GRID`). Karena itu
+# bot TIDAK perlu nebak koordinat dari model vision (sering meleset → dulu bot nyomot judul + potongan
+# wajah sebagai "panel", akar masalah "wajah nggak mirip"). Bot cukup menghitung sendiri.
+# Satu sumber kebenaran ada di `sheetbuild.py` — jangan tulis ulang angkanya di sini.
+import sheetbuild as _sb
+
+GRID = _sb.GRID
 
 
 def layout_panels(size: tuple[int, int]) -> list[tuple[int, int, int, int]] | None:
-    """Kalau gambar ini sheet buatan tools/make_sheet.py → daftar kotak panel (kiri→kanan, atas→bawah).
-
-    None kalau ukurannya tidak cocok dengan tata letak kita (mis. sheet bikinan orang lain).
-    """
-    try:
-        W, H = int(size[0]), int(size[1])
-    except Exception:                                       # noqa: BLE001
-        return None
-    g = GRID
-    pw = (W - 2 * g["margin"] - (g["cols"] - 1) * g["gutter"]) // g["cols"]
-    if pw < 100:
-        return None
-    for head in (g["head"], 0):                             # 120 = ada judul, 0 = tanpa judul
-        for rows in range(1, 9):
-            if 2 * g["margin"] + head + rows * (g["label_h"] + g["ph"]) \
-               + (rows - 1) * g["gutter"] != H:
-                continue
-            out = []
-            for i in range(rows * g["cols"]):
-                r, c = divmod(i, g["cols"])
-                x = g["margin"] + c * (pw + g["gutter"])
-                y = g["margin"] + head + r * (g["label_h"] + g["ph"] + g["gutter"]) + g["label_h"]
-                out.append((x, y, pw, g["ph"]))
-            return out
-    return None
+    """Kotak semua panel sheet buatan kita (delegasi ke `sheetbuild.layout_panels`)."""
+    return _sb.layout_panels(size)
 
 
 def panel_for(path: Path, purpose: str = "body") -> tuple[int, int, int, int] | None:

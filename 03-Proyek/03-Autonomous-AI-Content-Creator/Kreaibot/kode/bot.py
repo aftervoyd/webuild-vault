@@ -29,6 +29,7 @@ from aiogram.types import (BotCommand, CallbackQuery, FSInputFile, InlineKeyboar
 import catalog
 import presets
 import sheetfix
+import chargen
 from fsmstore import SQLiteStorage
 from identity import lock_identity
 import promptsmith
@@ -76,6 +77,10 @@ def main_menu_kb(uid: int | None = None) -> InlineKeyboardMarkup:
     for f in catalog.enabled_features():
         rows.append([InlineKeyboardButton(text=f"{f.label} — {f.cost:g} Token",
                                           callback_data=f"m:feat:{f.key}")])
+    if uid:
+        # CHARACTER CREATOR: bikin master karakter (sheet machine-readable) sekali klik.
+        rows.append([InlineKeyboardButton(
+            text=f"🧬 Bikin Karakter Baru — {chargen.COST:g} Token", callback_data="cc:start")])
     rows.append([InlineKeyboardButton(text="⚡ Top Up Token", callback_data="m:topup"),
                  InlineKeyboardButton(text="💳 Saldo", callback_data="m:saldo")])
     rows.append([InlineKeyboardButton(text="📖 Panduan", callback_data="m:help"),
@@ -131,6 +136,15 @@ class Flow(StatesGroup):
     # --- inventory: karakter & produk tersimpan ---
     inv_photo = State()     # kirim foto master
     inv_name = State()      # kasih nama (atau ganti nama)
+    # --- CHARACTER CREATOR: master sheet otomatis (tombol semua, tanpa ngetik) ---
+    cc_photo = State()      # 1/8 foto wajah
+    cc_gender = State()     # 2/8
+    cc_race = State()       # 3/8 penampilan
+    cc_vibe = State()       # 4/8 vibe wajah
+    cc_bust = State()       # 5/8 bentuk dada
+    cc_slim = State()       # 6/8 langsing
+    cc_hips = State()       # 7/8 pinggul–bawah
+    cc_outfit = State()     # 8/8 outfit → konfirmasi
 
 
 # ============================ menu ============================
@@ -1897,6 +1911,201 @@ async def _resume_jobs(bot: Bot) -> None:
     log.info("resume: %d job berjalan ditemukan → disambung", len(rows))
     for r in rows:
         asyncio.create_task(_resume_one(bot, dict(r)))
+
+
+# ==================== CHARACTER CREATOR: master sheet otomatis ====================
+# 1 foto wajah → pilih gender/penampilan/vibe/bentuk badan/outfit (SEMUA tombol, tanpa ngetik)
+# → mesin gambar 4 panel (wajah + badan depan/samping/belakang) → susun sheet machine-readable
+# → simpan jadi karakter. Token didebit di depan & DIKEMBALIKAN kalau proses gagal.
+
+CC_KEY = "cc"
+
+
+def cc_kb(kind: str, prefix: str, extra: list | None = None) -> InlineKeyboardMarkup:
+    """Tombol pilihan dari tabel chargen (gender/race/vibe/bust/slim/hips/outfit)."""
+    rows = [[InlineKeyboardButton(text=lab, callback_data=f"{prefix}:{k}")]
+            for k, (lab, _) in chargen.LABELS[kind].items()]
+    rows += list(extra or [])
+    rows.append([InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")])
+    return InlineKeyboardMarkup(inline_keyboard=rows)
+
+
+@router.callback_query(F.data == "cc:start")
+async def cc_start(cb: CallbackQuery, state: FSMContext):
+    await state.clear()
+    await state.set_state(Flow.cc_photo)
+    await state.update_data(**{CC_KEY: {"gender": "wanita", "race": "asia_tenggara", "vibe": "natural",
+                                        "bust": "2", "slim": "2", "hips": "2", "outfit": "netral"}})
+    await cb.message.edit_text(
+        ("🧬 <b>Character Creator</b> — bikin master karakter (sheet siap dipakai bot)\n\n"
+         "<b>Langkah 1/8</b> · Kirim <b>1 FOTO WAJAH</b> yang jelas (hadap depan).\n"
+         "Foto ini jadi patokan identitas — badan, gaya & proporsi digambar dari sini.\n\n"
+         f"💰 Biaya: <b>{chargen.COST:g} Token</b> — dibayar di AKHIR, setelah semua pilihan.\n"
+         "⏱️ Proses ±5–8 menit (4 gambar: wajah + badan depan/samping/belakang)\n\n"
+         f"{chargen.DISCLAIMER}"),
+        reply_markup=back_kb())
+    await cb.answer()
+
+
+@router.message(Flow.cc_photo, F.photo | F.document)
+async def cc_photo(msg: Message, state: FSMContext):
+    uid = msg.from_user.id if msg.from_user else 0
+    fid = msg.photo[-1].file_id if msg.photo else msg.document.file_id
+    dest = Path(settings.work_dir) / "chargen" / str(uid) / "ref.jpg"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    try:
+        tg = await bot.get_file(fid)
+        await bot.download_file(tg.file_path, dest)
+    except Exception as e:                                  # noqa: BLE001
+        log.warning("chargen: unduh foto gagal: %s", e)
+        await msg.answer("⚠️ Gagal mengunduh fotonya — coba kirim ulang ya.")
+        return
+    data = await state.get_data()
+    cc = data.get(CC_KEY, {})
+    cc["face_fid"] = fid
+    await state.update_data(**{CC_KEY: cc, "cc_face": str(dest)})
+    await state.set_state(Flow.cc_gender)
+    await msg.answer("✅ Foto diterima.\n\n<b>Langkah 2/8</b> · Pilih <b>gender</b>:",
+                     reply_markup=cc_kb("gender", "cc:g"))
+
+
+# --- langkah 2–8: gender → penampilan → vibe → dada → langsing → pinggul → outfit ---
+_CC_STEPS: dict[str, tuple] = {
+    "cc:g": ("gender", Flow.cc_race, "race", "cc:r", 3),
+    "cc:r": ("race", Flow.cc_vibe, "vibe", "cc:v", 4),
+    "cc:v": ("vibe", Flow.cc_bust, "bust", "cc:b1", 5),
+    "cc:b1": ("bust", Flow.cc_slim, "slim", "cc:b2", 6),
+    "cc:b2": ("slim", Flow.cc_hips, "hips", "cc:b3", 7),
+    "cc:b3": ("hips", Flow.cc_outfit, "outfit", "cc:o", 8),
+}
+_CC_Q = {
+    "race": "Pilih <b>penampilan / ras</b>",
+    "vibe": "Pilih <b>vibe wajah</b>",
+    "bust": "Pilih <b>bentuk dada</b> (1–3)",
+    "slim": "Pilih <b>tingkat langsing</b> (1–3)",
+    "hips": "Pilih <b>pinggul sampai bawah</b> (1–3)",
+    "outfit": "Pilih <b>outfit</b>",
+}
+
+
+@router.callback_query(
+    F.data.startswith("cc:g:") | F.data.startswith("cc:r:") | F.data.startswith("cc:v:")
+    | F.data.startswith("cc:b1:") | F.data.startswith("cc:b2:") | F.data.startswith("cc:b3:"))
+async def cc_step(cb: CallbackQuery, state: FSMContext):
+    prefix = cb.data[:cb.data.rfind(":")]
+    key = cb.data.split(":", 2)[2]
+    cfg = _CC_STEPS.get(prefix)
+    if not cfg:
+        await cb.answer("Pilihan tidak dikenal", show_alert=True)
+        return
+    set_key, next_state, next_kind, next_prefix, step_no = cfg
+    data = await state.get_data()
+    cc = data.get(CC_KEY, {})
+    cc[set_key] = key
+    await state.update_data(**{CC_KEY: cc})
+    await state.set_state(next_state)
+    await cb.message.edit_text(f"<b>Langkah {step_no}/8</b> · {_CC_Q[next_kind]}:",
+                               reply_markup=cc_kb(next_kind, next_prefix))
+    await cb.answer(chargen.label(set_key, key))
+
+
+def cc_confirm_text(uid: int, cc: dict) -> str:
+    return ("🧬 <b>Rangkuman Karakter</b>\n\n" + chargen.summary(cc) + "\n\n"
+            f"💰 Biaya: <b>{chargen.COST:g} Token</b> · saldo kamu: <b>{db.balance(uid):.1f} Token</b>\n"
+            "⏱️ Proses ±5–8 menit (4 gambar). Hasil: 1 sheet master + otomatis disimpan jadi karakter.\n\n"
+            f"{chargen.DISCLAIMER}")
+
+
+def cc_confirm_kb() -> InlineKeyboardMarkup:
+    return InlineKeyboardMarkup(inline_keyboard=[
+        [InlineKeyboardButton(text="✅ Generate Sekarang", callback_data="cc:go")],
+        [InlineKeyboardButton(text="🔁 Ubah Dari Awal", callback_data="cc:start")],
+        [InlineKeyboardButton(text="❌ Batal", callback_data="f:cancel")]])
+
+
+@router.callback_query(F.data.startswith("cc:o:"))
+async def cc_outfit(cb: CallbackQuery, state: FSMContext):
+    key = cb.data.split(":", 2)[2]
+    data = await state.get_data()
+    cc = data.get(CC_KEY, {})
+    cc["outfit"] = key
+    await state.update_data(**{CC_KEY: cc})
+    await cb.message.edit_text(cc_confirm_text(cb.from_user.id, cc), reply_markup=cc_confirm_kb())
+    await cb.answer(chargen.label("outfit", key))
+
+
+@router.callback_query(F.data == "cc:go")
+async def cc_go(cb: CallbackQuery, state: FSMContext):
+    uid = cb.from_user.id
+    data = await state.get_data()
+    cc = data.get(CC_KEY) or {}
+    face = data.get("cc_face")
+    if not face or not Path(str(face)).exists():
+        await cb.answer("Fotonya hilang — kirim ulang ya.", show_alert=True)
+        return
+    bal = db.balance(uid)
+    if bal < chargen.COST:
+        await cb.message.edit_text(
+            (f"💳 Saldo kamu <b>{bal:.1f} Token</b> — kurang <b>{chargen.COST - bal:.1f} Token</b>.\n"
+             f"Biaya Character Creator: <b>{chargen.COST:g} Token</b>.\n\n"
+             "Top up dulu ya, terus tekan tombol di bawah."),
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="⚡ Top Up Token", callback_data="m:topup")],
+                [InlineKeyboardButton(text="⬅️ Menu Utama", callback_data="m:home")]]))
+        await cb.answer()
+        return
+    ref = f"cc:{uid}:{int(time.time())}"
+    db.ledger_add(uid, -chargen.COST, "chargen", ref=ref)
+    await cb.message.edit_text("🧬 <b>Mulai bikin karakter…</b>\n\n🎨 Menggambar wajah master…\n\n"
+                               "⏳ ±5–8 menit — jangan tutup bot, hasil dikirim otomatis.")
+    asyncio.create_task(_cc_run(cb.message.chat.id, cb.message.message_id, uid, cc,
+                               Path(str(face)), ref))
+    await cb.answer("Mulai! ±5–8 menit")
+
+
+async def _cc_run(chat_id: int, msg_id: int, uid: int, cc: dict, face: Path, ref: str) -> None:
+    """Jalankan Character Creator di latar belakang + progress + simpan jadi karakter."""
+    out_dir = Path(settings.work_dir) / "chargen" / str(uid)
+
+    async def on_step(text: str) -> None:
+        try:
+            await bot.edit_message_text(
+                f"🧬 <b>Character Creator</b>\n\n{text}\n\n⏳ Jangan tutup bot — hasil dikirim otomatis.",
+                chat_id=chat_id, message_id=msg_id)
+        except Exception:                                    # noqa: BLE001
+            pass
+
+    try:
+        res = await chargen.run(backend, face, cc, out_dir, on_step=on_step)
+        sheet = res["sheet"]
+        sent = await bot.send_document(chat_id, FSInputFile(sheet),
+                                       caption=("🧬 <b>Karakter kamu jadi!</b>\n\n" + chargen.summary(cc)
+                                                + "\n\nSheet ini otomatis masuk 🧑🎨 <b>Karakter Saya</b>. "
+                                                "Panggil namanya di fitur apa pun biar identitasnya konsisten."))
+        name = cc.get("name") or f"Karakter {db.char_count(uid, 'char') + 1}"
+        db.char_save(uid, name, sent.document.file_id, "master sheet (Character Creator)", "char")
+        await bot.edit_message_text(
+            f"✅ Selesai! Karakter <b>{name}</b> tersimpan.\n\n"
+            "Sekarang tinggal pilih fitur (editor / i2v / dst.) lalu tekan karakter ini — "
+            "wajahnya bakal dijaga otomatis.",
+            chat_id=chat_id, message_id=msg_id,
+            reply_markup=InlineKeyboardMarkup(inline_keyboard=[
+                [InlineKeyboardButton(text="🧑🎨 Karakter Saya", callback_data="m:inv:char")],
+                [InlineKeyboardButton(text="⬅️ Menu Utama", callback_data="m:home")]]))
+        for lab, p in res["panels"]:                          # panel mentah juga dikirim (bisa dipakai sendiri)
+            try:
+                await bot.send_document(chat_id, FSInputFile(p), caption=f"📎 Panel: {lab}")
+            except Exception:                                # noqa: BLE001
+                pass
+    except Exception as e:                                   # noqa: BLE001
+        log.error("chargen gagal: %s", e)
+        db.ledger_add(uid, chargen.COST, "refund", ref=ref)
+        try:
+            await bot.edit_message_text(
+                f"❌ Gagal bikin karakter: {str(e)[:150]}\n\nToken <b>{chargen.COST:g}</b> sudah dikembalikan.",
+                chat_id=chat_id, message_id=msg_id)
+        except Exception:                                    # noqa: BLE001
+            pass
 
 
 # ==================== FALLBACK: anti-DIEM (pesan tanpa sesi) ====================
