@@ -227,6 +227,26 @@ async def main() -> int:
     res.append(ok("inventory juga pakai panel (bukan lembaran sheet)",
                   "simpan PANEL orangnya" in _bsrc))
 
+    # 3a-5) BUG "editor jadi kayak video / gepeng": PNG hasil app dinamai .mp4
+    from backends.mediafix import fix_ext as _fx
+    _png = b"\x89PNG\r\n\x1a\n" + b"\x00" * 40
+    _mp4 = b"\x00\x00\x00\x18ftypisom" + b"\x00" * 40
+    f1 = WORK / "salah_nama.mp4"; f1.write_bytes(_png)
+    r1 = _fx(f1)
+    res.append(ok("fix_ext: PNG yang dinamai .mp4 → jadi .png (biar dikirim sebagai FOTO)",
+                  r1.suffix == ".png" and r1.exists()))
+    f2 = WORK / "salah_nama2.png"; f2.write_bytes(_mp4)
+    r2 = _fx(f2)
+    res.append(ok("fix_ext: video yang dinamai .png → jadi .mp4 (biar dikirim sebagai video)",
+                  r2.suffix == ".mp4" and r2.exists()))
+    f3 = WORK / "benar.png"; f3.write_bytes(_png)
+    res.append(ok("fix_ext: nama yang sudah benar tidak diubah", _fx(f3) == f3))
+    res.append(ok("fix_ext: file tidak ada → aman (tidak crash)", _fx(WORK / "hantu.png") == WORK / "hantu.png"))
+    _bsrc2 = (Path(__file__).with_name("bot.py")).read_text(encoding="utf-8")
+    res.append(ok("bot memakai fix_ext sebelum mengirim hasil", "to_thread(fix_ext, result)" in _bsrc2))
+    res.append(ok("PNG termasuk gambar (dikirim sebagai foto, bukan video)",
+                  '".png"' in _bsrc2 and "IMG_EXT" in _bsrc2))
+
     # 3b) referral (anti-farming)
     db.ensure_user(900, "inviter", "Inviter", signup_bonus=1.0)
     db.ensure_user(901, "teman", "Teman", signup_bonus=1.0)

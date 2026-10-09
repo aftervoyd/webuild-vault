@@ -108,3 +108,44 @@ def smooth_fps(path: Path | str, target: float | None = None, timeout: int = 120
     if r.returncode == 0 and out.exists() and out.stat().st_size > 0:
         return out
     return p
+
+def fix_ext(path: Path | str) -> Path:
+    """Betulkan ekstensi sesuai ISI file.
+
+    BUG NYATA (job 15, 9 Okt): app AI Image Editor mengembalikan PNG, tapi worker menyimpannya
+    sebagai `hasil.mp4` (nama tetap) → `send_result` melihat ekstensi .mp4 → mengirim GAMBAR
+    sebagai VIDEO (user melihat "jadi kayak video" + rasio tampak gepeng). Fungsi ini menamai
+    ulang sesuai isi aslinya supaya gambar dikirim sebagai foto.
+    """
+    p = Path(path)
+    if not p.exists():
+        return p
+    try:
+        head = p.read_bytes()[:16]
+    except Exception:                       # noqa: BLE001
+        return p
+    ext = ""
+    if head.startswith(b"\x89PNG"):
+        ext = ".png"
+    elif head.startswith(b"\xff\xd8\xff"):
+        ext = ".jpg"
+    elif head[:6] in (b"GIF87a", b"GIF89a"):
+        ext = ".gif"
+    elif head[:4] == b"RIFF" and head[8:12] == b"WEBP":
+        ext = ".webp"
+    elif head[4:8] == b"ftyp":
+        ext = ".mp4"
+    elif head[:4] == b"\x1aE\xdf\xa3":
+        ext = ".webm"
+    elif head[:2] == b"PK":
+        ext = ".zip"
+    if not ext or p.suffix.lower() == ext:
+        return p
+    new = p.with_suffix(ext)
+    try:
+        if new.exists() and new != p:
+            new.unlink()
+        p.rename(new)
+        return new
+    except Exception:                       # noqa: BLE001
+        return p

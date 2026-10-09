@@ -33,7 +33,7 @@ import promptsmith
 import storyboard
 from aulaa import Aulaa, make_client
 from backends import GenRequest, GenStatus, make_backend
-from backends.mediafix import smooth_fps, unwrap_media
+from backends.mediafix import fix_ext, smooth_fps, unwrap_media
 from config import settings
 from db import Database
 
@@ -1339,6 +1339,7 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                     work=work, dur_each=per_shot, job_id=job_id,
                     poll_interval=settings.poll_interval, on_progress=_story_progress)
                 result = await asyncio.to_thread(unwrap_media, result)
+                result = await asyncio.to_thread(fix_ext, result)
                 result = await asyncio.to_thread(smooth_fps, result)
                 db.set_job(job_id, status="done", result_path=str(result))
                 await send_result(bot, chat_id, result,
@@ -1407,7 +1408,8 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                 await asyncio.sleep(settings.poll_interval)
 
             result = await asyncio.to_thread(unwrap_media, result)  # kalau ZIP, ambil media
-            result = await asyncio.to_thread(smooth_fps, result)   # 16fps → 30fps halus
+            result = await asyncio.to_thread(fix_ext, result)      # nama file ≠ isi → betulkan (PNG jadi .png)
+            result = await asyncio.to_thread(smooth_fps, result)   # 16fps → 30fps halus (opsional)
             db.set_job(job_id, status="done", result_path=str(result))
             await send_result(bot, chat_id, result,
                               f"✨ <b>{f.label}</b> selesai tanpa watermark!\n"

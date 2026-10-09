@@ -543,6 +543,28 @@ foto normal → `sheet=false` (tidak false-positive). Selftest **113/113** (10 t
 
 **Sisa kelemahan yang jujur:** tangan + objek kecil (HP) tetap titik lemah model — bukan bug bot.
 
+### 6p. BUG "Image Editor jadi kayak video + gepeng" (9 Okt 16:20) — FIXED
+
+**Laporan user:** bikin image creator, "hasilnya malah jadi seperti video dan rasionya nggak 9:16, jadi kaya gepeng".
+
+**Akar masalah (dibuktikan):** app AI Image Editor mengembalikan **GAMBAR PNG 768×1376 (9:16 BENAR)**,
+tapi worker menyimpannya dengan **nama tetap `hasil.mp4`** (`out = work / "hasil.mp4"`).
+`send_result()` memilih jalur kirim dari **ekstensi nama file** → PNG dikirim sebagai **VIDEO**
+(Telegram menampilkannya di pemutar video → kelihatan "gepeng"). Bukan rasio yang salah, cuma
+salah jalur kirim.
+
+**Dampak sama di job 14** (editor, 16:04): render SUKSES tapi **gagal di `send_video`**
+(`ServerDisconnectedError`) → job ditandai gagal → token **sudah direfund** (ledger: −0,3 lalu +0,3 ✓).
+
+**FIX:** `backends/mediafix.fix_ext()` — baca 16 byte pertama file, tentukan jenis dari ISI
+(PNG/JPG/GIF/WEBP/MP4/WEBM/ZIP) lalu ganti ekstensi. Dipanggil **sebelum** `smooth_fps` + `send_result`
+di jalur utama dan jalur cerita. Jadi gambar selalu dikirim sebagai foto.
+
+**Tindakan tambahan:** file job 15 dinama-ulang `hasil.mp4 → hasil.png`, DB diupdate, dan hasilnya
+**dikirim ulang ke user sebagai FOTO** (message_id 166) supaya user lihat hasil aslinya.
+
+**Uji:** selftest **119/119** (6 tes baru fix_ext: PNG↔MP4 bolak-balik, nama benar tak diubah, file hilang aman).
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi
