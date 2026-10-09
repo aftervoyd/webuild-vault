@@ -17,6 +17,10 @@ from pathlib import Path
 
 log = logging.getLogger("kreaibot.identity")
 
+# Prompt bawaan app (sudah teruji): ganti kepala+wajah gambar 1 dengan gambar 2, jaga komposisi/cahaya.
+IDLOCK_PROMPT = ("参照图像1和图像2，把图像1人物的头和脸换成图像2人物的头和脸，"
+                 "保持图像1的构图、场景和光线不变，融合真实自然，不能有PS痕迹")
+
 
 def _download(url: str, dest: Path) -> Path:
     """Unduh hasil dari cloud RunningHub (hindari impor bot → tidak ada impor melingkar)."""
@@ -37,8 +41,11 @@ async def lock_identity(backend, result: Path, face_photo: Path, job_id: int,
     try:
         from backends import GenRequest
 
-        req = GenRequest(job_id=job_id, feature_key="faceswap", workflow="",
-                         photos=[face_photo, result], prompt="", ratio="", duration=0,
+        # 9 Okt malam: app "极速换脸" TERBUKTI no-op (wajah tidak berubah sama sekali). Diganti app
+        # "换头换脸提高相似度优化版 (Flux2-Klein, 4K)" = 93% mirip (uji A/B/C berlabel).
+        # Urutan foto app ini: node 6 = GAMBAR UTAMA (hasil render), node 26 = FOTO REFERENSI WAJAH.
+        req = GenRequest(job_id=job_id, feature_key="idlock", workflow="",
+                         photos=[result, face_photo], prompt=IDLOCK_PROMPT, ratio="", duration=0,
                          out_path=out_path)
         # CATATAN 9 Okt: dulu di sini dipanggil backend.generate() — metode itu TIDAK ADA di
         # RunningHubBackend, jadi kunci identitas GAGAL SENYAP (tertangkap except, cuma warning),

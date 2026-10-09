@@ -317,6 +317,18 @@ async def main() -> int:
     _rl = await _idmod.lock_identity(_FakeBackend(), WORK / "hasil_uji.png", _fajah, 1, _outl)
     res.append(ok("identity-lock: face swap BENAR-BENAR jalan (submit+poll) & hasil dipakai",
                   bool(_rl) and Path(_rl).exists()))
+    # 3a-8b) MESIN KUNCI IDENTITAS: app "极速换脸" no-op → diganti 换头换脸提高相似度 (uji 93%)
+    _envtxt2 = (Path(__file__).with_name(".env")).read_text(encoding="utf-8")
+    res.append(ok("identity-lock: pakai app '换头换脸提高相似度' (93% mirip, bukan app no-op)",
+                  "RUNNINGHUB_APP_IDLOCK=2020760401977282562" in _envtxt2))
+    res.append(ok("identity-lock: binding app benar (6=GAMBAR UTAMA, 26=FOTO WAJAH)",
+                  '\"nodeId\":\"6\"' in _envtxt2 and '\"nodeId\":\"26\"' in _envtxt2))
+    res.append(ok("identity-lock: urutan foto = [hasil render, foto wajah] (sesuai app)",
+                  'photos=[result, face_photo]' in _idcode))
+    res.append(ok("identity-lock: feature_key 'idlock' (env sendiri, tidak bentrok Face Swap)",
+                  'feature_key="idlock"' in _idcode))
+    res.append(ok("fitur Face Swap juga pindah ke app yang benar-benar nge-swap",
+                  "RUNNINGHUB_APP_FACESWAP=2020760401977282562" in _envtxt2))
     res.append(ok("sheet-guard juga jaga karakter tersimpan (use:c / u:ch)",
                   "fix_char_id=r[\"id\"]" in _bsrc4))
 

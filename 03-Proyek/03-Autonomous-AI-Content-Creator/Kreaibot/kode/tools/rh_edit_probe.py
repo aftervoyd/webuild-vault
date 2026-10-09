@@ -38,6 +38,10 @@ async def main() -> int:
     app_id, nodes, photo = sys.argv[1], sys.argv[2], Path(sys.argv[3])
     prompt = sys.argv[4] if len(sys.argv) > 4 else ""
     out = Path(sys.argv[5]) if len(sys.argv) > 5 else ROOT / "work/tests/probe_edit.png"
+    # foto tambahan (buat app 2-gambar: face swap dll) → @photo2, @photo3, ...
+    # pakai: RH_PROBE_PHOTOS="/path/wajah.jpg,/path/lain.jpg"
+    extra = [Path(p) for p in os.getenv("RH_PROBE_PHOTOS", "").split(",") if p.strip()]
+    photos = [photo] + extra
 
     os.environ["RUNNINGHUB_APP_EDITOR"] = app_id
     os.environ["RUNNINGHUB_APP_NODES_EDITOR"] = nodes
@@ -45,7 +49,7 @@ async def main() -> int:
     be = RunningHubBackend(os.getenv("RUNNINGHUB_API_KEY", ""), os.getenv("RUNNINGHUB_BASE", ""),
                            upload_key=os.getenv("RUNNINGHUB_UPLOAD_KEY", ""))
     t0, before = time.time(), saldo()
-    req = GenRequest(job_id=997, feature_key="editor", workflow="", photos=[photo],
+    req = GenRequest(job_id=997, feature_key="editor", workflow="", photos=photos,
                      prompt=prompt, ratio="9:16", duration=0, out_path=out)
     task = await be.submit(req)
     print("taskId:", task)

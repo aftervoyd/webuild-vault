@@ -725,6 +725,35 @@ Log dinaikkan ke `log.error` (tidak senyap lagi). Diuji sungguhan: render editor
 `log.error` + ada tes fungsional yang memanggil backend/nama metode nyata. `warning` senyap menyembunyikan
 fitur mati total.
 
+### 6x. KUNCI IDENTITAS JADI NYATA + KATALOG APP (9 Okt 19:0x)
+
+**Katalog app** baru: `tools/rh_apps.py` (`pull`/`find`/`show`). 298 app terindeks, dan tiap app
+membawa `invokeExample` yang berisi **nodeInfoList lengkap** (nodeId + fieldName + description) →
+binding app sekarang PASTI, tidak ditebak lagi. (Ini akar kenapa dulu "face swap" jadi no-op:
+node-nya salah tafsir.)
+
+**Uji berlabel 4 mesin (wajah sama, satu render cafe):**
+| Mesin | Mirip | Biaya | Waktu |
+|---|---|---|---|
+| **换头换脸提高相似度优化版 `2020760401977282562`** (Flux2-Klein, 4K) | **93%** | 71 koin | 104 dtk |
+| Kontext (input wajah close-up + prompt "jangan ubah wajah") | 82% | 29 koin | 72 dtk |
+| render mentah (editor Kontext) | 72% | 28 koin | 72 dtk |
+| 换头换脸-真实自然 `2044289076647432194` | 58% | 18 koin | 47 dtk |
+| 极速换脸 `1889155568379092993` (yang dipakai sebelumnya) | **no-op (0% perubahan)** | 10 koin | — |
+
+**Binding app 93%:** node `6` = GAMBAR UTAMA (basis) · node `26` = FOTO REFERENSI WAJAH ·
+node `70` = 1920 (sisi panjang) · node `25` = prompt (ada bawaan; kita kirim prompt teruji).
+
+**Perubahan kode:** `identity.py` → `feature_key="idlock"`, `photos=[result, face_photo]`, `IDLOCK_PROMPT`.
+`.env`: `RUNNINGHUB_APP_IDLOCK=2020760401977282562` + `RUNNINGHUB_APP_NODES_IDLOCK=...`;
+fitur wajah pengguna **Face Swap juga pindah** ke app yang sama (app lamanya no-op),
+ALT = `2044289076647432194` (真实自然, 18 koin) dengan binding 17=badan, 23=wajah.
+`tools/rh_edit_probe.py` kini dukung 2 gambar (`RH_PROBE_PHOTOS`). **selftest 159/159.**
+
+**⚠️ EKONOMI belum diputuskan user:** kunci = 71 koin ≈ Rp244. Editor 0.3T (Rp300) + render 28 koin
+(≈Rp96) + kunci 71 koin (≈Rp244) = ±Rp340 untuk harga Rp300 → **RUGI**. Usul: opsi premium
+"🔒 Kunci wajah" (mis. editor+kunci 0.8T) ATAU pakai kunci hanya kalau user pilih sendiri.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi
