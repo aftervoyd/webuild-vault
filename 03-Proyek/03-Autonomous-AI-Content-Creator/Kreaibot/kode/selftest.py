@@ -247,6 +247,33 @@ async def main() -> int:
     res.append(ok("PNG termasuk gambar (dikirim sebagai foto, bukan video)",
                   '".png"' in _bsrc2 and "IMG_EXT" in _bsrc2))
 
+    # 3a-6) SESI TAHAN RESTART + anti-DIEM (bug 9 Okt 16:14: restart → foto user "not handled")
+    from fsmstore import SQLiteStorage as _SS
+    from aiogram.fsm.storage.base import StorageKey as _SK
+    _fk = WORK / "fsm_uji.sqlite3"
+    if _fk.exists():
+        _fk.unlink()
+    _key = _SK(bot_id=1, chat_id=8886993492, user_id=8886993492)
+    _s1 = _SS(_fk)
+    await _s1.set_state(_key, "Flow:photos")
+    await _s1.set_data(_key, {"feature": "i2v", "photos": ["fid-uji"], "preset_sent": False})
+    _s2 = _SS(_fk)                      # ← instance BARU = simulasi bot restart
+    res.append(ok("sesi FSM bertahan setelah bot restart (state)",
+                  await _s2.get_state(_key) == "Flow:photos"))
+    res.append(ok("data sesi bertahan setelah restart (fitur + foto tidak hilang)",
+                  (await _s2.get_data(_key)).get("photos") == ["fid-uji"]))
+    await _s2.set_data(_key, {"feature": "motion", "n": 1, "ok": True})
+    res.append(ok("data sesi bisa diubah lagi setelah restart",
+                  (await _s2.get_data(_key)).get("feature") == "motion"))
+    _bsrc3 = (Path(__file__).with_name("bot.py")).read_text(encoding="utf-8")
+    res.append(ok("Dispatcher memakai storage SQLite (sesi tidak di RAM lagi)",
+                  "SQLiteStorage(fsm_path)" in _bsrc3))
+    res.append(ok("handler FALLBACK terdaftar (bot tidak pernah diam)",
+                  "fallback_tak_ditangani" in _bsrc3))
+    _hb = [h.callback.__name__ for h in __import__("bot").router.message.handlers]
+    res.append(ok("fallback = handler pesan TERAKHIR (command admin tetap jalan)",
+                  _hb and _hb[-1] == "fallback_tak_ditangani"))
+
     # 3b) referral (anti-farming)
     db.ensure_user(900, "inviter", "Inviter", signup_bonus=1.0)
     db.ensure_user(901, "teman", "Teman", signup_bonus=1.0)

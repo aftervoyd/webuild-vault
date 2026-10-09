@@ -565,6 +565,27 @@ di jalur utama dan jalur cerita. Jadi gambar selalu dikirim sebagai foto.
 
 **Uji:** selftest **119/119** (6 tes baru fix_ext: PNG↔MP4 bolak-balik, nama benar tak diubah, file hilang aman).
 
+### 6q. BUG "kirim foto ke i2v tapi bot DIEM" (9 Okt 16:35) — FIXED (sesi tahan restart)
+
+**Laporan user:** pilih Image to Video → kirim foto (tanpa pilih karakter tersimpan) → **tidak terjadi apa-apa**,
+tidak lanjut ke langkah prompt.
+
+**Akar masalah (dari log, bukan dugaan):** `16:13:51` bot di-**RESTART** (deploy saya), `16:14:12` user kirim foto →
+log: **"Update id=300858148 is not handled"**. aiogram menyimpan state FSM di **RAM** (`MemoryStorage`):
+restart = **semua sesi user hilang** → handler foto cari state `Flow.photos` → tidak ada → tidak ada yang cocok
+→ bot **diam total**. Jadi fitur i2v-nya TIDAK rusak; sesinya yang kehapus oleh restart.
+
+**FIX 1 — sesi tahan restart:** `fsmstore.py` = `SQLiteStorage` (BaseStorage aiogram 3, file `kreaibot_fsm.sqlite3`,
+JSON untuk data sesi, auto-bersih > 30 hari, aman dari crash). `Dispatcher(storage=SQLiteStorage(fsm_path))`.
+Sekarang: pilih fitur → kirim foto → prompt nyambung walau bot baru restart.
+
+**FIX 2 — anti-DIEM permanen:** handler `fallback_tak_ditangani` sebagai handler **TERAKHIR** (setelah command
+admin & teks bebas, dengan guard `~F.text.startswith("/")`). Pesan/berkas yang tidak cocok handler mana pun
+→ bot SELALU menjawab ("sesi ke-reset, tekan /start") + tombol menu. Jangan pernah diam lagi.
+
+**Uji:** selftest **125/125** (6 tes baru: state & data bertahan di instance baru = simulasi restart,
+Dispatcher pakai storage file, fallback terdaftar & posisinya paling akhir).
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

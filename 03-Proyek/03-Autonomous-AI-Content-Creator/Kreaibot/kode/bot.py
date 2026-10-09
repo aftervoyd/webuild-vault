@@ -29,6 +29,7 @@ from aiogram.types import (BotCommand, CallbackQuery, FSInputFile, InlineKeyboar
 import catalog
 import presets
 import sheetfix
+from fsmstore import SQLiteStorage
 import promptsmith
 import storyboard
 from aulaa import Aulaa, make_client
@@ -1839,6 +1840,21 @@ async def _resume_jobs(bot: Bot) -> None:
         asyncio.create_task(_resume_one(bot, dict(r)))
 
 
+# ==================== FALLBACK: anti-DIEM (pesan tanpa sesi) ====================
+# Kalau ada pesan/berkas yang tidak ditangani handler mana pun (mis. sesi kadaluarsa, bot habis
+# restart jadul, user kirim bahan di luar alur), bot WAJIB menjawab — jangan diam seperti mati.
+
+@router.message(F.chat.type == "private", ~F.text.startswith("/"))
+async def fallback_tak_ditangani(msg: Message, state: FSMContext):
+    if msg.successful_payment or msg.text or msg.photo or msg.video or msg.voice or msg.audio or msg.document:
+        await msg.answer(
+            "🤔 Pesan kamu belum masuk alur mana pun (mungkin sesi-nya baru ke-reset).\n\n"
+            "Tekan <b>/start</b> atau tombol <b>Menu</b> di kiri kolom ketik, lalu pilih fiturnya lagi ya.",
+            reply_markup=main_menu_kb(msg.from_user.id if msg.from_user else None))
+        log.info("fallback: pesan tanpa sesi dari %s (tidak ada handler yang cocok)",
+                 msg.from_user.id if msg.from_user else "?")
+
+
 async def main() -> None:
     global bot
     if not settings.bot_token:
@@ -1846,7 +1862,10 @@ async def main() -> None:
         sys.exit(1)
     settings.ensure_dirs()
     bot = Bot(settings.bot_token, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
-    dp = Dispatcher()
+    # State FSM disimpan di file (bukan RAM): sesi user tetap ada walau bot di-restart.
+    # Bug nyata 9 Okt 16:14 — restart menghapus sesi → foto user "not handled" → bot diem.
+    fsm_path = Path(settings.db_path).with_name(Path(settings.db_path).stem + "_fsm.sqlite3")
+    dp = Dispatcher(storage=SQLiteStorage(fsm_path))
     dp.include_router(router)
     me = await bot.get_me()
     log.info("KREE.AI jalan sebagai @%s (backend=%s, promptsmith=%s, bayar=%s)",
