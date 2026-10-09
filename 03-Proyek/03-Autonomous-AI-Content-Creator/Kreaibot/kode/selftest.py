@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import subprocess
+import json
 import sys
 from pathlib import Path
 
@@ -448,6 +449,60 @@ async def main() -> int:
 
     _psrc = (Path(__file__).with_name("promptsmith.py")).read_text(encoding="utf-8")
     _db6src = (Path(__file__).with_name("db.py")).read_text(encoding="utf-8")
+
+    def _meta_rt(d6):
+        """Uji metadata karakter machine-readable (permintaan user 9 Okt: sheet harus bisa DIBACA bot)."""
+        _m = json.dumps({"kind": "kreaibot.character_sheet",
+                         "opts": {"gender": "wanita", "bust": "3", "outfit": "dress"}})
+        cid = d6.char_save(777001, "Uji Meta", "FILEID_META", "master sheet", "char", meta=_m)
+        r = d6.char_get(777001, "Uji Meta")
+        return bool(cid) and r is not None and bool(r["meta"]) and '"bust": "3"' in (r["meta"] or "")
+    res.append(ok("DB: karakter menyimpan sifat (kolom meta + char_save(meta=…)) bisa dibaca ulang", _meta_rt(db)))
+    _cgsrc7 = (Path(__file__).with_name("chargen.py")).read_text(encoding="utf-8")
+    res.append(ok("chargen: menulis sidecar cc_sheet.json + mengembalikan meta & peta panel",
+                  "cc_sheet.json" in _cgsrc7 and '"meta": meta' in _cgsrc7
+                  and '"role": roles[i]' in _cgsrc7))
+    _bsrc_m = (Path(__file__).with_name("bot.py")).read_text(encoding="utf-8")
+
+    # --- MODE MURNI harus TERJEMAHKAN jujur (bug 9 Okt: prompt Indonesia mentah → mesin balikin
+    #     foto tanpa diubah, job 35 = 1/10). ---
+    _pssrc = (Path(__file__).with_name("promptsmith.py")).read_text(encoding="utf-8")
+    res.append(ok("promptsmith: ada terjemahan JUJUR (translate_prompt + aturan 'add NOTHING')",
+                  "def translate_prompt" in _pssrc and "Add NOTHING" in _pssrc
+                  and "NEVER add extra rules" in _pssrc))
+    res.append(ok("promptsmith: deteksi bahasa Indonesia (is_indonesian)",
+                  "def is_indonesian" in _pssrc and "_ID_MARKERS" in _pssrc))
+    try:
+        res.append(ok("is_indonesian: Indonesia dideteksi, Inggris TIDAK ikut ke-flag",
+                      promptsmith.is_indonesian("tertidur di kasur menggunakan bikini") is True
+                      and promptsmith.is_indonesian("sleeping on a bed wearing a bikini") is False
+                      and promptsmith.is_indonesian("woman dancing on the beach at sunset") is False))
+    except Exception as e:                                   # noqa: BLE001
+        res.append(ok(f"is_indonesian (error: {e})", False))
+    res.append(ok("bot: MODE MURNI menerjemahkan prompt Indonesia sebelum ke mesin",
+                  "promptsmith.is_indonesian(job[\"prompt\"])" in _bsrc_m
+                  and "translate_prompt(" in _bsrc_m))
+    _rhsrc = (Path(__file__).with_name("backends") / "runninghub.py").read_text(encoding="utf-8")
+    res.append(ok("backend: antrean penuh (421) ditunggu & dicoba ulang, bukan langsung gagal",
+                  '"421"' in _rhsrc and "RUNNINGHUB_QUEUE_RETRY" in _rhsrc))
+
+    def _murni_rt(d6):
+        """Uji MODE MURNI default: prompt user dikirim apa adanya, perapian AI hanya kalau user minta."""
+        d6.pref_set(999002, "rapi", "0")
+        a = d6.pref_on(999002, "rapi") is False          # default → MURNI
+        jid = d6.create_job(999002, "i2v", 1.0, ["X"], "gerak bebas di pantai", "9:16")
+        r = d6.get_job(jid)
+        return a and r is not None and (r["prompt_raw"] or "") == "gerak bebas di pantai"
+    res.append(ok("MODE MURNI: default tanpa perapian AI + prompt ASLI user tersimpan (prompt_raw)",
+                  _murni_rt(db)))
+    res.append(ok("bot: perapian prompt HANYA jalan kalau user minta (prefs 'rapi')",
+                  'db.pref_on(job["telegram_id"], "rapi")' in _bsrc_m and "MODE MURNI" in _bsrc_m
+                  and "\n            if f and f.kind == \"ugc\":" not in _bsrc_m))
+    res.append(ok("bot: tombol 🧼 Prompt (Murni/Dirapikan) + callback m:prompt:toggle",
+                  "def prompt_row" in _bsrc_m and 'F.data == "m:prompt:toggle"' in _bsrc_m
+                  and "prompt_row(uid)" in _bsrc_m))
+    res.append(ok("bot: meta karakter dikirim ke DB + tampil di detail karakter",
+                  "meta=_meta)" in _bsrc_m and 'r["meta"]' in _bsrc_m))
     res.append(ok("creator: prompt editor TIDAK memakai instruksi video (akar bug 'bikini jadi baju lama')",
                   "refine_edit_prompt" in _psrc and "IMAGE_EDIT_SYSTEM" in _psrc
                   and 'f.key == "editor"' in _bsrc6 and "promptsmith.refine_edit_prompt(" in _bsrc6))
@@ -470,8 +525,9 @@ async def main() -> int:
                   "main_menu_kb(u.id))" not in _bsrc7.split("@router.callback_query(F.data == \"r:claim\")")[1][:400]))
     res.append(ok("BUG foto master Document: answer_photo ada cadangan answer_document",
                   'except TelegramBadRequest:' in _bsrc7 and "answer_document(r[\"file_id\"]" in _bsrc7))
-    res.append(ok("editor: mesin utama = Flux Kontext (taat perintah), cadangan Qwen 2511",
-                  "RUNNINGHUB_APP_EDITOR=2075393520445251586" in (Path(__file__).with_name(".env")).read_text(encoding="utf-8")))
+    res.append(ok("editor: mesin utama = Qwen 2511 (TERBUKTI ganti baju 8/10), cadangan Flux Kontext (2/10)",
+                  "RUNNINGHUB_APP_EDITOR=2056741213927206914" in (Path(__file__).with_name(".env")).read_text(encoding="utf-8")
+                  and "RUNNINGHUB_APP_EDITOR_ALT=2075393520445251586" in (Path(__file__).with_name(".env")).read_text(encoding="utf-8")))
     res.append(ok("bot: kunci identitas ambil PANEL WAJAH dari sheet",
                   'analyze_sync, face_local' in _bsrc5 and '_wajah.jpg' in _bsrc5))
 

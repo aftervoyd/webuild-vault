@@ -927,6 +927,33 @@ menimpa keputusan model/user tanpa sepengetahuan user.
 
 **selftest 184/184.**
 
+### 7e. AUDIT "SEMUA GAGAL" (9 Okt 22:5x) — BUKTI DARI DB, BUKAN OPINI
+
+**Keluhan user:** "semua selalu gagal pake bot gue selain gue sendiri" + "lu benerin ini yang lain rusak".
+
+**Data DB (users & jobs):** ada **7 akun** di DB (owner + Triviaquest + Tuyul 88 + Shoecces + Rezza +
+Peter Griffin + zrh8383). Akun **Triviaquest (1056834664)** = akun lain user → **2 job, 2 GAGAL (100%)**:
+- job 33 (i2v) & job 34 (editor) → **code 421 TASK_QUEUE_MAXED**
+- PENYEBAB: **tes gue sendiri** (3 probe i2v paralel) memakai satu-satunya slot mesin RunningHub
+  (akun cuma boleh **1 task bersamaan**) → job user ditolak ✗✗. SALAH GUE, bukan bot.
+
+**PERBAIKAN (7e):**
+1. `backends/runninghub.py` — error **421 di-TUNGGU & dicoba ulang** (`RUNNINGHUB_QUEUE_RETRY`=9 ×
+   `RUNNINGHUB_QUEUE_WAIT`=50s) → job tidak gagal lagi hanya karena antrean penuh ✓ (melindungi SEMUA user).
+2. Semua proses tes gue **DIHENTIKAN**; aturan baru: **jangan jalankan tes berat saat user memakai bot**.
+3. **MODE MURNI = TERJEMAHKAN JUJUR** — bug regresi gue: prompt Indonesia dikirim mentah → mesin balikin
+   foto apa adanya (job 35 = **1/10**: minta bikini di kasur, hasil tetap dress merah di bangku) ✓ diperbaiki:
+   `promptsmith.translate_prompt()` + `is_indonesian()` (arti sama, TAMBAHAN apa pun = TIDAK).
+   Bukti: "tertidur di kasur menggunakan bikini…" → **"Asleep on the bed wearing a bikini, slightly
+   covered by a blanket."** (nol boilerplate).
+4. **MESIN EDITOR UTAMA DIGANTI: Qwen 2511** (`2056741213927206914`, node 52/54, 23 koin/61 dtk) —
+   uji head-to-head janji sama & foto sama: **Qwen 8/10** (bikini ✓ kasur ✓ selimut ✓ posisi tidur ✓)
+   vs **Flux Kontext 2/10** (cuma kasur, baju tetap dress ✗) vs hasil rusak 1/10. Kontext → cadangan.
+5. Bug `NameError: name 'u' is not defined` di tombol "✅ Sudah Join — Klaim Bonus" (dipakai user baru!) →
+   sudah diperbaiki (`main_menu_kb(uid)`); bot admin di @KreeaCommunity ✓ (5 anggota) jadi gate bukan masalah.
+
+**selftest 195/195.**
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

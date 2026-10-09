@@ -295,6 +295,18 @@ class RunningHubBackend:
         if inst and inst != "default":
             payload["instanceType"] = inst
         js = await self._post("/task/openapi/ai-app/run", payload)
+        # Antrean penuh (code 421 TASK_QUEUE_MAXED) → JANGAN langsung gagal, TUNGGU lalu coba lagi.
+        # Akar keluhan user 9 Okt: job user (33, 34) gagal karena slot mesin cuma 1 dan sedang
+        # dipakai — padahal cukup menunggu. Batas ±9 percobaan × 50s supaya tidak menggantung.
+        _tries = int(os.getenv("RUNNINGHUB_QUEUE_RETRY", "9") or 9)
+        _wait = int(os.getenv("RUNNINGHUB_QUEUE_WAIT", "50") or 50)
+        for _i in range(_tries):
+            if not (isinstance(js, dict) and str(js.get("code") or "") == "421"):
+                break
+            log.info("antrean mesin penuh (421) — tunggu %ss, coba lagi (%d/%d)",
+                     _wait, _i + 1, _tries)
+            await asyncio.sleep(_wait)
+            js = await self._post("/task/openapi/ai-app/run", payload)
         tid = ""
         if isinstance(js, dict):
             d = js.get("data")

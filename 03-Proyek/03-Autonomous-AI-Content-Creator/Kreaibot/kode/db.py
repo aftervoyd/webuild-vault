@@ -112,7 +112,9 @@ class Database:
         # migrasi ringan: SQLite tak punya "ADD COLUMN IF NOT EXISTS"
         for _sql in ("ALTER TABLE payments ADD COLUMN msg_id INTEGER",   # pesan QR → bisa di-edit jadi LUNAS
                      "ALTER TABLE payments ADD COLUMN chat_id INTEGER",
-                     "ALTER TABLE characters ADD COLUMN kind TEXT NOT NULL DEFAULT 'char'"):
+                     "ALTER TABLE characters ADD COLUMN kind TEXT NOT NULL DEFAULT 'char'",
+                     # 9 Okt: metadata karakter (JSON: gender/ras/vibe/bust/slim/hips/outfit + peta panel)
+                     "ALTER TABLE characters ADD COLUMN meta TEXT"):
             try:
                 self.conn.execute(_sql)
             except sqlite3.OperationalError:      # kolom sudah ada
@@ -124,7 +126,9 @@ class Database:
     def _migrate(self) -> None:
         """Tambah kolom baru ke DB lama tanpa menghapus data."""
         cols = {r["name"] for r in self.conn.execute("PRAGMA table_info(jobs)")}
-        for name, ddl in (("brief", "TEXT"), ("style", "TEXT"), ("duration", "INTEGER")):
+        for name, ddl in (("brief", "TEXT"), ("style", "TEXT"), ("duration", "INTEGER"),
+                          # 9 Okt: prompt ASLI user disimpan terpisah (audit "sistem ngedit prompt")
+                          ("prompt_raw", "TEXT")):
             if name not in cols:
                 self.conn.execute(f"ALTER TABLE jobs ADD COLUMN {name} {ddl}")
 
@@ -176,9 +180,9 @@ class Database:
                    brief: str = "", style: str = "", duration: int = 0) -> int:
         import json
         cur = self.conn.execute(
-            "INSERT INTO jobs (telegram_id, feature, cost, ref_photos, prompt, brief, style, ratio, duration, created_at, updated_at)"
-            " VALUES (?,?,?,?,?,?,?,?,?,?,?)",
-            (telegram_id, feature, cost, json.dumps(list(ref_photos)), prompt, brief, style,
+            "INSERT INTO jobs (telegram_id, feature, cost, ref_photos, prompt, prompt_raw, brief, style, ratio, duration, created_at, updated_at)"
+            " VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+            (telegram_id, feature, cost, json.dumps(list(ref_photos)), prompt, prompt, brief, style,
              ratio, int(duration or 0), _now(), _now()))
         self.conn.commit()
         return int(cur.lastrowid)
@@ -336,16 +340,22 @@ class Database:
         return cur.rowcount > 0
 
     def char_save(self, telegram_id: int, name: str, file_id: str,
-                  note: str = "", kind: str = "char") -> int | None:
-        """Simpan karakter baru. None kalau nama sudah dipakai (biar tidak kembar)."""
+                  note: str = "", kind: str = "char", meta: str | None = None) -> int | None:
+        """Simpan karakter baru. None kalau nama sudah dipakai (biar tidak kembar).
+
+        `meta` = JSON sifat karakter (gender/ras/vibe/bust/slim/hips/outfit + peta panel) hasil
+        Character Creator. Disimpan supaya bot bisa MEMBACA karakter (machine-readable), bukan
+        cuma menyimpan gambar (permintaan user 9 Okt).
+        """
         nm = " ".join(str(name or "").split())[:40]
         if not nm or not file_id:
             return None
         try:
             cur = self.conn.execute(
-                "INSERT INTO characters (telegram_id, kind, name, name_lower, file_id, note, created_at)"
-                " VALUES (?,?,?,?,?,?,?)",
-                (telegram_id, kind, nm, nm.lower(), file_id, (note or "")[:120], _now()))
+                "INSERT INTO characters (telegram_id, kind, name, name_lower, file_id, note, meta, created_at)"
+                " VALUES (?,?,?,?,?,?,?,?)",
+                (telegram_id, kind, nm, nm.lower(), file_id, (note or "")[:120],
+                 (meta or None), _now()))
             self.conn.commit()
             return int(cur.lastrowid)
         except sqlite3.IntegrityError:            # nama sudah ada

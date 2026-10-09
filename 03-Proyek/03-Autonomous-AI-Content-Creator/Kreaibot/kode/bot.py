@@ -1344,39 +1344,62 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
         work = Path(settings.work_dir) / f"job_{job_id}"
         work.mkdir(parents=True, exist_ok=True)
         try:
-            # 0) UGC: haluskan prompt lewat LLM (opsional; gagal → pakai template)
-            if f and f.kind == "ugc":
-                refined = await promptsmith.refine_with_llm(
-                    job["prompt"] or "", job["brief"] or "", job["style"] or "review",
-                    base_url=settings.promptsmith_base, api_key=settings.promptsmith_key,
-                    model=settings.promptsmith_model)
-                if refined and refined != job["prompt"]:
-                    log.info("job %s prompt dihaluskan LLM (%d → %d char)", job_id,
-                             len(job["prompt"] or ""), len(refined))
-                    db.set_job(job_id, prompt=refined)
-            elif f and f.key == "editor" and (job["prompt"] or "").strip():
-                # 0b) EDITOR GAMBAR: user MEMERINTAH PERUBAHAN (ganti baju, latar, pose).
-                #     WAJIB pakai perapian khusus edit — perapian video menulis "outfit stay exactly
-                #     as in the photo" sehingga perintah user DIBATALKAN (akar keluhan "nggak bebas").
-                refined = await promptsmith.refine_edit_prompt(
-                    job["prompt"] or "", base_url=settings.promptsmith_base,
-                    api_key=settings.promptsmith_key, model=settings.promptsmith_model)
-                if refined and refined != job["prompt"]:
-                    log.info("job %s prompt edit dirapikan LLM (%d → %d char)",
-                             job_id, len(job["prompt"] or ""), len(refined))
-                    db.set_job(job_id, prompt=refined)
-            elif f and settings.refine_video and (job["prompt"] or "").strip():
-                # 0b) fitur video biasa (i2v/all-in-one): rapikan prompt user.
-                #     Gagal / hasil aneh → refine_video_prompt mengembalikan prompt ASLI.
-                refined = await promptsmith.refine_video_prompt(
-                    job["prompt"] or "", ratio=job["ratio"] or "9:16",
-                    duration=int(job["duration"] or f.duration),
-                    base_url=settings.promptsmith_base, api_key=settings.promptsmith_key,
-                    model=settings.promptsmith_model)
-                if refined and refined != job["prompt"]:
-                    log.info("job %s prompt video dirapikan LLM (%d → %d char)",
-                             job_id, len(job["prompt"] or ""), len(refined))
-                    db.set_job(job_id, prompt=refined)
+            # ⭐ MODE MURNI (default sejak 9 Okt): prompt user dikirim APA ADANYA ke model.
+            #    Akar keluhan user "terlalu banyak sistem yang ngedit, gak murni render dari model
+            #    terbaik": perapian LLM menambah boilerplate ("camera stays static", "her face,
+            #    hair and outfit remaining exactly as in the photo") sehingga model disuruh MENOLAK
+            #    GERAK → video statis (bukti terukur: job 30 dinilai 4/10 karena 4 frame hampir sama).
+            #    Setelan per user: prefs 'rapi' = 1 → user MINTA dirapikan AI (opsional, bukan default).
+            if db.pref_on(job["telegram_id"], "rapi"):
+                # 0) UGC: haluskan prompt lewat LLM (opsional; gagal → pakai template)
+                if f and f.kind == "ugc":
+                    refined = await promptsmith.refine_with_llm(
+                        job["prompt"] or "", job["brief"] or "", job["style"] or "review",
+                        base_url=settings.promptsmith_base, api_key=settings.promptsmith_key,
+                        model=settings.promptsmith_model)
+                    if refined and refined != job["prompt"]:
+                        log.info("job %s prompt dihaluskan LLM (%d → %d char)", job_id,
+                                 len(job["prompt"] or ""), len(refined))
+                        db.set_job(job_id, prompt=refined)
+                elif f and f.key == "editor" and (job["prompt"] or "").strip():
+                    # 0b) EDITOR GAMBAR: user MEMERINTAH PERUBAHAN (ganti baju, latar, pose).
+                    #     WAJIB pakai perapian khusus edit — perapian video menulis "outfit stay
+                    #     exactly as in the photo" sehingga perintah user DIBATALKAN ("nggak bebas").
+                    refined = await promptsmith.refine_edit_prompt(
+                        job["prompt"] or "", base_url=settings.promptsmith_base,
+                        api_key=settings.promptsmith_key, model=settings.promptsmith_model)
+                    if refined and refined != job["prompt"]:
+                        log.info("job %s prompt edit dirapikan LLM (%d → %d char)",
+                                 job_id, len(job["prompt"] or ""), len(refined))
+                        db.set_job(job_id, prompt=refined)
+                elif f and settings.refine_video and (job["prompt"] or "").strip():
+                    # 0b) fitur video biasa (i2v/all-in-one): rapikan prompt user.
+                    #     Gagal / hasil aneh → refine_video_prompt mengembalikan prompt ASLI.
+                    refined = await promptsmith.refine_video_prompt(
+                        job["prompt"] or "", ratio=job["ratio"] or "9:16",
+                        duration=int(job["duration"] or f.duration),
+                        base_url=settings.promptsmith_base, api_key=settings.promptsmith_key,
+                        model=settings.promptsmith_model)
+                    if refined and refined != job["prompt"]:
+                        log.info("job %s prompt video dirapikan LLM (%d → %d char)",
+                                 job_id, len(job["prompt"] or ""), len(refined))
+                        db.set_job(job_id, prompt=refined)
+            elif (job["prompt"] or "").strip():
+                # MODE MURNI: tanpa aturan tambahan — TAPI bahasanya harus dimengerti mesin.
+                # Bukti bug 9 Okt: prompt Indonesia dikirim mentah → Flux Kontext balikin foto TANPA
+                # diubah (job 35 = 1/10: minta bikini di kasur, hasil tetap dress merah di bangku).
+                # Jadi: terjemahkan JUJUR ke Inggris (arti sama, ditambah apa pun = TIDAK).
+                if promptsmith.is_indonesian(job["prompt"]):
+                    _en = await promptsmith.translate_prompt(
+                        job["prompt"], base_url=settings.promptsmith_base,
+                        api_key=settings.promptsmith_key, model=settings.promptsmith_model)
+                    if _en and _en.strip() and _en != job["prompt"]:
+                        log.info("job %s MODE MURNI: prompt diterjemahkan jujur (%d → %d char): %s",
+                                 job_id, len(job["prompt"] or ""), len(_en), _en[:120])
+                        db.set_job(job_id, prompt=_en)
+                else:
+                    log.info("job %s MODE MURNI: prompt dikirim apa adanya (tanpa perapian AI)",
+                             job_id)
 
             # 1) unduh aset referensi
             photos = json.loads(job["ref_photos"] or "[]")
@@ -1702,7 +1725,38 @@ def inv_use_rows(uid: int, kind: str, prefix: str) -> list:
             for r in db.char_list(uid, kind=kind)]
     if kind == "char":
         rows.append(idlock_row(uid))
+        rows.append(prompt_row(uid))
     return rows
+
+
+def prompt_row(uid: int) -> list:
+    """Saklar 🧼 Mode Prompt: MURNI (default — prompt user apa adanya) vs DIRAPIKAN AI.
+
+    Akar keluhan user 9 Okt: "terlalu banyak sistem yang ngedit, gak murni render dari model".
+    Default MURNI = NOL sistem yang mengubah prompt. 'Dirapikan' = opsional kalau user mau.
+    """
+    rapi = db.pref_on(uid, "rapi")
+    return [InlineKeyboardButton(
+        text=f"🧼 Prompt: {'DIRAPIKAN AI' if rapi else 'MURNI (apa adanya)'}",
+        callback_data="m:prompt:toggle")]
+
+
+@router.callback_query(F.data == "m:prompt:toggle")
+async def prompt_toggle(cb: CallbackQuery):
+    """Balik mode prompt per user. Default MURNI (tanpa perapian AI)."""
+    uid = cb.from_user.id
+    baru = "0" if db.pref_on(uid, "rapi") else "1"
+    db.pref_set(uid, "rapi", baru)
+    if baru == "1":
+        await cb.answer("🧼 Prompt DIRAPIKAN AI — AI ngrapiin tulisan kamu (kadang nambah aturan "
+                        "yang bikin gerakan kaku).", show_alert=True)
+    else:
+        await cb.answer("🧼 Prompt MURNI — tulisan kamu dikirim APA ADANYA ke mesin, tanpa "
+                        "diketik ulang AI. Ini mode paling bebas.", show_alert=True)
+    try:
+        await cb.message.edit_text(inv_text(uid, "char"), reply_markup=inv_kb(uid, "char"))
+    except Exception:                                        # noqa: BLE001
+        pass
 
 
 @router.callback_query(F.data == "m:idlock:toggle")
@@ -1865,6 +1919,15 @@ async def cb_char_detail(cb: CallbackQuery, state: FSMContext):
     cap = (f"{INV_ICON[kind]} <b>{r['name']}</b>\n"
            f"📊 Dipakai: {r['uses']}×\n"
            f"📅 Disimpan: {time.strftime('%d %b %Y', time.localtime(r['created_at']))}")
+    try:                                     # sifat karakter (machine-readable, dari Character Creator)
+        _o = (json.loads(r["meta"]) if r["meta"] else {}).get("opts") or {}
+        _trait = " · ".join(f"{lab}: {_o[k]}" for lab, k in (
+            ("gender", "gender"), ("ras", "race"), ("vibe", "vibe"), ("dada", "bust"),
+            ("langsing", "slim"), ("pinggul", "hips"), ("outfit", "outfit")) if _o.get(k))
+        if _trait:
+            cap += f"\n🧬 {_trait}"
+    except Exception:                        # noqa: BLE001 — meta rusak jangan bikin tombol mati
+        pass
     try:
         await cb.message.delete()
     except Exception:                        # noqa: BLE001
@@ -2217,7 +2280,14 @@ async def _cc_run(chat_id: int, msg_id: int, uid: int, cc: dict, face: Path, ref
                                                 + "\n\nSheet ini otomatis masuk 🧑🎨 <b>Karakter Saya</b>. "
                                                 "Panggil namanya di fitur apa pun biar identitasnya konsisten."))
         name = cc.get("name") or f"Karakter {db.char_count(uid, 'char') + 1}"
-        db.char_save(uid, name, sent.document.file_id, "master sheet (Character Creator)", "char")
+        _meta = ""
+        try:                                   # simpan sifat karakter (machine-readable)
+            import json as _json
+            _meta = _json.dumps(res.get("meta") or {}, ensure_ascii=False)
+        except Exception:                      # noqa: BLE001 — sheet tetap disimpan walau meta gagal
+            _meta = ""
+        db.char_save(uid, name, sent.document.file_id, "master sheet (Character Creator)", "char",
+                     meta=_meta)
         await bot.edit_message_text(
             f"✅ Selesai! Karakter <b>{name}</b> tersimpan.\n\n"
             "Sekarang tinggal pilih fitur (editor / i2v / dst.) lalu tekan karakter ini — "

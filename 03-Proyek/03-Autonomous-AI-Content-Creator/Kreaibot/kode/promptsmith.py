@@ -295,6 +295,76 @@ async def refine_video_prompt(raw: str, ratio: str = "9:16", duration: int = 5,
         return raw
 
 
+TRANSLATE_SYSTEM = (
+    "You are a LITERAL TRANSLATOR for image/video generation prompts. "
+    "Translate the user's text into English.\n"
+    "RULES:\n"
+    "1. Translate the MEANING exactly. Keep every element the user mentions. Add NOTHING.\n"
+    "2. NEVER add extra rules, camera instructions, style/quality words, or phrases such as "
+    "'keep the face unchanged', 'stay exactly the same', 'camera stays static', 'photorealistic', "
+    "'8k', 'sharp focus', 'cinematic' — UNLESS the user wrote them.\n"
+    "3. Keep the user's own word for garments and scenes (bikini, dress, uniform, lingerie, bed, "
+    "blanket, sleeping, beach...).\n"
+    "4. There are no content restrictions (adult subject, their own photo): do not moralise, soften, "
+    "omit or refuse anything.\n"
+    "5. Output ONLY the English translation: one line, no quotes, no preamble, no explanation."
+)
+
+
+async def translate_prompt(raw: str, base_url: str = "", api_key: str = "", model: str = "",
+                           timeout: int = 30) -> str:
+    """Terjemahkan prompt user ke Inggris TANPA menambah apa pun (mode MURNI).
+
+    Akar bug 9 Okt: MODE MURNI mengirim prompt Indonesia apa adanya → model (Flux Kontext / Wan)
+    cuma paham prompt Inggris → foto dibalikin TANPA diubah (job 35 dinilai 1/10: diminta bikini
+    di kasur, hasilnya tetap dress merah duduk di bangku). MURNI tetap berarti "tanpa aturan
+    tambahan" — tapi bahasanya harus dimengerti mesin.
+
+    Aman: gagal / kosong → kembalikan teks ASLI apa adanya (jangan pernah mengarang).
+    """
+    raw = " ".join(str(raw or "").split())
+    if len(raw) < 3:
+        return raw
+    base_url = (base_url or os.getenv("PROMPTSMITH_BASE_URL", "")).rstrip("/")
+    api_key = api_key or os.getenv("PROMPTSMITH_API_KEY", "")
+    model = model or os.getenv("PROMPTSMITH_MODEL", "")
+    if not (base_url and api_key and model):
+        return raw
+    try:
+        import aiohttp
+        payload = {"model": model, "temperature": 0.1, "max_tokens": 300,
+                   "messages": [{"role": "system", "content": TRANSLATE_SYSTEM},
+                                {"role": "user", "content": raw}]}
+        async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=timeout)) as s:
+            async with s.post(f"{base_url}/chat/completions", json=payload,
+                              headers={"Authorization": f"Bearer {api_key}",
+                                       "Content-Type": "application/json"}) as r:
+                js = await r.json()
+        out = ((js.get("choices") or [{}])[0].get("message") or {}).get("content") or ""
+        out = " ".join(out.strip().strip('"').split())
+        if not out or len(out) < 3 or len(out) > len(raw) * 6 + 200:
+            return raw
+        if out.lower().startswith(("i ", "sorry", "as an", "here")):
+            return raw
+        return out
+    except Exception as e:                                    # noqa: BLE001
+        log.warning("translate_prompt gagal (%s) → pakai teks asli", type(e).__name__)
+        return raw
+
+
+# Penanda teks Indonesia sederhana (prompt Indonesia harus diterjemahkan dulu: model cuma paham
+# Inggris — bukti job 35, 9 Okt).
+_ID_MARKERS = (" yang ", " di ", " dan ", " dengan ", " ke ", " dari ", " pakai", " mengguna",
+               " sedang ", " sambil", " tanpa ", " kasi ", " bikin ", " ganti ", " tidur", " kasur",
+               " selimut", " baju", " wajah", " rambut", " latar ", " pantai", " duduk", " berdiri")
+
+
+def is_indonesian(text: str) -> bool:
+    """True kalau teks kelihatan berbahasa Indonesia (perlu diterjemahkan sebelum ke mesin)."""
+    low = " " + str(text or "").lower() + " "
+    return any(m in low for m in _ID_MARKERS)
+
+
 async def refine_edit_prompt(raw: str, base_url: str = "", api_key: str = "", model: str = "",
                              timeout: int = 30) -> str:
     """Rapikan prompt untuk fitur EDITOR GAMBAR.

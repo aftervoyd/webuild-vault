@@ -13,7 +13,9 @@ Semua render tetap mesin RunningHub original (env `RUNNINGHUB_APP_CHARGEN`).
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
+import time
 import urllib.request
 from pathlib import Path
 
@@ -279,7 +281,28 @@ async def run(backend, face_photo: Path, opts: dict, out_dir: Path, on_step=None
                         f"{label('vibe', opts.get('vibe'))}"))
     if not sheet:
         raise RuntimeError("gagal menyusun sheet")
-    return {"sheet": Path(sheet), "panels": panels}
+    # SIDECAR machine-readable: bot (dan siapa pun) bisa baca sifat karakter + PETA PANEL tanpa
+    # menebak dari gambar. Permintaan user 9 Okt: "master character sheet machine-readable".
+    roles = ("face", "front", "side", "back")
+    meta = {
+        "kind": "kreaibot.character_sheet",
+        "version": 1,
+        "name": name,
+        "created_at": int(time.time()),
+        "opts": {k: opts.get(k) for k in ("gender", "race", "vibe", "bust", "slim", "hips", "outfit")},
+        "body_ref_used": bool(body_ref),
+        "panels": [{"role": roles[i] if i < len(roles) else f"panel{i+1}",
+                    "label": str(lab), "file": Path(p).name}
+                   for i, (lab, p) in enumerate(panels)],
+        "sheet": Path(sheet).name,
+        "disclaimer": DISCLAIMER,
+    }
+    sidecar = Path(out_dir) / "cc_sheet.json"
+    try:
+        sidecar.write_text(json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8")
+    except OSError as e:                                     # sheet tetap dikirim walau json gagal
+        log.warning("chargen: sidecar json gagal ditulis (%s)", e)
+    return {"sheet": Path(sheet), "panels": panels, "meta": meta, "meta_json": sidecar}
 
 
 def summary(opts: dict) -> str:
