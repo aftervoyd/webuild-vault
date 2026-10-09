@@ -257,6 +257,27 @@ Aset: `RUNNINGHUB_APP_FACESWAP` + `RUNNINGHUB_APP_NODES_FACESWAP`. Uji: `tools/b
 **Catatan penting:** face swap kita = **hasil GAMBAR** (bukan video). Kuzushi menjual "Face Swap & Motion" (video).
 Kalau mau versi video: rangkai face swap → i2v (atau cari app "视频换脸" yang menerima input video).
 
+### 6d-4. GPU PLUS + PERBAIKAN PROMPT (9 Okt 12:40)
+
+**`instanceType: plus` = GPU 48 GB di sisi RunningHub (default 24 GB).** Bukan RAM VPS kita —
+cuma satu field di request API. Sudah aktif: `RUNNINGHUB_INSTANCE_TYPE=plus` di `.env`.
+
+Ukur nyata (i2v 5 detik): **204 s (vs 243 s default) = 16 % lebih cepat**, tapi koin **73 (vs 45) = +62 %**.
+Margin i2v 5 s turun 69 % → **50 %** (masih di atas ambang 45 %). Kalau mau hemat: batasi `plus` hanya untuk fitur `long` (30 s).
+
+**Akar "hasil aneh" job 10:** brief user berisi **5 aksi bertumpuk** (ketawa → lari → hampir jatuh → noleh →
+kamera ngejar). i2v cuma sanggup SATU gerakan menerus; dipaksa banyak aksi → meleleh.
+Bukti ffmpeg + vision: latar **berubah** (pantai sunset → parkiran mobil), kacamata warp, gigi menyatu, jari blob.
+
+**Perbaikan terpasang (`promptsmith.VIDEO_REFINE_SYSTEM`):**
+- Aturan baru #2: **ONE ACTION ONLY** — kompres banyak aksi jadi satu gerakan; larang rantai "then … then".
+- Aturan baru #3: **larang chase-cam / handheld lari / whip pan** (sumber utama warping).
+- Batas panjang 90 → **70 kata**.
+- Bukti: brief job 10 yang sama sekarang jadi 3 kalimat, 1 aksi, kamera halus.
+
+**Bahasa Indonesia:** sudah didukung sejak awal (`promptsmith` menerima brief Indonesia & menerjemahkan ke Inggris).
+Ditambah panduan di deskripsi fitur i2v & `long`: "Boleh nulis PAKAI BAHASA INDONESIA" + "Tulis SATU aksi sederhana".
+
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).

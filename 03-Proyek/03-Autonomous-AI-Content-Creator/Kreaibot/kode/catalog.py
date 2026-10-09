@@ -66,7 +66,10 @@ FEATURES: dict[str, Feature] = {
         desc=("Foto → video pendek.\n"
               "· 5 detik = 0,5 Token · 10 detik = 1 Token · 15 detik = 1,5 Token\n"
               "· Ada suara ambient otomatis, gerak halus 24 fps\n"
-              "· Cocok buat teaser, loop, dan bikin cepat"),
+              "· Boleh nulis PAKAI BAHASA INDONESIA (diterjemahkan otomatis)\n"
+              "· Tulis SATU aksi sederhana (mis. \"dia melambai sambil tersenyum\").\n"
+              "  Jangan tumpuk banyak aksi (ketawa→lari→tersandung) — hasilnya jadi aneh/rusak\n"
+              "· Makin panjang durasi → makin pelan gerakannya biar tetap rapi"),
         backend_workflow="krea_i2v_ltx",
         hint="Kirim 1 foto (wajah, produk, atau scene apa saja).",
     ),
@@ -113,7 +116,9 @@ FEATURES: dict[str, Feature] = {
         desc=("Satu foto → video 30 detik sekali jalan (bukan sambung-sambungan).\n"
               "· 1 Token (Rp1.000) — sama dengan pasaran\n"
               "· Ada suara ambient, 24 fps, 768×1280\n"
-              "· Cocok buat cerita/iklan panjang"),
+              "· Boleh nulis PAKAI BAHASA INDONESIA (diterjemahkan otomatis)\n"
+              "· Tulis SATU aksi pelan & terus-menerus (mis. \"dia jalan santai di pantai, kamera ikut pelan\")\n"
+              "  Jangan aksi cepat/bertumpuk — 30 detik itu butuh gerakan yang tenang biar tetap stabil"),
         backend_workflow="krea_i2v_ltx",
         hint="Kirim 1 foto + ketik mau videonya seperti apa (boleh cerita panjang).",
     ),
