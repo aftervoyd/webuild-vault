@@ -29,13 +29,19 @@
 - **Script resmi RH CACAT** (`github.com/HM-RunningHub/OpenClaw_RH_Skills`): fungsi upload hardcode `Bearer ***`; host `.cn` menolak key kita → **pakai `.ai`**. Sudah ditambal di `rh-skills/` (salinan lokal).
 - **Program cuan**: invite **500 koin/orang** (maks 5.000 koin/hari; partner promosi tanpa batas) · kontes film AIGC hadiah s/d **USD 150.000** · insentif creator **¥20.000** kredit.
 
-## 3. TEARDOWN KUZUSHIGENBOT (bot pembanding)
+## 3. TEARDOWN KUZUSHIGENBOT (bot pembanding) — DIPERBARUI 9 Okt 2026, pukul 09:20 WIB
 
-- Bot menyatakan sendiri: **"🎬 AI Image to Video (Minimax / LTX 2.3)"**.
-- **Harga mereka**: 5s = **0,5T** · 10s = **1T** · 15s = **2T** (kita: 0,5 / **1,5** / **2,5** → kita lebih mahal di 10s & 15s).
-- **Flow mereka**: klik Image to Video → kirim 1 foto → "✅ Foto Berhasil Diterima!" → **langsung minta prompt** (tanpa tombol Lanjut) ✓ identik dengan UX kita.
-- Menu mereka: Face Swap & Motion 2T · AI Image Editor 0,3T · Pose Transfer 0,5T · Lip Sync 0,5T · Video All-in-One Star Trail H3 1T.
-- Saldo uji: **15,9 Token** (user top-up). Uji banding foto+prompt sama → hasil ukur disimpan di sesi.
+> Detail lengkap: **`TEARDOWN-KUZUSHI-9OKT.md`** (menu, alur 6 fitur, top up, referral, perbandingan harga, rencana implementasi).
+
+- **Menu (1 pesan, harga tampil di tombol):** 🎭 Face Swap & Motion **2T** · 🎬 Image to Video **0,5–2T** · 🖌️ AI Image Editor **0,3T** · 🕺 Pose Transfer **0,5T** · 🎤 Lip Sync **0,5T** · 🌌 Video All-in-One Star Trail H3 (30s) **1T** · Top Up QRIS · Referral · Profil · Voucher · Panduan.
+- **Daftar harga resmi mereka:** i2v **5s=0,5 · 10s=1 · 15/30s=2** · Face Swap 2 · Image Editor 0,3 · Pose 0,5 · Lip Sync 0,5 · All-in-One H3 1.
+- **Token mereka ≈ Rp 667** (paket Rp10.000 = 15 Token). **Token kita Rp 1.000** → kita 1,5× lebih mahal.
+- **Kesenjangan besar:** All-in-One **30s = Rp667** vs All-in-One 15s kita **Rp2.500** (3,7× lebih mahal). Kita juga **tidak jual i2v 15s & 30s**.
+- **Sudah punya social proof** di menu: "Total Komunitas: 2.781 Member" + Profil "Total Render Bot: 2732" + Referral "Penukaran Terakhir: @wahyu_hidayat menukarkan 50 Token".
+- **Referral mereka = komisi RUPIAH per top up** (Rp5rb→2T · 10rb→3T · 25rb→5T · 50rb→15T · 100rb→20T), link `?start=ref_<uid>`.
+- **Alur fitur (terverifikasi):** Image Editor = foto → prompt → render. Pose = foto subjek → foto referensi pose. Lip Sync = foto wajah → file audio (.mp3/voice note). All-in-One = 1–6 foto (tombol "✅ Lanjut Ketik Prompt") → prompt. Face Swap = foto wajah → video .mp4 (disarankan 15s, maks 30s).
+- **Pelajaran UX:** mereka menaruh **pilihan durasi + harganya di pesan pembuka** dan **harga di label tombol menu** — user tahu biaya sebelum klik.
+- Saldo uji setelah eksplorasi: **12,6 Token**.
 
 ## 4. METRIK VIDEO (heat-map 12 frame; angka lebih besar = lebih banyak gerakan)
 
