@@ -324,6 +324,30 @@ Dokumen rancangan: `RANCANGAN-UX-PRESET-9OKT.md`.
 pelangi + bendera kuning + latar gunung salju) → `tools/prompt_probe.py`.
 Kalau output tidak memuat itu → binding prompt salah, bukan salah prompt user.
 
+### 6g. HASIL PROBE PROMPT — BINDING BENAR (9 Okt 13:20)
+
+**Uji:** render i2v 5 s dengan prompt mustahil-terlewat — *"wig badut merah + topi pelangi tinggi +
+bendera kuning + latar gunung salju"* (`tools/prompt_probe.py`, 159 s, 64 koin).
+**Hasil (vision, 2 frame):** semuanya MUNCUL — wig badut merah ✔, topi pelangi ✔, bendera kuning ✔,
+latar gunung salju ✔.
+
+⇒ **Binding node `304.text` BENAR. Prompt benar-benar sampai ke model.** Hipotesis "binding salah" GUGUR.
+
+**Kesimpulan akar masalah sebenarnya:** model LTX kuat untuk mengubah **penampilan/kostum/latar**
+(malah bisa mengubah seluruh scene), tapi **lemah untuk gerak tubuh besar** (lari menjauh dari kamera,
+kamera mengejar) — dia cenderung mempertahankan framing close-up selfie input.
+
+**Implikasi produk:**
+- Preset yang mengandalkan ekspresi/gerak halus (😄 tertawa, 😮 kaget, 🌬️ angin, 💪 pose, 🚶 vlog) → **cocok** dengan mesin sekarang.
+- Preset lokomosi (🏃 lari dikejar kamera) → butuh jalur lain (masih beta).
+
+**Insight kunci (cara Kuzushi dapat gerak lari):** fitur mereka **"Face Swap & Motion"** menerima
+**VIDEO sumber gerakan (.mp4)** — jadi gerak lari/chase diambil dari footage nyata, wajah user
+ditransfer ke situ. **Bukan** gerak yang digenerate dari still. Ini sebabnya mereka bisa dan kita belum.
+
+**Rencana berikutnya:** cari + uji app **VIDEO face swap** (input: foto user + video gerakan),
+lalu jual sebagai "Face Swap & Motion" (±1 Token vs 2 Token Kuzushi).
+
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).
