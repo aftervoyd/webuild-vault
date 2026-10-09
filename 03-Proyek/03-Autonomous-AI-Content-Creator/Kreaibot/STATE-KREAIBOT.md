@@ -612,6 +612,38 @@ Nyala OTOMATIS kalau: fitur `editor` + foto referensi = karakter/produk **tersim
 **Uji:** editor 41 dtk (11 koin) → face swap 10 koin → hasil dikirim ke user (msg 221) untuk **penilaian mata user**.
 Selftest **133/133** (8 tes baru). Prinsip: **"jangan jual yang belum terbukti"** — jangan klaim mirip sebelum user bilang mirip.
 
+### 6s. "GAGAL TERUS" — SALDO $ vs KOIN + FALLBACK APP (9 Okt 17:35) — FIXED
+
+**Keluhan user:** "gue bikin gambar gagal terus, lu sengaja halangin padahal runninghub bebas".
+
+**AKAR MASALAH (dibaca dari log, bukan dugaan):** job 25/26/27 (editor, 17:25–17:29) gagal dengan
+`code 433` → `"Your API balance is insufficient, please recharge and use it"`
+pada node `RH_RhartImageNG31FlashImageToImage` (app **"全能图片V2-图生图-低价渠道版"** = `2061699451919618049`).
+
+**Pelajaran kunci:** di RunningHub ada DUA dompet:
+ - **KOIN** (remainCoins, sekarang ±31.7 ribu) → dipakai app biasa (LTX, Wan, Kontext, Qwen 2511) ✅
+ - **SALDO API $** (remainMoney, sekarang **$0,037**) → dipakai app **"低价渠道版" (low-cost channel)** ❌
+Koin banyak tapi $ kosong → app kelas cheap-channel **menolak jalan seketika**. Bukan pembatasan pihak lain;
+murni saldo dompet kedua. App Seedream/即梦5.0Pro 单图编辑 juga kelas ini (makanya "FAILED" 16–22 detik).
+
+**FIX 1 — app editor dipindah ke mesin yang bayar KOIN:** `RUNNINGHUB_APP_EDITOR=2075393520445251586`
+(**Flux Kontext 智能图文编辑**) — TERBUKTI jalan 57 dtk/21 koin, **menjaga rasio foto input** (488×526 → 488×520)
+dan menjaga identitas. (Cadangan: `2056741213927206914` Qwen 2511 一致性.)
+
+**FIX 2 — FALLBACK APP OTOMATIS (permanen):** `backends/runninghub.py`:
+ - `RUNNINGHUB_APP_<FITUR>_ALT` = app cadangan.
+ - Gagal saat **submit** → langsung coba app cadangan (`_run_app`).
+ - Gagal saat **poll** (state FAILED) → submit ulang ke cadangan SEKALI, `taskId` lama dipetakan ke task baru
+   lewat `_alias`, user tidak melihat error.
+ - Uji paksa: app rusak di depan → **FALLBACK BERHASIL 61 dtk** (pindah sendiri ke cadangan).
+ - “Jangan jual yang belum terbukti”: ini yang bikin satu app mati tidak lagi berarti "gagal terus".
+
+**Refund:** job 25/26/27 otomatis direfund (−0,30 lalu +0,30 ×3) — token user utuh (22 token).
+
+**Pilihan user (bukan pembatasan):** kalau mau app kelas cheap-channel (即梦/Seedream 5.0 Pro, 全能图片V2 —
+per gambar cuma 2 koin ≈ Rp7), tinggal **isi saldo API $** di akun RunningHub; kalau tidak, semua fitur
+tetap jalan lewat app berkoin.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

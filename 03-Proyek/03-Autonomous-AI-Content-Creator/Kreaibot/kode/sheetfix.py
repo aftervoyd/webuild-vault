@@ -20,7 +20,15 @@ from pathlib import Path
 
 log = logging.getLogger("kreaibot.sheetfix")
 
-PROMPT = (
+PROMPT_FACE = (
+    "Lihat gambar ini (character sheet / lembar referensi). Jawab HANYA JSON tanpa penjelasan: "
+    '{"sheet": true/false, "box": [x, y, w, h]}.\n'
+    "sheet=true kalau ini LEMBAR/KOLASE berisi BANYAK panel; kalau foto satu orang biasa → sheet=false, box=null.\n"
+    "Kalau sheet=true: box = kotak panel WAJAH CLOSE-UP terbaik (satu orang, wajah besar & frontal, "
+    "mata-hidung-mulut jelas, tanpa tulisan/swatch) — dipakai untuk face-swap. Koordinat dalam PIXEL gambar asli."
+)
+
+PROMPT_BODY = (
     "Lihat gambar ini. Jawab HANYA JSON tanpa penjelasan: "
     '{"sheet": true/false, "box": [x, y, w, h]}.\n'
     "sheet=true kalau ini LEMBAR/KOLASE berisi BANYAK panel (beberapa gambar dalam satu file, "
@@ -33,11 +41,11 @@ PROMPT = (
 
 
 def _ask_vision(img_bytes: bytes, mime: str, base_url: str, api_key: str,
-                model: str, timeout: int = 150) -> str:
+                model: str, prompt: str, timeout: int = 150) -> str:
     body = json.dumps({
         "model": model,
         "messages": [{"role": "user", "content": [
-            {"type": "text", "text": PROMPT},
+            {"type": "text", "text": prompt},
             {"type": "image_url", "image_url": {"url": f"data:{mime};base64,"
                                                       + base64.b64encode(img_bytes).decode()}},
         ]}],
@@ -79,8 +87,13 @@ def _parse(text: str) -> dict:
     return {"sheet": bool(j.get("sheet")), "box": box}
 
 
-def analyze_sync(path: Path, base_url: str, api_key: str, model: str) -> dict:
-    """Deteksi sheet (blocking — panggil lewat asyncio.to_thread)."""
+def analyze_sync(path: Path, base_url: str, api_key: str, model: str,
+                 purpose: str = "body") -> dict:
+    """Deteksi sheet + pilih panel sesuai kebutuhan (blocking — pakai asyncio.to_thread).
+
+    purpose="body" → panel satu orang SELURUH BADAN (untuk referensi render: proporsi konsisten).
+    purpose="face" → panel WAJAH CLOSE-UP (untuk face-swap/kunci identitas).
+    """
     if not (base_url and api_key and model):
         return {"sheet": False, "box": None, "skip": "vision tak dikonfigurasi"}
     try:
@@ -89,7 +102,8 @@ def analyze_sync(path: Path, base_url: str, api_key: str, model: str) -> dict:
         return {"sheet": False, "box": None, "err": f"baca gagal: {e}"}
     mime = "image/png" if raw[:4] == b"\x89PNG" else "image/jpeg"
     try:
-        return _parse(_ask_vision(raw, mime, base_url, api_key, model))
+        prm = PROMPT_FACE if purpose == "face" else PROMPT_BODY
+        return _parse(_ask_vision(raw, mime, base_url, api_key, model, prm))
     except Exception as e:                              # noqa: BLE001
         log.warning("vision sheet-check gagal: %s", e)
         return {"sheet": False, "box": None, "err": str(e)[:120]}

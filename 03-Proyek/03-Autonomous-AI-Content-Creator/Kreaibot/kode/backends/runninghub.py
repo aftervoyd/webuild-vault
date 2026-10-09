@@ -50,6 +50,8 @@ class RunningHubBackend:
                            or self.api_key)
         self.base = (base or DEFAULT_BASE).rstrip("/")
         self.work_dir = Path(work_dir)
+        self._ctx: dict[str, dict] = {}          # taskId → {req, uploaded, extra, switched}
+        self._alias: dict[str, str] = {}         # taskId lama → taskId pengganti (app cadangan)
 
     # ---------- helpers ----------
     def _workflow_id(self, feature_key: str) -> str:
@@ -65,6 +67,20 @@ class RunningHubBackend:
     def _app_id(self, feature_key: str) -> str:
         """webappId AI App. Jalur app uji 9 Okt: 165s/33 koin (workflow 324s/61 koin)."""
         return os.getenv(f"RUNNINGHUB_APP_{feature_key.upper()}", "")
+
+    def _alt_app(self, feature_key: str) -> tuple[str, list[dict]]:
+        """App CADANGAN (RUNNINGHUB_APP_<FITUR>_ALT): dipakai otomatis kalau app utama gagal.
+
+        Alasan nyata (9 Okt 17:2x): app "低价渠道版" menolak jalan saat saldo API ($) kosong
+        ("Your API balance is insufficient") walau koin masih banyak → user melihat "gagal terus".
+        """
+        app = os.getenv(f"RUNNINGHUB_APP_{feature_key.upper()}_ALT", "")
+        raw = os.getenv(f"RUNNINGHUB_APP_NODES_{feature_key.upper()}_ALT", "")
+        try:
+            nodes = json.loads(raw) if raw else []
+        except json.JSONDecodeError:
+            nodes = []
+        return app, nodes
 
     def _app_bindings(self, feature_key: str) -> list[dict]:
         raw = os.getenv(f"RUNNINGHUB_APP_NODES_{feature_key.upper()}", "")
@@ -243,19 +259,20 @@ class RunningHubBackend:
                             log.warning("upload zoom-variant gagal (%s) → pakai foto asli", e)
 
         if app_id:
-            # Jalur AI APP (biasanya lebih cepat & lebih murah): kirim gambar + prompt
-            # ke node yang diekspos app. Upload tetap pakai key SHARED, task pakai key
-            # platform supaya dibayar KOIN (bukan wallet $).
-            nodes = self._bind(self._app_bindings(req.feature_key)
-                               or self._node_bindings(req.feature_key), req, uploaded, extra)
-            payload: dict = {"apiKey": self.api_key, "webappId": int(app_id),
-                             "nodeInfoList": nodes}
-            # instanceType=plus → GPU 48G (lebih cepat untuk durasi panjang).
-            inst = (os.getenv(f"RUNNINGHUB_INSTANCE_{req.feature_key.upper()}")
-                    or os.getenv("RUNNINGHUB_INSTANCE_TYPE", ""))
-            if inst and inst != "default":
-                payload["instanceType"] = inst
-            js = await self._post("/task/openapi/ai-app/run", payload)
+            # Jalur AI APP (biasanya lebih cepat & lebih murah). Upload pakai key SHARED,
+            # task pakai key platform supaya dibayar KOIN (bukan wallet $).
+            try:
+                task_id = await self._run_app(app_id, req, uploaded, extra)
+            except RuntimeError as e:
+                alt, alt_nodes = self._alt_app(req.feature_key)
+                if not alt:
+                    raise
+                log.warning("app utama %s gagal (%s) → COBA APP CADANGAN %s",
+                            app_id, str(e)[:90], alt)
+                task_id = await self._run_app(alt, req, uploaded, extra,
+                                              bindings=alt_nodes or None)
+            self._ctx[task_id] = {"req": req, "uploaded": uploaded, "extra": extra, "alt_tried": True}
+            return task_id
         else:
             payload = {"apiKey": self.api_key, "workflowId": wf,
                        "nodeInfoList": self._bind(self._node_bindings(req.feature_key), req, uploaded, extra)}
@@ -268,7 +285,26 @@ class RunningHubBackend:
             raise RuntimeError(f"gagal membuat task RunningHub: {js}")
         return task_id
 
+    async def _run_app(self, app_id: str, req: GenRequest, uploaded: list[str],
+                       extra: dict[str, str], bindings: list[dict] | None = None) -> str:
+        nodes = self._bind(bindings or self._app_bindings(req.feature_key)
+                           or self._node_bindings(req.feature_key), req, uploaded, extra)
+        payload: dict = {"apiKey": self.api_key, "webappId": int(app_id), "nodeInfoList": nodes}
+        inst = (os.getenv(f"RUNNINGHUB_INSTANCE_{req.feature_key.upper()}")
+                or os.getenv("RUNNINGHUB_INSTANCE_TYPE", ""))
+        if inst and inst != "default":
+            payload["instanceType"] = inst
+        js = await self._post("/task/openapi/ai-app/run", payload)
+        tid = ""
+        if isinstance(js, dict):
+            d = js.get("data")
+            tid = str(d.get("taskId") if isinstance(d, dict) else d or "")
+        if not tid:
+            raise RuntimeError(f"gagal membuat task RunningHub (app {app_id}): {js}")
+        return tid
+
     async def poll(self, task_id: str) -> GenStatus:
+        task_id = self._alias.get(task_id, task_id)       # task pengganti (kalau pernah dialihkan)
         st = await self._post("/task/openapi/status", {"apiKey": self.api_key, "taskId": task_id})
         data = st.get("data") if isinstance(st, dict) else None
         state_raw = ""
@@ -283,6 +319,25 @@ class RunningHubBackend:
             return GenStatus(state="done", progress=100, message="selesai",
                              result_path=self._output_url(out))
         if state_raw in ("FAILED", "ERROR"):
+            # FALLBACK: app utama gagal (mis. "Your API balance is insufficient") → coba app cadangan
+            # SEKALI, tanpa membuat user melihat "gagal terus".
+            ctx = self._ctx.get(task_id) or {}
+            alt, alt_nodes = self._alt_app(ctx["req"].feature_key) if ctx.get("req") else ("", [])
+            if ctx and alt and not ctx.get("switched"):
+                ctx["switched"] = True
+                try:
+                    nid = await self._run_app(alt, ctx["req"], ctx["uploaded"], ctx["extra"],
+                                              bindings=alt_nodes or None)
+                    self._alias[task_id] = nid
+                    self._ctx[nid] = ctx
+                    if len(self._ctx) > 400:                  # jaga memori
+                        for k in list(self._ctx)[:200]:
+                            self._ctx.pop(k, None)
+                    log.warning("task %s gagal di app utama → dialihkan ke app cadangan %s (task %s)",
+                                task_id, alt, nid)
+                    return GenStatus(state="queued", progress=5, message="dialihkan ke mesin cadangan")
+                except Exception as e:                        # noqa: BLE001
+                    log.warning("app cadangan %s juga gagal: %s", alt, str(e)[:140])
             return GenStatus(state="failed", error=json.dumps(st)[:400])
         if state_raw in ("QUEUED", "PENDING", ""):
             return GenStatus(state="queued", progress=5, message="dalam antrean cloud")
