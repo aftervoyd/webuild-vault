@@ -23,10 +23,11 @@ log = logging.getLogger("kreaibot.chargen")
 
 DISCLAIMER = "Setiap panel yang digambar AI adalah orang DEWASA (18+)."
 
-# HARGA fitur Character Creator (token). Perhitungan margin (harga koin RunningHub ≈ Rp3,4/koin):
-#   4 render (1 wajah + 3 badan) ≈ 41 + 24 + 70 + 41 ≈ 176 koin ≈ Rp600
-#   dijual 2,5 Token = Rp2.500  →  margin ± 76%  (aman walau koin naik/turun sedikit)
-COST = 2.5
+# HARGA fitur Character Creator (token). Diukur NYATA 9 Okt (selisih koin sebelum/sesudah):
+#   4 render (1 wajah + 3 badan) ≈ 200–220 koin ≈ Rp700–760 (harga koin RunningHub ≈ Rp3,4)
+#   dijual 3 Token = Rp3.000  →  margin ± 75%
+# Kalau biaya mesin naik/turun, cuma angka ini yang diubah.
+COST = 3.0
 
 # ---------------------------------------------------------------- pilihan user (label UI + frasa prompt)
 GENDER: dict[str, tuple[str, str]] = {
@@ -90,6 +91,15 @@ def label(kind: str, key: str) -> str:
     return row[0] if row else key
 
 
+def _ascii(text: str) -> str:
+    """Buang karakter non-ASCII (emoji) — font sheet tidak punya glyph-nya → jadi kotak tofu di judul."""
+    out = text.replace("·", "-").replace("—", "-")
+    out = "".join(ch for ch in out if ord(ch) < 128)
+    while "  " in out:
+        out = out.replace("  ", " ")
+    return out.strip(" -")
+
+
 def _word(kind: str, key: str, default: str = "") -> str:
     row = LABELS.get(kind, {}).get(key)
     return row[1] if row else default
@@ -107,6 +117,14 @@ def face_prompt(opts: dict) -> str:
             f"lighting, photorealistic, sharp focus, no text, no watermark")
 
 
+# Sepatu ikut outfit supaya konsisten di semua panel (temuan uji 9 Okt: sepatu beda-beda antar panel).
+SHOES: dict[str, str] = {
+    "netral": "black flat shoes", "kasual": "white sneakers", "dress": "black high heels",
+    "formal": "black leather shoes", "sporty": "white running shoes",
+    "seksi": "black high heels", "tradisional": "black flat sandals",
+}
+
+
 def body_prompt(opts: dict, view: str) -> str:
     g = _word("gender", opts.get("gender", "wanita"), "woman")
     r = _word("race", opts.get("race", "asia_tenggara"), "Southeast Asian facial features")
@@ -114,13 +132,16 @@ def body_prompt(opts: dict, view: str) -> str:
     s = _word("slim", opts.get("slim", "2"), "average, balanced body shape")
     h = _word("hips", opts.get("hips", "2"), "average hips and normal leg proportions")
     o = _word("outfit", opts.get("outfit", "netral"), "simple neutral fitted top and straight pants")
+    sh = SHOES.get(opts.get("outfit", "netral"), "black flat shoes")
     pose = {"front": "Standing straight facing the camera",
             "side": "Standing straight in full side profile facing right",
             "back": "Standing straight with her/his back turned to the camera"}.get(view, "Standing straight")
-    return (f"Full body photograph of the SAME person as the reference photo — keep the face, hair and "
-            f"identity exactly the same. A {g} with {r}. Adult (18+). Body: {b}, {s}, {h}. "
-            f"Wearing {o}. {pose}, full body visible from head to toe including shoes, arms relaxed at "
-            f"the sides, plain light gray studio background, soft even studio lighting, photorealistic, "
+    return (f"Full body photograph of the SAME person as the reference photo — keep the face, hair, "
+            f"glasses and identity EXACTLY the same as the reference. A {g} with {r}. Adult (18+). "
+            f"Body: {b}, {s}, {h}. Wearing EXACTLY this outfit and nothing else: {o}, with {sh}. "
+            f"Same outfit and same shoes as the reference image — do not change the clothes. "
+            f"{pose}, full body visible from head to toe including shoes, arms relaxed at the sides, "
+            f"plain light gray studio background, soft even studio lighting, photorealistic, "
             f"sharp focus, no text, no watermark")
 
 
@@ -192,19 +213,26 @@ async def run(backend, face_photo: Path, opts: dict, out_dir: Path, on_step=None
     face_out = await _gen(backend, "chargen", [Path(face_photo)], face_prompt(opts), face_out)
     panels.append(("FACE CLOSE UP", face_out))
 
-    for view, label_id in (("front", "FULL BODY FRONT"), ("side", "FULL BODY SIDE"),
-                           ("back", "FULL BODY BACK")):
+    # PENTING: panel depan digambar dari WAJAH, lalu samping & belakang digambar dari PANEL DEPAN.
+    # Temuan uji 9 Okt: kalau semua digambar dari wajah, outfit/sepatu beda-beda antar panel.
+    # Rantai begini bikin baju, sepatu, rambut & proporsi ikut konsisten.
+    await step("🧍 Menggambar badan (depan)…")
+    front_out = out_dir / "cc_front.png"
+    front_out = await _gen(backend, "chargen", [face_out], body_prompt(opts, "front"), front_out)
+    panels.append(("FULL BODY FRONT", front_out))
+
+    for view, label_id in (("side", "FULL BODY SIDE"), ("back", "FULL BODY BACK")):
         await step(f"🧍 Menggambar badan ({view})…")
         p = out_dir / f"cc_{view}.png"
-        p = await _gen(backend, "chargen", [face_out], body_prompt(opts, view), p)
+        p = await _gen(backend, "chargen", [front_out], body_prompt(opts, view), p)
         panels.append((label_id, p))
 
     await step("📋 Menyusun sheet…")
     sheet = sheetbuild.build(
         name, out_dir / "cc_sheet.png", panels,
-        subtitle=("Character Creator · AI-generated master sheet from your face reference · "
-                  f"{label('gender', opts.get('gender'))} · {label('race', opts.get('race'))} · "
-                  f"{label('vibe', opts.get('vibe'))}"))
+        subtitle=_ascii(f"Character Creator · master sheet from your face reference · "
+                        f"{label('gender', opts.get('gender'))} · {label('race', opts.get('race'))} · "
+                        f"{label('vibe', opts.get('vibe'))}"))
     if not sheet:
         raise RuntimeError("gagal menyusun sheet")
     return {"sheet": Path(sheet), "panels": panels}

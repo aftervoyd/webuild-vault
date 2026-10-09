@@ -783,6 +783,30 @@ tidak lagi ditulis dua kali — penyebab bug potong panel 9 Okt).
 cadangan `..._CHARGEN_ALT=2075393520445251586` (Flux Kontext, node 390/399).
 **selftest 172/172** (13 tes baru untuk creator).
 
+### 6z. CHARACTER CREATOR — UJI NYATA & PERBAIKAN (9 Okt 19:5x)
+
+**Uji pertama (CHARACTER CREATOR v1):** 174 dtk, 4 panel 1440×1750, sheet 1778×2880 (dibaca bot: 4 panel ✓).
+Tapi penilaian jujur = **BELUM LAYAK JUAL**, 3 cacat nyata:
+1. **Kotak tofu di judul** — subtitle sheet pakai emoji (👩🌸🍬) yang tidak ada di font DejaVu.
+2. **Outfit & sepatu BEDA antar panel** (depan: dress beige + sneakers; samping/belakang: rok hitam + heels).
+   Sebabnya: tiap panel digambar langsung dari panel WAJAH → model menafsir ulang pakaian.
+3. Wajah antar panel belum 100%.
+
+**PERBAIKAN (chargen.py):**
+- `_ascii()` — buang karakter non-ASCII dari subtitle sheet (emoji → hilang, "·" → "-"). Tofu beres.
+- `SHOES` per outfit (dress → black high heels, kasual → white sneakers, dst.) + prompt badan menyebut
+  **sepatu eksplisit** dan menegaskan "Same outfit and same shoes as the reference image — do not change
+  the clothes".
+- **RANTAI GENERASI**: wajah → **badan DEPAN** → samping & belakang digambar **DARI PANEL DEPAN**
+  (bukan dari wajah). Ini yang mengunci baju, sepatu, rambut & proporsi supaya konsisten.
+
+**Uji kedua:** outfit + sepatu **konsisten**, tofu hilang, wajah konsisten antar panel ✓ (dinilai vision).
+**Harga disesuaikan:** `chargen.COST = 3.0` (Rp3.000) karena biaya mesin TERUKUR ±200–220 koin ≈ Rp700–760
+→ margin ±75%. Estimasi waktu di UI diperbaiki jadi "±3–6 menit" (terukur 174 dtk).
+
+**Pelajaran:** kalau panel sheet digambar semua dari satu wajah, atribut (baju/sepatu) akan bervariasi →
+selalu RANTAI dari panel tubuh pertama. Fon PIL tidak punya emoji → jangan taruh emoji di gambar.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi
