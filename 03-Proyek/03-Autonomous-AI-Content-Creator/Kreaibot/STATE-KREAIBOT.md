@@ -178,8 +178,12 @@ Dipakai di 2 titik pengiriman (`worker` + `_resume_one`). Hasil editor (PNG) oto
 Ukur: **5 s = 42 detik** (±6× lebih cepat dari app koin 263 s) tapi **$0,20 ≈ Rp3.240** (vs 61 koin ≈ Rp272).
 Di harga jual sekarang (5 s = Rp500) → **RUGI**. Layak hanya sebagai tier premium / harga 15 s dinaikkan.
 
-**Endpoint `ltx-2.3/image-to-video` masih TIDAK bisa dipanggil** dari daftar endpoint API kita
-(hanya muncul di katalog web). Kalau mau jalur LTX, opsi berikutnya: AI App / workflow ComfyUI LTX-2.3 (jalur koin).
+**Endpoint LTX-2.3 SUDAH KETEMU (9 Okt 10:45):** nama aslinya **`rhart-video/ltx-2.3/image-to-video`**
+(bukan `ltx-2.3/image-to-video`) — didapat dari `POST /api/sku/detail?id=2034461796984971265` (`rhEndpoint`).
+Harga **$0,01/detik**, ada audio ambient, 9:16 native, 5–20 s. **TAPI submit diblokir `errorCode 605
+"balance insufficient"`** walau saldo $0,28 (5 s cuma $0,05) → perlu top up dulu (saran $5–10).
+Rincian lengkap + daftar harga model lain: **`API-MODEL-RUNNINGHUB-9OKT.md`**.
+Catatan: `wan-2.6-image-to-video-flash` versi id pendek **$0,02/s** (separuh dari slug `alibaba/` yang gue tes).
 
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
