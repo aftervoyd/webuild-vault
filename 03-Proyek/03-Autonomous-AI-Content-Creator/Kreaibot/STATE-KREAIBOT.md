@@ -9,6 +9,15 @@
 
 ## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 02:05 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
+### 🌙 SESI OTONOM 10 Okt 03:00 (user tidur) — RunningHub & koin
+- **Login web RunningHub BERHASIL** ✓ (vault handle `vault_5e4871dcae31` · origin runninghub.ai · profil "Nimara Official" ID 2108050207926067202). Situs Nuxt SPA; login via modal nav ("Enter phone number or email" + password). Header API web = **`Authorization`** (token dari `localStorage['Rh-Accesstoken']`); endpoint web pakai `POST /uc/getUserInfo`.
+- **Saldo**: koin **27.912** (via `/uc/openapi/accountStatus`, apiKey) · wallet $0,010 · membership s/d 8 Nov.
+- **FREE WINDOW terkonfirmasi**: "MiniMax H3 RH Enhanced — members 1 bulan generate unlimited, **13 jam gratis/hari = 9 AM–10 PM ET = 21:00–10:00 WIB**". → aturan: produksi berat di jam itu = koin ~0.
+- **Jalur koin**: (A) Creator Incentive Program `runninghub.ai/creator-reward` — publish workflow/AI app → dibayar per-run + favorit + orisinalitas, settle mingguan, withdraw bulanan (`/my-income` masih $0,00) · (B) Invite **500 koin/undangan**, kode kita **`baaxhjzz`** (⚠️ dilarang farming akun palsu) · (C) login harian ~100 koin (hangus 24 jam).
+- **Kontes**: RunningHub (tutup 9 Okt) & 鲸锐 (wajib KTP China) ✗. Yang BUKA & layak: **Chroma Awards S2** (global, gratis, 51 kategori, ~31 Des) + **腾讯SSV "科技向善"** (¥130rb, 31 Okt, 2–5 mnt). Detail + strategi menang: **`RUNNINGHUB-KOIN-PLAYBOOK.md`**.
+- **Automation**: cron `RunningHub — cek koin & scan kontes` (harian 08:00, id `428a7529fa42`) + tool `tools/rh_coin_check.py` (log `work/rh_coins.csv`).
+- Commit: kode `cfe7737` · vault `856a9bc`. **Menunggu keputusan user**: garap Creator Incentive Program & sediakan akun YouTube untuk submit kontes.
+
 ### 🔧 AUDIT & FIX 10 Okt 02:00–02:05 (SEMUA LIVE; service sudah direstart)
 - **Bug tombol mati (edit_safe)** — tombol "🔙 Kembali" dari layar detail karakter (pesan **FOTO**) & "⬅️ Menu Utama" dari pesan **QRIS** mati diam-diam (`TelegramBadRequest: there is no text in the message to edit`). → helper `edit_safe()` (foto→`edit_caption`, teks→`edit_text`, gagal→kirim baru); **34 call site** `cb.message.edit_text` dikonversi → seluruh kelas bug hilang.
 - **Error handler global** `@dp.errors()` — `TelegramBadRequest` jinak (klik tombol lama / `query is too old`) cukup di-log ringan; error serius tetap dicatat lengkap.
