@@ -857,6 +857,39 @@ setelah ±5 menit.)
 
 **Waktu:** 208–290 dtk (3,5–5 menit) dengan foto tubuh; 93–174 dtk tanpa.
 
+### 7c. BUG BESAR: BOT "NGGAK BEBAS" + HASIL DIRUSAK (job 28) — 9 Okt 20:4x
+
+**Keluhan user:** "RUSAK BOT GUA JADI RUSAK NGGAK BEBAS KAYA KUZUSHI, LIAT IMAGE CREATOR TERAKHIR
+YANG GUA BIKIN" (job 28: *"ganti outfit sesuai vibes, memakai bikini di sunset pantai, selfie, 8k"*).
+
+**AKAR #1 (bot tidak bebas — paling parah):** fitur **editor gambar** memakai perapian prompt
+**VIDEO** (`refine_video_prompt` + `VIDEO_REFINE_SYSTEM`). Instruksi itu menyuruh LLM menulis
+*"face, hair, glasses, skin and **outfit stay exactly as in the photo**"* → perintah user
+"GANTI OUTFIT jadi bikini" **DIBATALKAN oleh bot sendiri**. Terbukti dengan menjalankan ulang
+perapian: hasilnya *"...her face, skin texture, hair, and bikini remain completely unchanged and
+stable"* → model mempertahankan baju lama (dress) ✗.
+**FIX:** `IMAGE_EDIT_SYSTEM` + `refine_edit_prompt()` baru (aturan: TAATI user, semua yang diminta
+diubah ditulis sebagai PERUBAHAN, dilarang menulis 'unchanged'/'stay exactly', tanpa pembatasan
+konten, garment disebut namanya) + bot.py memakai `refine_edit_prompt` untuk `f.key == "editor"`.
+Hasil uji perapian: *"Change the person's outfit to a stylish bikini and replace the background
+with a beautiful beach during golden hour sunset"* ✅.
+
+**AKAR #2 (hasil dirusak):** **kunci identitas** (face swap balik ke wajah karakter tersimpan)
+jalan OTOMATIS setelah render → wajah user berubah jadi "orang lain" + kulit plastis (dinilai
+vision: wajah kanan bukan orang yang sama, versi sebelum lebih bagus). 
+**FIX:** jadikan SAKLAR per user (`prefs.idlock`), **DEFAULT MATI** = bot bebas, tidak menyentuh
+hasil model kecuali user minta. Tombol di 🧑🎨 Karakter Saya & di layar pilih karakter
+("🔒 Kunci Identitas: AKTIF / MATI (bebas)"). Pesan popup menjelaskan efek sampingnya.
+
+**File:** `promptsmith.py` (IMAGE_EDIT_SYSTEM, refine_edit_prompt), `bot.py` (cabang editor,
+`db.pref_on(..., "idlock")`, `idlock_row`, `idlock_toggle`, hint di inv_text),
+`db.py` (tabel `prefs` + `pref_get/pref_set/pref_on`). **selftest 179/179.**
+
+**PELAJARAN (penting):** (1) JANGAN pakai perapian prompt video untuk fitur edit gambar — ia
+membatalkan perintah user secara diam-diam. (2) Fitur yang mengubah hasil model harus punya
+SAKLAR dan default-nya MATI. (3) Keluhan "nggak bebas" hampir selalu = ada lapisan bot yang
+menimpa keputusan model/user tanpa sepengetahuan user.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

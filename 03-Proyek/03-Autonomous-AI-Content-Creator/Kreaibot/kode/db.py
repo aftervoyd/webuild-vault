@@ -88,6 +88,12 @@ CREATE TABLE IF NOT EXISTS characters (
     UNIQUE(telegram_id, kind, name_lower)           -- 1 user tidak boleh punya 2 nama kembar (per jenis)
 );
 CREATE INDEX IF NOT EXISTS idx_chars_user ON characters(telegram_id, created_at);
+CREATE TABLE IF NOT EXISTS prefs (
+    telegram_id INTEGER NOT NULL,
+    key         TEXT    NOT NULL,                   -- contoh: 'idlock' = kunci identitas ON/OFF
+    value       TEXT    NOT NULL DEFAULT '',
+    PRIMARY KEY (telegram_id, key)
+);
 """
 
 
@@ -354,6 +360,25 @@ class Database:
         return list(self.conn.execute(
             "SELECT * FROM characters WHERE telegram_id=? ORDER BY uses DESC, created_at DESC LIMIT ?",
             (telegram_id, limit)))
+
+    def pref_get(self, telegram_id: int, key: str, default: str = "") -> str:
+        """Baca setelan kecil per user (contoh: 'idlock' = kunci identitas ON/OFF)."""
+        row = self.conn.execute(
+            "SELECT value FROM prefs WHERE telegram_id=? AND key=?",
+            (telegram_id, key)).fetchone()
+        return row["value"] if row else default
+
+    def pref_set(self, telegram_id: int, key: str, value: str) -> None:
+        self.conn.execute(
+            "INSERT INTO prefs(telegram_id, key, value) VALUES(?,?,?) "
+            "ON CONFLICT(telegram_id, key) DO UPDATE SET value=excluded.value",
+            (telegram_id, key, str(value)))
+        self.conn.commit()
+
+    def pref_on(self, telegram_id: int, key: str, default: str = "0") -> bool:
+        """True kalau setelan = '1'/'on'. Catatan: kunci identitas DEFAULT MATI (bot harus bebas,
+        tidak mengubah hasil model kecuali user minta sendiri)."""
+        return str(self.pref_get(telegram_id, key, default)).lower() in ("1", "on", "true", "yes")
 
     def char_count(self, telegram_id: int, kind: str | None = None) -> int:
         if kind:

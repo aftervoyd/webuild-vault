@@ -1326,6 +1326,17 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
                     log.info("job %s prompt dihaluskan LLM (%d → %d char)", job_id,
                              len(job["prompt"] or ""), len(refined))
                     db.set_job(job_id, prompt=refined)
+            elif f and f.key == "editor" and (job["prompt"] or "").strip():
+                # 0b) EDITOR GAMBAR: user MEMERINTAH PERUBAHAN (ganti baju, latar, pose).
+                #     WAJIB pakai perapian khusus edit — perapian video menulis "outfit stay exactly
+                #     as in the photo" sehingga perintah user DIBATALKAN (akar keluhan "nggak bebas").
+                refined = await promptsmith.refine_edit_prompt(
+                    job["prompt"] or "", base_url=settings.promptsmith_base,
+                    api_key=settings.promptsmith_key, model=settings.promptsmith_model)
+                if refined and refined != job["prompt"]:
+                    log.info("job %s prompt edit dirapikan LLM (%d → %d char)",
+                             job_id, len(job["prompt"] or ""), len(refined))
+                    db.set_job(job_id, prompt=refined)
             elif f and settings.refine_video and (job["prompt"] or "").strip():
                 # 0b) fitur video biasa (i2v/all-in-one): rapikan prompt user.
                 #     Gagal / hasil aneh → refine_video_prompt mengembalikan prompt ASLI.
@@ -1409,7 +1420,11 @@ async def process_job(job_id: int, bot: Bot, chat_id: int, msg_id: int):
             # 1c) KUNCI IDENTITAS: kalau foto referensi = karakter/produk TERSIMPAN user, wajah aslinya
             #     di-swap balik setelah render (model img2img suka "menggambar ulang" wajah).
             #     Fitur gambar: editor. (Video menyusul, butuh app face swap video.)
-            if f and f.key in IDENTITY_LOCK:
+            # SAKLAR user (default MATI). Kunci identitas = face swap balik ke wajah karakter tersimpan.
+            # 9 Okt: tanpa saklar ini hasil user (job 28) DIBUAT RUSAK — wajah berubah jadi orang lain
+            # & kulit jadi plastis, padahal user cuma minta ganti outfit. Bot harus bebas: kalau user
+            # tidak minta, jangan sentuh hasil model.
+            if f and f.key in IDENTITY_LOCK and db.pref_on(job["telegram_id"], "idlock"):
                 try:
                     fids = json.loads(job["ref_photos"] or "[]")
                     cr = db.char_by_file_id(job["telegram_id"], fids[0]) if fids else None
@@ -1614,10 +1629,20 @@ INV_HINT = {
 }
 
 
+def idlock_row(uid: int) -> list:
+    """Saklar 🔒 Kunci Identitas (default MATI = bot bebas, hasil model tidak diubah-ubah)."""
+    on = db.pref_on(uid, "idlock")
+    return [InlineKeyboardButton(
+        text=f"🔒 Kunci Identitas: {'AKTIF' if on else 'MATI (bebas)'}",
+        callback_data="m:idlock:toggle")]
+
+
 def inv_kb(uid: int, kind: str) -> InlineKeyboardMarkup:
     rows = [[InlineKeyboardButton(text=f"{INV_ICON[kind]} {r['name']} · {r['uses']}×",
                                   callback_data=f"m:ch:{r['id']}")]
             for r in db.char_list(uid, kind=kind)]
+    if kind == "char":
+        rows.append(idlock_row(uid))
     rows.append([InlineKeyboardButton(text="➕ Tambah baru", callback_data=f"m:inv:add:{kind}"),
                  InlineKeyboardButton(text="⬅️ Menu Utama", callback_data="m:home")])
     return InlineKeyboardMarkup(inline_keyboard=rows)
@@ -1628,15 +1653,42 @@ def inv_text(uid: int, kind: str) -> str:
     head = f"{INV_ICON[kind]} <b>{INV_TITLE[kind]}</b>\n\n{INV_HINT[kind]}\n\n"
     if not lst:
         return head + "<i>Belum ada yang disimpan.</i> Tekan ➕ Tambah baru."
-    return head + "\n".join(f"· <b>{r['name']}</b> — dipakai {r['uses']}×" for r in lst) + \
-        "\n\n👇 Tap salah satu buat ubah / hapus."
+    tail = "\n\n👇 Tap salah satu buat ubah / hapus."
+    if kind == "char":
+        on = db.pref_on(uid, "idlock")
+        tail += ("\n\n🔒 <b>Kunci Identitas</b>: " + ("<b>AKTIF</b> — wajah hasil dipaksa sama "
+                 "dengan wajah karakter (kadang jadi kaku/plastis)." if on else
+                 "<b>MATI</b> — hasil apa adanya dari model. Bot tidak mengubah wajahmu sendiri. "
+                 "Nyalakan kalau wajah hasil sering melenceng dari karakternya."))
+    return head + "\n".join(f"· <b>{r['name']}</b> — dipakai {r['uses']}×" for r in lst) + tail
 
 
 def inv_use_rows(uid: int, kind: str, prefix: str) -> list:
-    """Baris tombol 'pakai yang tersimpan' untuk disisipkan di alur fitur."""
-    return [[InlineKeyboardButton(text=f"{INV_ICON[kind]} {r['name']}",
+    """Baris tombol 'pakai yang tersimpan' (+ saklar kunci identitas) untuk disisipkan di alur fitur."""
+    rows = [[InlineKeyboardButton(text=f"{INV_ICON[kind]} {r['name']}",
                                   callback_data=f"{prefix}:{r['id']}")]
             for r in db.char_list(uid, kind=kind)]
+    if kind == "char":
+        rows.append(idlock_row(uid))
+    return rows
+
+
+@router.callback_query(F.data == "m:idlock:toggle")
+async def idlock_toggle(cb: CallbackQuery):
+    """Nyalakan/matikan 'kunci identitas' (face swap balik). Default MATI = bot bebas."""
+    uid = cb.from_user.id
+    baru = "0" if db.pref_on(uid, "idlock") else "1"
+    db.pref_set(uid, "idlock", baru)
+    if baru == "1":
+        await cb.answer("🔒 Kunci identitas AKTIF — wajah hasil bakal dipaksa sama dengan wajah "
+                        "karakter yang kamu pilih (kadang wajah jadi lebih kaku/plastis).", show_alert=True)
+    else:
+        await cb.answer("🔓 Kunci identitas MATI — hasil apa adanya dari model. Bot nggak ngubah "
+                        "wajah diam-diam. (Ini mode paling bebas.)", show_alert=True)
+    try:
+        await cb.message.edit_text(inv_text(uid, "char"), reply_markup=inv_kb(uid, "char"))
+    except Exception:                                        # noqa: BLE001
+        pass
 
 
 def inv_parse(data: str) -> tuple[str, str]:

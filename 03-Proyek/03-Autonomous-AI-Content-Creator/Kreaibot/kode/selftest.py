@@ -438,6 +438,28 @@ async def main() -> int:
     res.append(ok("creator: kalau 'tempel wajah' gagal → otomatis balik ke cara AI (tidak bikin user gagal)",
                   'pakai foto tubuh gagal' in (Path(__file__).with_name("chargen.py")).read_text(encoding="utf-8")
                   and 'face_prompt' in (Path(__file__).with_name("chargen.py")).read_text(encoding="utf-8")))
+    def _prefs_rt(d):
+        """Uji simpan-baca setelan per user (dipakai tes saklar kunci identitas)."""
+        d.pref_set(999999, "idlock", "1")
+        a = d.pref_on(999999, "idlock") is True
+        d.pref_set(999999, "idlock", "0")
+        b = d.pref_on(999999, "idlock") is False
+        return a and b
+
+    _psrc = (Path(__file__).with_name("promptsmith.py")).read_text(encoding="utf-8")
+    _db6src = (Path(__file__).with_name("db.py")).read_text(encoding="utf-8")
+    res.append(ok("creator: prompt editor TIDAK memakai instruksi video (akar bug 'bikini jadi baju lama')",
+                  "refine_edit_prompt" in _psrc and "IMAGE_EDIT_SYSTEM" in _psrc
+                  and 'f.key == "editor"' in _bsrc6 and "promptsmith.refine_edit_prompt(" in _bsrc6))
+    res.append(ok("creator: instruksi editor MELARANG kata pembatal perintah user ('unchanged'/'stay exactly')",
+                  "NEVER write" in _psrc and "'keep the outfit unchanged', 'stay exactly the same'" in _psrc))
+    res.append(ok("saklar kunci identitas ada & DEFAULT MATI (bot bebas, tidak mengubah hasil model)",
+                  "db.pref_on(job[\"telegram_id\"], \"idlock\")" in _bsrc6
+                  and "m:idlock:toggle" in _bsrc6 and 'default: str = "0"' in _db6src))
+    res.append(ok("db: setelan per user (prefs) hidup — simpan & baca ulang",
+                  _prefs_rt(db)))
+    res.append(ok("db: user belum punya setelan → default MATI (bot bebas)",
+                  db.pref_on(999998, "idlock") is False))
     res.append(ok("bot: kunci identitas ambil PANEL WAJAH dari sheet",
                   'analyze_sync, face_local' in _bsrc5 and '_wajah.jpg' in _bsrc5))
 
