@@ -28,6 +28,7 @@ from aiogram.types import (BotCommand, CallbackQuery, FSInputFile, InlineKeyboar
 
 import catalog
 import presets
+import sheetfix
 import promptsmith
 import storyboard
 from aulaa import Aulaa, make_client
@@ -892,6 +893,52 @@ async def ugc_style(cb: CallbackQuery, state: FSMContext):
 
 # ============================ alur umum: foto → prompt → rasio ============================
 
+# Fitur yang butuh FOTO ORANG (asset ke-1). Kalau user kirim character sheet (kolase banyak panel),
+# bot otomatis memotong panel orangnya — kalau tidak, hasilnya jadi video berisi kotak-kotak panel
+# (kasus nyata job 13, 9 Okt). UGC di-skip: di sana sheet memang dipakai sebagai character sheet.
+SHEET_GUARD = {"i2v", "long", "allinone", "faceswap", "motion", "lipsync", "pose"}
+_SHEET_CACHE: dict[str, str] = {}          # file_id asli → file_id panel ("" = bukan sheet)
+
+
+async def _sheet_panel_from_file(msg: Message, file_id: str) -> str | None:
+    """Kalau file_id itu character sheet → balikin file_id PANEL orangnya (atau None)."""
+    if file_id in _SHEET_CACHE:
+        return _SHEET_CACHE[file_id] or None
+    tmp: Path | None = None
+    notice = None
+    try:
+        notice = await msg.answer("🔍 Memeriksa fotonya sebentar…")
+        tg = await bot.get_file(file_id)
+        tmp = Path(settings.work_dir) / "sheet" / f"{file_id[-14:]}.jpg"
+        tmp.parent.mkdir(parents=True, exist_ok=True)
+        await bot.download_file(tg.file_path, tmp)      # type: ignore[arg-type]
+        info = await asyncio.to_thread(sheetfix.analyze_sync, tmp, settings.promptsmith_base,
+                                       settings.promptsmith_key, settings.promptsmith_model)
+        if not (info.get("sheet") and info.get("box")):
+            _SHEET_CACHE[file_id] = ""
+            return None
+        panel = await asyncio.to_thread(sheetfix.crop_panel, tmp, info["box"],
+                                        tmp.with_name(tmp.stem + "_panel.jpg"))
+        if not panel:
+            _SHEET_CACHE[file_id] = ""
+            return None
+        sent = await bot.send_photo(msg.chat.id, FSInputFile(panel),
+                                    caption=sheetfix.reason_text(), parse_mode=ParseMode.HTML)
+        fid = sent.photo[-1].file_id
+        _SHEET_CACHE[file_id] = fid
+        log.info("sheet terdeteksi → panel dipotong (%s) box=%s", fid, info["box"])
+        return fid
+    except Exception as e:                                  # noqa: BLE001
+        log.warning("sheet-guard dilewati: %s", e)
+        _SHEET_CACHE[file_id] = ""
+        return None
+    finally:
+        if notice is not None:
+            try:
+                await bot.delete_message(msg.chat.id, notice.message_id)
+            except Exception:                    # noqa: BLE001
+                pass
+
 # Nama bahan per fitur: aset ke-1 biasanya orangnya, ke-2 = video gerakan / suara.
 ASSET_LABEL: dict[str, tuple[str, ...]] = {
     "motion": ("Foto orang", "Video gerakan"),
@@ -914,16 +961,23 @@ async def on_photo(msg: Message, state: FSMContext):
     if f and len(photos) >= f.max_photos:
         await msg.answer(f"Sudah maksimal {f.max_photos} foto — <b>langsung ketik prompt</b>-nya.")
         return
+    is_gambar_doc = bool(msg.document and str(msg.document.mime_type or "").startswith("image/"))
     if msg.photo:
-        photos.append(msg.photo[-1].file_id)
+        fid = msg.photo[-1].file_id
     elif msg.video:
-        photos.append(msg.video.file_id)
+        fid = msg.video.file_id
     elif msg.audio:
-        photos.append(msg.audio.file_id)
+        fid = msg.audio.file_id
     elif msg.voice:
-        photos.append(msg.voice.file_id)
-    else:
-        photos.append(msg.document.file_id)      # type: ignore[union-attr]
+        fid = msg.voice.file_id
+    elif msg.document:
+        fid = msg.document.file_id
+    if (msg.photo or is_gambar_doc) and not photos \
+            and (f.key if f else "") in SHEET_GUARD:
+        panel = await _sheet_panel_from_file(msg, fid)
+        if panel:
+            fid = panel
+    photos.append(fid)
     await state.update_data(photos=photos)
     fkey = f.key if f else ""
     sisa = (f.max_photos - len(photos)) if f else 0
@@ -1552,6 +1606,10 @@ async def inv_photo(msg: Message, state: FSMContext):
         await msg.answer("Itu bukan gambar 📄 — kirim sebagai <b>FOTO</b> ya (atau tekan ❌ Batal).")
         return
     fid = msg.photo[-1].file_id if msg.photo else doc.file_id   # type: ignore[union-attr]
+    if msg.photo:                       # simpan PANEL orangnya, bukan lembaran sheet
+        panel = await _sheet_panel_from_file(msg, fid)
+        if panel:
+            fid = panel
     await state.update_data(inv_file_id=fid)
     await state.set_state(Flow.inv_name)
     contoh = "si rina" if kind == "char" else "kopi arabika"

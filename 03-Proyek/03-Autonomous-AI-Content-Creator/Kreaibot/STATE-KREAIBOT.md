@@ -518,6 +518,31 @@ Butuh 2 foto bersih dari user untuk verdict final.
 
 **Uji:** selftest **104/104** (4 tes baru untuk parsing inventory + 3 tes anti-bingung), ux_audit bersih.
 
+### 6o. AKAR "HASIL ANEH": USER KIRIM CHARACTER SHEET KE I2V (9 Okt 16:05) — FIXED
+
+**Laporan user:** "lihat hasil video generate gue di kreeai bot, kenapa malah jadi kaya gitu" (job 13, i2v 15s).
+
+**Akar masalah (dibuktikan, bukan dugaan):** foto yang dikirim ke i2v = **character sheet 15 panel**
+(`work/tests/j13/job13_ref.jpg`, 853×1280) — ada label "MAIN VIEW (CLOSE UP)", "SIDE VIEW (RIGHT)",
+"BACK VIEW", "EYES/NOSE/LIPS DETAIL", "SKIN TEXTURE", plus color swatch & teks kecil.
+Model i2v **menggerakkan gambar itu apa adanya** → video jadi berisi **kotak-kotak panel**, bukan orang.
+Cacat kedua: prompt minta "selfie pakai hp iphone orange" → **tangan + HP** (kelemahan umum AI) muncul ~detik 12–14.
+Job 10–12 pakai foto normal (717×1276) — jadi masalah ini KHUSUS job 13 (input sheet).
+
+**FIX LIVE — `sheetfix.py`:**
+1. Sebelum render, foto diperiksa **model vision** (PromptSmith `ag/gemini-3.6-flash-high` — output JSON teks saja,
+   bukan model generator): `{"sheet": true/false, "box":[x,y,w,h]}`.
+2. Kalau sheet → **potong panel orangnya** (PIL, buang margin 2%, tolak kotak < 220px) → panel itu yang dirender.
+3. User dapat pesan "🔍 Memeriksa fotonya sebentar…" → lalu panel hasil potong + penjelasan.
+4. Berlaku di: `SHEET_GUARD = {i2v, long, allinone, faceswap, motion, lipsync, pose}` (aset ke-1) **dan**
+   saat menyimpan ke Karakter/Produk Saya (biar sheet tersimpan tidak merusak semua render berikutnya).
+   UGC di-skip (di sana sheet memang karakter sheet). Gagal/ragu → **foto asli dipakai** (bot tetap jalan); ada cache per file_id.
+
+**Bukti uji:** sheet user → terdeteksi `sheet=true box=[0,0,508,682]` → panel **488×656** (8,8 dtk per cek);
+foto normal → `sheet=false` (tidak false-positive). Selftest **113/113** (10 tes baru sheetfix).
+
+**Sisa kelemahan yang jujur:** tangan + objek kecil (HP) tetap titik lemah model — bukan bug bot.
+
 ## 8. RENCANA NOL-PROMPT (lihat `RANCANGAN-UX-NOL-PROMPT.md`)
 
 Masukan user (9 Okt): *"gue mau user gue semudah mungkin pake bot walaupun dia gak bisa prompting, tapi

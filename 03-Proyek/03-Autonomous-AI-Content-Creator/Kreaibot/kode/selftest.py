@@ -200,6 +200,33 @@ async def main() -> int:
     res.append(ok("inventory: 'm:inv:produk' → buka daftar produk",
                   _b.inv_parse("m:inv:produk") == ("produk", "buka")))
 
+    # 3a-4) SHEET FIX: character sheet → ambil panel orangnya (akar "hasil aneh" job 13)
+    import sheetfix as _sf
+    res.append(ok("sheetfix: baca JSON polos", _sf._parse('{"sheet": true, "box": [0,35,516,663]}')
+                  == {"sheet": True, "box": [0, 35, 516, 663]}))
+    res.append(ok("sheetfix: baca JSON di dalam ```json ... ``` (balasan LLM nyata)",
+                  _sf._parse('```json\n{"sheet": true, "box": [0, 0, 508, 682]}\n```')
+                  == {"sheet": True, "box": [0, 0, 508, 682]}))
+    res.append(ok("sheetfix: foto biasa → sheet=false", _sf._parse('{"sheet": false, "box": null}')
+                  == {"sheet": False, "box": None}))
+    res.append(ok("sheetfix: balasan ngaco tidak bikin crash",
+                  _sf._parse("maaf saya tidak bisa") == {"sheet": False, "box": None, "err": "tak ada JSON"}))
+    from PIL import Image as _I
+    _t = WORK / "sheet_grid.jpg"
+    _I.new("RGB", (600, 600), (40, 40, 40)).save(_t)
+    _p = _sf.crop_panel(_t, [0, 0, 300, 300], WORK / "panel_uji.jpg")
+    res.append(ok("sheetfix: potong panel jalan (300×300 → 288×288 setelah buang margin)",
+                  bool(_p) and _I.open(_p).size[0] >= 285))        # type: ignore[arg-type]
+    res.append(ok("sheetfix: kotak kekecilan DITOLAK (jangan crop ngawur)",
+                  _sf.crop_panel(_t, [0, 0, 50, 50], WORK / "panel_kecil.jpg") is None))
+    res.append(ok("sheetfix: kotak keluar batas/terlalu kecil DITOLAK (foto asli tetap dipakai)",
+                  _sf.crop_panel(_t, [500, 500, 400, 400], WORK / "panel_luar.jpg") is None))
+    _bsrc = (Path(__file__).with_name("bot.py")).read_text(encoding="utf-8")
+    res.append(ok("bot pasang sheet-guard sebelum render (i2v dkk)",
+                  "SHEET_GUARD" in _bsrc and "_sheet_panel_from_file" in _bsrc))
+    res.append(ok("inventory juga pakai panel (bukan lembaran sheet)",
+                  "simpan PANEL orangnya" in _bsrc))
+
     # 3b) referral (anti-farming)
     db.ensure_user(900, "inviter", "Inviter", signup_bonus=1.0)
     db.ensure_user(901, "teman", "Teman", signup_bonus=1.0)
