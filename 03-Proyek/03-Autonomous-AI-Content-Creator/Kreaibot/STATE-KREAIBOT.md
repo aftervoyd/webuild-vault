@@ -348,6 +348,42 @@ ditransfer ke situ. **Bukan** gerak yang digenerate dari still. Ini sebabnya mer
 **Rencana berikutnya:** cari + uji app **VIDEO face swap** (input: foto user + video gerakan),
 lalu jual sebagai "Face Swap & Motion" (±1 Token vs 2 Token Kuzushi).
 
+### 6h. 🔥 MOTION TRANSFER (Wan2.2 Animate) — CELAH KUZUSHI KETEMU (9 Okt 13:30)
+
+**Temuan:** app AI `2039639280896708610` = **"New Wan2.2 Animate Motion Transfer"** (useCount 6.954).
+Ini **persis fitur andalan Kuzushi "Face Swap & Motion"**: foto karakter + **video sumber gerakan** → video.
+Model open-source (Wan 2.2) → **jalur koin**, bukan jalur dolar.
+
+**Node (dibaca dari `/api/webapp/apiCallDemo?apiKey=…&webappId=…`):**
+
+| Node | Fungsi | Nilai kita |
+|---|---|---|
+| 484 | LoadImage 主图 | `@photo1` (foto user) |
+| 485/486/487 | LoadImage 副图1–3 | tidak dipakai |
+| **488** | **VHS_LoadVideo** | `@video` (video gerakan) |
+| 476 | 秒数 (detik) | `@duration` |
+| 475 | 帧率 | 16 |
+| 482 | 分辨率 | **3 = vertikal 720p** |
+| 478 | 姿势 (1=vitpose, 2=sdpose, 3=scailpose) | 1 |
+| 470 / 479 | 抖动幅度 / 表情强度 | 0,5 / 1,0 |
+
+Catatan: contoh curl RESMI dari RunningHub untuk app ini memakai `"instanceType": "plus"` → pilihan plus kita valid.
+
+**Uji produksi nyata (5 detik, foto ref1 + video 10 s):**
+`state=done` · **308 s** · **121 koin** (±Rp411) · output **720×1280 · 16 fps · 5,06 s · ADA AUDIO (AAC 48 kHz)**.
+(gunakan `smooth_fps()` untuk 16→24 fps di produksi.)
+
+**Uji face-swap pakai video di app LAMA: GAGAL** (`FAILED`) — app `1889155568379092993` hanya menerima GAMBAR.
+Jadi fitur motion WAJIB memakai app Wan2.2 Animate di atas.
+
+**Konfigurasi `.env` (sudah dipasang, belum dijual):**
+`RUNNINGHUB_APP_MOTION=2039639280896708610` · `RUNNINGHUB_APP_NODES_MOTION=[484.image←@photo1, 488.video←@video, 476.int←@duration, 482.value=3, 478.select=1]` · `RUNNINGHUB_INSTANCE_MOTION=plus`.
+Uji: `tools/motion_test.py`. Backup `.env.bak-before-motion`.
+
+**Yang BELUM terbukti (jangan dijual dulu):** fidélitas wajah lintas-orang. Semua material uji kita
+orang yang sama (ref1, app_bernini, app_wan22) sehingga swap tidak bisa dibedakan secara visual.
+Perlu 1 uji dengan **video gerakan orang LAIN**.
+
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).
