@@ -40,6 +40,16 @@
 4. Benerin `desa-mobile` (belum ada `index.html`) ✗.
 5. Opsional: isi saldo dolar ±$5 buat tes app kelas "high consistency".
 
+### 🔗 CARA NYAMBUNGIN KONTEKS SETELAH `/new` (TERVERIFIKASI 10 Okt 2026)
+
+1. **Sesi panjang 9–10 Okt (id `20261009_082106_0c23340b`)** — SELURUH obrolan ada di `~/.hermes/state.db` (FTS5, 9.617 baris terindeks · sesi ini **3.464 pesan**). Cara buka:
+   - `session_search(query="<KATA KUNCI>")` ← **WAJIB kata kunci, JANGAN frasa panjang** (terbukti: frasa `"kacamata mutlak mesin identitas Arunika"` → **0 hasil** ✗; kata kunci `"Kuzushi RunningHub koin"` → **ketemu** ✓ termasuk pesan yang barusan dikirim ✓).
+   - Baca sesi penuh / gulir: `session_search(session_id="20261009_082106_0c23340b", around_message_id=<id>)`.
+   - Di CLI: `hermes --resume 20261009_082106_0c23340b` · atau `hermes --continue` (sesi terakhir).
+2. **Lapisan yang SELALU aktif** (nggak perlu diminta): memori `MEMORY.md`/`USER.md` ✓ · 85 skill ✓ · 3 cron ✓ · file ini ✓.
+3. **Yang WAJIB dibaca sesi baru:** file ini **bagian 0** + `TEARDOWN-KUZUSHI-9OKT.md` · detail lain: `RUNNINGHUB-ANALISA-LENGKAP.md`.
+4. **Status RAM VPS (10 Okt):** zram zstd **1,1 G** aktif (swap total 3,1 G, prioritas 100 ✓) · journal di-cap 100 M disk / 64 M RAM ✓ · pemakan terbesar = **Hermes gateway 440 MB** (hilang kalau gateway di-restart ✓) · Telegram Desktop 118 MB (opsional) · Tencent agents ~90 MB (biarkan).
+
 ---
 
 ## 1. STATUS SEKARANG (8 Okt 2026, dini hari WIB)
