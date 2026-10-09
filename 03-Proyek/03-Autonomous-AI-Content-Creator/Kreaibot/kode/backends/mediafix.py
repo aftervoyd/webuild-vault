@@ -15,6 +15,37 @@ from pathlib import Path
 from .mock import ffmpeg_bin
 
 VIDEO_EXT = {".mp4", ".mov", ".mkv", ".webm"}
+IMAGE_EXT = {".png", ".jpg", ".jpeg", ".webp"}
+MEDIA_EXT = VIDEO_EXT | IMAGE_EXT
+
+
+def unwrap_media(path: Path | str) -> Path:
+    """Beberapa AI App mengemas hasil jadi ZIP (mis. app LTX-2.3 "…zip").
+
+    Deteksi header PK lalu ambil file media pertama di dalamnya.
+    """
+    p = Path(path)
+    try:
+        if not p.exists() or p.is_dir() or p.read_bytes()[:4] != b"PK\x03\x04":
+            return p
+    except Exception:                                        # noqa: BLE001
+        return p
+    import zipfile
+    try:
+        with zipfile.ZipFile(p) as z:
+            names = sorted(n for n in z.namelist()
+                           if Path(n).suffix.lower() in MEDIA_EXT and not n.startswith("__MACOSX"))
+            if not names:
+                return p
+            target = names[0]
+            out = p.with_name(f"{p.stem}__{Path(target).name}")
+            with z.open(target) as src, open(out, "wb") as dst:
+                dst.write(src.read())
+        if out.exists() and out.stat().st_size > 0:
+            return out
+    except Exception:                                        # noqa: BLE001
+        pass
+    return p
 
 
 def ffprobe_bin() -> str:

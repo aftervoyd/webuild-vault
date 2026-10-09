@@ -96,13 +96,20 @@ class RunningHubBackend:
             kind = "image"
 
         last_err: object = None
-        for path in ("/task/openapi/upload", "/task/openapi/fileUpload"):
+        for path in ("/openapi/v2/media/upload/binary", "/task/openapi/upload",
+                     "/task/openapi/fileUpload"):
             try:
                 data = aiohttp.FormData()
-                data.add_field("apiKey", self.upload_key)
-                data.add_field("fileType", kind)
-                data.add_field("file", p.read_bytes(), filename=p.name,
-                               content_type="application/octet-stream")
+                if path.startswith("/openapi/v2"):
+                    # API upload BARU (9 Okt): cuma butuh field `file` + header Bearer.
+                    # Endpoint lama /task/openapi/upload mulai ditolak ("ApiKey verification failed").
+                    data.add_field("file", p.read_bytes(), filename=p.name,
+                                   content_type="application/octet-stream")
+                else:
+                    data.add_field("apiKey", self.upload_key)
+                    data.add_field("fileType", kind)
+                    data.add_field("file", p.read_bytes(), filename=p.name,
+                                   content_type="application/octet-stream")
                 async with aiohttp.ClientSession(timeout=aiohttp.ClientTimeout(total=300)) as s:
                     async with s.post(f"{self.base}{path}", data=data,
                                       headers={"Authorization": f"Bearer {self.upload_key}"}) as r:
@@ -158,6 +165,14 @@ class RunningHubBackend:
                     d = int(os.getenv(f"RUNNINGHUB_DURATION_{req.feature_key.upper()}",
                                       os.getenv("RUNNINGHUB_DEFAULT_DURATION", "5")) or 5)
                 val = str(d)
+            elif val == "@frames":
+                # LTX-2.3: durasi dikontrol JUMLAH FRAME (native 24 fps). 5s → 120 frame.
+                d = getattr(req, "duration", 0) or 0
+                if not d:
+                    d = int(os.getenv(f"RUNNINGHUB_DURATION_{req.feature_key.upper()}",
+                                      os.getenv("RUNNINGHUB_DEFAULT_DURATION", "5")) or 5)
+                fps_native = int(os.getenv("RUNNINGHUB_FPS_NATIVE", "24") or 24)
+                val = str(int(d) * fps_native)
             elif val in ("@width", "@height"):
                 w, h = RATIO_SIZES.get(req.ratio.replace(" ", ""), (480, 832))
                 val = str(w if val == "@width" else h)

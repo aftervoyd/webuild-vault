@@ -185,6 +185,40 @@ Harga **$0,01/detik**, ada audio ambient, 9:16 native, 5–20 s. **TAPI submit d
 Rincian lengkap + daftar harga model lain: **`API-MODEL-RUNNINGHUB-9OKT.md`**.
 Catatan: `wan-2.6-image-to-video-flash` versi id pendek **$0,02/s** (separuh dari slug `alibaba/` yang gue tes).
 
+## 6d. GANTI MESIN i2v → LTX-2.3 JALUR KOIN (9 Okt 11:00) — INI JAWABAN "CELAH KUZUSHI"
+
+**Temuan kunci:** RunningHub punya DUA jalur bayar (halaman `vip-rights`):
+- **Plan A = RHCoins** → "for AI apps, workflows, and **open-source models** (Qwen, Wan, **Ltx**)"
+- Plan B = dompet USD → model **tertutup** (Kling, Sora, NanoBanana)
+
+Akun kita = **Personal, $89,9/tahun → 36.000 RHCoins + $1 per bulan** (koin kedaluwarsa tiap bulan).
+**1 RHCoin ≈ $0,00021 ≈ Rp3,4.** Jadi jalur koin itu **4–8× lebih murah** dari Model API dolar
+(LTX API $0,01/s = Rp810/5s, sedangkan app koin cuma ±45 koin = Rp152/5s). **Inilah cara Kuzushi jual murah.**
+
+**App baru terpasang:** `RUNNINGHUB_APP_I2V=2065707741691334658`
+("Ltx2.3图生视频带声音（极速）zip" = LTX 2.3 i2v + suara, jalur koin)
+Bindings: `345.image ← @photo1` · `304.text ← @prompt` · `301.value ← @frames`
+(`@frames` = durasi × 24 fps — token baru di `_bind()`).
+
+| | Wan2.2 app (lama) | **LTX-2.3 app (baru)** |
+|---|---|---|
+| fps | 16 | **24** |
+| audio | ❌ | **✅ AAC 48 kHz stereo** |
+| ukuran | 720×1280 | **768×1280** |
+| 5 s: waktu / koin | 263 s / 61 | **243 s / 45** |
+| 10 s: waktu / koin | 566 s / 112 | **343 s / 68** |
+| 10 s: harga koin (Rp) | ±Rp378 | **±Rp229** |
+
+→ Lebih murah, lebih cepat, fps benar, **ada suara**. Itu sekaligus mematikan masalah "slow motion + tanpa suara".
+
+**Perbaikan teknis pendukung (LIVE, selftest 79/79):**
+- `backends/mediafix.py`: `unwrap_media()` — hasil app kadang **ZIP**, otomatis diekstrak (terbukti di app ini).
+- **Upload API BARU:** `POST /openapi/v2/media/upload/binary` (field `file` + header Bearer).
+  Endpoint lama `/task/openapi/upload` mulai ditolak ("ApiKey verification failed") → sudah dipasang sebagai pilihan pertama.
+- `KREAIBOT_FPS=24` (interpolasi hanya jalan kalau hasil < 24 fps, jadi jalur LTX tidak kena biaya ekstra).
+
+**Belum dites:** durasi 15 s / 20 s (frame 360/480) — API LTX mendukung 5–20 s.
+
 ## 7. JANGAN DIULANG (sudah selesai — jangan dikerjakan lagi)
 
 - Analisa seluruh situs RunningHub (SELESAI — baca `RUNNINGHUB-ANALISA-LENGKAP.md`).
