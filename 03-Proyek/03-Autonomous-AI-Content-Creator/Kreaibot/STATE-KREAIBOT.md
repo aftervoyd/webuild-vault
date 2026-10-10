@@ -7,7 +7,26 @@
 
 ---
 
-## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 02:05 WIB (BACA INI DULU; bagian di bawah = riwayat)
+## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 12:45 WIB (BACA INI DULU; bagian di bawah = riwayat)
+
+### 🎬 SESI 10 Okt siang — workflow #2 "Food Photo Studio" (siap terbit, 1 klik user tersisa)
+- **Workflow #1 `qwen-consistency-edit` TERBIT** → https://www.runninghub.ai/post/2108638842228461570
+  (judul *Qwen Consistency Edit — Identity-Locked Photo Edit*, tag Consistent Characters + Background Swap + Image-to-Image, cover 1).
+- **Riset celah selesai** (`RUNNINGHUB-GAP-SCAN.md`): lane #1 (`一致性`) ternyata **paling rame = 2121 workflow** → #1 memang cuma aset starter, bukan jackpot.
+  Celah nyata: `一寸照片` **0**, `建筑表现` 0, `简历` 1, `菜单` 3, `模特换人` 5, `户型图` 9.
+- **Kandidat A dipilih user** (pembuat menu/poster UMKM) → diuji 6 run → **produk poster berteks DIBATALKAN**
+  (model selalu menambah teks sampah, nilai 3/10). **PIVOT ke produk yang terbukti: `food-photo-studio`**
+  (studio foto makanan/produk **bebas teks** untuk menu, listing ojol, katalog UMKM).
+- Workflow #2: workflowId **2108775873615863810** (tersimpan ✓, tervalidasi jalan **89 dtk / 18 koin**),
+  `workflows/food-photo-studio.json`, builder `tools/rh_build_food_wf.py`, 13 node **semua standar**
+  (input user = `CLIPTextEncode` node 6 `text`), 832×1216, 30 step, cfg 4.
+- Cover siap: `work/rh_covers/food_cover_final.jpg` (3:4 1080×1440, dinilai 7,5/10).
+- ⚠️ **TERSISA 1 LANGKAH USER**: publish di `/publish/2108775873615863810` — nama/deskripsi/cover sudah terisi
+  headless; yang perlu user: **pilih Tag**, **Tambah node input `CLIPTextEncode-text [6]`**, lalu Publikasikan → KONFIRMASI.
+- Hambatan lingkungan: **login web RH expired tiap ~10 menit** (IP datacenter) + editor ComfyUI bikin
+  browser daemon timeout (RAM server tipis) → pakai **Ctrl+S via CDP** & verifikasi save lewat `create task`.
+
+### Riwayat sesi sebelumnya
 
 ### 🏗️ SESI OTONOM 10 Okt 03:30 (lanjutan) — WORKFLOW PERTAMA SIAP TERBIT
 - ✅ **TERBIT 10 Okt 10:27 WIB** → https://www.runninghub.ai/post/2108638842228461570

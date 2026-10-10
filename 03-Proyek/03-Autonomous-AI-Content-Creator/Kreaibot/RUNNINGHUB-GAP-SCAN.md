@@ -70,3 +70,36 @@ wajar kalau run-nya tidak meledak. Ini aset starter, bukan jackpot. (Sudah dikor
 ## 5. Rekomendasi
 **A dulu** — satu-satunya kandidat yang memberi user **kontrol teks**, celahnya paling lebar,
 dan langsung nyambung ke bisnis user (UMKM). B & C menyusul sebagai app kedua/ketiga.
+
+---
+
+## 6. HASIL UJI-JALAN NYATA (10 Okt, 6 run) — apa yang benar-benar bisa dijual
+
+Workflow `food-photo-studio` (Qwen-Image text-to-image, node standar, Lightning dimatikan)
+diuji 6× dengan prompt berbeda. Biaya **13–31 koin/run**, 60–161 dtk. Temuan:
+
+| Uji | Konfigurasi | Hasil |
+|---|---|---|
+| 1 | Lightning 8-step, prompt poster berteks | Teks **berantakan/gibberish**, teks Latin salah eja → **tolak** |
+| 2 | 30 step cfg 4, poster berteks | Teks kebaca tapi "SPESIAL" jadi "SPECIAL", tipografi AI → 3/10 |
+| 3 | 40 step, minta ejaan persis | **Makin banyak teks sampah** (filler makin parah) → 3/10 |
+| 4 | 30 step, poster Mandarin | Headline 「招牌炒饭」 **SEMPURNA**, tapi teks sampah tambahan merata → 3/10 |
+| 5 | 30 step, preset gaya **anti-teks** | **BENAR-BENAR BEBAS TEKS** ✓, foto makanan 6/10 |
+| 6 | 45 step @1024×1536 | 6/10 juga — naik resolusi/step **tidak** menambah realisme, cuma nambah biaya |
+
+### Kesimpulan yang mengubah desain produk
+1. **Model SELALU menyisipkan teks sampah** kalau prompt mengarah ke "poster/menu/菜单".
+   → produk "pembuat poster berteks" **tidak layak jual** (3/10). Dibatalkan.
+2. **Preset gaya berisi "no text at all ... absolutely text-free" TERBUKTI efektif** → output nol teks.
+   → produk yang dijual = **studio foto makanan/produk bebas teks** (untuk menu, listing ojol, katalog UMKM).
+3. Realisme plafon di **6/10** (bagus untuk thumbnail/listings, belum kelas premium).
+   Naikkan hanya kalau ganti model dasar (mis. `FLUX.1-Turbo-8step`, `Z-Image-Turbo`) — belum diuji.
+4. **Semua node standar** → input teks user bisa di-expose via `CLIPTextEncode.text` (dibuktikan:
+   override `nodeInfoList` berhasil mengubah prompt dari API).
+
+### Workflow final
+`workflows/food-photo-studio.json` (13 node): UNETLoader `qwen_image_fp8_e4m3fn` → ModelSamplingAuraFlow(3.5)
+→ KSampler(30 step, cfg 4, euler/simple) · CLIPLoader `qwen_2.5_vl_7b_fp8` · VAELoader `qwen_image_vae` ·
+CLIPTextEncode gaya (dibake, anti-teks) + CLIPTextEncode user (node 6, **diekspos**) → ConditioningCombine
+→ positive; ConditioningZeroOut → negative · EmptySD3LatentImage 832×1216 · VAEDecode · SaveImage.
+workflowId **2108775873615863810** (tersimpan). Cover: `work/rh_covers/food_cover_final.jpg` (3:4, 7,5/10).
