@@ -9,7 +9,10 @@
 
 ## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 12:45 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
-### 🎬 SESI 10 Okt siang — workflow #2 "Food Photo Studio" (siap terbit, 1 klik user tersisa)
+### 🎬 SESI 10 Okt siang — workflow #2 "Food Photo Studio" (TERBIT ✓)
+- ✅ **TERBIT 10 Okt 12:43 WIB** → https://www.runninghub.ai/post/2108775873615863810
+  Judul: *Food Photo Studio: AI Dish & Product Photography* · tag `Product Shots` + `Text-to-Image` · cover 1 (CN) · live (HTTP 200).
+  ⚠️ Deskripsi yang tersimpan cuma berisi NAMA (deskripsi panjang ketimpa) → perlu diedit user lewat halaman publish.
 - **Workflow #1 `qwen-consistency-edit` TERBIT** → https://www.runninghub.ai/post/2108638842228461570
   (judul *Qwen Consistency Edit — Identity-Locked Photo Edit*, tag Consistent Characters + Background Swap + Image-to-Image, cover 1).
 - **Riset celah selesai** (`RUNNINGHUB-GAP-SCAN.md`): lane #1 (`一致性`) ternyata **paling rame = 2121 workflow** → #1 memang cuma aset starter, bukan jackpot.
