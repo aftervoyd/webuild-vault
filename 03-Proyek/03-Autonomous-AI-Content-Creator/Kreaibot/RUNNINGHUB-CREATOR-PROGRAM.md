@@ -12,8 +12,19 @@
 | Struktur | valid — validasi server: `node_errors: {}` |
 | Sudah di-**Save** | ✅ (editor → tombol Save → "Workflow has been saved.") |
 | Sudah di-**jalankan** | ✅ task `2108639276355883009` selesai **73,7 dtk**, output PNG 848×1280 |
-| Publikasi | ⬜ **belum** — tersisa aksi UI 1-klik (lihat §5) |
-| Penghasilan | `runninghub.ai/my-income` masih $0,00 |
+| Publikasi | ✅ **TERBIT 10 Okt 2026** (10:27 WIB) — live di `/post/2108638842228461570`, judul: *Qwen Consistency Edit — Identity-Locked Photo Edit* |
+| Tag terpasang | `Consistent Characters` · `Image-to-Image` · `Background Swap` |
+| Cover | 1 (CN) |
+| Penghasilan | `runninghub.ai/my-income` masih $0,00 (stats: run 0, view 0) |
+
+> **PELAJARAN PENTING (desain workflow berikutnya):** RunningHub **TIDAK mengekspos field widget
+> node CUSTOM** sebagai input user. Daftar "tambah node input" cuma memuat widget node standar
+> (UNETLoader, LoraLoaderModelOnly, CLIPLoader, VAELoader, LoadImage, KSampler…). Field `prompt` di
+> node custom `Easy_QwenEdit2509` **tidak muncul** → instruksi teks user tidak bisa dijadikan input
+> lewat node itu. Untuk workflow #2: kalau input teks user dibutuhkan, pakai node standar
+> (mis. `CLIPTextEncode`) atau jadikan app "one-click" dengan prompt di-bake.
+>
+> **Tag WAJIB** — submit tanpa tag → modal `Pilih setidaknya satu tag`, metadata tidak tersimpan.
 
 ## 1. APA ITU PROGRAM INI (aturan resmi)
 - Bayaran dari: **① jumlah run** (termasuk panggilan API) · **② favorit** · **③ orisinalitas**.

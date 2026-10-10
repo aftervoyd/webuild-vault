@@ -10,9 +10,13 @@
 ## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 02:05 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
 ### 🏗️ SESI OTONOM 10 Okt 03:30 (lanjutan) — WORKFLOW PERTAMA SIAP TERBIT
-- **Workflow orisinal dibuat & JALAN**: `qwen-consistency-edit` (11 node: Qwen-Image-Edit-2511 + Lightning 4-step + consistency LoRA). workflowId RH **2108638842228461570**.
+- ✅ **TERBIT 10 Okt 10:27 WIB** → https://www.runninghub.ai/post/2108638842228461570
+  Judul: *Qwen Consistency Edit — Identity-Locked Photo Edit* · tag: Consistent Characters,
+  Background Swap, Image-to-Image · cover 1 (CN). Metadata lengkap (desc + cover + tag).
 - Alur terbukti: export contoh publik (tanpa login) → rakit JSON → **import** ke `/workspace` via CDP `setFileInputFiles` → **Save** di editor (wajib! kalau tidak: error `810 WORKFLOW_NOT_SAVED_OR_NOT_RUNNING`) → **run via API**: task `2108639276355883009` ✅ **73,7 dtk**, output PNG 848×1280. Validasi server `node_errors: {}`.
-- **Publish: tersisa 1 aksi UI** (route `/PublishView` tidak bisa dibuka via URL; harus dipicu dari editor). Endpoint terpetakan: `POST /api/workflow/publish` (publishType 1=workflow, 2=AI app), butuh cover+tags+deskripsi. Resep lengkap: **`RUNNINGHUB-CREATOR-PROGRAM.md`**.
+- **Route publish = `/publish/<workflowId>`** (bukan `/PublishView` — itu cuma nama komponen internal).
+- **Blocker yang perlu user**: (a) **Tag WAJIB**; (b) picker tag `rh-select-tag` **tidak render dropdown di headless** → harus diklik user; (c) **field widget node CUSTOM tidak bisa di-expose** sebagai input user (yg muncul cuma node standar) → desain workflow #2 harus pakai node standar untuk input teks.
+- Referensi taksonomi tag: **`RUNNINGHUB-TAGS.md`**. Resep publish lengkap: **`RUNNINGHUB-CREATOR-PROGRAM.md`**.
 - Jebakan tercatat: `widgets_values` wajib ada; jangan tulis `link:null` di input widget; link harus tercatat dua sisi.
 - ⚠️ **Free window spesifik MODEL** — run uji Qwen di "jam gratis" tetap kena **±632 koin** (27.912→27.280).
 - Kode: `cf3fabf` · vault `4850b3c`.
