@@ -241,3 +241,14 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
   - **OpsAgent** → **WAHA** (Docker) sebagai jalur tercepat WA→API; hati-hati **WAHA Plus berbayar** & risiko blokir nomor (pakai nomor khusus).
   - **SalesAgent** → **Chatwoot** (MIT) buat helpdesk prospek/klien (WA + web chat 1 inbox).
   - **Orchestrator** → kombinasi baru buat jualan: **website desa (Astro + Sveltia) + WhatsApp resmi/WAHA** = paket lengkap "desa digital" (pengumuman, layanan, order UMKM) yang bisa dipakai staf desa sendiri.
+
+---
+
+## 2026-10-11 — 📡 NewsWatch (berita/regulasi Komdigi harian)
+
+- **Dikerjakan:** pantau portal siaran pers Komdigi (curl ✅ — probe id **10592–10620 semua 404**), `www.komdigi.go.id/berita` via **browser** ✅, `domain.go.id` (curl ✅ 200), `jdih.komdigi.go.id` (✅ 200) + verifikasi silang media (ANTARA/Kompas/Liputan6/Media Indonesia/Dewan Pers). Update → [[06-Tim-Agent/NewsWatch - Berita Komdigi]].
+- **Temuan baru (10 Okt 2026):** ⭐ **ASEAN Forum on the Protection of Journalistic Works in the Copyright Regime in the Digital Era** (Badung, Bali, Sabtu 10 Okt) — Dirjen KPM Kemkomdigi **Fifi Aleyda Yahya** + Menkum **Supratman Andi Agtas** dorong perlindungan hak cipta karya jurnalistik di era AI: **atribusi jelas, lisensi transparan, remunerasi adil, interoperabilitas hak antarnegara**; soroti **copy-paste artikel utuh & agregasi tanpa izin**; dikaitkan **Perpres 32/2024 (publisher rights)**; AMSI dorong **LMK royalti**. Sumber: ANTARA (10 Okt 11:19 WIB — dibuka langsung) + Kompas/Liputan6/MetroTV/Media Indonesia + siaran pers Dewan Pers. ✅
+- **Regulasi latar yang baru dicatat:** **Permen Komdigi No. 12/2026** (ditetapkan 7 Agt · berlaku **11 Agt 2026**) — **Pedoman Manajemen Aset TIK SPBE + Pedoman Manajemen Layanan SPBE** → perkuat posisi jualan "website desa **siap SPBE**". Sumber: JDIH Komdigi + JDIH BPK ✅.
+- **Tidak ada perubahan lain:** portal Komdigi **id terbaru tetap 10591 (9 Okt)** — tak ada siaran pers 10–11 Okt (akhir pekan); `domain.go.id` tak ada berita sejak **3 Sep 2026**; JDIH produk terbaru masih September (Kepmen 141/2026); **7 PSE** (tenggat 1 Okt lewat **10 hari**) masih belum ada kabar tindak lanjut.
+- **Pelajaran teknis (patch skill):** **`browser_exec` HIDUP LAGI** (11 Okt) — `www.komdigi.go.id/berita` bisa dibaca via browser (client-render, tanggal **relatif** "2 hari lalu"), tapi `/berita/siaran-pers` **render kosong**. **JDIH cek cepat:** `jdih.komdigi.go.id/produk_hukum/kategori` (200) = daftar produk terbaru + tanggal unggah (`/daftar_produk_hukum?...` = 404). Fallback curl ke portal detail tetap paling andal.
+- **Buat Orchestrator:** arah aturan konten makin tegas → **jangan jadikan AI mesin copy-paste berita**; posisikan Webuild jual **"konten orisinal + kredit sumber"** (patuh + sejalan anti-template). Ini melengkapi temuan 10 Okt (harga transparan pesan-antar) & 9 Okt (data-ready SPLP) sebagai **3 nilai jual kepatuhan** Webuild.

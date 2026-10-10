@@ -4,7 +4,30 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-10** (run harian · cakupan 7–9 Okt 2026)
+**Update terakhir: 2026-10-11** (run harian · cakupan 10–11 Okt 2026)
+
+---
+
+## 🆕 Update 2026-10-11 (run harian — cakupan 10–11 Okt 2026)
+
+> Cek sumber resmi 11 Okt 07:00 CST: portal detail `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` via **curl** → **id terbaru TETAP 10591 (9 Okt)**; probe **10592–10620 semua 404** → **tidak ada siaran pers baru** dari portal (10–11 Okt = akhir pekan). `www.komdigi.go.id/berita` dibuka via **browser** (⚠️ browser **HIDUP lagi** hari ini) → item terbaru tertulis **"2 hari lalu"** = 9 Okt. `domain.go.id` **200** (terbaru masih **3 Sep 2026**). `jdih.komdigi.go.id` **200** (produk terbaru masih September 2026). Tidak ada perubahan regulasi baru di Indonesia pada 10–11 Okt.
+
+### 10. 📰 ASEAN Forum di Bali — Komdigi dorong **perlindungan hak cipta karya jurnalistik di era AI** — 10 Okt 2026 ⭐ BARU
+- **Apa yang berubah:** Sabtu **10 Okt 2026**, di Badung (Bali) digelar **"ASEAN Forum on the Protection of Journalistic Works in the Copyright Regime in the Digital Era"**. Dirjen Komunikasi Publik & Media Kemkomdigi **Fifi Aleyda Yahya** menegaskan perlindungan karya jurnalistik perlu **atribusi yang jelas + mekanisme lisensi yang transparan + iktikad baik**; platform digital & sistem AI diminta **menghargai hak jurnalis dan organisasi media**. Menkum **Supratman Andi Agtas** menyoroti **agregasi konten & copy-paste artikel utuh tanpa izin** sebagai tantangan paling mendesak. Indonesia mendorong **3 hal tingkat ASEAN**: (1) **transparansi penggunaan karya** (termasuk saat dipakai melatih AI), (2) **remunerasi adil & proporsional**, (3) **interoperabilitas sistem pengelolaan hak lintas negara**. Dikaitkan dengan **Perpres 32/2024 (publisher rights)**; juga dibahas **wacana revisi UU Hak Cipta** + mekanisme royalti ketika platform AI memakai berita. Hadir pula Ketua Dewan Pers **Komaruddin Hidayat** dan Ketua AMSI **Wahyu Dhyatmika** (mendorong pembentukan **Lembaga Manajemen Kolektif/LMK** pengelola royalti karya jurnalistik). Catatan: **pemegang hak ekonomi = perusahaan media**, jadi jurnalis belum otomatis dapat bagian.
+- **Status dokumen:** ini **forum + pernyataan kebijakan**, **BUKAN peraturan baru** — belum ada draf pasal resmi. ⚠️ **Revisi UU Hak Cipta & mekanisme royalti masih wacana → perlu verifikasi.**
+- Sumber: **ANTARA** (Sabtu, 10 Okt 2026 11:19 WIB — artikel dibuka langsung, ✅) + **Kompas** (10 Okt), Liputan6, MetroTV, Media Indonesia, Times Indonesia, **Siaran Pers Dewan Pers 10 Okt**. ✅ terverifikasi (≥4 media + siaran pers Dewan Pers).
+- **➡️ Dampak ke Webuild (rendah–sedang — tapi langsung ke cara kita bikin konten):**
+  - **Arah aturan makin jelas: jangan copy-paste artikel utuh.** Kalau kita bikin konten klien dengan bantuan AI → wajib **atribusi sumber + tulis ulang orisinal**, bukan "AI tulis ulang berita orang" mentah-mentah. Ini sejalan dengan posisi Webuild **anti-template**.
+  - **Nilai jual:** tawarkan paket **"konten orisinal + kredit sumber"** (berita desa/UMKM ditulis sendiri, bukan jiplak media) — aman hukum + lebih dipercaya.
+  - **Hati-hati kalau bikin fitur agregasi** (mis. "kabar sekitar desa" yang menarik berita media lain): pakai **kutipan terbatas + link sumber**, **jangan** reproduksi penuh.
+  - **Kontrak klien:** cantumkan klausul bahwa konten berita pihak ketiga butuh izin; Webuild menyediakan penulisan orisinal.
+
+### 📌 Status lain (per 11 Okt 2026)
+- **Domain (`domain.go.id`):** **tetap tak ada berita baru sejak 3 Sep 2026** (diverifikasi ulang 11 Okt via curl 200).
+- **7 PSE lingkup privat:** tenggat **1 Okt 2026** sudah lewat **10 hari** — **masih belum ada pengumuman resmi** tindak lanjut (teguran berjenjang/pemutusan akses). Yang terakhir tercatat: surat peringatan 27 Sep + rencana teguran berjenjang (Dirjen Alexander Sabar, 28 Sep). ⚠️ **pantau terus.**
+- **Portal Komdigi:** id terbaru masih **10591 (9 Okt)** → **tidak ada siaran pers 10–11 Okt** (akhir pekan). Ini **bukan** tanda ada yang terlewat — sudah dicek 10592–10620 (semua 404).
+- **UU Satu Data Indonesia:** belum ada berita baru soal PP turunan / Penyelenggara SDI (masih sebatas catatan 6–7 Okt).
+- **JDIH:** produk hukum **terbaru yang diunggah masih September 2026** (Kepmen 141/2026 tgl 9 Sep; SE 4/2026) → **belum ada Permen baru di Oktober 2026**.
 
 ---
 
@@ -113,11 +136,15 @@
 - **PP 33/2026** — Peraturan Pelaksanaan **UU 27/2022 (PDP)**, ditetapkan/diundangkan **16 Juli 2026**, **225 pasal**: memperjelas kewajiban **pengendali & prosesor data**, keamanan data, transfer lintas negara, sanksi administratif. Sumber hukumonline menyebut **berlaku mulai 16 Januari 2027**. ⚠️ *perlu verifikasi tanggal berlaku pasti*.
 - **Permen Komdigi No. 9/2026** (6 Mar 2026) — pelaksanaan **PP 17/2025 (PP TUNAS)**: perlindungan anak di **platform digital**; **menunda akses akun anak <16 tahun** pada platform berisiko tinggi (medsos/jejaring); tahap awal mulai **28 Mar 2026**. → *Dampak Webuild:* kalau website desa/klien punya **akun pengguna/komentar/forum**, perlu ditinjau kewajiban perlindungan anak. Situs profil desa biasa umumnya bukan "platform berisiko tinggi".
 - **Permen Komdigi No. 5/2025** — PSE Lingkup Publik (dasar pendaftaran domain instansi & `.desa.id`).
+- **Permen Komdigi No. 12/2026** — **Pedoman Manajemen Aset TIK SPBE** + **Pedoman Manajemen Layanan SPBE** (ditetapkan **7 Agt 2026**, diundangkan & **berlaku 11 Agt 2026**, BN 2026/556, 71 hlm). Sumber: JDIH Komdigi + JDIH BPK. ✅ *Dampak Webuild:* standar pengelolaan **aset & layanan TIK pemerintah** → perkuat posisi jualan "website desa **siap SPBE**" (inventarisasi aset/aplikasi, dokumentasi layanan, keamanan), bukan sekadar situs.
 - Konteks non-Komdigi: **Permen PU 5/2026** soal SPBE (tata kelola/audit TIK) — indikasi tren penguatan SPBE & moratorium aplikasi sektoral + pemusatan ke **PDN**.
 
 ---
 
 ## 🔧 Catatan teknis pemantauan (buat run berikutnya)
+
+- ✅ **11 Okt 2026: `browser_exec` HIDUP LAGI** (9 Okt sempat mati — Chromium belum ter-install saat itu). `www.komdigi.go.id/berita` bisa dibaca via browser (client-render) → listing menampilkan **tanggal relatif** ("2 hari lalu") yang cukup untuk tahu item terbaru. **TAPI** `www.komdigi.go.id/berita/siaran-pers` di browser **render kosong** (cuma footer) → jangan andalkan halaman itu; pakai `/berita`.
+- **JDIH cara cepat cek peraturan baru:** `https://jdih.komdigi.go.id/produk_hukum/kategori` (**200**) menampilkan daftar produk terbaru + **tanggal unggah** (dan jumlah per jenis: Permen 23, Pedoman Menteri 20, dst). Detail: `/produk_hukum/view/id/<id>/t/<slug>` (200). ❌ `/daftar_produk_hukum?tahun=2026` = **404**. Per 11 Okt 2026 produk terbaru masih September (Kepmen 141/2026, 9 Sep).
 
 - `www.komdigi.go.id` & `djkpm.komdigi.go.id` **balas HTTP 403** ke `curl` (WAF).
 - ⚠️ **9 Okt 2026: `browser_exec` GAGAL** — "The local browser could not be started ... Run `hermes tools` → Browser Automation to (re)install Chromium" (Chromium belum ter-install di profil ini). **Fallback yang berhasil hari ini:** `curl` untuk **halaman detail** `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` (HTTP **200**, isi teks artikel ada di HTML — tak perlu browser) + `jdih.komdigi.go.id` (200) + `domain.go.id` (200).
@@ -131,6 +158,8 @@
 ---
 
 ## 🗒️ Ringkasan 1 baris buat Orchestrator
+> **11 Okt 2026:** ⭐ BARU — **ASEAN Forum (Badung, Bali, 10 Okt)**: Komdigi (Dirjen KPM Fifi Aleyda Yahya) + Menkum Supratman dorong **perlindungan hak cipta karya jurnalistik di era AI** → **atribusi jelas, lisensi transparan, remunerasi adil, interoperabilitas hak antarnegara**; menyorot **copy-paste artikel utuh & agregasi tanpa izin**; dikaitkan **Perpres 32/2024 (publisher rights)**; **revisi UU Hak Cipta + royalti/LMK masih wacana** (belum peraturan). → **Dampak Webuild:** konten klien wajib **orisinal + kredit sumber** (jangan pakai AI sebagai mesin copy-paste berita) = patuh + nilai jual "konten orisinal" (nyambung ke posisi anti-template). Catatan baru: **Permen Komdigi 12/2026** (pedoman manajemen aset & layanan **SPBE**, berlaku 11 Agt 2026) → perkuat posisi "website desa **siap SPBE**". Tidak ada siaran pers portal baru — **id terbaru tetap 10591 (9 Okt)**, 10592–10620 = 404 (akhir pekan); `domain.go.id` tak ada berita sejak **3 Sep**; **7 PSE (tenggat 1 Okt, lewat 10 hari) masih belum ada kabar**. Browser hidup lagi (fallback curl tetap jalan).
+>
 > **10 Okt 2026:** ⭐ BARU — Komdigi siapkan **Permen transparansi harga layanan antar barang & makanan** (turunan **Perpres 27/2026 "Perpres Ojol"**, Pasal 11(4)) → **harga ongkir/biaya platform wajib transparan + jaminan pengemudi**; **langsung relevan ke segmen UMKM & rencana "kurir/toko lokal desa"** (fitur rincian biaya transparan = patuh + nilai jual). Konteks: **Portal Perlinsos Bali 652.858 KK (50,52%) terhubung via SPLP** → makin penting "data desa rapi", tapi **SPLP tetap TERTUTUP** (jangan klaim konek langsung). Domain `.desa.id`: belum ada berita baru sejak 3 Sep. 7 PSE (tenggat 1 Okt) belum ada kabar.
 >
 > **9 Okt 2026 (sebelumnya):** **UU Satu Data Indonesia sah (6 Okt 2026, 141 pasal)** → data desa jadi fondasi; **website/SID desa "siap SDI"** = peluang jualan baru Webuild. Komdigi perjelas perannya (**7 Okt**): integrasi lewat **SPLP — tapi SPLP jaringan TERTUTUP**, jadi jangan janji "connect langsung"; posisikan data-ready + aman (lapor insiden ≤24 jam). Plus Komdigi gencar tindak data pribadi ilegal → PDP jadi nilai jual kepercayaan.
