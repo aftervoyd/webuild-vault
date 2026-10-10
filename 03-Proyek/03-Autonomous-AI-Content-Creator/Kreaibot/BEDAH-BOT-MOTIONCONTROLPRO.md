@@ -150,9 +150,29 @@ Lanjut proses generate sekarang?
 [✅ Mulai Generate]  [❌ Batal]
 ```
 
-**Langkah 5 — generate + kirim hasil** (belum terekam; perlu 1 tap manual)
+**Langkah 5 — HASIL (terekam)**
+Bot mengirim **video hasil** dengan caption:
+```
+✅ Motion control selesai!
+```
+- Waktu: konfirmasi 1:41 PM → hasil **1:56 PM** (≈15 menit; **TIDAK ada pesan "sedang diproses"/antrean** —
+  bot diam lalu kirim hasil. Ini celah UX yang bisa dikalahkan bot tiruan.)
+- File: **1920×1072 (16:9)**, durasi **3,77 dtk**, h264 + **AAC audio**, 1,6 MB (113 frame video, 163 frame audio)
+- Diverifikasi: antar-frame beda **32–47** → gerakan nyata (bukan gambar diam); frame-0 vs foto input beda **70** → benar-benar di-render ulang
+- Output menyertakan **audio track** (mewarisi audio dari video referensi) → konsisten dengan pipeline
+  motion-transfer ber-audio (Wan ATI / Wan Animate / Kling Motion Control)
+- **Saldo: 16 → 15 credit = tepat 1 credit** sesuai label model ✓
+- File bukti disimpan: `work/rh_bot_probe/mc_output_16-9.mp4` + `fr_0.png`, `fr_3.5.png`
 
-### 🔥 JEBAKAN TEKNIS YANG DITEMUKAN (wajib ditiru kalau bikin bot sendiri)
+### 📌 Ringkasan ekonomi fitur Motion Control (data nyata)
+| Item | Nilai |
+|---|---|
+| Harga jual | 1 credit = **Rp455–833** |
+| Output | 1920×1072, ~3,8 dtk, ada audio |
+| Waktu proses | beberapa menit s/d ~15 menit, **tanpa progress bar** |
+| Peluang bot tiruan | (a) tampilkan status antrean + ETA, (b) output rasio 9:16 juga, (c) durasi lebih panjang |
+
+## 11. JEBAKAN TEKNIS (wajib ditiru kalau bikin bot sendiri)
 1. **Video referensi HARUS video asli (punya audio track).** mp4 senyap 4 detik dikirim Telegram
    sebagai **animasi/GIF** (`message.animation`) → **bot DIAM TOTAL** (tidak merespons). Setelah
    ditambah audio AAC senyap (`anullsrc`), langsung diproses. Artinya handler bot cek `message.video`,
@@ -165,7 +185,7 @@ Lanjut proses generate sekarang?
 6. Ada kartu data user (`Motion Control Bot · Data Keterangan · Username · Status AKTIF`) — indikasi
    panel admin di dalam bot.
 
-## 11. CATATAN TEKNIS SESI (biar tidak mengulang kerja)
+## 12. CATATAN TEKNIS SESI (biar tidak mengulang kerja)
 - Telegram Desktop di VPS: akun **sudah login di tdata** → TIDAK perlu QR. Launch:
   `Xvfb :99` → `openbox` → `DISPLAY=:99 DBUS_SESSION_BUS_ADDRESS=disabled: LIBGL_ALWAYS_SOFTWARE=1 /opt/telegram/Telegram`
 - **Input ke Qt WAJIB XTEST**: `xdotool windowactivate` + `xdotool key/type` **TANPA** flag `--window`
