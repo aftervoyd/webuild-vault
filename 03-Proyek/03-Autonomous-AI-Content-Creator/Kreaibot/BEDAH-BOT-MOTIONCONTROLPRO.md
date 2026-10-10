@@ -110,7 +110,62 @@ Arsitektur: `aiogram (Telegram) → worker → RunningHub API → kirim video ba
 6. **Chat list Telegram Desktop** (tempat evidence kalau perlu): bot berbalas cepat, jadi ubah `send.py`
    untuk menyadap balasan bot saat debugging.
 
-## 10. CATATAN TEKNIS SESI (biar tidak mengulang kerja)
+## 10. ALUR MOTION CONTROL — TERVERIFIKASI LANGKAH DEMI LANGKAH (10 Okt, saldo 16 credit)
+Semua di bawah ini hasil jalan nyata di bot (bukan dugaan):
+
+**Langkah 0** — tombol reply-keyboard `🎬 Generate Motion Control`
+
+**Langkah 1 — pilih model**
+```
+🎬 Generate Motion Control
+Saldo credit kamu: 16
+Pilih model yang mau dipakai:
+[⚡ Standard S1 (1 credit)] [🚀 Standard Fast (1 credit)]
+[🖥️ MC 16:9 (landscape) (1 credit)]
+[⚡ Standard HD (1.5 credit)] [💎 Pro (2 credit)]
+[❌ Batal]
+```
+
+**Langkah 2 — minta foto karakter**
+```
+✅ Model: 🖥️ MC 16:9 (landscape) (1 credit)
+
+Sekarang kirim foto Karakter.
+
+Ketik /batal untuk membatalkan.
+```
+
+**Langkah 3 — minta video referensi gerakan**
+```
+✅ Foto diterima.
+
+Sekarang kirim video referensi, atau kirim link TikTok (bot akan download otomatis).
+```
+
+**Langkah 4 — konfirmasi (credit BELUM dipotong sampai di sini)**
+```
+✅ Foto & video sudah siap.
+Model: 🖥️ MC 16:9 (landscape) (1 credit)
+Lanjut proses generate sekarang?
+[✅ Mulai Generate]  [❌ Batal]
+```
+
+**Langkah 5 — generate + kirim hasil** (belum terekam; perlu 1 tap manual)
+
+### 🔥 JEBAKAN TEKNIS YANG DITEMUKAN (wajib ditiru kalau bikin bot sendiri)
+1. **Video referensi HARUS video asli (punya audio track).** mp4 senyap 4 detik dikirim Telegram
+   sebagai **animasi/GIF** (`message.animation`) → **bot DIAM TOTAL** (tidak merespons). Setelah
+   ditambah audio AAC senyap (`anullsrc`), langsung diproses. Artinya handler bot cek `message.video`,
+   bukan `message.animation`. → Di bot tiruan: **tolak animasi**, atau konversi sendiri.
+2. **Bot menerima LINK TikTok dan mengunduh videonya sendiri** — ini fitur UX terkuatnya:
+   user cukup paste link (tidak perlu simpan video). Perlu implementasi downloader di bot tiruan.
+3. Command batal = **`/batal`**; ada juga tombol `❌ Batal`.
+4. Credit **hanya** dipotong di langkah 4 (setelah ada foto + video), bukan saat pilih model.
+5. Bot **mem-pause alur generate saat saldo 0** dan mendorong top-up.
+6. Ada kartu data user (`Motion Control Bot · Data Keterangan · Username · Status AKTIF`) — indikasi
+   panel admin di dalam bot.
+
+## 11. CATATAN TEKNIS SESI (biar tidak mengulang kerja)
 - Telegram Desktop di VPS: akun **sudah login di tdata** → TIDAK perlu QR. Launch:
   `Xvfb :99` → `openbox` → `DISPLAY=:99 DBUS_SESSION_BUS_ADDRESS=disabled: LIBGL_ALWAYS_SOFTWARE=1 /opt/telegram/Telegram`
 - **Input ke Qt WAJIB XTEST**: `xdotool windowactivate` + `xdotool key/type` **TANPA** flag `--window`
