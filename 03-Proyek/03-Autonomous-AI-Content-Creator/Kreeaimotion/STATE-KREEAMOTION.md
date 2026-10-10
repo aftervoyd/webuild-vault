@@ -40,9 +40,12 @@
 - **Suara selalu ada**: audio referensi dipertahankan + `ensure_audio()` sebagai jaring pengaman
   (hasil bisu ≤ -60 dB → ditempel audio referensi). Terbukti pada file user sendiri.
 - **Durasi tidak terpotong**: cap frame diatur di NODE WORKFLOW (`frame_load_cap`), bukan di kode.
-- **Link**: TikTok (selalu OK) · Instagram (4/4 reel) · **Facebook publik 5/6 = 83%** ·
+- **Link**: TikTok (selalu OK — **kalau dibatasi usia/audiens otomatis lewat jalur cadangan API tikwm**,
+  user tidak perlu login) · Instagram (4/4 reel) · **Facebook publik 5/6 = 83%** ·
   **Facebook terkunci = ~100% setelah cookie** · YouTube/X/Threads/Douyin.
   Format FB `/share/r/...` juga jalan. Rantai penuh dari link FB terbukti sampai hasil jadi.
+- **Pesan error WAJIB sesuai situsnya**: pernah kejadian user kirim link TikTok tapi pesannya
+  menyebut Facebook (template lama) → sudah dibetulkan jadi sadar-situs (`friendly_error(msg, url)`).
 - **Hasil**: 464×832 · 16 fps · **orientasi mengikuti video referensi** (menu 16:9/9:16 dibuang) · 2–13 MB.
 - **Audio FB bisa pelan** (mis. -16,7 dB) → diteruskan apa adanya (bukan bug).
 
