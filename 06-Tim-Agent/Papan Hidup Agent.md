@@ -296,3 +296,15 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
   - **OpsAgent** → **Headroom** (hemat token) + **codebase-memory-mcp** (agen paham repo tanpa baca file satu-satu) + **FastMCP** (expose vault/kanban jadi MCP).
   - **VoiceAgent** → **sherpa-onnx** buat STT/TTS offline CPU; **Pipecat** buat rangkai agen suara; jalur desa: pesan suara WA → STT → agen → TTS → balas via WAHA.
   - **SalesAgent/ContentWriter** → **Marketingskills** (MIT) buat materi jualan desa/UMKM.
+
+---
+
+## 2026-10-12 — 📡 NewsWatch (berita/regulasi Komdigi harian)
+
+- **Dikerjakan:** pantau portal siaran pers Komdigi (curl ✅ — probe id **10592–10625 (34 id) semua 404**), `www.komdigi.go.id/berita` via **browser** ✅ (browser HIDUP), `domain.go.id` (curl ✅ 200), `jdih.komdigi.go.id/produk_hukum/kategori` (✅ 200) + verifikasi silang media. Update → [[06-Tim-Agent/NewsWatch - Berita Komdigi]].
+- **Hasil run: TIDAK ada regulasi/berita Komdigi baru (11–12 Okt 2026).** Portal Komdigi **id terbaru tetap 10591 (9 Okt)**; `domain.go.id` tak ada berita sejak **3 Sep 2026**; JDIH produk terbaru masih **September 2026**. Browser menampilkan item terbaru **"3 hari lalu"** (= 9 Okt) → konsisten tidak ada konten setelah 9 Okt.
+- **Backfill yang dicatat hari ini (bukan berita baru):** angka detail **evaluasi 6 bulan PP TUNAS** (siaran pers portal **10583**, **Rabu 7 Okt 2026 – 22:20**) — TikTok menonaktifkan **±9 juta** akun <16 th (naik dari >4 juta); Meta memblokir **±85 ribu** akun IG + **±99 ribu** akun FB, **±22,5 juta** akun anak dialihkan ke **Teen Account**; **Instagram & Facebook masih dikategorikan berisiko tinggi**; **AI dinilai risiko baru** dalam pelindungan anak. ✅ terverifikasi ke portal.
+- **Pelajaran baru (2, dipatch ke skill):**
+  1. ⚠️ **Blog agregator/AI memalsukan kesan "baru"** — `technomonsta.com` menulis "Komdigi tegur 25 PSE (10 Okt 2026)", padahal itu **berita 16–17 Sep 2026** (portal **10548**). **Aturan: klaim dari blog wajib dipadankan dulu ke portal/media kredibel bertanggal sama; kalau tidak ada → tandai ⚠️ perlu verifikasi.**
+  2. **Item di carousel `www.komdigi.go.id/berita` tidak otomatis baru** (mis. "Enam Bulan Implementasi PP TUNAS" ternyata **id 10583, 7 Okt**) → **selalu `curl` id-nya & baca tanggal di badan HTML** sebelum dicatat.
+- **Buat Orchestrator:** tidak ada aksi baru dari regulasi hari ini. Yang perlu dipegang: (a) **7 PSE tenggat 1 Okt sudah lewat 11 hari** dan masih belum ada pengumuman sanksi → begitu keluar, ini contoh nyata "kompetitor/pihak lain kena tindak" yang bisa jadi bahan edukasi klien; (b) untuk fitur interaksi situs klien (komentar/akun warga), desain **minim data pribadi** sekaligus aman PP TUNAS + PDP.
