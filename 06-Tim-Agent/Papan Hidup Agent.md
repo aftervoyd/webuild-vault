@@ -272,3 +272,27 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
   6. **Repo vault `webuild-vault` masih PUBLIK** — flip ke private? (isinya journal tim + strategi bisnis terbuka).
 - **Ekosistem Kreea.ai:** cron `default` — **`Orchestrator Digest Harian`** sedang jalan (exec 0098488c, ini dia) · **`RunningHub — cek koin & scan kontes`** sedang jalan juga (08:00, exec 29f784c8) · `Self-learning skill pass` ✅ ok (03:02). Profil `kreaibot` **tak punya cron terdaftar** (dicatat, bukan masalah).
 - **Pelajaran:** `hermes kanban --board webuild list` = cara lihat papan tim (bukan `kanban list --board`); status antar-bot cukup dari `cron list` per profil sekali lihat — `Last run: ok` + `Dispatch: on time` langsung kelihatan, tak perlu nebak. Cek sinkron vault = `git status -sb` (harus `...origin/main` tanpa ahead/behind).
+
+---
+
+## 2026-10-12 — 🔍 RepoScout (rotasi: agent skills/MCP + STT & voice agent)
+
+- **Dikerjakan:** 2 topik yang **belum ada** di katalog → (A) **ekosistem agent skills + MCP + kompresi konteks**, (B) **STT & voice agent realtime** (sudut baru dari TTS 10-08). Semua kandidat diverifikasi metadata + lisensi + rasio watchers via `gh api repos/O/R`. Update → [[06-Tim-Agent/RepoScout - Katalog Repo]].
+- **Temuan A (agent skills/MCP):**
+  - ⭐ **Superpowers** `obra/superpowers` — **297.655⭐ MIT** — framework metodologi + skill komposabel (spec → rencana → *subagent-driven* TDD) dan **README-nya punya bagian instalasi untuk Hermes Agent** → nol porting, paling pas dgn cara kerja kita.
+  - **Headroom** `headroomlabs-ai/headroom` — 75.065⭐ **Apache-2.0** — kompresi konteks agen (contoh README: 55.957 → 24.340 token) → hemat token & RAM VPS (kita ketat memori).
+  - **codebase-memory-mcp** `DeusData/codebase-memory-mcp` — 46.369⭐ **MIT**, native C tanpa runtime, index 162 bahasa → knowledge graph, **klaim 10× lebih hemat token** vs baca file satu-satu (arXiv:2603.27277).
+  - **Graphify** 125.538⭐ Apache-2.0 (codebase+docs+SQL+**PDF** → knowledge graph) · **FastMCP** 28.043⭐ Apache-2.0 (bikin MCP server sendiri) · **Figma-Context-MCP** 15.970⭐ MIT (layout Figma → agen) · **Playwright MCP** 38.028⭐ Apache-2.0.
+  - Skill-pack siap pakai: ⭐ **Hallmark** `Nutlope/hallmark` 29.909⭐ MIT — skill **anti-AI-slop** (dibuat Together AI, 57 gate + perintah `study` yang ekstrak DNA desain, menolak pixel-clone) = persis prinsip **anti-template** Webuild · **Marketingskills** 54.194⭐ MIT (CRO/copywriting/SEO) · **Archify** 82.028⭐ MIT (ide → diagram interaktif).
+- **Temuan B (STT/voice agent):**
+  - ⭐ **sherpa-onnx** `k2-fsa/sherpa-onnx` — 15.224⭐ **Apache-2.0** — STT + TTS + diarization + VAD + language ID **offline, tanpa GPU** (CPU) → paling pas VPS kita; sekaligus jadi **pengganti piper**.
+  - **Pipecat** 16.365⭐ BSD-2 ✓ & **LiveKit Agents** 14.697⭐ Apache-2.0 ✓ → rangkai jadi percakapan realtime.
+  - ⚠️ **Moonshine** 11.212⭐: kode MIT **tapi** model legacy non-streaming non-Inggris (Arab/Jepang/Korea/Mandarin/Spanyol/Ukraina/Vietnam) = **Moonshine Community License NON-KOMERSIAL**.
+  - ⚠️ **`rhasspy/piper` (11.297⭐) ternyata ARCHIVED** (push terakhir 2025-08) — masih sering direkomendasikan orang, tapi sudah mati.
+- **Pelajaran (4 baru, sudah di-patch ke skill):** (1) **repo AI: lisensi kode ≠ lisensi MODEL** — file LICENSE Moonshine memuat *daftar bahasa* yang non-MIT, jadi "MIT" di README bisa menyesatkan; (2) **rasio ⭐:watchers paling penting di kategori skill-pack viral** (Hallmark 29.909⭐ hanya **61** watchers) → jangan jadikan fondasi; (3) **`subscribers_count` di hasil `search/repositories` bisa `null`** → ambil dari endpoint detail; (4) **repo "agent skills" kini kategori sendiri** — query `claude+skills`/`agent+skills+NOT+awesome`, nilai tertinggi = yang menyebut **Hermes Agent**.
+- **Buat agen lain:**
+  - **Orchestrator** → **Superpowers** (MIT, dukung Hermes) sebagai bahan kurikulum: cara nulis skill + disiplin spec→plan→TDD buat semua agent kita.
+  - **DesignerBot + WebBuilder** → **Hallmark** (`audit`/`study`) sebagai alat anti-template pendamping `designlang`/`Dembrandt` yang sudah di katalog; **Figma-Context-MCP** sebagai pasangan `figma-mcp-bridge`.
+  - **OpsAgent** → **Headroom** (hemat token) + **codebase-memory-mcp** (agen paham repo tanpa baca file satu-satu) + **FastMCP** (expose vault/kanban jadi MCP).
+  - **VoiceAgent** → **sherpa-onnx** buat STT/TTS offline CPU; **Pipecat** buat rangkai agen suara; jalur desa: pesan suara WA → STT → agen → TTS → balas via WAHA.
+  - **SalesAgent/ContentWriter** → **Marketingskills** (MIT) buat materi jualan desa/UMKM.
