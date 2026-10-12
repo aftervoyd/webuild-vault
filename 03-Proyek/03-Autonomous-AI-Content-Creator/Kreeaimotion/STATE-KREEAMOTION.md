@@ -173,7 +173,11 @@
   heads tall, correct leg-to-torso ratio, natural hip-to-waist ratio, realistic anatomy` dan ke
   negatif — `chibi, doll-like proportions, oversized head, short legs, long torso, deformed anatomy`.
   Hasil v3 vs v2 (1 run nyata, 50 koin): **~7,5 kepala**, kepala lebih kecil, kaki lebih panjang,
-  bahu lebih seimbang. Sisa minor: pinggang agak terlalu ramping, massa rambut masih agak besar.
+  bahu lebih seimbang.
+- **v4 (final, terbukti)**: tambah `natural hip-to-waist ratio` → tetap 7,5 kepala, **pinggang tak
+  lagi terjepit**, panggul lebih penuh, **tangan lebih rapat ke badan** (pose netral), sebaran skala
+  antar-view turun 1,2% → **0,7%**. Penilai visual: "v4 decisively the better reference — v3's
+  stylized waist/hip and floating arms can cause warping/morphing saat bergerak". KONFIG FINAL = v4.
 - **Seberapa "digarap model"**: foto *selfie* (bukan seluruh badan) → bagian bawah tubuh **tidak ada
   di foto** → memang DIKARANG model. Karena itu tip di bot: foto seluruh badan (kepala–kaki) =
   proporsi lebih mirip aslinya. Ini informasi, bukan syarat (user tak mau ada gerbang FILE).
