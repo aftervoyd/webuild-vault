@@ -102,9 +102,14 @@
   **setelah invitee selesai render pertama** (mode aman, `MOTIONBOT_REF_INVITER_AFTER_RENDER=1`);
   (5) gate channel komunitas (opsional, aktif setelah bot jadi ADMIN).
 - Admin: `/refstats` · `/refbayar <invitee_id>`. Uji: `tools/ref_selftest.py` (21),
-  `tools/ref_e2e.py` (11), `tools/ref_route.py` (8, lewat Dispatcher aiogram asli) = **40 lulus**.
-- ⏳ **Sisa 1 langkah manual**: `@kreeaimotionbot` belum admin di `@KreeaCommunity`
-  → gate join belum aktif. Setelah bot dijadikan admin, isi `MOTIONBOT_CHANNEL=KreeaCommunity`.
+  `tools/ref_e2e.py` (11), `tools/ref_route.py` (8, lewat Dispatcher aiogram asli),
+  `tools/ref_gate.py` (12, gate channel) = **52 lulus**.
+- ✅ **Gate channel AKTIF (12 Okt 2026)**: `@kreeaimotionbot` sudah jadi **administrator** di
+  `@KreeaCommunity` (nama tampilan channel = **Kreeativ Community**, 7 subscriber) — ditambahkan
+  lewat otomasi GUI Telegram Desktop (xdotool+OCR, resep di skill `telegram-desktop-gui-automation`).
+  Terverifikasi dari sisi Bot API: `get_chat_member` → bot `administrator`, user `creator`,
+  non-member → BadRequest "member not found" (ditangkap kode = "belum join").
+  `MOTIONBOT_CHANNEL=KreeaCommunity`.
 
 ### Pending / next
 1. **Harga final** tingkatan (tunggu user; placeholder 1 / 1,5 / 2 / 4 cr).
