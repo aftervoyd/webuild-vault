@@ -155,7 +155,73 @@ CREATE TABLE IF NOT EXISTS characters (
 
 ---
 
-## 8. CATATAN OPERASIONAL
+## 8. REALISME: tekstur kulit + video rasa iPhone (riset lanjutan, 12 Okt)
+
+### 8.1 Temuan pahit yang harus diketahui
+Dua workflow "skin texture" terpopuler di RH diuji nyata:
+(`2108844379510251521` *Skin Texture King* dan `2102285699730214913` *De-AI Look* — **29 koin**, 72 dtk):
+
+- Hasilnya kulit **malah makin mulus**, bukan berpori. Prompt internalnya justru:
+  *"dry skin, clean skin"* dan *"脸部干净轻微修图不要任何雀斑污点伤痕"*
+  (= wajah bersih, retouch ringan, **tanpa jerawat/bercak/pori**) → itu estetika *beauty* pasar CN.
+- Penilaian mata (vision) pada hasil: **3/10** (De-AI) dan **4/10** (SeedVR2) untuk realisme.
+- 🔴 **Kesimpulan: kelas workflow ini TIDAK BISA menciptakan pori-pori dari gambar AI.**
+  SeedVR2 (36 koin, 88 dtk) = **pemulih**, bukan pencipta detail.
+
+### 8.2 Aturan realism yang benar
+1. **Pori-pori hanya bisa berasal dari FOTO ASLI.** Kalau sumbernya foto asli, detailnya sudah ada —
+   tugas pipeline = **jangan menghapusnya** (hindari pass yang "menghaluskan").
+2. ⚠️ **Telegram mengompres foto** (sisi panjang ≤1280 px + re-encode JPEG) → pori-pori **hilang sebelum
+   sampai ke bot**. → **Bot WAJIB menyuruh user kirim foto sebagai FILE/dokumen**, bukan foto biasa.
+   Gratis, efeknya besar.
+3. **Resolusi render = penghambat utama.** Output sekarang 464×832 → wajah ±200 px → pori mustahil ada.
+   Node `WanVideoAnimateEmbeds` kita = **(512, 912)** → bisa dinaikkan ke **720×1280** (≈2× piksel,
+   ≈2× koin & waktu). Wajib untuk mode realistis.
+4. Model & step: naikkan dari `fp8_scaled` ke **bf16** + step sampler **6–8** (sekarang 4) + LoRA
+   `lightx2v_elite_it2v_animate_face` @1,1 & `WAN22_MoCap_fullbodyCOPY_ED` @0,4.
+5. **Rasa "kamera iPhone" itu urusan POST-PROCESS (ffmpeg lokal), bukan model.** Lihat 9.3.
+
+### 8.3 Rantai iPhone-look — SUDAH DIUJI & DIUKUR (lokal, 0 koin)
+```
+minterpolate=fps=30:mi_mode=mci:mc_mode=aobmc:me_mode=bidir:vsbmc=1   # 30fps halus (default iPhone)
+scale=928:1664:flags=lanczos                                          # 2× resolusi
+unsharp=5:5:0.9:5:5:0.0                                               # ketajaman komputasional
+eq=contrast=1.05:saturation=1.05                                      # warna
+noise=alls=6:allf=t+u                                                 # BUTIR SENSOR (kunci!)
+vignette=PI/5.5                                                       # karakter lensa
+```
+Hasil ukur (frame identik, skala identik, base = naik-res saja):
+
+| Metrik | naik-res saja | + iPhone-look | Delta |
+|---|---|---|---|
+| Ketajaman (energi tepi) | 18,16 | **20,78** | **+14%** |
+| Derau temporal / butir sensor | 1,39 | **2,62** | **+88% (1,88×)** |
+
+Waktu proses di VPS: ≈**4,7× durasi klip** (klip 20 dtk ≈ 95 dtk) — jalan di VPS, **tidak pakai koin**.
+Catatan: `fps=30` tanpa interpolasi = frame kembar (gerakan tetap patah-patah) → **wajib `minterpolate`**
+kalau mau rasa video HP asli. Tambahkan butir **SETELAH** interpolasi (kalau sebelum, butir ikut dihaluskan).
+
+### 8.4 Arsitektur mode **"Realistis"** (rekomendasi)
+
+| # | Tahap | Alat | Biaya |
+|---|---|---|---|
+| 1 | Foto asli dikirim sebagai **file** | user | Rp 0 |
+| 2 | Sheet + crop wajah resolusi tinggi | Qwen-Image-Edit 2511 + LoRA 3-view (workflow `2093154602467319810`) | ±50 koin |
+| 3 | Render Wan Animate **720×1280**, model bf16, step 6–8, + LoRA wajah/konsistensi | RunningHub | ±2× koin tarif normal |
+| 4 | Pemulih detail video/gambar | SeedVR2 (`1962513607676309506`) | ±36 koin |
+| 5 | **iPhone-look** | ffmpeg di VPS | Rp 0 |
+| | | **Tambahan** | **±86 koin ≈ Rp 380** |
+
+→ Jual sebagai **tier premium** (+1 s.d. +1,5 credit dari tarif normal). Tier normal tetap seperti sekarang.
+
+### 8.5 Jangan tertipu
+- Jangan janji "pori-pori dari AI" — yang bisa dijual: **mempertahankan** detail foto asli + resolusi
+  tinggi + kamera-look. Kalau user kirim foto hasil AI / foto terkompres, hasilnya tetap plastik.
+- Jangan pakai pass "beauty/clean skin" untuk mode realistis (itu justru menghapus tekstur).
+
+---
+
+## 9. CATATAN OPERASIONAL
 
 - Endpoint berguna: `POST /api/search/workflow` (param `search`), `POST /api/workflow/export`
   (param `workflowId`, tanpa login, wajib Referer/Origin), `/task/openapi/ai-app/run` (webappId),
