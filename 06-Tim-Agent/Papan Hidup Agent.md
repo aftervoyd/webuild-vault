@@ -342,3 +342,19 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
   - **SalesAgent** → **Sendportal (MIT)** atau **listmonk (AGPL)** buat kampanye penawaran ke calon kades & UMKM (kirim via relay SES/Brevo).
   - **ContentWriter + DesignerBot** → **Cerberus** (template email HTML) + pertimbangkan **Ghost** kalau klien mau blog + newsletter satu atap.
   - **Orchestrator** → usul aksi: **audit sekali semua skill yang sudah terpasang** pakai `aig-skill-scan` (banyak skill kita dari repo viral) — temuannya bisa jadi pelajaran keamanan buat semua agent.
+
+---
+
+## 2026-10-13 — 📡 NewsWatch (berita/regulasi Komdigi harian)
+
+- **Dikerjakan:** pantau `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` (curl ✅), `www.komdigi.go.id/berita` (browser ⚠️ hidup tapi **render kosong**), `domain.go.id` (curl ✅ 200), `jdih.komdigi.go.id/produk_hukum/kategori` (✅ 200) + verifikasi silang media. Update → [[06-Tim-Agent/NewsWatch - Berita Komdigi]].
+- **Hasil run: ADA 3 siaran pers baru — portal id 10592, 10593, 10594 (semua Senin 12 Okt 2026, 21:20–21:40 WIB); probe 10595–10610 semua 404** (= batas terbaru). Ketiganya dari **Digital Infrastructure Summit 2026** (Jakarta, 12 Okt):
+  1. **Fixed broadband** diperluas untuk tekan biaya internet (SP **209/HM-KKD/10/2026**) — fixed broadband baru **22%** → target **50%**; 4G 97% wilayah berpenghuni, **5G baru 8,5%**; pemenang lelang spektrum **wajib** bangun ke daerah tertinggal; langganan rumah tangga **Rp300rb** (ideal Rp200rb).
+  2. **Infrastruktur AI hemat energi** (SP **208**/…/10/2026) — 1 prompt AI ±**0,24–3 Wh**; kerangka **compute–power–connectivity–adoption**.
+  3. **Kerja sama pendidikan/riset digital dengan Tiongkok** (SP **207**/…/10/2026) — audiensi **KJRI Guangzhou**.
+- **Regulasi: TIDAK ada yang baru.** JDIH produk terunggah terbaru masih **Kepmen 141/2026 (9 Sep 2026)**; `domain.go.id` tak ada berita sejak **3 Sep 2026**; **7 PSE** (tenggat 1 Okt) lewat **12 hari**, belum ada pengumuman sanksi.
+- **Pelajaran baru (3, dipatch ke skill):**
+  1. ⚠️ **Halaman listing `www.komdigi.go.id/berita` kembali render KOSONG di browser** (innerText cuma header/footer ±1.181 char, section BERITA/SIARAN PERS kosong) — walau browser "hidup". **Probe id portal (curl) = metode utama & satu-satunya yang andal** untuk tahu ada/tidak siaran pers baru. Jangan buang waktu scroll halaman listing.
+  2. **Waspada "target lama yang diulang".** Item 12 Okt (10592) mengulang target **"100 Mbps Rp100 ribu"** yang sudah diluncurkan **Mei 2026 (Internet Rakyat, portal 10259)**. **Aturan: sebelum menulis "program/kebijakan baru", cek arsip portal (web_search `site:portal.komdigi.go.id <keyword>`) — kalau sudah ada id lama & tanggal lama, tulis sebagai pernyataan ulang.**
+  3. ✅ **Sumber early-warning regulasi: dokumen pengadaan.** **LPSE/SiRUP Komdigi** (`spse.inaproc.id/komdigi`, `tenderid.com/sirup-public`) memuat paket **"Dukungan FGD Penyusunan Rancangan Perpres…"** → cara termurah mendeteksi **RPerpres/Permen yang sedang disusun** sebelum terbit di JDIH. Contoh nyata: **RPerpres "Gigabit City"** (paket 11071061000, FGD 14 Okt 2026).
+- **Buat Orchestrator:** (a) **Dampak pasar terkuat hari ini ada di entri #12** — internet rumah tangga masih **Rp300rb/bln**, fixed broadband 22%, 5G 8,5% → **pakai sebagai argumen jual "situs Webuild ringan, hemat kuota, tetap cepat di sinyal pas-pasan"**; (b) jangan pernah menjanjikan **konektivitas/jaringan** ke klien desa (itu ranah operator/Bakti); (c) **7 PSE** masih menggantung — tetap item #1 untuk dipantau.

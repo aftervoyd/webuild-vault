@@ -4,7 +4,41 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-12** (run harian · cakupan 11–12 Okt 2026)
+**Update terakhir: 2026-10-13** (run harian · cakupan 12–13 Okt 2026)
+
+---
+
+## 🆕 Update 2026-10-13 (run harian — cakupan 12–13 Okt 2026)
+
+> Cek sumber resmi 13 Okt 07:00 CST: portal detail `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` via **curl** → **ADA 3 siaran pers BARU: id 10592, 10593, 10594 (semua Senin 12 Okt 2026, 21:20–21:40 WIB)**; probe **10595–10610 semua 404** → itu batas terbaru. Ketiganya berasal dari **Digital Infrastructure Summit 2026** (Jakarta Pusat, Senin 12 Okt). `domain.go.id` **200** (berita terbaru masih **3 Sep 2026**). `jdih.komdigi.go.id/produk_hukum/kategori` **200** (produk terunggah terbaru masih **Kepmen 141/2026 — 9 Sep 2026**) → **belum ada Permen baru Oktober 2026**. ⚠️ **Tidak ada perubahan regulasi baru** — tiga item hari ini adalah **pernyataan kebijakan/prioritas infrastruktur**, bukan peraturan.
+
+### 12. 🌐 Kemkomdigi kaji perluasan **fixed broadband** untuk tekan biaya internet — 12 Okt 2026 ⭐ BARU (paling relevan)
+- **Apa yang berubah** (Siaran Pers **No. 209/HM-KKD/10/2026**, portal **10592**, Senin 12 Okt 2026 – 21:40): Wamen Komdigi **Nezar Patria** (usai **Digital Infrastructure Summit 2026**, Jakarta Pusat, 12/10) menyatakan pemerintah mengkaji **perluasan fixed broadband** untuk menekan biaya internet. Angka yang dipaparkan: penetrasi **fixed broadband baru ±22%** dari total konektivitas → **target naik ke ±50%**; **4G sudah menjangkau 97%** wilayah berpenghuni namun masih ada kantong berpopulasi kecil yang belum terlayani → **pemenang lelang spektrum diwajibkan membangun jaringan 4G/5G ke daerah tertinggal**; penetrasi **5G masih ±8,5%** → dipercepat. Soal harga: biaya langganan rumah tangga saat ini **±Rp300 ribu**, idealnya **±Rp200 ribu**; target **100 Mbps ≈ Rp100 ribu**.
+- ⚠️ **Jebakan akurasi:** target "**100 Mbps Rp100 ribu**" **BUKAN kebijakan baru** — itu program lama (**Internet Rakyat/IRA, diluncurkan 26 Mei 2026**, portal **10259**). Yang baru di item ini = **pernyataan ulang + arah perluasan fixed broadband** (12 Okt). Jangan dicatat sebagai program baru.
+- Sumber: portal **10592** (12 Okt 2026) ✅ + liputan summit oleh **Bisnis.com** (12 Okt 21:53), **Liputan6**, **deJurnal**, **Independensi**, **Teritorial**, **tvOnenews**. ✅ terverifikasi (sumber resmi + ≥4 media bertanggal sama).
+- **➡️ Dampak ke Webuild (sedang — argumen jual langsung):**
+  - **Ini justifikasi pasar terkuat tahun ini:** internet rumah tangga masih **Rp300 ribu/bulan** (ideal Rp200 ribu), fixed broadband baru 22%, 5G 8,5%, dan masih **ada desa/kantong tanpa sinyal memadai**. → Klien desa/UMKM memang **masih sensitif kuota & kecepatan**.
+  - **Nilai jual teknis Webuild:** situs buatan Webuild **ringan** (mosi contoh demo desa: Astro + Tailwind, output statis, ±280 KB, build <2 dtk) → **cepat dibuka di jaringan lambat & hemat kuota warga**. Bandingkan dengan theme WordPress berat yang penuh plugin. Angkat ini di proposal: *"situs yang tetap ringan walau sinyal desa pas-pasan."*
+  - **Jangan janji konektivitas:** Webuild **tidak** menyediakan/menjanjikan jaringan internet — bedakan tegas antara **layanan web** (kita) dan **infrastruktur jaringan** (operator/Bakti). Kalau desa belum ada sinyal, itu urusan operator/lelang spektrum.
+  - **Pantau:** detail tarif/implementasi perluasan fixed broadband (masih "dikaji") → ⚠️ perlu verifikasi; ini bisa jadi **Permen/aturan** baru nanti. Cek JDIH.
+
+### 13. ⚡🔌 Wamen Nezar: **infrastruktur AI harus hemat energi & berdampak** — 12 Okt 2026 — *dampak: rendah*
+- **Apa yang berubah** (Siaran Pers **No. 208/HM-KKD/10/2026**, portal **10593**, 12 Okt – 21:30): Wamen **Nezar Patria** menegaskan pembangunan infrastruktur AI harus memperhitungkan **kebutuhan energi & air** sekaligus memberi manfaat nyata. Ia menyebut **satu prompt AI generatif ≈ 0,24–3 Wh**. Pemerintah melihat tulang punggung infrastruktur digital lewat **4 lapisan: compute (komputasi) → power (energi) → connectivity (konektivitas) → adoption (adopsi)**. Target bukan "menambah megawatt", tapi **pusat data andal** + **"meaningful connectivity"**: AI untuk **produktivitas UMKM**, bantu tenaga medis, dan **petani** olah info cuaca (tanam/pupuk/panen). Sumber daya mineral kritis (nikel, timah, tembaga, bauksit, pasir silika) disebut modal industri semikonduktor. Tata kelola AI: peta jalan nasional, pemerataan konektivitas, investasi, talenta, kemitraan internasional.
+- Sumber: portal **10593** ✅ + **Bisnis.com** (12 Okt 21:53 — "Pemerintah Siapkan Infrastruktur Air untuk Dukung Pusat Data AI"), **Liputan6** (9 Okt, ISF 2026), **deJurnal**. ✅ terverifikasi.
+- **➡️ Dampak ke Webuild (rendah):** tidak ada kewajiban baru. Sinyal berguna: arah pemerintah menempatkan **AI sebagai alat produktivitas UMKM & tani** — sejalan kalau Webuild menawarkan fitur sederhana (info cuaca/kalender tanam, katalog UMKM) di situs desa. Ingat batas: jangan klaim "situs desa = infrastruktur AI".
+
+### 14. 🇨🇳 Wamen Nezar jajaki kerja sama **pendidikan & riset digital dengan Tiongkok** — 12 Okt 2026 — *dampak: sangat rendah*
+- **Apa yang berubah** (Siaran Pers **No. 207/HM-KKD/10/2026**, portal **10594**, 12 Okt – 21:20): audiensi Wamen **Nezar Patria** dengan perwakilan **KJRI Guangzhou** di Kantor Komdigi (Jakarta Pusat). Fokus: **transfer pengetahuan**, kerja sama **riset & pendidikan** dengan universitas Tiongkok, menarik investasi *emerging technologies*, dan agar Indonesia **masuk rantai pasok global AI** (bukan sekadar pasar) — sejalan **Indonesia Digital 2045**. Mineral (nikel, kobalt, pasir silika) diarahkan ke **semikonduktor/material bernilai tambah**.
+- Sumber: **hanya siaran pers resmi portal 10594** — belum ada media pendukung untuk audiensi 12 Okt ini. ⚠️ **perlu verifikasi** (tidak ada dokumen/kesepakatan resmi; masih "menjajaki").
+- **➡️ Dampak ke Webuild: sangat rendah** (diplomasi/kebijakan luar negeri digital). Dicatat untuk kelengkapan cakupan harian saja.
+
+### 📌 Status lain (per 13 Okt 2026)
+- **Regulasi: TIDAK ADA yang baru.** **JDIH** — produk hukum **terunggah terbaru masih Kepmen 141/2026 (9 Sep 2026)** → **belum ada Permen baru di Oktober 2026**.
+  - 📎 **Konteks SPBE (bukan berita baru, tapi penting dicatat):** sudah ada **Permen Komdigi No. 12 Tahun 2026** — *Pedoman Manajemen Aset TIK SPBE & Pedoman Manajemen Layanan SPBE* (**ditetapkan 7 Agu 2026, diundangkan 11 Agu 2026**, BN 2026/556, 71 hlm; dasar **Perpres 95/2018 Pasal 50(5) & 54(8)**). Diatur: siklus aset TIK (rencana–pengadaan–kelola–hapus) + manajemen layanan (pelayanan pengguna, pengoperasian, pengelolaan aplikasi). **Batas penyesuaian: 1 tahun sejak diundangkan → ±11 Agu 2027.** Pelaksananya **Instansi Pusat, Pemprov, Pemkab/Pemkot** (desa tidak diatur langsung). → Webuild: rujukan resmi kalau klien pemda menanyakan **standar tata kelola aplikasi/layanan digital**; posisikan situs desa sebagai **aset digital terkelola** (ada dokumentasi, serah terima, siklus pembaruan).
+- **Domain (`domain.go.id`):** **tetap tak ada berita baru sejak 3 Sep 2026** (curl 200; urutan: 3 Sep → 20 Agu → 7 Agu → 15 Jul → 24 Jun → 25 Mei 2026).
+- **7 PSE lingkup privat:** tenggat **1 Okt 2026** sudah lewat **12 hari** — **masih belum ada pengumuman resmi** tindak lanjut (teguran berjenjang/pemutusan akses). Terakhir tercatat: surat peringatan 27 Sep + rencana teguran berjenjang (Dirjen Alexander Sabar, 28 Sep). ⚠️ **pantau terus — ini item paling "menggantung"**.
+- **UU PDP / PP 33/2026:** tidak ada perkembangan baru (pembahasan yang beredar hanya artikel konsultan/blog). **UU Satu Data Indonesia:** belum ada berita baru soal PP turunan/Penyelenggara SDI.
+- ⚠️ **Sinyal sekunder (perlu verifikasi) — RPerpres "Gigabit City":** paket pengadaan **LPSE/SiRUP Komdigi** (Dipen Infrastruktur Digital, **paket 11071061000**, anggaran **Rp200 juta**, terdaftar 27 Sep 2026) berisi *"Dukungan **FGD Penyusunan Rancangan Peraturan Presiden tentang Strategi Pembangunan Gigabit City di Indonesia Beserta Aturan Turunannya**"*, **FGD 14 Okt 2026**. → Artinya **RPerpres baru sedang disusun**. Relevansi Webuild **rendah** (fokus kota), **tapi pantau** kalau aturan turunannya menyentuh kabupaten/desa. ⚠️ **perlu verifikasi** (baru dari dokumen pengadaan, belum ada draf/berita resmi).
 
 ---
 
