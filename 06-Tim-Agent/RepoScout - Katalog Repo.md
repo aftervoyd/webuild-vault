@@ -274,6 +274,51 @@
 
 ---
 
+## 🛠️ OpsAgent / Orchestrator — Observability, Eval & Keamanan Agen
+
+> Riset **2026-10-13** — rotasi topik: **agentic AI, sudut baru: memantau & mengamankan agen** (katalog sudah punya framework/builder/memori/skill/MCP, tapi belum ada cara lihat *jejak, biaya, dan kesalahan* tiap run agen kita, apalagi mengaudit skill pihak ketiga).
+> Kenapa penting sekarang: tim kita jalan dari cron per profil + gateway + fallback provider — kalau ada run gagal/diam-diam boros, **tidak ada yang kelihatan**.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **AI-Infra-Guard (A.I.G)** | github.com/Tencent/AI-Infra-Guard | Platform **AI red teaming** (Tencent Zhuque Lab): **`skill-scan`** audit keamanan skill agen (taksonomi T01–T09, verdict `malicious`/`suspicious`/`normal`, output SARIF), **`mcp-scan`**, `agent-scan`, pustaka **2000+ CVE** komponen AI (LangFlow, n8n, vLLM, MLflow…), jailbreak eval (Many-Shot/PAIR/GOAT) | Python (`pip install aig-skill-scan`) | Apache-2.0 ✅ | 6.836 | OpsAgent + RepoScout | ✅ **REKOMENDASI** — wajib dipakai tiap mau pasang **skill-pack pihak ketiga** (selama ini kita ambil skill dari repo viral tanpa audit) |
+| **Plano** | github.com/katanemo/plano | **Proxy/data-plane AI-native** (dibangun di atas Envoy oleh kontributor intinya): routing orkestrasi multi-agen, **smart LLM routing + fallback provider** (endpoint OpenAI-compatible `base_url`), guardrail filter, **OTel traces/metrics** — "What you don't write: intent classifiers, routing logic, model fallbacks, provider adapters, tracing instrumentation" | Rust / Envoy / YAML | Apache-2.0 ✅ (tanpa folder `ee/`) | 7.084 | OpsAgent | ✅ **PAKAI** — paling relevan buat kita: **pusatkan fallback provider (Inferhub→OmoApicall) + guardrail + tracing di satu tempat**; ⚠️ repo muda (created 2024-07), pantau stabilitas |
+| **Langfuse** | github.com/langfuse/langfuse | Observability + eval agen: trace LLM/agen, prompt management, dataset, LLM-as-judge, biaya | TypeScript / Next.js | MIT Expat (inti) + dir `ee/` proprietary | 35.713 | OpsAgent | ✅ PAKAI — tapi ⚠️ **self-host BERAT**: `docker-compose.yml` = web + worker + **ClickHouse + MinIO + Redis + Postgres** (6 service) → **jangan self-host di VPS kita** (RAM ketat); pakai versi cloud dulu |
+| **Opik** | github.com/comet-ml/opik | Observability + eval LLM/RAG/agent (Comet): trace, LLM-judge, dataset; SDK Python/TS + dukungan OpenTelemetry | Python | Apache-2.0 ✅ | 22.533 | OpsAgent | ⚠️ CADANGAN — fungsinya lengkap, tapi **self-host compose = 15 service** (MySQL, ClickHouse, Redis, MinIO, ZooKeeper, Jaeger, otel-collector) → paling berat dari semua kandidat, bukan buat VPS kita |
+| **Logfire** | github.com/pydantic/logfire | Observability AI **paling ringan**: SDK **OpenTelemetry** buat trace LLM/agen (tim Pydantic) | Python | MIT ✅ | 4.513 | OpsAgent | ✅ PAKAI — jalur paling hemat RAM: cukup kirim OTel dari proses Python, tanpa container besar; ⚠️ watchers cuma 17 |
+| **MLflow** | github.com/mlflow/mlflow | Platform AI engineering (tracking eksperimen, eval LLM/agen, model registry) — standar industri | Python | Apache-2.0 ✅ | 28.353 | RepoScout | ⚠️ CADANGAN — sehat (watchers 327), tapi condong ke eksperimen ML → overkill buat memantau cron tim |
+
+### 🔎 Catatan observability / keamanan agen
+- **Kategori "observability/eval agen" = kategori berat container.** Ukur dulu sebelum janji self-host:
+  ```bash
+  gh api "repos/O/R/contents/docker-compose.yml" --jq '.content' | tr -d '\n' | base64 -d | grep -E "^  [a-z0-9_-]+:"
+  ```
+  Hasil nyata: **Langfuse 6 service**, **Opik 15 service** (MySQL+ClickHouse+MinIO+ZooKeeper+Jaeger). VPS kita (available ~272 MB) **tidak mungkin** menjalankannya → mulai dari **SDK OTel ringan (Logfire)** atau SaaS gratis.
+- **LICENSE gaya "open core" makin sering pemiliknya bukan nama repo:** file LICENSE Langfuse berbunyi *"Copyright (c) 2023-2026 **ClickHouse, Inc.**"* dengan aturan `ee/` (akuisisi) — **baca 15 baris pertama**, jangan kaget/anggap repo berpindah.
+- **Keamanan skill = risiko nyata buat tim skill-based.** Sebelum `skill_view`/instal skill dari repo luar, jalankan **`aig-skill-scan`** (verdict + SARIF); khususnya skill yang menyuruh jalankan shell/curl.
+
+## 📧 SalesAgent / ContentWriter — Email & Newsletter (prospek desa & UMKM)
+
+> Riset **2026-10-13** — rotasi topik: **email/newsletter self-hosted** (belum ada di katalog; yang ada baru sosmed + WhatsApp).
+> **Kebutuhan nyata:** kirim **penawaran/proposal ke calon kepala desa & UMKM** secara rapi + terukur (bukan blast dari Gmail), dan **newsletter** desa buat warga.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **listmonk** | github.com/knadh/listmonk | Manajer **newsletter & mailing list** self-hosted: kampanye, list/segment, template, bounce, API — **satu binary Go** + PostgreSQL | Go / Vue / PostgreSQL | ⚠️ AGPL-3.0 | 23.765 | SalesAgent + OpsAgent | ✅ **REKOMENDASI** — paling matang & aktif (push 2026-10-12, watchers 147); kirim lewat **SMTP relay luar**, bukan langsung dari VPS |
+| **Sendportal** | github.com/mettle/sendportal | **Email marketing** self-hosted: kampanye, subscriber, template (Laravel) | PHP / Laravel 13 / MySQL | ✅ **MIT** | 2.176 | SalesAgent | ✅ **PAKAI — lisensi paling bersih** buat yang mau dijual; baru upgrade Laravel 13 (push 2026-10-12) |
+| **Ghost** | github.com/TryGhost/Ghost | Publishing + **newsletter + membership** satu atap (blog desa + kirim berita ke warga) | TypeScript / Node | ✅ MIT (© Ghost Foundation) | 55.523 | ContentWriter + WebBuilder | ✅ PAKAI — watchers **1.015** (paling sehat dari semua kandidat); cocok kalau klien mau blog + email langganan sekaligus |
+| **BillionMail** | github.com/Billionmail/BillionMail | **Mail server penuh + newsletter/marketing** self-host (Postfix+Dovecot dibundel, panel web) | Go / Docker | ⚠️ AGPL-3.0 | 15.896 | OpsAgent | ⚠️ PANTAU — push terakhir **2026-06** (melambat); butuh DNS/PTR + port 25 → berat & rawan masuk spam |
+| **Keila** | github.com/pentacent/keila | Alat newsletter open source (kampanye, list, form pendaftaran) | Elixir / PostgreSQL | ⚠️ AGPL-3.0 | 2.233 | SalesAgent | ⚠️ CADANGAN — watchers 16 + stack Elixir (asing buat tim kita) |
+| **Notifuse** | github.com/Notifuse/notifuse | Newsletter + email marketing + email transaksional, ada MCP | Go / MySQL | ⚠️ **BSL-1.1 mulai v40** (v39.x selamanya AGPL) | 2.245 | SalesAgent | ⚠️ PELAJARI — **bukan open source lagi**: 6 fitur digerbang lisensi key (workspace >3, permission granular, SES tenant, SSO, template multibahasa, audit log). Mau bebas? pakai **v39.x (AGPL-3.0)** |
+| **Cerberus** | github.com/emailmonday/Cerberus | Pola **template email HTML responsif** yang aman di Outlook/Gmail (template, bukan server) | HTML / CSS | ✅ MIT | 5.139 | ContentWriter + DesignerBot | ✅ PAKAI — bahan bikin template email kampanye desa/UMKM yang tidak berantakan di email client |
+
+### 🔎 Catatan email/newsletter
+- **JANGAN kirim email massal langsung dari VPS.** Deliverability ditentukan **PTR + SPF/DKIM/DMARC + reputasi IP**, dan port 25 sering diblokir penyedia VPS. Pola yang benar: **aplikasi di VPS (listmonk / Sendportal) + pengiriman via relay luar** (Amazon SES / Brevo / Resend — ada kuota gratis).
+- **Lisensi bisa berubah per VERSI, bukan cuma per repo:** Notifuse pindah **AGPL-3.0 → BSL-1.1 mulai v40** (v39.x permanen AGPL) dan punya file terpisah **`LICENSING.md`** → baca `LICENSING.md`, bukan cuma `LICENSE`.
+- **Sambungan ke tim:** kampanye ke calon kades/UMKM → **SalesAgent**; newsletter & isi berita desa → **ContentWriter**; desain template → DesignerBot; relay/DNS/domain → **OpsAgent**.
+
+---
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
