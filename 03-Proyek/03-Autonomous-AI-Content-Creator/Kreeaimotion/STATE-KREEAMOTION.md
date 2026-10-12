@@ -112,6 +112,10 @@
   `MOTIONBOT_CHANNEL=KreeaCommunity`.
 
 ### Pending / next
+0. **Character sheet (hasil riset 12 Okt)** → baca `RISET-CHARACTER-SHEET.md` + `prompt-sheet-3view.txt`.
+   Terbukti: workflow sheet publik jalan via API kita (50 & 56 koin, ±53 koin ≈ Rp 235), hasil 1344×768
+   rapi. Arsitektur: sheet 3-view → potong per view → pilih otomatis sesuai framing video pemandu
+   → kirim potongan (BUKAN sheet utuh) ke `LoadImage #55`. Sudah ada bukti di `bukti/`.
 1. **Harga final** tingkatan (tunggu user; placeholder 1 / 1,5 / 2 / 4 cr).
 2. **Proxy rotate** untuk downloader (jaga rate-limit IP VPS kalau banyak user kirim link beruntun).
 3. Top-up / pembayaran (belum digarap; rencana ikut pola kreaibot = Aulaa QRIS).
