@@ -149,3 +149,18 @@
 - Downloader = modul **yt-dlp** (+ fallback CLI), 4 bentuk URL FB (www/m/mbasic/plugin/embed),
   nama file unik (uuid) → aman multi-user paralel.
 - Multi-user: maks 1 job aktif/user, janitor hapus file > 3 hari + cek disk.
+
+## KARAKTER SAYA (LIVE 12 Okt 2026)
+- Menu **🧑 Karakter Saya** di bot: bikin sheet (kirim foto sebagai **FILE**) → sheet 3-view
+  **full-body** (depan·samping·belakang) + crop wajah dari foto ASLI → kasih nama → tersimpan.
+- **Kenapa bisa "dibaca bot"**: sheet dipotong **deterministik** (bukan deteksi AI) → file per view
+  disimpan di kolom `views_json`; `tools/sheet.py:pick_view()` yang menentukan file mana dipakai.
+  Terbukti: potongan panel jatuh di ruang kosong antar figur (vision: "no character is split").
+- Prompt penentu full-body ada di node **#97** (`prompt`) workflow `1962303327478464513`;
+  tanpa prompt itu hasilnya kepotong di paha. Biaya 1× sheet ≈ 50 koin ≈ Rp 220 (~90 dtk).
+- Di alur Generate, tombol **🧑 Pakai: <nama>** memakai view DEPAN & menyalin filenya ke work_dir
+  (aman walau karakter dihapus) → lanjut seperti biasa (kirim video).
+- Uji: `char_hub`/`char_new`/`char_step_name`/`char_pick_kb`/`char_use` semua lulus harness handler;
+  8 handler karakter terdaftar; service `kreeaimotion` sudah restart.
+- BELUM: mode Realistis belum di-wire ke worker (mesin `tools/realism.py` masih dipanggil manual).
+
