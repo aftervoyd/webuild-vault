@@ -221,6 +221,46 @@ kalau mau rasa video HP asli. Tambahkan butir **SETELAH** interpolasi (kalau seb
 
 ---
 
+## 10. LATAR BELAKANG ASLI (bg_images) — temuan & tembok, 12 Okt
+
+**Hipotesis:** model kita menghalusinasi ulang SELURUH ruangan (cermin nggak memantulkan orangnya,
+ubin palsu, LED mekar palsu). Kalau `bg_images` diisi frame video asli, latar tetap footage asli
+(noise sensor asli, pantulan asli) — ini kunci rasa "rekaman HP".
+
+**Fakta node kita (`#84 WanVideoAnimateEmbeds`):** `bg_images`, `mask`, `face_images`,
+`start_ref_image` **KOSONG**; `colormatch` = `disabled`; `pose_strength` 1.1, `face_strength` 1.
+
+**Workflow publik yang SUDAH tersambung lengkap:** `1973232104739835906` ("Change char/bg V1.1",
+137 node) — `ref_images` ← #225, `pose_images` ← #226 (`DrawViTPose`), `face_images` ← #227
+(`PoseAndFaceDetection`), **`bg_images` ← #228 (`DrawMaskOnImage` ← `BlockifyMask` ← SAM2 +
+GroundingDINO #59 prompt `'dancer'`)**, `mask` ← #229.
+
+**Uji nyata:** dijalankan via API kita dengan override `#91 image` (foto kita), `#114 video`
+(video pemandu), `#114 frame_load_cap=81`, `#59 prompt='person'` → **SUCCESS 379 dtk, 150 koin**,
+tapi `/task/openapi/outputs` balik **`data: []`** (kosong).
+
+**Sebabnya ketemu:** semua node output workflow itu (`#239`, `#284`, `#301 VHS_VideoCombine`)
+punya `save_output = False`, jadi RH tidak menandai ada output. Percobaan menyalakan lewat
+`nodeInfo` **DITOLAK**: `NODE_INFO_MISMATCH(nodeId=284, reason=node_not_found_in_workflow)` —
+node di dalam grup/loop tidak bisa dialamatkan lewat API.
+
+**Tembok lain:** ambil hasil lewat web RH juga mentok — `/api/task/detail`, `/api/openapi/task/detail`,
+`/api/task/taskDetail` semua `403 TOKEN_MISSION` walau sudah login (cookie + token `Rh-Comfy-Auth`
+di localStorage tidak cukup); `/workspace` dan `/ai-apps` halaman SPA kosong saat dibaca headless;
+endpoint daftar AI App (`/api/search/webapp`, `/api/search/aiApp`, dst) **404**;
+`/api/aiapp/list` ada tapi `403`.
+
+**Kesimpulan praktis:** workflow publik yang butuh node output di dalam grup **tidak bisa dipakai
+bot lewat API** (hasilnya tak terambil). Untuk memakai ide `bg_images`, harus **punya workflow
+sendiri** yang: (a) `bg_images` + `mask` tersambung dari video asli, dan (b) node output di level
+atas dengan `save_output=True`. → Perlu **fork/replikasi workflow itu ke akun kita lalu ubah lewat
+editor RH**, bukan sekadar nodeInfo.
+
+**Alternatif yang tidak butuh fork:** komposit lokal — segmentasi orang (bisa via workflow RH murah)
++ tempel karakter AI ke atas frame video asli pakai ffmpeg (risiko: tepi rambut kasar).
+
+---
+
 ## 9. CATATAN OPERASIONAL
 
 - Endpoint berguna: `POST /api/search/workflow` (param `search`), `POST /api/workflow/export`

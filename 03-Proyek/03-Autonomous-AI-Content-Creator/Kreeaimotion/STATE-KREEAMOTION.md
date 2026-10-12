@@ -116,6 +116,18 @@
    Terbukti: workflow sheet publik jalan via API kita (50 & 56 koin, ±53 koin ≈ Rp 235), hasil 1344×768
    rapi. Arsitektur: sheet 3-view → potong per view → pilih otomatis sesuai framing video pemandu
    → kirim potongan (BUKAN sheet utuh) ke `LoadImage #55`. Sudah ada bukti di `bukti/`.
+0b. **REALISME (bab 8 & 10 dokumen itu)** — sudah diuji di akun RH (24,1rb koin):
+   - Upgrade kualitas TERBUKTI: bf16 + 720×1280 + 6 step = **+34% ketajaman**, biaya 1,61×
+     (365 koin / 925 dtk vs 226 / 575). Caranya: override `#94 model`, `#84 width/height`, `#70 steps`.
+   - **Modul baru `tools/iphone_look.py`** (sudah commit): naik-res 1080p + tajam + butir sensor +
+     warna + vignette, preset ringan/standar/kuat, 0 koin, ±4,7× durasi klip. Ukur: +14–19% tajam,
+     +1,88× butir.
+   - **Telegram mengompres foto user** (terbukti: semua foto masuk 1280 px / ±95 KB; aslinya
+     3000×4000) → bot HARUS menyuruh kirim foto sebagai **FILE/dokumen**.
+   - Workflow "skin texture" RH = penghalus kulit (3–4/10), TIDAK bisa menciptakan pori.
+   - `bg_images`/`mask`/`face_images` kita KOSONG (sebab latar belakang dihalusinasi); workflow
+     publik `1973232104739835906` tersambung lengkap tapi output-nya `save_output=False` di dalam
+     grup → tak bisa diambil lewat API. Perlu fork ke akun kita + pakai editor RH.
 1. **Harga final** tingkatan (tunggu user; placeholder 1 / 1,5 / 2 / 4 cr).
 2. **Proxy rotate** untuk downloader (jaga rate-limit IP VPS kalau banyak user kirim link beruntun).
 3. Top-up / pembayaran (belum digarap; rencana ikut pola kreaibot = Aulaa QRIS).
