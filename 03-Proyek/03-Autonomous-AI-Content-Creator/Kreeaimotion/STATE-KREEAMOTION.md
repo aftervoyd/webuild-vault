@@ -189,3 +189,40 @@
   dari siluet mentah tanpa verifikasi mata.
 - Di tahap render, bentuk tubuh hasil lebih banyak mengikuti **video pemandu** (+ acuan karakter),
   jadi pilih video yang orangnya sepadan; rasio aspek acuan vs video juga berpengaruh.
+
+## 🖼️ FITUR GENERATE GAMBAR — LIVE (12 Okt 2026)
+**Alur**: tekan 🖼️ Generate Gambar → kirim FOTO (selfie/badan penuh, caption boleh jadi perintah) →
+bot SELALU tampilkan menu pilihan → tekan 🚀 Buat Gambar → hasil di chat (±2 menit, 1 credit).
+Semua pilihan OPSIONAL. Tombol: 🔄 Ganti foto · 🧹 Reset · ✍️ Tulis sendiri.
+
+**Desain kelompok (5 opsi per kelompok — semua terkontrol, tidak tumpang tindih):**
+| Kelompok | Opsi |
+|---|---|
+| 👗 Pakaian | 👔 Formal · 👕 Casual · 🧥 Tertutup · 💃 Seksi · 🎽 Sporty |
+| 📐 Framing | 😊 Wajah · 👤 Half body · 🧍 Full body · 🪑 Duduk · 🚶 Berdiri |
+| 🏝️ Background | 🏖️ Pantai · ☕ Kafe · 🏊 Kolam · 🌃 Kota malam · 📸 Studio |
+| 🎨 Vibe | ☀️ Cerah · 🌅 Golden hour · 🎬 Sinematik · 💡 Studio · 🌙 Neon |
+| ✍️ Tulis sendiri | teks bebas (ditambah sebagai "Additional request: …") |
+
+**Mesin**: workflow RunningHub **2003539764081008641** "Qwen Image Edit 2511"
+(27 node, 4 langkah Lightning, ±53 koin/133 detik). Override API:
+`#41/#79/#81 LoadImage → image` (ketiganya diarahkan ke FOTO kita = edit 1 gambar),
+`#68 TextEncodeQwenImageEditPlus → prompt`, `#82 EmptySD3LatentImage → width/height`.
+
+⚠️ **JEBAKAN PENTING**: workflow ini punya 3 node SaveImage — `#9` = **foto hasil bersih**
+(944×1664), `#100` = komposit "sebelum|sesudah", `#101` = upscale 4K yang **juga komposit**
+(13 MB, 3779×4997). Bot **WAJIB ambil #9** (kode di tools/imagegen.py sudah memaksa nodeId
+"9", bukan urutan pertama/terbesar). Salah ambil = user dikirimi gambar berdampingan.
+
+**Kode**: `tools/imgmenu.py` (kelompok+perakit perintah), `tools/imagegen.py` (mesin),
+`bot.py` (3 state: img_photo/img_sel/img_custom, handler `ig:*`, cabang `run_image_job`),
+`db.py` kolom `jobs.prompt`, `config.py` `img_enabled/img_cost=1.0/img_workflow/img_timeout`.
+
+**Mutu saat ini (dinilai visual)**: ganti baju/background/cahaya BERHASIL; identitas
+dipertahankan tapi **kulit cenderung terlalu mulus** & kacamata agak melengkung → 7/10.
+Skor sama untuk instruksi "gaun merah + pantai" (7/10). Ini batas model, bukan bug alur.
+Sisa PR mutu: penajaman wajah (opsi pass kedua) atau tambah "natural skin texture, visible pores"
+yang lebih kuat di prompt.
+
+**Uji**: simulasi dispatcher 13/13 hijau (menu → foto → pilih → 🚀 → job+credit benar)
++ job #6 sungguhan lewat service → state=done → gambar terkirim (944×1664, 1,7 MB).
