@@ -166,3 +166,22 @@
   8 handler karakter terdaftar; service `kreeaimotion` sudah restart.
 - BELUM: mode Realistis belum di-wire ke worker (mesin `tools/realism.py` masih dipanggil manual).
 
+## PROPORSI TUBUH (temuan 12 Okt 2026)
+- **Masalah nyata**: prompt sheet lama menghasilkan figur **6,5–7 kepala** dengan kepala kegedean,
+  kaki pendek, torso panjang, panggul lebar/bahu sempit (jurnal penilai visual).
+- **Obatnya (TERBUKTI)**: tambahkan ke prompt — `natural adult human body proportions, about 7.5
+  heads tall, correct leg-to-torso ratio, natural hip-to-waist ratio, realistic anatomy` dan ke
+  negatif — `chibi, doll-like proportions, oversized head, short legs, long torso, deformed anatomy`.
+  Hasil v3 vs v2 (1 run nyata, 50 koin): **~7,5 kepala**, kepala lebih kecil, kaki lebih panjang,
+  bahu lebih seimbang. Sisa minor: pinggang agak terlalu ramping, massa rambut masih agak besar.
+- **Seberapa "digarap model"**: foto *selfie* (bukan seluruh badan) → bagian bawah tubuh **tidak ada
+  di foto** → memang DIKARANG model. Karena itu tip di bot: foto seluruh badan (kepala–kaki) =
+  proporsi lebih mirip aslinya. Ini informasi, bukan syarat (user tak mau ada gerbang FILE).
+- **Skala antar-view sheet sudah konsisten** di v2/v3 (tinggi figur 730/729/721 & 738/734/729 px,
+  sebaran ~1,2%) → tak perlu normalisasi panel.
+- **Pengukur otomatis proporsi: JANGAN dipercaya.** Deteksi "garis bahu" dan "garis pisah kaki"
+  dua-duanya salah pada figur ini (kaki rapat → pisah tak terdeteksi; bahu terdeteksi terlalu
+  rendah). Oracle yang sahih = **penilai visual** (hitungan "berapa kepala"). Jangan bangun fitur
+  dari siluet mentah tanpa verifikasi mata.
+- Di tahap render, bentuk tubuh hasil lebih banyak mengikuti **video pemandu** (+ acuan karakter),
+  jadi pilih video yang orangnya sepadan; rasio aspek acuan vs video juga berpengaruh.
