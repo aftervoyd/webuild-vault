@@ -83,3 +83,24 @@ Aset yang sudah kita punya: pipeline i2v H3, editor Qwen, faceswap, pose, lipsyn
 - [ ] Konfirmasi: garap **Creator Incentive Program** (publish workflow) sebagai ladang koin utama?
 - [ ] Sediakan akun YouTube/Vimeo untuk submit kontes.
 - [ ] Pilih tema untuk entri Chroma S2 / 腾讯SSV.
+
+---
+## 6. ADDENDUM KONTES — scan 12 Okt 2026 (aifilmcontests.com + aibetas.com)
+| Kontes | Biaya | Deadline | Catatan |
+|---|---|---|---|
+| **AI ZONE International AI Film Fest** | **GRATIS** | 30 Nov 2026 (reguler) | Online, festival 15 Jan 2027; 1 kategori Best AI Mini Movie, genre bebas. **Paling cocok budget $0.** |
+| **AIFFK Kerala (ed.3)** | cek | ~30 Nov 2026 (buka 15 Okt) | Kochi 22–24 Jan 2027; min 2 menit; byk kategori (narration, cinematography, experimental) |
+| Veritas AI Film Fest | $9 | 30 Nov 2026 | Screening Toronto 20 Feb 2027, film <7 mnt |
+| AI Slop Film Fest S2 | $10 | 16 Des 2026 | Markham, Ontario; ada kategori Best Human x Machine |
+| **HASFA** (Hollywood AI Short Film Awards) | $25–55 | 11 Jan 2027 | **$2.750 cash**; ≤22 mnt; film dibuat ≥1 Jan 2024 |
+| **GAIMVA** (Global AI Music Video Awards) | $20–40 | 1 Jan 2027 | **$1.000 cash**, 17 kategori (kursi juara banyak) |
+| LundinStudio AI Film Fest | ~$10/bln | 21 Jan 2027 | Juara 2 $300 + refund fee; 1–10 mnt |
+| PROMPT Festival Toronto | $15 | 16 Apr 2027 | rolling |
+| **HKAIIFF 2027** (Hong Kong) | $99 | 1 Mar 2027 | 7 "Unicorn Awards"; buka 1 Okt 2026 |
+| Berlin AI Film Festival | $10→$40 | 31 Jan 2027 (extended) | fee naik tiap cut-off |
+| Bengaluru Int'l Short Film Fest (seksi AI) | cek | 30 Apr 2027 | festival Agustus |
+| WAIFF Cannes 2027 | via edisi kota | regional (mis. LA 20 Jan 2027) | bukan submit langsung |
+
+**aibetas.com/competition-calendar:** tidak ada lomba baru — masih 6 agenda China (31 Okt 腾讯SSV, 1 Nov 可灵, 22 Nov 鲸锐, 3 Des 泉州, 6 Des 深圳, 31 Des GBA).
+
+**Catatan saldo (rh_coins.csv):** 26.765 (10 Okt 12:37) → 24.881 (11 Okt 08:00) → 24.881 (**12 Okt 08:00, Δ 0**). Jadi **tidak ada kebocoran berjalan** 24 jam terakhir; hipotesis "bocor 2,3rb/hari" gugur — penurunan 1.884 koin terjadi di jendela 10 Okt malam (kemungkinan sisa tugas/membership), bukan biaya harian.
