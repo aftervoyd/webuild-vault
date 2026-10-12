@@ -94,6 +94,18 @@
 - Coin RunningHub: **25.222** (cek 10 Okt) — turun ~1.543 untuk ±7 render uji.
 - RAM server 1,9 GB (aman; render berat di mesin RH, bukan di VPS).
 
+### 🎁 Referral (SELESAI 12 Okt 2026) — anti-farming
+- Bonus **2,5 : 2,5** (pengundang & yang diundang). Link `?start=ref_<id>` + menu **🎁 Kode Referral**.
+- **5 lapis pengaman**: (1) `referrals.invitee_id` PRIMARY KEY → 1 akun = 1 bonus seumur hidup;
+  (2) pengundang wajib user terdaftar + self-referral ditolak (dijaga di lapisan DB **dan** bot);
+  (3) cap 10/hari & 30/30hari → kelebihan DITAHAN, tidak hilang; (4) bonus pengundang cair
+  **setelah invitee selesai render pertama** (mode aman, `MOTIONBOT_REF_INVITER_AFTER_RENDER=1`);
+  (5) gate channel komunitas (opsional, aktif setelah bot jadi ADMIN).
+- Admin: `/refstats` · `/refbayar <invitee_id>`. Uji: `tools/ref_selftest.py` (21),
+  `tools/ref_e2e.py` (11), `tools/ref_route.py` (8, lewat Dispatcher aiogram asli) = **40 lulus**.
+- ⏳ **Sisa 1 langkah manual**: `@kreeaimotionbot` belum admin di `@KreeaCommunity`
+  → gate join belum aktif. Setelah bot dijadikan admin, isi `MOTIONBOT_CHANNEL=KreeaCommunity`.
+
 ### Pending / next
 1. **Harga final** tingkatan (tunggu user; placeholder 1 / 1,5 / 2 / 4 cr).
 2. **Proxy rotate** untuk downloader (jaga rate-limit IP VPS kalau banyak user kirim link beruntun).
