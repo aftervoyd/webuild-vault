@@ -269,3 +269,42 @@ editor RH**, bukan sekadar nodeInfo.
 - Niche "character consistency" di RH = **paling rame (2.121 workflow)** → bukan celah pasar,
   tapi **fitur bot** (UX + alur) tetap pembeda.
 - Skill GUI: `telegram-desktop-gui-automation`.
+
+## KANDIDAT "METODE TERBAIK" — hasil survei katalog RunningHub (12 Okt 2026)
+Disurvei saat riset proporsi diparkir. Belum ada yang diuji; ini daftar bahan mentah.
+Semua ID = workflow RunningHub (cek grafiknya lewat /api/workflow/export sebelum dipakai).
+
+**A. TURNAROUND / MULTI-VIEW (pengganti langsung sheet sekarang = 1962303327478464513)**
+- `2071975841445269506` Three views Qwen2511 High consistency  ← kandidat TERKUAT (keluarga
+  Qwen-Edit-2511 yang sama dengan sheet kita, tapi sudah versi "high consistency")
+- `2098329707967168513` Multi-Angle Workflow | Qwen Image Edit Consistent Multi-View
+- `2072999837630767104` Generate multi-view character images — Consistent character kit
+- `2067830775218786305` Three views (four views)
+
+**B. 3D / MESH — paling anti-drift proporsi (foto → mesh → render beberapa sudut)**
+- `2074612521968955394` Hunyuan3D Multi-view generates glb model
+- `2069669394275454978` Hunyuan3D 2.0 Multi-view Model Generation (Texture version)
+- `2003825166566236162` TRELLIS.2 (Microsoft, open-source)
+- `2060178512773992449` Image to 3D Model [Plus Mode] (Pixal3D)
+Catatan: jalur ini menjamin proporsi & siluet KONSISTEN antar sudut (mesh = satu benda yang
+sama), tapi butuh langkah render mesh → gambar, dan hasil "3D-ish" harus diuji dulu.
+
+**C. FRONTIER IMAGE (konsistensi identitas paling jago menurut reputasi umum)**
+- `2097867666316185602` nano banana2 & pro create package mold
+- `2096806165706498049` Nano Banana generates models (masked version)
+
+**D. POSE / CONTROL — mengunci proporsi (bukan menyerahkan ke model)**
+- `1996350694477152257` Create Z image Controlnet union pose/depth/sketch/redraw four-in-one
+- `1996144706801352706` Z Controlnet pose control
+- `2108557946895474690` Pose Control 4K | Outfit Transfer Posture Workflow
+- `2001253005766914050` SCAIL SDPose Uni3C Action (transfer aksi/pose)
+
+**E. IDENTITY (jaga muka antar view)**
+- `1846037353528705026` Multi-angle consistent realistic characters_PuLiD  ← paling relevan
+- `1978028146278674434` IPAdapter face swapping
+- `1930521704227880961` IPAdapter Face Refinement Real Person to 3D
+
+**Urutan uji yang disarankan kalau riset dilanjutkan:**
+1. `2071975841445269506` (paling murah: ganti mesin saja, alur bot tak berubah)
+2. `2098329707967168513` atau `2072999837630767104` (bandingkan konsistensi antar-view)
+3. Jalur mesh Hunyuan3D (kalau 1 & 2 masih meleset proporsinya)
