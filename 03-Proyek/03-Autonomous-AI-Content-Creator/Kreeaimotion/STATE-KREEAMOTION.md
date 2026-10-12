@@ -151,13 +151,15 @@
 - Multi-user: maks 1 job aktif/user, janitor hapus file > 3 hari + cek disk.
 
 ## KARAKTER SAYA (LIVE 12 Okt 2026)
-- Menu **🧑 Karakter Saya** di bot: bikin sheet (kirim foto sebagai **FILE**) → sheet 3-view
+- Menu **🧑 Karakter Saya** di bot: bikin sheet (cukup **foto biasa**, tak wajib FILE) → sheet 3-view
   **full-body** (depan·samping·belakang) + crop wajah dari foto ASLI → kasih nama → tersimpan.
 - **Kenapa bisa "dibaca bot"**: sheet dipotong **deterministik** (bukan deteksi AI) → file per view
   disimpan di kolom `views_json`; `tools/sheet.py:pick_view()` yang menentukan file mana dipakai.
   Terbukti: potongan panel jatuh di ruang kosong antar figur (vision: "no character is split").
 - Prompt penentu full-body ada di node **#97** (`prompt`) workflow `1962303327478464513`;
   tanpa prompt itu hasilnya kepotong di paha. Biaya 1× sheet ≈ 50 koin ≈ Rp 220 (~90 dtk).
+- Crop wajah: **deteksi wajah OpenCV** (frontal+profil + verifikasi MATA untuk buang deteksi palsu di badan) dengan cadangan heuristik (foto badan penuh → wajah di bagian atas). Kotak dirapatkan 1,35× agar pori-pori terlihat.
+- BUG yang sudah dibasmi (12 Okt): handler bukti-bayar `@router.message(F.photo)` tanpa `StateFilter(None)` didaftarkan paling awal & memanggil `step_photo()` untuk state APA PUN → foto di alur Karakter kebajak jadi alur motion. Sekarang filter ketiga handler foto saling eksklusif + ada jaring pengaman "mau dipakai untuk apa?".
 - Di alur Generate, tombol **🧑 Pakai: <nama>** memakai view DEPAN & menyalin filenya ke work_dir
   (aman walau karakter dihapus) → lanjut seperti biasa (kirim video).
 - Uji: `char_hub`/`char_new`/`char_step_name`/`char_pick_kb`/`char_use` semua lulus harness handler;
