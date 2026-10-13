@@ -8,6 +8,17 @@
 
 ## 0. ⭐ STATUS TERKINI — 13 Okt 2026, 10:10 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
+### ♾️ AKUN KITA (ADMIN) BEBAS CREDIT — 13 Okt 2026 13:50
+- `bot.py`: helper **`is_unlim(uid)`** = `uid in S.admins or DBX.is_unlimited(uid)`.
+  **Semua 9 titik** cek/potong credit (motion, gambar, refund) sudah pakai helper ini.
+- Akun admin (`MOTIONBOT_ADMINS=8886993492`) **tidak pernah dipotong credit** —
+  dan saldonya sudah di-seed **100 credit** sebagai cadangan kalau bypass dimatikan.
+- Tampilan saldo admin: `♾️ Admin — bebas credit (tidak dipotong)`.
+- **Credit tetap berlaku penuh untuk USER kita** nanti (bukan dihapus).
+- **Uji nyata**: job motion admin → saldo **100 → 100 (potong 0)**; job user biasa →
+  **12,5 → 11,5 (potong 1)** ✓.
+- Cara isi saldo manual (kalau perlu): `/addcredits <uid> <jumlah>` (admin saja).
+
 ### 🧑 Karakter Saya — FOTO USER APA ADANYA (13 Okt 2026 13:45, LIVE)
 - **Perubahan**: bikin karakter **TIDAK lagi render character sheet 3 view** lewat RunningHub.
   Foto yang dikirim user **langsung disimpan apa adanya** → dipakai sebagai sumber Motion Control.
