@@ -319,6 +319,56 @@
 
 ---
 
+## 🚀 OpsAgent / WebBuilder — Deploy & Hosting Banyak Situs (self-hosted PaaS)
+
+> Riset **2026-10-14** — rotasi topik **web dev/infra**, sudut baru: **cara menaruh BANYAK situs klien di satu server** (katalog sudah punya framework & CMS-nya, belum punya cara *men-deploy*-nya).
+> **Kebutuhan nyata:** setiap klien desa/UMKM butuh domain + SSL + deploy sendiri. Ini yang paling cepat jadi beban operasional kalau dikerjakan manual satu-satu.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Coolify** | github.com/coollabsio/coolify | **PaaS self-hosted** (alternatif Vercel/Heroku/Netlify): panel web, deploy dari Git/Docker, kelola domain + SSL + database, aplikasi & service | PHP (Laravel) / Docker | Apache-2.0 ✅ (cuma `LICENSE`, tanpa folder `ee/`) | 62.948 (subs 195) | OpsAgent | ✅ **REKOMENDASI** — standar de-facto; cocok jadi \"panel hosting klien\" begitu kita punya VPS khusus web |
+| **Dokploy** | github.com/Dokploy/dokploy | PaaS self-hosted (alternatif Vercel/Netlify/Heroku) — UI modern, Docker Compose, database, multi-server; ada versi cloud berbayar (opsional) | TypeScript / Docker | ✅ **Apache-2.0** (inti) + dir `/proprietary` | 37.779 (subs 113) | OpsAgent | ✅ PAKAI — inti bebas; baca folder `/proprietary` buat tahu fitur yang digerbang |
+| **Dokku** | github.com/dokku/dokku | PaaS minimalis \"git push → jalan\" di atas Docker (paling ringan, tanpa panel berat) | Go / Docker | ✅ **MIT** | 32.179 (subs **340** — paling sehat) | OpsAgent | ✅ PAKAI — kalau mau hemat RAM: tanpa UI, cukup CLI + plugin |
+| **Kamal** | github.com/basecamp/kamal | Deploy aplikasi container ke server apa pun **tanpa panel** (dari Basecamp): YAML + SSH, zero-downtime, proxy bawaan | Ruby / Docker | ✅ **MIT** | 14.646 (subs 98) | OpsAgent | ✅ PAKAI — jalur \"tanpa dashboard\", dokumentasi paling jelas |
+| **CapRover** | github.com/caprover/caprover | PaaS (Docker + nginx otomatis) — \"Heroku on steroids\", sudah lama jalan | TypeScript / Docker | ✅ **Apache-2.0** (© BigZee Ventures LLC — file `LICENSE`) | 15.185 (subs 144) | OpsAgent | ⚠️ CADANGAN — masih aktif (push 2026-10-13) tapi UI/ritme lebih lambat dari Coolify/Dokploy |
+| **Nginx Proxy Manager** | github.com/NginxProxyManager/nginx-proxy-manager | Panel **domain + reverse proxy + SSL Let's Encrypt** (klik, bukan edit config) | TypeScript / nginx / Docker | ✅ **MIT** | 34.395 (subs 227) | OpsAgent | ✅ **PAKAI SEKARANG** — paling langsung berguna: semua domain klien + sertifikat auto di satu UI |
+| **Uptime Kuma** | github.com/louislam/uptime-kuma | **Monitoring uptime** situs/layanan + notifikasi (Telegram/WA/email), halaman status publik | JavaScript / Socket.io | ✅ **MIT** | 92.413 (subs 322) | OpsAgent + SalesAgent | ✅ **PAKAI** — bukti ke klien bahwa situsnya dipantau; notifikasi bisa masuk ke Telegram tim |
+| **ZaneOps** | github.com/zane-ops/zane-ops | PaaS self-hosted (Django + React) untuk app, database, **situs statis** | Python / Docker | Apache-2.0 ✅ | 1.387 | OpsAgent | ⚠️ PANTAU (subs 30) |
+| **SwiftWave** | github.com/swiftwave-org/swiftwave | PaaS ringan untuk VPS kecil (Go) — klaim hemat resource | Go / Docker | Apache-2.0 ✅ | 907 | OpsAgent | ⚠️ CADANGAN |
+
+### 🔎 Catatan deploy/hosting
+- **VPS kita (1,9 GB RAM, available ~375 MB) BUKAN tempat PaaS ini.** Coolify/Dokploy dirancang untuk server tersendiri (2 GB+ per instance) — memasangnya di server yang sekarang menjalankan 6 service + swap 1,5 GB kepakai = bunuh diri. **Urutan yang benar:** (1) sekarang pakai **NPM (domain+SSL)** + **Uptime Kuma (monitor)** + deploy manual per service; (2) begitu volume klien naik → **VPS khusus web** + Coolify/Dokploy; (3) kalau klien punya server sendiri → Dokku/Kamal (paling hemat).
+- **Pola \"open-core\" juga ada di sini** dan semuanya terbaca `NOASSERTION` di API: **Dokploy** = Apache-2.0 + dir `/proprietary` · **PostHog** = MIT Expat + `ee/` · **Formbricks** = AGPL + `apps/web/modules/ee` · **OpnForm** = AGPL + `api/app/Enterprise`. **Baca header file LICENSE-nya** (bukan cuma spdx_id) → ini yang menentukan boleh-dijual atau tidak.
+
+---
+
+## 📊 SalesAgent / OpsAgent — Analitik Web & Formulir Klien (lead capture)
+
+> Riset **2026-10-14** — rotasi topik kedua: **analitik & formulir** (belum ada di katalog).
+> **Kebutuhan nyata:** (1) klien desa/UMKM mau tahu \"berapa orang buka situs saya\" **tanpa iklan Google**; (2) situs statis kita butuh **formulir kontak/pendaftaran** yang datanya masuk ke kita (lead sales) — bukan cuma tombol WhatsApp.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Umami** | github.com/umami-software/umami | Analitik web **privacy-first tanpa cookie** — traffic, campaign, behavior, conversion, revenue | TypeScript / Next.js | ✅ **MIT** | 39.350 (subs 139) | OpsAgent + SalesAgent | ✅ **REKOMENDASI** — compose cuma **2 service (app + Postgres)** → paling ringan buat VPS kita; ada versi cloud |
+| **Plausible CE** | github.com/plausible/community-edition *(aplikasinya: `plausible/analytics` 29.391⭐ AGPL-3.0)* | Analitik privacy-first versi **self-hosted community** (ringan, satu halaman dashboard) | Elixir → Docker | ✅ **MIT** (repo CE) | 2.896 | OpsAgent | ✅ PAKAI — **3 service: app + Postgres + ClickHouse** (2 mesin DB → lebih berat dari Umami; jangan digabung di server klien kecil) |
+| **Matomo** | github.com/matomo-org/matomo | Analitik web **paling lengkap** (eks-GitHub Piwik): laporan detail, goal, funnel, heatmap via plugin | PHP / MySQL | ⚠️ GPL-3.0 | 21.951 (subs **394** — paling sehat) | OpsAgent | ✅ PAKAI kalau klien minta laporan \"seperti Google Analytics\" — butuh PHP 8.1 + MySQL 8/MariaDB 10.6 |
+| **PostHog** | github.com/PostHog/posthog | Platform product-analytics + session replay + feature flag + eksperimen (all-in-one) | Python / TS | ⚠️ MIT Expat (inti) + dir `ee/` | 40.262 (subs 143) | OpsAgent | ⚠️ CADANGAN — **jauh lebih berat** dari kebutuhan situs desa/UMKM; pakai versi cloud kalau butuh |
+| **Formbricks** | github.com/formbricks/formbricks | **Form builder + survey + feedback** (alternatif Qualtrics/Typeform), ada targeting in-app & link publik | TypeScript / Next.js | ⚠️ **AGPLv3** (inti) + `apps/web/modules/ee` | 13.094 (subs 47) | SalesAgent + ContentWriter | ⚠️ PELAJARI — fitur bagus, **tapi self-host berat**: compose resmi (`docker/docker-compose.yml`) berisi **postgres + redis + spicedb + authzed (4 container izin) + migrate + hub** → **>12 container** |
+| **OpnForm** | github.com/OpnForm/OpnForm *(URL lama `JhumanJ/OpnForm` = repo sama)* | Form builder open-source (drag-drop + logic), respons rapi | PHP (Laravel) / Vue / Nuxt | ⚠️ **AGPLv3** (inti) + dir `api/app/Enterprise` | 3.829 (subs 24) | SalesAgent | ⚠️ PELAJARI — **7 service** (api, api-worker, api-scheduler, ui, redis, db, ingress); AGPL → hati-hati kalau di-embed ke produk tertutup |
+| **LimeSurvey** | github.com/LimeSurvey/LimeSurvey | Platform **survei/kuesioner** mapan (logika, kuota, token, laporan) | PHP / MySQL | ✅ **GPL-2.0** | 3.761 (subs 129) | SalesAgent + ContentWriter | ✅ CADANGAN — kalau kebutuhannya **survei serius** (mis. survei kepuasan warga), bukan formulir kontak |
+
+### 🔎 Cadangan & jebakan formulir/analitik
+| Repo | ⭐ | Catatan |
+|---|---|---|
+| github.com/ohmyform/ohmyform | 2.889 | **ARCHIVED** (`archived=true`, push terakhir 2024-10) → sering muncul di daftar \"alternatif Typeform\", **jangan dipakai**. |
+| github.com/quillforms/quillforms | 622 | **Plugin WordPress** (LGPL-3.0) — cuma relevan kalau klien pakai WP; stack kita Astro/Next → tidak berguna. |
+| github.com/Luigigreco/gitforms | 164 | Ide cerdas (**kirim formulir → jadi GitHub Issue + email otomatis**, gratis tanpa DB) **TAPI lisensi = CC BY-NC-SA 4.0 (NON-KOMERSIAL)** → **dilarang** dipakai untuk jasa berbayar kita. |
+| github.com/Swetrix/swetrix · betterlytics/betterlytics | 1.204 · 178 | Analitik privacy-first yang lebih baru (Swetrix AGPL-3.0 subs **6**, Betterlytics ada session replay) → referensi saja, komunitas terlalu kecil. |
+
+**Kesimpulan:** (1) **Umami (MIT, 2 service)** = default analitik semua situs klien — ringan, tanpa cookie, gampang dijual sebagai \"statistik desa tanpa iklan\"; (2) formulir: **jangan** self-host Formbricks di VPS ini (12+ container) — untuk kebutuhan kita cukup **form → endpoint kita/WAHA + catat di vault**, atau OpnForm kalau nanti ada VPS khusus; (3) **hosting:** sekarang **NPM + Uptime Kuma**, nanti **Coolify/Dokploy** di VPS khusus web.
+
+---
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
