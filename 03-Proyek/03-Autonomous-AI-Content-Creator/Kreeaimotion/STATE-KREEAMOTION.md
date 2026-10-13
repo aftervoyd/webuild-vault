@@ -6,6 +6,40 @@
 
 ---
 
+## 👕 FITUR BARU: "GANTI BAJU" (13 Okt 2026, 16:35) — LIVE
+Tombol **`👕 Ganti Baju`** di menu bot: user kirim **foto baju** → keluar karakter user memakai baju itu,
+sementara **wajah, tubuh, pose, dan background tetap**. Commit **`b3c3c78`**.
+
+- **Mesin**: workflow **Qwen-Edit 2511 `2003539764081008641`** — 3 slot gambar:
+  node **41** = gambar 1 (karakter) · node **79** = gambar 2 (**BAJU**) · node **81** = gambar 3 (background)
+  · node **68** = prompt · node **82** = ukuran.
+- `tools/imagegen.py`: `edit_image(..., photo2=, photo3=)` → slot 2 & 3 boleh beda dari slot 1
+  (sebelumnya selalu diisi foto yang sama).
+- DB: kolom baru **`jobs.photo2`** + migrasi idempoten di `db.py`; `new_job(photo2=)`.
+- Foto base: **`data/base_<uid>.jpg`**; kalau belum ada → fallback foto terbaru user
+  (`char_<uid>_*` lalu `photo_<uid>_*`). Helper `_base_photo(uid)` di `bot.py`.
+- Prompt `OUTFIT_PROMPT`: jaga wajah/identitas/tubuh/pose/background + larangan pinggang-melar & kulit plastik.
+- **Biaya nyata: 49 koin RunningHub per gambar (~Rp 216)** — jauh lebih murah dari motion (431 koin).
+- Hasil uji (foto user + baju dari video): baju berubah ✓ · wajah sama ✓ · background sama ✓.
+  ⚠️ Catatan jujur: Qwen **menggambar ulang seluruh gambar**, jadi pinggang/pinggul bisa tampak lebih
+  ideal, kulit lebih halus, dan aksesori tipis (kalung) bisa hilang. Kalau mau background **piksel-identik**,
+  jalurnya harus workflow try-on bermask (kandidat: `2011329691990368258` one-click outfit change 6.580×,
+  `2078118953481940994` FireRed try-on 766×, `1874011612846624769` Leffa try-on 1.465×).
+
+## 🎨 BASE + BACKGROUND (13 Okt 2026, 16:30)
+Kelanjutan permintaan user: *"transfer baju udah mantep, background tolong bikinin aja biar agak mirip sama
+video yang gue kirim, kedepannya gua cuma bakal ganti baju doang"* + *"kamar nggak harus 100% mirip,
+justru lebih bagus agak beda tapi menarik"*.
+
+- Vibe acuan (video FB): kamar cozy — dinding krem, lantai kayu + karpet, kasur seprai putih/abu,
+  nightstand + lampu meja kuning hangat + diffuser.
+- Bahan di `/root/.hermes/cache/scratch/vibes/`: `BG_strip.jpg` (strip kamar), `BAJU_ref.jpg` (baju).
+- Dibuat: **2 base** (A: baju tetap · B: baju dari video) + **4 variasi background**
+  (V1 Korea aesthetic · V2 jendela golden hour · V3 rak buku cozy · V4 jendela lampu kota malam).
+- Skrip: `vibes/uji_gantibaju.py`, `vibes/uji_base_baru.py`, `vibes/uji_variasi_bg.py`.
+- ⏳ **Menunggu user memilih base** → set jadi `data/base_8886993492.jpg` (supaya tombol Ganti Baju
+  pakai base itu).
+
 ## 🥇 MESIN MOTION FINAL: AI App `otz` "Pose Transfer" (13 Okt 2026, 15:23) — LIVE
 User memilih hasil uji #4 (file dibalas = md5 `b242bdf5a351ff0d5339650fde09bf3f`):
 *"ini pakai mesin yang mana? mantep sih yang ini"* → mesin dipindah dari nightfunnels ke **AI App**.
