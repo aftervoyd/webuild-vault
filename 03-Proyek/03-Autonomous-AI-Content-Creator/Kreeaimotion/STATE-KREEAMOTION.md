@@ -8,6 +8,28 @@
 
 ## 0. ⭐ STATUS TERKINI — 13 Okt 2026, 10:10 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
+### 🧑 Karakter Saya — FOTO USER APA ADANYA (13 Okt 2026 13:45, LIVE)
+- **Perubahan**: bikin karakter **TIDAK lagi render character sheet 3 view** lewat RunningHub.
+  Foto yang dikirim user **langsung disimpan apa adanya** → dipakai sebagai sumber Motion Control.
+  Efek: **instan (0,000 dtk; sebelumnya 63 dtk)**, **0 credit** (gerbang credit & teks biaya dicopot),
+  wajah/proporsi **tidak mungkin berubah** karena tidak ada proses AI yang menyentuhnya.
+- **Kode**: `_char_build_from` (tanpa RunningHub; `views={"front": foto user}`),
+  `char_use` utamakan `photo_path` (foto asli; sheet lama jadi cadangan),
+  `config.char_cost` default **0.0**. Commit kode **`9c9fdbe`**. Backup `bot.py.bak-13Oct-1341`.
+- **Uji nyata**: kirim foto → state `char_name` + balasan foto; tombol 🧑 Pakai →
+  salinan **md5 identik** dengan foto asli user (`71b52d5a…`), beda dari panel sheet (`2c525f07…`).
+- `tools/sheet.py` + `MOTIONBOT_CHAR_WORKFLOW` kini **tidak dipakai bot** (tinggal CLI manual).
+
+### ✅ CEK RUNNINGHUB — workflow motion TIDAK rusak (13 Okt 2026 13:40)
+Export 6 workflow via `/api/workflow/export`; **binding node semuanya benar**:
+`2106585458498420737` (t10/t15/t20/full/mc16/S1/FAST/HD) ✓ #1 LoadImage · #2 VHS_LoadVideo ·
+`2013996160695930881` (mc916) ✓ #55 · #72 · `2074049787567292416` (PRO) ✓ #299 · #275 ·
+`1973232104739835906` (Mode Realistis, belum di-wire) ✓ #91 · #114 ·
+`2057856312750465025` (default LAMA di `tools/try_motion.py`) ada tapi **tak dipakai** ·
+`2003539764081008641` (Generate Gambar) ✓ #68 TextEncodeQwen · #9 SaveImage.
+→ Kalau alur motion terasa "beda dari default", sebabnya di **alur bot** (banyak fitur +
+langkah pilih durasi dihapus + karakter), **bukan** di RunningHub.
+
 ### 🧠 9router — GATEWAY MODEL (13 Okt 2026, PERMANEN)
 - **Apa**: gateway OpenAI-compatible yang bisa many-to-many model + fallback otomatis.
 - **Service**: `9router` (systemd, `enabled`, RAM ±160 MB, dibatasi `MemoryMax=420M`).
