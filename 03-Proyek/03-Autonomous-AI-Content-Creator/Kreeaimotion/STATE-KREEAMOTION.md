@@ -47,6 +47,20 @@ Tombol: **[🎲 Generate Prompt] → berubah jadi [🔄 Ganti]** + **[🚀 Buat 
   `tools/promptcraft.py` lewat **9router** (`cerdas`) — **hasil rapihan TIDAK ditampilkan ke user**.
   Cadangan tanpa internet: kamus ID→EN berbasis token (jangan pakai `str.replace` berulang —
   dulu bikin kata rusak "tobaya"/"toep").
+- ⚠️ **PERBAIKAN 13 Okt 11:30 — kunci identitas terlalu ketat (bug).**
+  Dulu `promptcraft.IDENT` = *"Keep her face, **hair**, skin tone and identity exactly the same"* dan
+  `SYS_PROMPT` nomor 1 = *"keep the same face/**hair**/body"* → bot **melarang** mesin mengubah rambut,
+  jadi permintaan "ubah gaya rambut" / "foto dari samping" **selalu ditolak**.
+  Sekarang: kunci **HANYA wajah** (`Keep the same face and facial features identical`) + 3 aturan baru:
+  **ANGLE RULE** (sudut samping ditulis konkret: "profile view, turned 90 degrees"), **PROPORTION RULE**
+  (bukan close-up kalau tidak diminta; kepala ±1/6 tinggi frame), **CLEAN RULE** (hapus teks UI/watermark —
+  foto user sering screenshot aplikasi yang ada tulisan "MAIN VIEW (CLOSE UP)" dan dulu IKUT TERSALIN ke hasil).
+  **Bukti uji nyata**: dari foto close-up DEPAN → keluar **profil 90° + rambut bob pendek** ✓ (koin −138).
+- **Soal "kepala selalu kelihatan besar"**: BUKAN efek kunci rasio. Hasil ukur: hasil LAMA tanpa kunci
+  = kepala **58%** tinggi frame ✗; hasil pakai kunci = **24%** ✓ (kunci justru memperbaiki).
+  Penyebab sesungguhnya = **foto masukan user selalu close-up dada-ke-atas** (kepala 38%) sehingga
+  komposisi itu diwarisi mesin. Solusi: minta *full body/wide shot* di prompt, atau kirim foto yang
+  badannya kelihatan.
 - **RASIO WAJIB IKUT PERMINTAAN USER.** Node size `#82` diabaikan mesin, jadi rasio dikunci dari
   sisi INPUT: `tools/imagegen.py::prep_canvas()` (kanvas 1080×1920, pinggir cermin+blur) →
   hasil 936×1672 = 9:16 pas. Terdeteksi dari prompt: `9:16 16:9 1:1 4:5 3:4 2:3 3:2 5:4 4:3`,
