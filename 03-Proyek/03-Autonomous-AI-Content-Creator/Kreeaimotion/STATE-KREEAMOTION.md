@@ -6,9 +6,45 @@
 
 ---
 
-## 🚀 MESIN MOTION DIGANTI KE NIGHTFUNNELS (13 Okt 2026, 15:12) — LIVE
-Keputusan user (memilih hasil uji banding `nightfunnels`): *"gua mau pake yang terakhir lu kirim, yang ini"*
-(file yang dibalas = `A_nightfunnels.mp4`, md5 `389400069db4d2409dda5bfd91b70d02` ✓ terverifikasi).
+## 🥇 MESIN MOTION FINAL: AI App `otz` "Pose Transfer" (13 Okt 2026, 15:23) — LIVE
+User memilih hasil uji #4 (file dibalas = md5 `b242bdf5a351ff0d5339650fde09bf3f`):
+*"ini pakai mesin yang mana? mantep sih yang ini"* → mesin dipindah dari nightfunnels ke **AI App**.
+
+**`webappId = 2083697864529678338`** · nama `动作迁移自用` / "Pose Transfer Personal Use"
+- 7.843× dipakai · **sukses 97%** · ±690 dtk/run · `instanceType: plus` · tanpa password
+- Output: **576×1024 @30fps**, durasi **mengikuti video referensi** (uji: 16,43 dtk)
+- **Biaya nyata 431 koin/16,4 dtk ≈ 26,3 koin/dtk** (setara nightfunnels 25,9)
+- ⚠️ **Keluarannya ZIP** (nama di dalam: `新V6_00001-audio.mp4`) **sudah ada audionya**
+
+**Cara panggil**: `rh.run_app(2083697864529678338, nodes, instance="plus")`
+→ `POST /task/openapi/ai-app/run` (jalur yang sama dengan Generate Gambar). Tidak pakai workflowId.
+- Binding: **node `299` `image` = foto** · **node `275` `video` = video referensi**
+- Field lain (opsional): 316/317 lebar-tinggi (576×1024), 264 fps (30), 300 batas frame (1200),
+  293 mode pose (1), 265 ekspresi (1.0), 266 guncangan (0.35), 271 topeng (false), 356 prompt
+- **Tidak ada field durasi** → durasi ditentukan oleh panjang video referensi (bot sudah memotongnya
+  sesuai tier), jadi `_CAP` **dikosongkan**.
+
+**Setelan .env** (backup: `.env.bak-13Oct-1525`):
+`MOTIONBOT_{T10,T15,T20,FULL,MC16,S1,FAST,HD}_APP=2083697864529678338`,
+`..._NODES=[["299","image","@photo"],["275","video","@video"]]`, `..._INSTANCE=plus`, `..._CAP=` (kosong).
+`..._WF=2042526099766251522` (nightfunnels) **sengaja dibiarkan** sebagai cadangan — hapus baris `_APP`
+saja untuk kembali ke nightfunnels.
+
+**Perbaikan kode**: `rh.download()` sekarang otomatis **membongkar ZIP** (`_buka_zip_bila_perlu`)
+dan mengambil file video terbesar di dalamnya — sebelumnya ZIP tersimpan sebagai `.mp4` dan
+hasilnya rusak (`moov atom not found`).
+
+### Ringkasan uji banding template (foto & video sama)
+| template | hasil |
+|---|---|
+| **AI App `otz`** (2083697864529678338) | ✅ 576×1024@30fps · 431 koin · ada audio ← **DIPAKAI** |
+| nightfunnels (2042526099766251522) | ✅ 544×960@30fps · 394 koin · cadangan |
+| SCAIL SDPose Uni3C (2001253005766914050) | ❌ CRASH `OOM_KILLED` |
+| CereLabs Motion Control (2080966668369932290) | ❌ "sukses tapi tak ada output" (66 koin hangus) |
+| Wan2.2 Animate revolution (1969217356767653890) | ⏹ dibatalkan (antrean penuh, sudah ada pilihan) |
+
+## 🚀 MESIN MOTION SEBELUMNYA: nightfunnels (13 Okt 2026, 15:12) — dipakai ±11 menit
+Keputusan user saat itu (memilih hasil uji banding `A_nightfunnels`, md5 `389400069db4d2409dda5bfd91b70d02`).
 
 **Workflow baru: `2042526099766251522` — "Motion Control - nightfunnels.com"** (72 node)
 - Mesin: **`Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2`** + `WanAnimate_relight_lora_fp16`
