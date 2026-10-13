@@ -43,6 +43,19 @@ Hasil ±2 menit.
 Tombol: **[🎲 Generate Prompt] → berubah jadi [🔄 Ganti]** + **[🚀 Buat Gambar]**.
 - **Pilihan kelompok (Pakaian/Framing/Background/Vibe) DIHAPUS**; bank 24 prompt di
   `tools/imgmenu.py::RANDOM_PROMPTS` masih ada tapi hanya dipakai tombol acak.
+- ⚠️ **PERUBAHAN 13 Okt 11:55 — PROMPT LANGSUNG KE RUNNINGHUB (default).**
+  User menegur: *"kenapa kurang realistis, lu terlalu banyak bikin aturan dan nggak langsung kirim
+  prompt ke runninghub"* — **BENAR**. Dulu `run_image_job` selalu memanggil
+  `PC.build_final()` → prompt user dirapihkan + ditempeli aturan (kunci wajah, aturan sudut,
+  aturan proporsi, pembersih teks) sebelum dikirim ✗.
+  Sekarang ada saklar **`MOTIONBOT_IMG_RAW_PROMPT=1`** (default ON, di `config.py`) →
+  `final = prompt user APA ADANYA`, **0 karakter tambahan**, lalu langsung ke node prompt RunningHub.
+  Jalur rapihan masih ada tapi NONAKTIF (`=0` kalau mau dihidupkan); `promptcraft` kini hanya dipakai
+  tombol 🎲 Generate Prompt (teks yang dilihat user).
+  Satu-satunya yang masih diatur: **kanvas rasio** (kalau user menyebut 9:16 dll) — ini menyentuh
+  GAMBAR, bukan teks prompt. Kalau foto masukan sudah 9:16, kanvas praktis tidak menambah apa pun.
+  Kalau ternyata kanvas ini pun mengganggu keaslian, matikan dengan tidak menyebut rasio di prompt,
+  atau kabari untuk dibuatkan saklar terpisah.
 - **Prompt user dipahami dulu, lalu dirapihkan jadi Inggris 5 lapis** oleh
   `tools/promptcraft.py` lewat **9router** (`cerdas`) — **hasil rapihan TIDAK ditampilkan ke user**.
   Cadangan tanpa internet: kamus ID→EN berbasis token (jangan pakai `str.replace` berulang —
