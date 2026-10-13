@@ -6,7 +6,33 @@
 
 ---
 
-## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 19:54 WIB (BACA INI DULU; bagian di bawah = riwayat)
+## 0. ⭐ STATUS TERKINI — 13 Okt 2026, 09:45 WIB (BACA INI DULU; bagian di bawah = riwayat)
+
+### 🖼️ Generate Gambar — ALUR BARU (13 Okt 2026, sudah LIVE)
+Foto → bot **LANGSUNG minta prompt**. Pilihan **Pakaian/Framing/Background/Vibe DIHAPUS** semua.
+Tampilan menu (ringkas, 6 bagian):
+```
+✍️ Sekarang kirim prompt-nya: ketik langsung di chat ini.
+
+Contoh: identik wajah sama, kebaya merah, sawah pagi hari, half body 9:16,
+photorealistic kulit nyata film
+
+💡 Bahasa Inggris paling nurut — kalau bisa tulis promptnya dalam bahasa Inggris.
+
+🎲 Prompt: — ketuk tombol di bawah kalau mau dibuatkan otomatis
+
+Saldo: 11 credit · 1 gambar = 1 credit
+Hasil ±2 menit.
+```
+Tombol: **[🎲 Generate Prompt] → berubah jadi [🔄 Ganti]** + **[🚀 Buat Gambar]**.
+- **Ketik prompt sendiri** = jalur utama (min. 12 karakter) → menu tampil ulang, prompt masuk ke baris `🎲 Prompt:`.
+- **🎲 / 🔄** = ambil prompt acak dari bank **24 prompt** di `tools/imgmenu.py::RANDOM_PROMPTS`
+  (dijamin beda dari yang sekarang); baris `🎲 Prompt:` ikut berubah otomatis.
+- **Kirim foto baru** kapan saja = otomatis ganti fotonya (tidak perlu tombol).
+- **Tanpa prompt** → tombol 🚀 tetap jalan (pakai `Improve the photo…` bawaan).
+- Teks & tombol ada di `tools/imgmenu.py` (`menu_text`, `main_kb`, `STRUCT_LINES`).
+- ⚠️ **Mesin JANGAN diubah tanpa perintah**: Qwen-Image-Edit 2511 `2003539764081008641`.
+- Markdown selalu diverifikasi genap (`*` dan `_`) sebelum kirim; ada `try/except` fallback.
 
 ### Bot LIVE: **Kreeaimotion** — `@kreeaimotionbot` (id 8787755168)
 - Kode: `/root/projects/kreeaimotion` (repo git lokal, **belum ada remote GitHub**)
