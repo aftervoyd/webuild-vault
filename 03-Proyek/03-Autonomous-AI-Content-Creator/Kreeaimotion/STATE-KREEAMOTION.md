@@ -8,6 +8,24 @@
 
 ## 0. ⭐ STATUS TERKINI — 13 Okt 2026, 10:10 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
+### 🔥 FIX OOM MOTION — instanceType tak terkirim (13 Okt 2026 14:25, LIVE)
+- **Gejala**: job motion t20 **gagal** berulang (17/19/20) padahal job 18 sukses — input sama.
+- **Akar masalah (dari RunningHub, bukan kira-kira)**: `POST /task/openapi/outputs` untuk task
+  gagal → `data.failedReason = {exception_type: "torch.OutOfMemoryError", node_name: "WanVideoSampler"}`
+  → **GPU kehabisan VRAM** di sampler Wan.
+- **Sebab di kode kita**: `bot.run_job` memanggil `rh.run_workflow(wf_id, nodes)` **tanpa
+  `instance=inst`** → setelan `MOTIONBOT_*_INSTANCE` (plus) **tidak pernah terkirim**; task jatuh
+  ke mesin default yang padat. (Jalur `run_app` sudah mengirim, jalur workflow tidak.)
+- **Perbaikan (commit `158b724`)**:
+  1. `run_workflow(..., instance=inst)` — instance benar-benar dikirim.
+  2. **Auto-retry**: `MOTIONBOT_JOB_RETRY=2` + jeda `MOTIONBOT_JOB_RETRY_WAIT=8` detik;
+     user dikabari "🔁 percobaan N gagal, mencoba ulang otomatis…".
+  3. `rh.failed_reason()` → pesan gagal menyebut sebab asli (mis. "GPU kehabisan memori").
+  4. `rh.cancel()` → `/task/openapi/cancel` (buat buang task sebelum retry / saat salah kirim).
+- **instanceType yang sah**: `plus`, `ultra` (balas `netWssUrl` + target host sendiri), `pro`
+  (bisa balas `TASK_QUEUE_MAXED`).
+- Backup: `bot.py.bak-13Oct-1341`. Service sudah direstart (14:28) dengan kode ini.
+
 ### ♾️ AKUN KITA (ADMIN) BEBAS CREDIT — 13 Okt 2026 13:50
 - `bot.py`: helper **`is_unlim(uid)`** = `uid in S.admins or DBX.is_unlimited(uid)`.
   **Semua 9 titik** cek/potong credit (motion, gambar, refund) sudah pakai helper ini.
