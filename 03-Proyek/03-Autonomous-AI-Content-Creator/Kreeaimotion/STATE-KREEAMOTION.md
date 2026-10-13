@@ -41,7 +41,13 @@ hasilnya rusak (`moov atom not found`).
 | nightfunnels (2042526099766251522) | ✅ 544×960@30fps · 394 koin · cadangan |
 | SCAIL SDPose Uni3C (2001253005766914050) | ❌ CRASH `OOM_KILLED` |
 | CereLabs Motion Control (2080966668369932290) | ❌ "sukses tapi tak ada output" (66 koin hangus) |
-| Wan2.2 Animate revolution (1969217356767653890) | ⏹ dibatalkan (antrean penuh, sudah ada pilihan) |
+| Wan2.2 Animate revolution (1969217356767653890) | ⏹ dibatalkan tapi **tetap ditagih 431 koin** |
+
+**⚠️ PELAJARAN KEUANGAN (13 Okt 2026)**: `/task/openapi/cancel` **TIDAK mengembalikan koin** yang
+sudah terpakai. Membatalkan task yang sedang berjalan hanya menghentikannya, tagihan tetap jalan
+(bukti: D_wan22rev dibatalkan → tetap 431 koin). Jadi **jangan** membatalkan task untuk "hemat koin";
+lebih baik biarkan selesai (hasilnya bisa dipakai) atau jangan dijalankan sejak awal.
+Total uji banding 13 Okt: **21.009 → 20.118 = 891 koin** (A 394 + B 0 + C 66 + D 431).
 
 ## 🚀 MESIN MOTION SEBELUMNYA: nightfunnels (13 Okt 2026, 15:12) — dipakai ±11 menit
 Keputusan user saat itu (memilih hasil uji banding `A_nightfunnels`, md5 `389400069db4d2409dda5bfd91b70d02`).
