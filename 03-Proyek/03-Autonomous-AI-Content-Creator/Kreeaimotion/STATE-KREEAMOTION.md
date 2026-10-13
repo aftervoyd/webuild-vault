@@ -6,11 +6,27 @@
 
 ---
 
-## 0. ⭐ STATUS TERKINI — 13 Okt 2026, 09:45 WIB (BACA INI DULU; bagian di bawah = riwayat)
+## 0. ⭐ STATUS TERKINI — 13 Okt 2026, 10:10 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
-### 🖼️ Generate Gambar — ALUR BARU (13 Okt 2026, sudah LIVE)
-Foto → bot **LANGSUNG minta prompt**. Pilihan **Pakaian/Framing/Background/Vibe DIHAPUS** semua.
-Tampilan menu (ringkas, 6 bagian):
+### 🧠 9router — GATEWAY MODEL (13 Okt 2026, PERMANEN)
+- **Apa**: gateway OpenAI-compatible yang bisa many-to-many model + fallback otomatis.
+- **Service**: `9router` (systemd, `enabled`, RAM ±160 MB, dibatasi `MemoryMax=420M`).
+  Port **20128** · hanya `127.0.0.1` · log `/var/log/9router.log` · data `~/.9router/db/data.sqlite`.
+- **Klien**: kunci klien ada di tabel `apiKeys` DB itu (nama `kreeaimotion-bot`) —
+  **JANGAN pernah tampilkan nilainya**. Base URL: `http://127.0.0.1:20128/v1`.
+- **Provider terpasang**: node `openai-compatible-chat-429e8267-…` nama **Inferhub**
+  (baseUrl `https://api.inferhub.dev/v1`) + 315 model kekspos sebagai `ih/<model-asli>`.
+- **Combo `cerdas`** (kind chat, 5 model, urut): `ih/ali/qwen3.8-flash` → `ih/cb/gpt-5.6-luna`
+  → `ih/ali/qwen3.8-max` → `ih/cb/gemini-3.1-pro` → `ih/ali/deepseek-v4.1-flash`.
+  Panggil model `cerdas` = otomatis pindah model kalau ada yang mati/nolak.
+- ⚠️ **WAJIB `"stream": false`** di body `/v1/chat/completions` — tanpa itu balasannya SSE
+  dan `json.loads` gagal (ini pernah bikin promptcraft mentok 24 dtk).
+- Login dashboard dimatikan lewat tabel `settings` (`requireLogin:false`) karena bind localhost.
+- Nyalakan/matikan: `systemctl status|restart 9router`.
+
+### 🖼️ Generate Gambar — ALUR + MUTU (13 Okt 2026, sudah LIVE)
+Alur (pilihan user): **FOTO DULU** → menu minta prompt → user ketik atau tombol prompt acak →
+🚀 Buat Gambar. Tampilan menu:
 ```
 ✍️ Sekarang kirim prompt-nya: ketik langsung di chat ini.
 
@@ -19,20 +35,28 @@ photorealistic kulit nyata film
 
 💡 Bahasa Inggris paling nurut — kalau bisa tulis promptnya dalam bahasa Inggris.
 
-🎲 Prompt: — ketuk tombol di bawah kalau mau dibuatkan otomatis
+🎲 Prompt: <muncul di sini, otomatis berubah tiap tekan Ganti>
 
-Saldo: 11 credit · 1 gambar = 1 credit
+Saldo: 12 credit · 1 gambar = 1 credit
 Hasil ±2 menit.
 ```
 Tombol: **[🎲 Generate Prompt] → berubah jadi [🔄 Ganti]** + **[🚀 Buat Gambar]**.
-- **Ketik prompt sendiri** = jalur utama (min. 12 karakter) → menu tampil ulang, prompt masuk ke baris `🎲 Prompt:`.
-- **🎲 / 🔄** = ambil prompt acak dari bank **24 prompt** di `tools/imgmenu.py::RANDOM_PROMPTS`
-  (dijamin beda dari yang sekarang); baris `🎲 Prompt:` ikut berubah otomatis.
-- **Kirim foto baru** kapan saja = otomatis ganti fotonya (tidak perlu tombol).
-- **Tanpa prompt** → tombol 🚀 tetap jalan (pakai `Improve the photo…` bawaan).
-- Teks & tombol ada di `tools/imgmenu.py` (`menu_text`, `main_kb`, `STRUCT_LINES`).
+- **Pilihan kelompok (Pakaian/Framing/Background/Vibe) DIHAPUS**; bank 24 prompt di
+  `tools/imgmenu.py::RANDOM_PROMPTS` masih ada tapi hanya dipakai tombol acak.
+- **Prompt user dipahami dulu, lalu dirapihkan jadi Inggris 5 lapis** oleh
+  `tools/promptcraft.py` lewat **9router** (`cerdas`) — **hasil rapihan TIDAK ditampilkan ke user**.
+  Cadangan tanpa internet: kamus ID→EN berbasis token (jangan pakai `str.replace` berulang —
+  dulu bikin kata rusak "tobaya"/"toep").
+- **RASIO WAJIB IKUT PERMINTAAN USER.** Node size `#82` diabaikan mesin, jadi rasio dikunci dari
+  sisi INPUT: `tools/imagegen.py::prep_canvas()` (kanvas 1080×1920, pinggir cermin+blur) →
+  hasil 936×1672 = 9:16 pas. Terdeteksi dari prompt: `9:16 16:9 1:1 4:5 3:4 2:3 3:2 5:4 4:3`,
+  plus kata vertical/portrait → 9:16, horizontal/landscape → 16:9, square/persegi → 1:1.
+- Config `.env`: `MOTIONBOT_LLM_BASE=http://127.0.0.1:20128/v1`, `MOTIONBOT_LLM_KEY=<kunci klien 9router>`,
+  `MOTIONBOT_LLM_MODELS=cerdas,ih/ali/qwen3.8-flash,ih/cb/gpt-5.6-luna,ih/ali/qwen3.8-max`.
+- Biaya nyata satu gambar: ±50 koin RunningHub ≈ Rp 220 (job #8: 198 dtk, 49 koin).
 - ⚠️ **Mesin JANGAN diubah tanpa perintah**: Qwen-Image-Edit 2511 `2003539764081008641`.
-- Markdown selalu diverifikasi genap (`*` dan `_`) sebelum kirim; ada `try/except` fallback.
+- ⚠️ **JANGAN pakai `pkill -f "9router …"`** — polanya cocok dengan shell pemanggil dan
+  membunuh diri sendiri. Matikan lewat PID dari `ss -ltnp` atau `systemctl`.
 
 ### Bot LIVE: **Kreeaimotion** — `@kreeaimotionbot` (id 8787755168)
 - Kode: `/root/projects/kreeaimotion` (repo git lokal, **belum ada remote GitHub**)
