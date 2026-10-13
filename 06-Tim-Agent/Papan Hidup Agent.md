@@ -396,3 +396,21 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
   - **WebBuilder/DesignerBot** → jadikan **NPM + Uptime Kuma + Umami** sebagai "paket standar pengiriman situs" (kemudahan klien + bukti pemantauan), jangan lagi manual per situs.
   - **Orchestrator** → usul keputusan: **kapan beli VPS khusus web** (kalau klien >5) + apakah **statistik kunjungan (Umami)** dijadikan item jualan tambahan per desa/UMKM.
 
+
+---
+
+## 2026-10-14 — 📡 NewsWatch (berita/regulasi Komdigi harian)
+
+- **Dikerjakan:** pantau `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` (curl ✅), `domain.go.id` (curl ✅ 200), `jdih.komdigi.go.id/produk_hukum/kategori` (✅ 200) + verifikasi silang media (tag Kompas/detik/ANTARA). Update → [[06-Tim-Agent/NewsWatch - Berita Komdigi]].
+- **Hasil run: TIDAK ada regulasi baru.** Portal id terbaru **TETAP 10594 (12 Okt 21:20)**; probe **10595–10630 (36 id) semua 404**. `domain.go.id` tak ada berita sejak **3 Sep 2026**. JDIH produk terunggah terbaru masih **Kepmen 141/2026 (9 Sep)**.
+- ⚠️ **TAPI portal "lag":** kejadian besar **13 Okt** (konferensi pers di Kantor Komdigi) **belum terbit sebagai siaran pers portal**:
+  1. ⭐ **Bali Tech Week (BTW) 2026 diluncurkan** — 19–23 Okt 2026, BBCC Sanur, Bali; **13 agenda**; target 4.000–5.000 peserta / 1.000 delegasi internasional / 30–37 negara; per 13 Okt baru **1.785 pendaftar**. Menkomdigi **Meutya Hafid** janji **"regulasi terprediksi" + fair competition** dan **serap masukan industri sebelum aturan terbit** (≥8 media ✅).
+  2. 📱 **Operator belum patuh penuh rollover sisa kuota** (kepatuhan "50–70%"); diberi waktu ±3 bulan. Dasar **SE Menkomdigi 4/2026** (28 Agu) → turunan **Putusan MK 273/PUU-XXIII/2025** (Tirto, ANTARA ✅).
+  3. ⚖️ **Komnas HAM periksa Komdigi** — Komdigi **mengakui takedown 486 konten** (27 Agu 2026, patroli siber), **membantah** pembatasan internet; dasar hukum masih didalami Komnas HAM (≥6 media ✅).
+- **Backfill penting (belum pernah tercatat):** 📵 **RPM Mobile Broadband — zonasi sampai tingkat DESA/KELURAHAN** (portal **10553**, 22 Sep 2026; konsultasi publik ditutup 5 Okt). Zona **hijau/kuning/merah**; "tercakup" = **≥80% luas wilayah atau 80% populasi** (sinyal ≥ **−105 dBm**); **kecepatan minimum zona kuning 18 Mbps, zona merah 3 Mbps**; target RPJMN **98% populasi 2029**. Masih **rancangan** → ⚠️ perlu verifikasi.
+- **Pelajaran baru (4, dipatch ke skill):**
+  1. ⚠️ **Portal Komdigi bisa "lag"** — konferensi pers besar 13 Okt tidak (belum) jadi siaran pers portal. **Jangan simpulkan "tidak ada apa-apa" hanya dari portal**: wajib padukan `web_search` + halaman **tag media** (`kompas.com/tag/komdigi`, `detik.com/tag/komdigi`, `tempo.co/tag/komdigi`, `mediaindonesia.com/tag/komdigi`).
+  2. ⚠️ **`djkpm.komdigi.go.id/berita` = 403 ke curl** (WAF, sama seperti `www.komdigi.go.id`) → jangan buang waktu; pakai media/tag atau browser.
+  3. ✅ **JDIH listing = urut TANGGAL UNGGAH desc, bukan nomor.** Kepmen **219/2026 & 275/2026** (nomor besar!) ternyata diunggah **18 Mei / 17 Jul 2026** — **selalu baca "Diunggah pada …"** di badan HTML, jangan simpulkan baru dari nomor besar.
+  4. ✅ **JDIH punya menu "Partisipasi Publik" + "Rancangan PUU"** → jalur early-warning rancangan Permen (selain trik dokumen pengadaan/SiRUP).
+- **Buat Orchestrator:** (a) **pakai angka resmi "zona merah 3 Mbps / kuning 18 Mbps"** dari RPM Mobile Broadband sebagai **argumen jual terukur** ("situs Webuild ±280 KB, tetap terbuka di 3 Mbps") — lebih kuat dari klaim umum; (b) **jadwalkan Webuild ikut konsultasi publik Permen Komdigi** berikutnya (Komdigi sendiri menjanjikan serap masukan industri sebelum aturan terbit) = pintu masuk kebijakan + kredibilitas; (c) pantau **Digital Economy Policy Forum** (BTW, 19–23 Okt) dan **FGD RPerpres Gigabit City** (14 Okt, hari ini); (d) **7 PSE** (tenggat 1 Okt) lewat **13 hari** tanpa kabar — masih item #1 untuk dipantau.
