@@ -6,6 +6,40 @@
 
 ---
 
+## 🚀 MESIN MOTION DIGANTI KE NIGHTFUNNELS (13 Okt 2026, 15:12) — LIVE
+Keputusan user (memilih hasil uji banding `nightfunnels`): *"gua mau pake yang terakhir lu kirim, yang ini"*
+(file yang dibalas = `A_nightfunnels.mp4`, md5 `389400069db4d2409dda5bfd91b70d02` ✓ terverifikasi).
+
+**Workflow baru: `2042526099766251522` — "Motion Control - nightfunnels.com"** (72 node)
+- Mesin: **`Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2`** + `WanAnimate_relight_lora_fp16`
+- Segmentasi `SeCVideoSegmentation` (SeC-4B-fp8) + deteksi pose/wajah `PoseAndFaceDetection`
+  (vitpose_h + yolov10m.onnx) — otomatis, tanpa setelan manual
+- Sampler hanya **3 langkah, cfg 1** (cepat) · keluaran **544×960 @30fps**
+- Binding: **foto = node `391` (`image`)**, **video = node `392` (`video`)**
+  · **durasi keluaran = node `341` (`value`, dalam DETIK)** ← dulu 15 (default pembuat)
+
+**Setelan .env sekarang** (backup: `.env.bak-13Oct-1520`):
+- `MOTIONBOT_{T10,T15,T20,FULL,MC16,S1,FAST,HD}_WF=2042526099766251522`
+- `..._NODES=[["391","image","@photo"],["392","video","@video"]]` · `..._INSTANCE=plus`
+- `..._CAP=341:value:{ref}` → **`{ref}` = durasi video referensi** (dihitung di `run_job`,
+  dibatasi durasi tier). Tanpa ini video 16 dtk diminta 20 dtk → gerakan ujung membeku.
+- `MOTIONBOT_MAX_FULL=30` (dulu 60): >30 dtk belum diuji, dan SCAIL sudah `OOM_KILLED`
+
+**⚠️ BIAYA NAIK**: nightfunnels **394 koin / 15 dtk** vs workflow lama **162 koin / 20 dtk**
+(≈ 2,4× lebih mahal). Harga credit ke user BELUM diubah (masih 1 / 1,5 / 2 / 4).
+
+**Perbaikan bug**: `rh.run_workflow()` sekarang menangani `421 TASK_QUEUE_MAXED`
+(menunggu & ulang) — sebelumnya langsung gagal; `run_app()` sudah punya sejak dulu.
+
+**Hasil uji banding template (foto & video sama):**
+| template | hasil |
+|---|---|
+| **nightfunnels** (2042526099766251522) | ✅ 544×960@30fps · 986 dtk · 394 koin ← **DIPAKAI** |
+| SCAIL SDPose Uni3C (2001253005766914050) | ❌ CRASH `OOM_KILLED` (VRAM kurang, 0 koin) |
+| CereLabs Motion Control (2080966668369932290) | ❌ "sukses tapi tak ada output" (66 koin hangus) |
+| Wan2.2 Animate revolution (1969217356767653890) | ⏳ sedang diuji |
+| AI App `otz` (2083697864529678338) | ⏳ sedang diuji |
+
 ## 🎬 WORKFLOW "VACE 14B Image-to-Video" — 盘古 (13 Okt 2026, link kedua dari user)
 Sumber: `works-details/2074687679400341505` (penulis `盘古`, 2.400× dipakai, output **720×1280**).
 `POST /api/creation/detail` → `contentType: WORKFLOW`, **`workflowId = 1922977171818598402`**
