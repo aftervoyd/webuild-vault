@@ -85,6 +85,19 @@ Tombol: **[🎲 Generate Prompt] → berubah jadi [🔄 Ganti]** + **[🚀 Buat 
 - ⚠️ **JANGAN pakai `pkill -f "9router …"`** — polanya cocok dengan shell pemanggil dan
   membunuh diri sendiri. Matikan lewat PID dari `ss -ltnp` atau `systemctl`.
 
+### 🧩 Potong subjek / ganti latar (13 Okt 12:20 — alat lokal, 0 koin)
+- `tools/bgswap.py` — potong subjek dari gambar → **PNG transparan** (`cutout`), lalu tempel ke latar
+  apa pun: warna polos, gradient, atau foto (`composite`) + penyatu cahaya, rim light, dan bayangan.
+- **PENTING**: `rembg 2.0.85` + `onnxruntime 1.31.0` sudah dipasang di `.venv` (venv jadi ±828 MB).
+  Model di `/root/.rembg/models/u2net/u2net.onnx` (176 MB, diunduh sekali).
+  **Kalau venv dibuat ulang, rembg+onnxruntime harus dipasang lagi**, kalau tidak `tools/bgswap.py` mati.
+- Pakai `alpha_matting=True` untuk rambut — terbukti jauh lebih bersih (potongan biasa menyisakan
+  halo putih + helaian rambut hilang). Biaya waktu: ±15 detik, RAM aman di server 1,9 GB.
+- Skor jujur: potongan subjek **7/10** ✓; tempel ke latar warna polos bagus ✓; tempel ke **foto adegan
+  ramai masih 4/10** ✗ (cahaya studio-dari-depan tidak cocok dengan latar seperti sunset) →
+  untuk adegan realistis tetap pakai jalur mesin AI (RunningHub), bukan tempel.
+- Belum dipasang sebagai tombol di bot (user belum minta).
+
 ### Bot LIVE: **Kreeaimotion** — `@kreeaimotionbot` (id 8787755168)
 - Kode: `/root/projects/kreeaimotion` (repo git lokal, **belum ada remote GitHub**)
 - Service: `kreeaimotion` · Log: `/var/log/kreeaimotion.log` · DB: `kreeaimotion.sqlite3`
