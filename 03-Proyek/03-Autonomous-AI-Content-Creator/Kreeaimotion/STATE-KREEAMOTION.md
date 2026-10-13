@@ -6,6 +6,28 @@
 
 ---
 
+## 🎬 WORKFLOW "VACE 14B Image-to-Video" — 盘古 (13 Okt 2026, link kedua dari user)
+Sumber: `works-details/2074687679400341505` (penulis `盘古`, 2.400× dipakai, output **720×1280**).
+`POST /api/creation/detail` → `contentType: WORKFLOW`, **`workflowId = 1922977171818598402`**
+→ bisa dibedah & dijalankan sendiri (bukan app terkunci).
+
+**INI BUKAN MOTION TRANSFER**: 74 node, input hanya **`LoadImage` node 210** —
+**tidak ada `VHS_LoadVideo`** → foto → video (I2V), tidak bisa memakai video referensi.
+
+**Kenapa hasilnya "realistis banget" — resepnya (patut ditiru):**
+1. Mesin: `WanVideoModelLoader` **Wan2_1-T2V-14B_fp8_e4m3fn** + `WanVideoVACEModelSelect`
+   **Wan2_1-VACE_module_14B_bf16** · `WanVideoVACEEncode` 832×480 · sampler 20 langkah cfg 6
+2. Penajam kualitas: **`WanVideoEnhanceAVideo`** (penguat detail/gerak) + **`ColorMatch`** (mkl 0.9)
+   + `WanVideoTeaCache` + `WanVideoSLG` ← kunci warna & detail tidak "plastik"
+3. **Prompt otomatis**: 3× `RH_Captioner` + `RH_Prompter` + 2× `RH_Translator` + `JjkText`
+4. **SUARA OTOMATIS**: `MMAudioModelLoader` (mmaudio_large_44k_v2) + `MMAudioFeatureUtilsLoader`
+   (vae_44k + synchformer) + `CheckpointLoaderSimple` stable-audio-open-1.0 + `CLIPLoader` t5-base-google
+   + `MMAudioSampler` (3, 40, 4.5) + `AudioCombine` → video keluar **dengan musik/ambience**
+   (nama file contoh: `241-20_00001_p85-audio_*.mp4`)
+
+**Kesimpulan peran:** link#1 (`otz`) = **motion transfer** (foto+video);
+link#2 (`盘古`) = **foto→video + prompt otomatis + suara otomatis**. Dua fungsi berbeda, dua-duanya berguna.
+
 ## 💎 AI APP "POSE TRANSFER PERSONAL USE" — app motion transfer paling realistis (13 Okt 2026)
 Sumber: halaman kreasi yang dikirim user `works-details/2107847068877430785` (penulis `otz`).
 Kreasi itu **bukan workflow, tapi AI App**. Detail app ditemukan via `POST /api/webapp/detail {"webappId":…}`
