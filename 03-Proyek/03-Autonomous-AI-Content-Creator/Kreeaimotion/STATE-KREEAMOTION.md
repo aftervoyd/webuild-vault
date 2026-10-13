@@ -6,6 +6,48 @@
 
 ---
 
+## 💎 AI APP "POSE TRANSFER PERSONAL USE" — app motion transfer paling realistis (13 Okt 2026)
+Sumber: halaman kreasi yang dikirim user `works-details/2107847068877430785` (penulis `otz`).
+Kreasi itu **bukan workflow, tapi AI App**. Detail app ditemukan via `POST /api/webapp/detail {"webappId":…}`
+(tanpa login pun jalan — cukup header Origin/Referer).
+
+**`webappId = 2083697864529678338`** · nama `动作迁移自用` / "Pose Transfer Personal Use"
+- **`useCount 7.843`** · 62 like · **250 koleksi** · **sukses 97%** · rata-rata **690 detik**
+- `accessType 0` · `needPassword false` · `encrypted false` · app jalan di `instanceType: plus`
+- Output contoh: **576×1024** · file `迁移_00001_p80-audio_nicnn_*.mp4`
+
+**Cara panggil (SUDAH didukung kode kita)**: `rh.run_app(app_id, nodes, instance)`
+→ `POST /task/openapi/ai-app/run` dengan `{apiKey, webappId, nodeInfoList, instanceType}`
+(jalur sama seperti Generate Gambar / Qwen-Edit). **Tidak perlu workflowId** (`workflowId: null`).
+
+**13 field masukan** (data mentah: `docs/apps/otz_motion_bindings.txt`, JSON: `docs/apps/otz_motion_*.json`):
+| node | jenis | field | arti | default |
+|---|---|---|---|---|
+| **299** | LoadImage | `image` | **FOTO** | — |
+| **275** | VHS_LoadVideo | `video` | **VIDEO referensi** | — |
+| 316 | easy int | `value` | lebar | 576 |
+| 317 | easy int | `value` | tinggi | 1024 |
+| 264 | easy int | `value` | fps | 30 |
+| 300 | easy int | `value` | batas frame | 1200 |
+| 293 | ImpactSwitch | `select` | mode hitung pose (1) | 1 |
+| 265 | easy float | `value` | simulasi ekspresi | 1.0 |
+| 266 | easy float | `value` | amplitudo guncangan | 0.35 |
+| 271 | easy boolean | `value` | saklar topeng | false |
+| 356 | Text Multiline | `text` | prompt penguat | 最佳质量, photorealistic, 8k… |
+| 348 | ImpactSwitch | `select` | mode keluaran | 1 |
+| 357 | Text | `text` | node cadangan (tak terpakai) | — |
+
+**Panduan parameter dari pembuatnya:**
+- 1280×720 @30fps → **video ≤26 dtk** (disarankan <20 dtk) · 1024×576 → ≤45 dtk (<34) · 960×540 → ≤42 dtk
+- **OOM bisa terjadi walau parameter sudah kecil** — kata pembuatnya: "jalankan ulang atau coba di jam lain,
+  ini cuma gangguan RunningHub" (cocok dengan temuan OOM kita)
+- Ekspresi: `0` = hampir tanpa perubahan wajah · `0.2` = halus (disarankan) · `1` = penuh (cepat)
+- Mode hitung pose **3 jangan dipakai pemula**
+- Ada opsi **video super-resolution** (2× resolusi, ~20–35 koin)
+
+Cara menemukan app lain: `POST /api/creation/detail {"creationId":…}` → lihat `webappId`/`workflowId`,
+lalu `POST /api/webapp/detail {"webappId":…}` untuk skema isian + statistik sukses.
+
 ## 0. ⭐ STATUS TERKINI — 13 Okt 2026, 10:10 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
 ### 🔥 FIX OOM MOTION — instanceType tak terkirim (13 Okt 2026 14:25, LIVE)
