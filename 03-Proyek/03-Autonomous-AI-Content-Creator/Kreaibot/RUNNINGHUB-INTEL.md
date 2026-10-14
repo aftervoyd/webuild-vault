@@ -35,10 +35,11 @@
 - ⏰ **Deadline pendaftaran + teaser 2 menit: 9 Okt 2026**
 - Tahap 2: film final min. 15 menit, deadline **3 Nov 2026**; pengumuman finalis 12–13 Okt
 
-### 4. Free window untuk member (penghematan biaya)
-- **13 jam/hari GRATIS**: 09.00–22.00 ET = **20.00–09.00 WIB**
-- Di luar jam itu: 480p ¥0,10/s · 768p ¥0,20/s · 1080p ¥0,42/s (≈Rp2.200–9.300/detik)
-- 👉 Render di jam gratis = biaya koin **NOL** → margin naik 100%
+### 4. ~~Free window untuk member~~ → ⚠️ **KOREKSI 14 OKT 2026: TIDAK BERLAKU BUAT KITA**
+- Promo *"13 jam/hari gratis"* itu **spesifik model MiniMax H3 RH Enhanced** — **bukan** workflow/AI App kita.
+- Bukti: uji Qwen di "jam gratis" tetap kena **632 koin**; render kita selalu memakai koin.
+- Tarif nyata: Qwen-Edit ±50 koin/gambar · motion ±26 koin/detik (16,4 dtk ≈ 431 koin).
+- 👉 **Hitung koin dulu sebelum render.** Tidak ada jam yang lebih murah.
 
 ## ⚠️ Catatan teknis
 - Login dari IP VPS (datacenter Tencent, beda negara): login pertama sempat **drop session** dalam ~1 menit; percobaan kedua **stabil** (bertahan > 40s + navigasi). Kalau drop berulang → pindah ke **proxy residensial** + profil browser persisten.

@@ -69,12 +69,12 @@ Lihat bagian 3.
 2. **腾讯SSV** — kata "向善/公益" bikin peserta tech-y berkurang; 21 hari cukup buat 2–5 mnt.
 3. **Strategi menang:** pilih **kategori sepi** (mis. Documentary/True Crime, Experimental, atau kategori Advertising spesifik seperti Banking/Telecom) daripada kategori ramai (Sci-Fi/Animation).
 
-## 4. 🎬 RENCANA PRODUKSI (siap dijalankan 21:00–10:00 = gratis)
+## 4. 🎬 RENCANA PRODUKSI (⚠️ BUKAN gratis — hitung koin dulu tiap render)
 Aset yang sudah kita punya: pipeline i2v H3, editor Qwen, faceswap, pose, lipsync, chargen (karakter konsisten), storyboard multi-scene, + bot KREE.AI sebagai mesin.
 
 **Langkah:**
 1. Pilih 1 kategori Chroma yang sepi → tulis 1 halaman logline + shot list (≤3 mnt).
-2. Render klip 5 dtk per shot **di dalam free window** (biaya ~0).
+2. Render klip 5 dtk per shot — **berbayar koin** (±26 koin/detik ⇒ klip 5 dtk ≈ 130 koin).
 3. Rakit di storyboard + subtitle English (wajib untuk juri).
 4. Upload ke YouTube/Vimeo (butuh akun milik user), deskripsi: cantumkan tools + www.ChromaAwards.com.
 5. Submit via form resmi.
@@ -118,7 +118,7 @@ Aset yang sudah kita punya: pipeline i2v H3, editor Qwen, faceswap, pose, lipsyn
 ---
 ## 7. SCAN 14 OKT 2026 — koreksi "kebocoran" + kontes baru
 **Koreksi penting (menggantikan catatan saldo di bagian 6):** TIDAK ada plafon tetap, tapi ADA pengurasan nyata & terukur: 24.881 (12 Okt 08:00, Δ0) → 22.729 (13 Okt, **-2.152**) → **18.847 (14 Okt, -3.882)**. Rata-rata ~2.083 koin/hari.
-**Penyebab ditemukan:** `.env` kreaibot & **kreeaimotion memakai RUNNINGHUB_API_KEY yang SAMA** (hash md5 identik) → satu kolam koin. Log kreeaimotion 13 Okt: job 18–28 jalan pukul **13:55–17:00 WIB** (DI LUAR free window 21:00–10:00) → kena tarif koin; job gagal (FAILED) juga tercatat (playbook klaim gagal tak ditagih — perlu verifikasi lanjut). Bukan kebocoran sistem, tapi pemborosan jadwal.
+**Penyebab ditemukan:** `.env` kreaibot & **kreeaimotion memakai RUNNINGHUB_API_KEY yang SAMA** (hash md5 identik) → satu kolam koin. Log kreeaimotion 13 Okt: job 18–28 jalan pukul **13:55–17:00 WIB** → kena tarif koin (normal; tarif berlaku 24 jam, bukan karena jam); job gagal (FAILED) juga tercatat (playbook klaim gagal tak ditagih — perlu verifikasi lanjut). Bukan kebocoran sistem, tapi pemborosan jadwal.
 
 ### Kontes baru/belum ada di bagian 3 & 6
 | Kontes | Biaya | Deadline | Catatan |

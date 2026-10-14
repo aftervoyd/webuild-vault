@@ -46,7 +46,7 @@
 ### 🌙 SESI OTONOM 10 Okt 03:00 (user tidur) — RunningHub & koin
 - **Login web RunningHub BERHASIL** ✓ (vault handle `vault_5e4871dcae31` · origin runninghub.ai · profil "Nimara Official" ID 2108050207926067202). Situs Nuxt SPA; login via modal nav ("Enter phone number or email" + password). Header API web = **`Authorization`** (token dari `localStorage['Rh-Accesstoken']`); endpoint web pakai `POST /uc/getUserInfo`.
 - **Saldo**: koin **27.912** (via `/uc/openapi/accountStatus`, apiKey) · wallet $0,010 · membership s/d 8 Nov.
-- **FREE WINDOW terkonfirmasi**: "MiniMax H3 RH Enhanced — members 1 bulan generate unlimited, **13 jam gratis/hari = 9 AM–10 PM ET = 21:00–10:00 WIB**". → aturan: produksi berat di jam itu = koin ~0.
+- ⚠️ **~~FREE WINDOW terkonfirmasi~~ → KOREKSI 14 Okt 2026:** promo *"MiniMax H3 RH Enhanced — 13 jam gratis/hari"* itu **KHUSUS MODEL MINIMAX H3**, **BUKAN** workflow/AI App kita. Sudah dibuktikan sendiri (baris di atas): uji Qwen di "jam gratis" **tetap kena 632 koin**. **Tidak ada jam gratis — tarif koin berlaku 24 jam.** Tarif nyata: Qwen-Edit ±50 koin/gambar · motion ±26 koin/detik.
 - **Jalur koin**: (A) Creator Incentive Program `runninghub.ai/creator-reward` — publish workflow/AI app → dibayar per-run + favorit + orisinalitas, settle mingguan, withdraw bulanan (`/my-income` masih $0,00) · (B) Invite **500 koin/undangan**, kode kita **`baaxhjzz`** (⚠️ dilarang farming akun palsu) · (C) login harian ~100 koin (hangus 24 jam).
 - **Kontes**: RunningHub (tutup 9 Okt) & 鲸锐 (wajib KTP China) ✗. Yang BUKA & layak: **Chroma Awards S2** (global, gratis, 51 kategori, ~31 Des) + **腾讯SSV "科技向善"** (¥130rb, 31 Okt, 2–5 mnt). Detail + strategi menang: **`RUNNINGHUB-KOIN-PLAYBOOK.md`**.
 - **Automation**: cron `RunningHub — cek koin & scan kontes` (harian 08:00, id `428a7529fa42`) + tool `tools/rh_coin_check.py` (log `work/rh_coins.csv`).
@@ -196,7 +196,7 @@ Uji `empty2` = workflow yang **sama** (FL2VA) tapi **frame-akhir dikosongkan eks
 5. `selftest.py` **78/78**. Commit vault: `165d7c9`.
 
 ## 6. CATATAN JALAN PINTAS
-- **Jam bebas H3 RH Enhanced (member):** 13 jam/hari gratis (6 AM–7 PM PT ≈ **21:00–10:00 WIB**) — belum diverifikasi apakah berlaku untuk workflow kita.
+- **~~Jam bebas H3 RH Enhanced (member)~~:** ⚠️ **SUDAH DIVERIFIKASI 14 Okt 2026 — TIDAK berlaku untuk workflow/AI App kita** (promo spesifik model MiniMax H3). Render kita **ditagih koin jam berapa pun**.
 - **AI App (jalur koin, tanpa key SHARED):** daftar app `--list`, input app `--info <webappId>` (butuh app pernah dijalankan di web). Kandidat LTX2.3 i2v: `2072511984289017857`, `2073941041631293442`, `2074067101232488449`; dipercepat/e-commerce: `2074672423118663682`.
 
 ## 4b. UJI API MODEL STANDAR (9 Okt 00:42–00:46) — hasil + batas

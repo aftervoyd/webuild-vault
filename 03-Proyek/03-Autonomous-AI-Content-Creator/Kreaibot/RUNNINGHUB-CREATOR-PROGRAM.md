@@ -46,7 +46,7 @@
    via CDP `DOM.setFileInputFiles` (file dibaca dari disk server) → muncul "Upload Workflow Success".
 4. **Save** — buka `/workflow/<id>?source=workspace`, tunggu ±25 dtk (editor berat), klik tombol **Save**
    → *"Workflow has been saved."* **Wajib**, tanpa ini task API ditolak `810 WORKFLOW_NOT_SAVED_OR_NOT_RUNNING`.
-5. **Uji jalan** (gratis di free window): `tools/rh_test_mywf.py --photo <img> --wf <id> --node <LoadImage id>`.
+5. **Uji jalan** (⚠️ **berbayar koin — bukan gratis**): `tools/rh_test_mywf.py --photo <img> --wf <id> --node <LoadImage id>`.
 
 ### Jebakan yang sudah kena (jangan diulang)
 - **`widgets_values` wajib ada di node** — kalau hilang: `required_input_missing: unet_name`.
