@@ -7,6 +7,28 @@
 ---
 
 
+
+### 💰 HARGA BARU TERPASANG (14 Okt 2026) — 1 credit = Rp 1.000
+- `.env`: `COST_10=3 · COST_15=5 · COST_20=6 · COST_FULL=18 · IMG_COST=1 · GEN_COST=1 ·
+  REAL_COST_ADD=2 · PACKAGES=5:5000,11:10000,28:25000,57:50000`.
+- Paket sekarang diatur lewat SATU baris env `MOTIONBOT_PACKAGES="kredit:harga,..."` (tidak perlu
+  ubah kode lagi). Tombol tier di bot ikut otomatis dari `TIER_COST`.
+- Uji E2E ulang setelah ganti harga: paket 5 credit/Rp 5.000 → poller mengkredit dalam ~4 dtk ✓.
+
+### 🔒 PENGAMAN MODE LIVE (wajib, karena uang asli)
+- **Klaim atomik** (`db.pay_credit_once`): `UPDATE payments … WHERE status='pending'` → poller dan
+  tombol "Sudah Bayar" bisa jalan bersamaan tanpa dobel-credit. Diuji: percobaan kedua balik `None`
+  dan saldo TIDAK bertambah.
+- **Cek nominal**: kalau yang dibayar < harga order → TIDAK dikredit, admin dikabari.
+- Cadangan manual tetap ada kalau API Aulaa mati.
+
+### 🚦 STATUS LIVE AULAA
+- Project Aulaa masih mode **sandbox** (transaksi balik `is_test=true`, QRIS tes `COM.TESTTEST`).
+- Project ini **dipakai bersama bot Kree.AI** → begitu switch di-flip ke Live, KEDUA bot langsung
+  pakai uang asli. (Riwayat: Kree.AI pernah 1 order live lunas Rp 10.000 — tes sendiri, 8 Okt.)
+- Setelah switch ke Live: lakukan 1 transaksi nyata kecil (Rp 5.000) dari HP sendiri, lalu cek
+  `journalctl -u kreeaimotion -f | grep topup` + tabel `payments`.
+
 ## PEMBAYARAN OTOMATIS AULAA (QRIS) — LIVE & TERUJI SANDBOX (14 Okt 2026)
 
 - **Modul:** `tools/aulaa.py` (disalin dari bot Kree.AI) + tabel `payments` di `db.py`
