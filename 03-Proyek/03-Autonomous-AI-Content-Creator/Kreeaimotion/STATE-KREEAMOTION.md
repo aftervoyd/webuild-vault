@@ -56,6 +56,24 @@ Binding portrait **berhasil kalau `width`/`height` diisi eksplisit** (aspect_rat
 - 📄 Rincian harga koin: Lite Plus $71,9/thn→13.000 koin/bln (Rp 8,26/koin) · Personal $89,9/thn→36.000 koin/bln
   (**Rp 3,73/koin**) · Pro $139/thn→54.000 (Rp 3,85) · Pro Plus $236,9/thn→72.000 (Rp 4,91).
 
+### 🔍 AKAR MASALAH "kacamata muncul telat + wajah berubah" (14 Okt, 12:40–13:10)
+Keluhan user pada hasil MiniMax ref2v 10 dtk. Temuan dari catatan workflow sendiri:
+- **"参考图不作为首帧"** (foto referensi **BUKAN** frame pertama) — rupa diambil dari foto, tapi frame awal
+  dibangun dari VIDEO referensi → identitas (kacamata) baru "nyantol" di tengah sampling.
+- Workflow ini aslinya untuk **DUA foto orang** (rantai: Image1 → Image2 → Video → Audio) + audio ref;
+  kita mengisi foto yang sama ke dua slot = pemakaian di luar peruntukan.
+- 📌 **Faktor dominan = DURASI**: klip 10 dtk drift; **klip 5 dtk dengan resep sama → kacamata muncul dari
+  frame pertama, wajah konsisten, latar tidak berubah.** → **batasi klip ref2v ≤ 5–6 dtk** untuk identitas stabil.
+- Portrait WAJIB set `width`/`height` eksplisit (node 12); `aspect_ratio` diabaikan.
+
+| uji lanjutan | hasil | biaya | catatan |
+|---|---|---|---|
+| **otz (mesin live) portrait 10 dtk** | 576×1024@30 · 10,0 dtk · audio | **279 koin** (27,9 k/dtk) | kacamata ✓ wajah ✓ latar ✓ · ghosting ringan di tangan |
+| **MiniMax ref2v portrait 5 dtk** (resep sama dgn landscape favorit user) | 768×1344@24 · 5,17 dtk · audio | **635 koin** (127 k/dtk) | identitas stabil ✓ · ghosting di tangan saat gerak cepat |
+- Task: otz `2110229393807040513` · MiniMax portrait5s `2110230011737325569`.
+- 💰 Biaya sesi lanjutan: **914 koin** (otz 279 + MiniMax 635) → sisa koin **15.898**.
+- 🏆 **Verdict untuk produksi: `otz` menang** — 4,5× lebih murah per detik, 30fps, identitas stabil di 10 dtk.
+
 **Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
 Kandidat kuat lain: `2093273891489026050` (Ref-to-Video RH full-chain) · `2100492507649007617`
 (Multi-Parameter, **3 video ref**) · `2089977406388338689` (1 foto + video ref) ·
