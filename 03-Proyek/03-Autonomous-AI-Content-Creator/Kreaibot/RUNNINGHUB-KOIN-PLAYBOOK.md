@@ -23,8 +23,12 @@
   | mesin | tarif nyata |
   |---|---|
   | Qwen-Edit 2511 (Generate Gambar / Ganti Baju) | **±49–52 koin per gambar** |
+  | **MiniMax H3 (i2v / workflow RH)** | **±16,4 koin/detik** (video 5 dtk = **82 koin**; uji 14 Okt 08:37 WIB) |
   | AI App `otz` Pose Transfer | **±26,3 koin/detik** (16,4 dtk ≈ 431 koin) |
   | nightfunnels Wan2.2 Animate | ±25,9 koin/detik |
+- 📌 **Klarifikasi promo "MiniMax H3 RH Enhanced gratis 13 jam/hari"**: berlaku **di rhTV / RHSTORY**
+  (produk aplikasi RunningHub) — **BUKAN** di jalur API/workflow/AI App kita. Terbukti: render 5 dtk pada
+  jam 08:37 WIB (di dalam jendela yang diklaim gratis) **tetap ditagih 82 koin**.
 - `accountStatus` → **`apiType: NORMAL`** (akun API biasa; bukan VIP/promo MiniMax).
 - **Aturan operasional yang BENAR: hitung koin dulu sebelum render.** Tidak ada jam gratis;
   menjadwalkan render ke malam **tidak** menghemat koin.

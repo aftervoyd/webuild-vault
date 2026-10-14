@@ -6,6 +6,37 @@
 
 ---
 
+## 🎬 MESIN ALTERNATIF: MiniMax H3 (14 Okt 2026) — lebih murah + motion control via video referensi
+**Latar:** user minta *"coba bikin motion control pake minimax"* (memanfaatkan promo "MiniMax H3 gratis").
+
+**⚠️ Promo "gratis" TIDAK berlaku di jalur kita.** Promo *"MiniMax H3 RH Enhanced — 1 bulan unlimited,
+13 jam gratis/hari"* berlaku **di rhTV / RHSTORY** (produk aplikasi RunningHub), **bukan** API/workflow/AI App.
+**Bukti empiris:** render 5 dtk jam **08:37 WIB** (di dalam jendela yang diklaim gratis) **tetap kena 82 koin**.
+`accountStatus` → `apiType: NORMAL`.
+
+**Mesin 1 — foto → gerak (i2v): workflow `2095423555109744641` "MiniMax H3 MAX Image-to-Video — AI photo to Motion"**
+- 8 node, pakai node `RHMiniMaxH3VideoGen` (versi "RH Enhanced" milik RunningHub).
+- Binding: node **1** `image` = foto · node **8** `prompt`, `aspect_ratio`, `width`, `height`, `duration_seconds`.
+- Hasil uji (foto user, 5 dtk, 4 step turbo): **480×832 @24fps · 5,17 dtk · ADA AUDIO (AAC)** · 2,4 MB
+- **Biaya 82 koin = 16,4 koin/detik** → **±38% lebih murah** dari mesin sekarang (otz 26,3 koin/detik),
+  tapi resolusi & fps lebih rendah.
+
+**Mesin 2 — MOTION CONTROL (gerak mengikuti video referensi): workflow `2085900381959593985`
+"MiniMax H3 Reference Live Video RH Version _ Text Image Audio"**
+- 20 node. Node kunci: `RHMiniMaxH3Ref2VAVideoReference` (**#9**) · `MiniMaxH3Ref2VATarget` (**#12**)
+  · `RHMiniMaxH3Ref2VAEncode` (**#13**).
+- Binding API: node **4** `image` (Picture 1) · node **6** `image` (Picture 2) ·
+  node **8** `file` (video) + `keep_audio` + `trim_time` · node **12** `aspect_ratio`/`duration_seconds`/`width`/`height`
+  · node **13** `prompt` (pakai penanda `<Picture 1>` / `<Picture 2>`).
+- Pelajaran: MiniMax H3 RH Enhanced **memang multimodal** — referensi bisa **9 gambar + 3 video + 3 audio**
+  → **motion control versi MiniMax ADA**, bukan cuma generasi.
+
+**Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
+Kandidat kuat lain: `2093273891489026050` (Ref-to-Video RH full-chain) · `2100492507649007617`
+(Multi-Parameter, **3 video ref**) · `2089977406388338689` (1 foto + video ref) ·
+`2087178020289708033` (all-in-one acceleration).
+Skrip: `scratch/rh_cari_minimax.py`, `rh_bedah_minimax.py`, `rh_cari_minimax_video.py`, `uji_minimax.py`, `uji_motion_minimax.py`.
+
 ## 👕 FITUR BARU: "GANTI BAJU" (13 Okt 2026, 16:35) — LIVE
 Tombol **`👕 Ganti Baju`** di menu bot: user kirim **foto baju** → keluar karakter user memakai baju itu,
 sementara **wajah, tubuh, pose, dan background tetap**. Commit **`b3c3c78`**.
