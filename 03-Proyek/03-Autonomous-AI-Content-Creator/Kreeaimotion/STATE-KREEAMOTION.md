@@ -30,6 +30,15 @@
   · node **13** `prompt` (pakai penanda `<Picture 1>` / `<Picture 2>`).
 - Pelajaran: MiniMax H3 RH Enhanced **memang multimodal** — referensi bisa **9 gambar + 3 video + 3 audio**
   → **motion control versi MiniMax ADA**, bukan cuma generasi.
+- **Hasil uji ref2v (14 Okt 09:15):** ✅ video jadi — **1344×768 @24fps · 5,17 dtk · ada audio** ·
+  render **±22 menit** (sampler 21 langkah) · **biaya 655 koin = ±127 koin/detik** → **±4,8× LEBIH MAHAL**
+  dari mesin otz (26,3 koin/detik). ⚠️ Binding `aspect_ratio=9:16` **tidak dipakai** (hasil tetap landscape 1344×768)
+  → kalau mau portrait, harus set `width`/`height` juga.
+  Isi video: identitas user terjaga (rambut panjang + kacamata + dress merah), pose **berubah antar frame**
+  (gerak terjadi), latar berubah jadi interior (gorden abu + sofa).
+- 📌 **Kesimpulan biaya:** MiniMax i2v turbo (4 langkah) = **16,4 koin/detik (termurah)** · otz = 26,3 ·
+  **MiniMax ref2v motion control = 127 koin/detik (termahal)**. Kalau mau motion control MiniMax yang murah,
+  cari varian **accel/turbo**-nya (mis. `2087178020289708033` all-in-one acceleration) dan turunkan langkah sampler.
 
 **Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
 Kandidat kuat lain: `2093273891489026050` (Ref-to-Video RH full-chain) · `2100492507649007617`
