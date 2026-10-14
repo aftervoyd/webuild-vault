@@ -104,3 +104,20 @@ Aset yang sudah kita punya: pipeline i2v H3, editor Qwen, faceswap, pose, lipsyn
 **aibetas.com/competition-calendar:** tidak ada lomba baru — masih 6 agenda China (31 Okt 腾讯SSV, 1 Nov 可灵, 22 Nov 鲸锐, 3 Des 泉州, 6 Des 深圳, 31 Des GBA).
 
 **Catatan saldo (rh_coins.csv):** 26.765 (10 Okt 12:37) → 24.881 (11 Okt 08:00) → 24.881 (**12 Okt 08:00, Δ 0**). Jadi **tidak ada kebocoran berjalan** 24 jam terakhir; hipotesis "bocor 2,3rb/hari" gugur — penurunan 1.884 koin terjadi di jendela 10 Okt malam (kemungkinan sisa tugas/membership), bukan biaya harian.
+
+---
+## 7. SCAN 14 OKT 2026 — koreksi "kebocoran" + kontes baru
+**Koreksi penting (menggantikan catatan saldo di bagian 6):** TIDAK ada plafon tetap, tapi ADA pengurasan nyata & terukur: 24.881 (12 Okt 08:00, Δ0) → 22.729 (13 Okt, **-2.152**) → **18.847 (14 Okt, -3.882)**. Rata-rata ~2.083 koin/hari.
+**Penyebab ditemukan:** `.env` kreaibot & **kreeaimotion memakai RUNNINGHUB_API_KEY yang SAMA** (hash md5 identik) → satu kolam koin. Log kreeaimotion 13 Okt: job 18–28 jalan pukul **13:55–17:00 WIB** (DI LUAR free window 21:00–10:00) → kena tarif koin; job gagal (FAILED) juga tercatat (playbook klaim gagal tak ditagih — perlu verifikasi lanjut). Bukan kebocoran sistem, tapi pemborosan jadwal.
+
+### Kontes baru/belum ada di bagian 3 & 6
+| Kontes | Biaya | Deadline | Catatan |
+|---|---|---|---|
+| **DAIFF 2nd ed. (TBWA, Australia)** | **GRATIS** | **16 Okt 2026** (≈2 hari) | Tema "Humans and Their Tools"; Gala Melbourne 18 Nov; didukung Google, Leonardo.AI, BMW. Terlalu mepet untuk edisi ini. |
+| **PixLight 2026 (PixVerse)** | gratis | **diperpanjang 9 Okt → 31 Okt 2026** | $300K, 33 award; **wajib PixVerse Canvas** sebagai platform utama. |
+| **VISIONARIA Roma** | cek | 31 Okt 2026 | Festival 27 Nov 2026. |
+| **IA en Corto (Chile, ed.2)** | $5,50–9 | 18 Okt 2026 | Spanyol/Inggris, 4 seksi. |
+| **Atlanta AI Ad Fest** | $10 (termasuk 5.000 kredit Bloomway) | 25 Okt 2026 | **$2.500 cash**; jury 40% ide. |
+| Future Vision XPRIZE | gratis | (indeks: 15 Agu 2026 → kemungkinan sudah lewat/2027) | >$3,5 jt; perlu verifikasi ulang. |
+
+**aibetas.com:** tambahan — "2026亚洲艺术电影节 AI影像奖" (Asia Art Film Festival AI Image Award) buka征片 global; sisanya masih 6 agenda China (butuh KTP China).
