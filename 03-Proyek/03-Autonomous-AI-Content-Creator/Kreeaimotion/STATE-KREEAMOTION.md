@@ -154,6 +154,23 @@ Bot mengirim berkas standar sebagai FOTO + berkas 4K sebagai DOKUMEN.
 Setelan: `MOTIONBOT_OUTFIT_RH_APP=2095689306085285890` (kosongkan = workflow Qwen-Edit biasa).
 **Uji end-to-end job #33** (Inferhub gagal 180 dtk → app) → `state=done`, keluar 760×1352 (750 KB) + 2160×3840 (8,3 MB).
 
+### 🕺 FITUR BARU: GANTI POSE + urutan mesin pintar (14 Okt 2026)
+- **Tombol `🕺 Ganti Pose`** (+ perintah `/gantipose`) — alur sama seperti Ganti Baju:
+  kalau belum ada `base_<uid>.jpg` minta foto karakter dulu (state `Flow.pose_base`), lalu minta foto pose
+  (`Flow.pose_photo`) → job `model="pose"` (foto pose disimpan di kolom `jobs.photo2`).
+- Dijalankan di AI App `2095689306085285890` dengan slot: **20 = orang · 21 = POSE acuan · 41 = foto orang
+  sendiri** (biar baju ikut yang asli) + prompt `POSE_PROMPT_APP`. Pose TIDAK lewat Inferhub (model gambar
+  di sana tidak bisa kontrol pose).
+- **Pelajaran penting (hasil uji #35 vs #36):** foto acuan pose WAJIB **seluruh badan**. Uji #35 pakai frame
+  selfie dari video FB (muka ketutup HP) → hasilnya wajah KEPOTONG dan pose cuma sebagian. Setelah ganti
+  acuan bersih (dibuat lewat GPT Image/Inferhub generations) + prompt ditambah "keep framing, never crop the
+  face" → **pose mengikuti acuan, wajah utuh, baju & latar tetap** (uji #36). Tips ini sudah ditulis di pesan bot.
+- **Urutan mesin pintar** (`MOTIONBOT_OUTFIT_ORDER=auto`): coba jalur gratis (Inferhub) dulu, TAPI kalau
+  endpoint itu baru gagal beruntun (`imgedit.sedang_rusak()`, 2 gagal dalam 15 menit) → **langsung** ke AI App
+  supaya user tidak menunggu 3 menit sia-sia. Nilai lain: `app` (selalu AI App) / `inferhub` (selalu gratis dulu).
+- **Biaya terukur:** ganti pose ≈ **40 koin** (instance default), ±4 menit, 2 berkas (760×1352 + 2160×3840 10,7 MB).
+  Biaya credit user tetap `MOTIONBOT_IMG_COST` (sama seperti fitur gambar lain).
+
 **Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
 Kandidat kuat lain: `2093273891489026050` (Ref-to-Video RH full-chain) · `2100492507649007617`
 (Multi-Parameter, **3 video ref**) · `2089977406388338689` (1 foto + video ref) ·
