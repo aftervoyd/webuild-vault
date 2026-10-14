@@ -128,6 +128,32 @@ sangat mirip foto kedua.
   baju dulu → orangnya yang diganti (jadi ilustrasi/kartun). Prompt berlabel IMAGE 1/2 & urutan dibalik = tetap gagal.
 - **Log per percobaan** ada di `/var/log/kreeaimotion.log` (`imgedit: gagal <model> / <bentuk> setelah N dtk`).
 
+### 🏆 MESIN CADANGAN GANTI BAJU DIGANTI → AI App "Outfit Transfer + Pose + 4K" (14 Okt 2026)
+Dua AI App dikirim user; hasil bedah + uji nyata dengan foto asli (2 berkas: standar + 4K):
+
+**✅ App `2095689306085285890` — DIPAKAI (menang)**
+- Isi: Qwen-Image-Edit **PLUS** FP8 + LoRA `consistence_edit_v2` / `qwen-edit-skin_1.1` / `edit_0928_lora`
+  + segmentasi orang (YOLO `person_yolov8m-seg`) + **GroundingDINO SDPose** (transfer pose)
+  + **SeedVR2 7B** upscale → **output 4K asli 2160×3840**.
+- Node: `20` 人物图 (orang) · `21` 姿态图 (pose) · `41` 服装图 (baju) · `113` CR Text (perintah).
+  ⚠️ **Baju = GAMBAR KETIGA**, bukan kedua → prompt Inferhub ("second image") TIDAK boleh dipakai di app ini;
+  dipakai `OUTFIT_PROMPT_APP` (China+Inggris, menyebut 图片1/图3).
+- **Biaya terukur: 40 koin dengan instance DEFAULT** (≈213 dtk) vs **96 koin kalau `instanceType: plus`**
+  dengan berkas hasil IDENTIK → **jangan paksa plus** (kesalahan yang sempat kejadian di jalur worker).
+- Perbandingan: 40 koin dapat 2 berkas termasuk 4K; Qwen-Edit biasa 44 koin hanya 1 berkas tanpa 4K.
+- Kelebihan lain: wajah/konsistensi identitas lebih stabil (ada LoRA khusus) — dinilai dari uji panel.
+
+**❌ App `2093156177407741953` (Seedream 5.0 Pro) — TIDAK BISA DIPAKAI**
+- Gagal di node `RH_SeedreamV5ProImageToImage` (`RuntimeError`) dalam 10–31 dtk, **0 koin**,
+  di semua tipe instance (`default`, `plus`, `ultra`) dan **bukan karena filter konten**
+  (baju netral juga gagal). Rusak di sisi RunningHub, bukan di sisi kita.
+
+**Rantai mesin ganti baju sekarang (live):**
+`Inferhub GPT/Gemini (0 koin)` → gagal/timeout → `AI App 2095689306085285890 (40 koin, 4K)`.
+Bot mengirim berkas standar sebagai FOTO + berkas 4K sebagai DOKUMEN.
+Setelan: `MOTIONBOT_OUTFIT_RH_APP=2095689306085285890` (kosongkan = workflow Qwen-Edit biasa).
+**Uji end-to-end job #33** (Inferhub gagal 180 dtk → app) → `state=done`, keluar 760×1352 (750 KB) + 2160×3840 (8,3 MB).
+
 **Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
 Kandidat kuat lain: `2093273891489026050` (Ref-to-Video RH full-chain) · `2100492507649007617`
 (Multi-Parameter, **3 video ref**) · `2089977406388338689` (1 foto + video ref) ·
