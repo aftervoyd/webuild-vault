@@ -113,6 +113,21 @@ sangat mirip foto kedua.
   Verifikasi: wajah sama ✓ · baju ikut acuan ✓ (catatan: celana panjang jadi celana pendek) · latar tetap ✓ · tanpa cacat.
 - ⚠️ Kalau mau kesetiaan potongan baju lebih ketat, perkuat `OUTFIT_PROMPT_EN` (mis. sebut "long trousers, same length").
 
+### ⚡ GANGGUAN ENDPOINT EDIT INFERHUB + cadangan otomatis (14 Okt 2026, ±1 jam)
+- **Gejala:** `/images/edits` MATI total (gpt-image-2 & gemini: read timeout 100–200 dtk; sebagian balas
+  `HTTP 502 upstream error`), padahal `/images/generations` di key yang SAMA sehat (±23 dtk). Job user #32
+  nyangkut 36 menit karena ini.
+- **Cadangan otomatis (sudah live):** Inferhub gagal → bot pindah sendiri ke RunningHub Qwen-Edit
+  (`MOTIONBOT_OUTFIT_RH_FALLBACK=1`). Job #32 selesai lewat jalur ini (44 koin) dan gambar terkirim ke user.
+- **Budget:** `MOTIONBOT_OUTFIT_BUDGET=180` detik; percobaan per model 100 detik; urutan percobaan
+  MEMBOLAK-BALIK model (gpt → gemini → gpt → gemini) supaya model mati tidak menelan seluruh budget.
+- **Pemutus arus:** `tools/imgedit.py::budget_efektif()` — setelah 2 kegagalan beruntun, budget dipangkas
+  jadi 70 dtk selama 15 menit (biar tidak buang 3 menit tiap job saat gateway rusak).
+- **JALUR /chat/completions TIDAK BISA dipakai ganti baju** (sudah diuji): Gemini di jalur itu nerima 2
+  gambar & balas gambar (11–42 dtk), TAPI gambar PERTAMA dianggap kanvas — orang dulu → baju diabaikan;
+  baju dulu → orangnya yang diganti (jadi ilustrasi/kartun). Prompt berlabel IMAGE 1/2 & urutan dibalik = tetap gagal.
+- **Log per percobaan** ada di `/var/log/kreeaimotion.log` (`imgedit: gagal <model> / <bentuk> setelah N dtk`).
+
 **Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
 Kandidat kuat lain: `2093273891489026050` (Ref-to-Video RH full-chain) · `2100492507649007617`
 (Multi-Parameter, **3 video ref**) · `2089977406388338689` (1 foto + video ref) ·
