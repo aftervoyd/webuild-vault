@@ -6,6 +6,24 @@
 
 ---
 
+## STATUS MODEL VIDEO INFERHUB (dicek 14 Okt 2026) — BELUM BISA DIPAKAI
+
+- `/v1/models` memang mendaftar **±28 id model video** (Veo 3.1, Kling 2.1–3.0 + video-o-1/o-3,
+  Seedance 1.0–2.5, Wan 2.6–3.0, Hailuo 03/2.3, LTXV 2.3 pro/fast, motion_2.0, flux-3-video) —
+  tapi itu cuma **iklan katalog**, bukan ketersediaan.
+- **Bukti 3 lapis bahwa video = NOL:** `GET /v1/videos` → `{"data":[]}`; halaman harga resmi →
+  `Text 201 · Image 4 · Video 0`; semua panggilan `POST /v1/videos` → `404 unknown_model`, TERMASUK
+  contoh dari docs mereka sendiri (`leo/veo-3.1-fast-generate-001`) dan semua prefix yang dicoba
+  (bare, leo/, alias/, ali/, cc/, cb/, ocg/, grok/).
+- **Jebakan:** submit tanpa prompt BUKAN tes validitas — router memvalidasi parameter lebih dulu,
+  jadi model hidup & mati sama-sama balas `400 invalid_request: prompt is required`.
+- **Keputusan:** video tetap di RunningHub (AI App otz). Alat pantau sudah dibuat:
+  `tools/pantau_video_inferhub.py` (gratis, tanpa API key, baca halaman harga publik).
+- **4 model gambar yang AKTIF** (semua sudah dipakai kecuali yang terakhir):
+  gpt-image-2 ($0.136/$0.51), gemini-3.0-pro-image ($0.034/$2.04),
+  **gemini-3.1-flash-image ($0.0085/$1.02 — murah, belum dipakai, kandidat cadangan ke-3)**,
+  gemini-2.5-flash-image ($0.0051/$0.51).
+
 ## 🎬 MESIN ALTERNATIF: MiniMax H3 (14 Okt 2026) — lebih murah + motion control via video referensi
 **Latar:** user minta *"coba bikin motion control pake minimax"* (memanfaatkan promo "MiniMax H3 gratis").
 
