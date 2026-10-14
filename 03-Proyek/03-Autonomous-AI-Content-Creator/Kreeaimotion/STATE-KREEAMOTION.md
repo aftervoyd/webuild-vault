@@ -40,6 +40,22 @@
   **MiniMax ref2v motion control = 127 koin/detik (termahal)**. Kalau mau motion control MiniMax yang murah,
   cari varian **accel/turbo**-nya (mis. `2087178020289708033` all-in-one acceleration) dan turunkan langkah sampler.
 
+### Uji PORTRAIT + DURASI 10 DETIK (14 Okt 2026, 09:30–10:17)
+Binding portrait **berhasil kalau `width`/`height` diisi eksplisit** (aspect_ratio saja tidak cukup).
+| uji | hasil | biaya | waktu |
+|---|---|---|---|
+| i2v turbo, 480×832, 10 dtk (prompt ada push-in) | 480×832@24 · 10,1 dtk · audio | **92 koin** (9,2 k/dtk) | ±3 mnt |
+| i2v turbo, 480×832, 10 dtk (**kamera statis**) | 480×832@24 · 10,1 dtk · audio | **42 koin** (4,2 k/dtk) | ±3 mnt |
+| **ref2v motion control, 768×1344, 10 dtk** | **768×1344@24 · 10,1 dtk · audio** | **1.398 koin** (138 k/dtk) | **±57 mnt** |
+- ⚠️ **Tagihan tidak linier**: i2v 5 dtk=82, i2v 10 dtk=92, i2v 10 dtk (v2)=42 → tampaknya dihitung dari
+  **waktu GPU nyata**, bukan durasi video. Jadi **10 detik bisa lebih murah dari 5 detik**.
+- ⚠️ Cacat i2v: framing masih sedikit mengetat di akhir; **warna dress bergeser** (merah→maroon), tint hijau
+  di rambut, glow oranye di lengan. Ghosting berat hilang setelah prompt "static camera, no push-in".
+- 💰 **Total eksperimen 14 Okt: 2.269 koin** (82+655+92+42+1.398) ≈ **Rp 12.200** (rentang Rp 8.500–18.750
+  tergantung tier koin). Bonus: **+100 koin klaim harian** masuk otomatis. Sisa koin: **16.812**.
+- 📄 Rincian harga koin: Lite Plus $71,9/thn→13.000 koin/bln (Rp 8,26/koin) · Personal $89,9/thn→36.000 koin/bln
+  (**Rp 3,73/koin**) · Pro $139/thn→54.000 (Rp 3,85) · Pro Plus $236,9/thn→72.000 (Rp 4,91).
+
 **Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
 Kandidat kuat lain: `2093273891489026050` (Ref-to-Video RH full-chain) · `2100492507649007617`
 (Multi-Parameter, **3 video ref**) · `2089977406388338689` (1 foto + video ref) ·
