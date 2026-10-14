@@ -92,6 +92,27 @@ Keluhan user pada hasil MiniMax ref2v 10 dtk. Temuan dari catatan workflow sendi
   Billing Inferhub **tidak bisa dicek via API** (endpoint billing 404) → cek dashboard mereka.
 - Deploy: `systemctl restart kreeaimotion` (14 Okt) · handler terverifikasi: `img_start`, `gen_prompt_step`, `img_use_photo`.
 
+### 👕 GANTI BAJU PINDAH MESIN → Inferhub (GPT utama, Gemini cadangan) — 14 Okt 2026
+**Permintaan user:** alur seperti di ChatGPT — upload foto karakter (character sheet) + foto orang yang
+memakai baju yang diinginkan → ketik `/transferoutfit` → wajah & proporsi tubuh tetap identik, baju jadi
+sangat mirip foto kedua.
+- **Endpoint Inferhub `/images/edits` menerima JSON** (BUKAN multipart; multipart dijawab
+  `body must be JSON`) — gambar dikirim sebagai **data-URL base64** di field **`image: [url1, url2]`**.
+  Bentuk ini TERBUKTI jalan untuk `gpt-image-2` (output 1024×1536) **dan** `gemini-3.0-pro-image` (848×1264).
+- Modul baru: **`tools/imgedit.py`** — `edit(foto_utama, [foto_lain], prompt, dest_dir)`, mencoba 4 bentuk
+  field (image/images × data-url/raw) dan otomatis pindah model kalau model utama gagal.
+- `.env`: `MOTIONBOT_OUTFIT_ENGINE=inferhub` · `MOTIONBOT_OUTFIT_MODEL=gpt-image-2` ·
+  `MOTIONBOT_OUTFIT_FALLBACK=gemini-3.0-pro-image`. Set `MOTIONBOT_OUTFIT_ENGINE=runninghub` untuk balik
+  ke Qwen-Edit (kena koin).
+- Prompt baru (Inggris, paling nurut): **`OUTFIT_PROMPT_EN`** — pertahankan wajah/identitas/kulit/rambut/
+  kacamata/pose/proporsi + latar & cahaya; baju disalin hampir identik (desain, potongan, warna, bahan, motif, panjang).
+- **Alur bot:** tombol 👕 Ganti Baju **atau** perintah **`/transferoutfit`**. Kalau belum ada `base_<uid>.jpg`,
+  bot minta FOTO KARAKTER dulu (state `Flow.outfit_base`, disimpan jadi `base_<uid>.jpg`), baru minta foto baju.
+- **UJI END-TO-END NYATA:** job #31 disisipkan ke DB → worker mengambilnya → **selesai 27 detik via gpt-image-2**
+  (RunningHub lama ± 2 menit) · hasil 1024×1536 · **0 koin RunningHub** · gambar terkirim ke chat admin.
+  Verifikasi: wajah sama ✓ · baju ikut acuan ✓ (catatan: celana panjang jadi celana pendek) · latar tetap ✓ · tanpa cacat.
+- ⚠️ Kalau mau kesetiaan potongan baju lebih ketat, perkuat `OUTFIT_PROMPT_EN` (mis. sebut "long trousers, same length").
+
 **Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
 Kandidat kuat lain: `2093273891489026050` (Ref-to-Video RH full-chain) · `2100492507649007617`
 (Multi-Parameter, **3 video ref**) · `2089977406388338689` (1 foto + video ref) ·
