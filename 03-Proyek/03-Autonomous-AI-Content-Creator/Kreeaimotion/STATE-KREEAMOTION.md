@@ -74,6 +74,24 @@ Keluhan user pada hasil MiniMax ref2v 10 dtk. Temuan dari catatan workflow sendi
 - 💰 Biaya sesi lanjutan: **914 koin** (otz 279 + MiniMax 635) → sisa koin **15.898**.
 - 🏆 **Verdict untuk produksi: `otz` menang** — 4,5× lebih murah per detik, 30fps, identitas stabil di 10 dtk.
 
+### 🖼️ FITUR BARU: Generate Gambar (TEKS → gambar) via Inferhub — 14 Okt 2026
+**Konsep:** user sekarang cukup KETIK PROMPT → gambar jadi. Tidak butuh RunningHub, **0 koin** (biaya lewat kredit gateway Inferhub).
+- Modul baru: **`tools/txt2img.py`** (`generate(prompt, dest_dir) -> (Path, model)`, retry + model cadangan)
+- Setelan `.env`: `MOTIONBOT_IMAGE_KEY` · `MOTIONBOT_IMAGE_BASE=https://api.inferhub.dev/v1` ·
+  `MOTIONBOT_IMAGE_MODEL=gemini-3.0-pro-image` · `MOTIONBOT_IMAGE_FALLBACK=gpt-image-2` · `MOTIONBOT_IMAGE_SIZE=1024x1536` ·
+  `MOTIONBOT_GEN_COST=0` (gratis sementara — harga final menyusul, cukup ubah .env)
+- Alur bot: tombol **🖼️ Generate Gambar** → popup berisi **susunan prompt** + **contoh master karakter kucing oren Van cat**
+  (mata heterochromia, pose realistis, background poskamling perumahan) → user ketik prompt → state `Flow.gen_prompt` →
+  `asyncio.to_thread(T2I.generate)` → foto dikirim. Kalau user malah kirim FOTO di state itu, otomatis pindah ke jalur foto lama.
+- Jalur lama (foto acuan: identitas/pakaian/latar/gaya, Qwen-Edit) tetap ada lewat tombol inline
+  **“🖼️ Pakai foto sebagai acuan”** (`callback_data="gg:photo"`).
+- **Model gambar yang TERBUKTI jalan di Inferhub `/v1/images/generations`:** `gemini-3.0-pro-image` (paling fotorealistis),
+  `gemini-3.1-flash-image`, `gemini-2.5-flash-image` (nano banana), `gpt-image-2` (ukuran PERSIS sesuai `size`).
+  Yang **404** (nama tak terdaftar di endpoint gambar): `gpt-image-1.5`, `gpt-image-2.5-flare`, `nano-banana-2`, `gemini-image-2`.
+- Catatan: model Gemini mengikuti rasio tapi memakai resolusi internal (848×1264); `gpt-image-2` patuh `size` (1024×1536).
+  Billing Inferhub **tidak bisa dicek via API** (endpoint billing 404) → cek dashboard mereka.
+- Deploy: `systemctl restart kreeaimotion` (14 Okt) · handler terverifikasi: `img_start`, `gen_prompt_step`, `img_use_photo`.
+
 **Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
 Kandidat kuat lain: `2093273891489026050` (Ref-to-Video RH full-chain) · `2100492507649007617`
 (Multi-Parameter, **3 video ref**) · `2089977406388338689` (1 foto + video ref) ·
