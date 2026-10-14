@@ -6,6 +6,34 @@
 
 ---
 
+
+## PEMBAYARAN OTOMATIS AULAA (QRIS) — LIVE & TERUJI SANDBOX (14 Okt 2026)
+
+- **Modul:** `tools/aulaa.py` (disalin dari bot Kree.AI) + tabel `payments` di `db.py`
+  (`pay_create/pay_set/pay_get/pay_pending/pay_recent`) + poller tiap 6 dtk di `bot.py`.
+- **Alur:** user ketuk 💰 Top Up → pilih paket → bot bikin order (`km<epoch><uid%100000>`) → Aulaa
+  balikin invoice QRIS → bot kirim **gambar QR + tautan halaman bayar** + tombol `✅ Sudah Bayar` /
+  `❌ Batalkan` → **poller** cek status tiap 6 dtk → credit masuk otomatis + user dikabari.
+- **Cadangan:** kalau `AULAA_API_KEY` kosong, alur lama (QRIS statis + kirim bukti + admin approve)
+  tetap jalan. Kredensial Aulaa sekarang diisi → jalur otomatis aktif.
+- **Sandbox:** switch di dashboard Aulaa → transaksi balik `is_test=true`; QR-nya QRIS tes
+  (`COM.TESTTEST`). Simulasi bayar: `GET/POST https://api.aulaa.co/payment-simulation`.
+- **Bukti uji (`tools/uji_aulaa_sandbox.py`):** order Rp 5.000 → bayar disimulasikan →
+  **poller bot sendiri mengkredit dalam ~4 detik** (log `topup LUNAS (via poller) … credit=+6.0
+  saldo=106.0`), status DB `paid`, ledger `topup_aulaa km…` tercatat, saldo 100 → 106.
+- **Metode aktif di project (14):** qris (min Rp 1.000), shopee_pay, linkaja, alfamart, indomaret,
+  BCA/BNI/BRI/Mandiri/Permata/CIMB/Maybank/BNC/ATM Bersama VA.
+- **⚠️ Catatan:** project Aulaa ini masih **sama** dengan bot Kree.AI. Pisahkan project kalau mau
+  pembukuan terpisah.
+
+## 💰 HARGA CREDIT — analisis lengkap di `HARGA-CREDIT.md`
+- Biaya nyata: motion **25,95 koin/detik**; ganti baju App 41–44 koin; ganti pose App 47–48 koin;
+  jalur Inferhub ±Rp 40–90 (0 koin).
+- **Harga sekarang RUGI**: motion 10 dtk dijual 1 credit (Rp 455–833) tapi biayanya Rp 968.
+- **Usulan:** 1 credit = Rp 1.000 → motion 10/15/20 dtk = 3/5/6 credit, motion maks 60 dtk = 18 credit,
+  ganti baju & pose & gambar = 1 credit → margin 52–91%.
+- Koin sebaiknya dibeli paket **Personal (Rp 3,73/koin)**, bukan Lite Plus (Rp 8,26).
+
 ## STATUS MODEL VIDEO INFERHUB (dicek 14 Okt 2026) — BELUM BISA DIPAKAI
 
 - `/v1/models` memang mendaftar **±28 id model video** (Veo 3.1, Kling 2.1–3.0 + video-o-1/o-3,
