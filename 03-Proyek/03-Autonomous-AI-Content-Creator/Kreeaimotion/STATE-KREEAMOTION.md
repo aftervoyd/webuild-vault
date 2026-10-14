@@ -176,6 +176,24 @@ Setelan: `MOTIONBOT_OUTFIT_RH_APP=2095689306085285890` (kosongkan = workflow Qwe
   setiap ganti baju langsung ke AI App, selalu keluar 2 berkas termasuk 4K. Balik ke hemat: set `auto`.
 - **Uji akhir job #38** (mode app): langsung ke AI App tanpa nunggu Inferhub → 825 KB + 8,7 MB (4K), terkirim
   berdua tanpa error (tidak ada log `gagal kirim berkas tambahan`).
+
+### 🔑 PEMBALIKAN BESAR (14 Okt 2026, ±18:20): Inferhub BISA keluarkan 4K langsung
+- **Probe `tools/imgedit.py` / `probe_ukuran_besar.py`:** `gpt-image-2` **mematuhi `size` PERSIS** —
+  minta `2160x3840` → benar-benar **2160×3840 (4K, ±106 dtk, 7,2 MB)**; `gemini-3.0-pro-image` minta
+  `2160x3840` → **3072×5504 (±125 dtk, 16,7 MB)**. Di jalur `/images/edits` pun ukuran 4K diterima.
+  **Artinya 4K tidak perlu upscale dan tidak perlu koin** — cukup minta ukuran besar ke Inferhub.
+- **ENV sekarang:** `MOTIONBOT_OUTFIT_SIZE=2160x3840`, `MOTIONBOT_OUTFIT_ORDER=auto` (gratis dulu; AI App
+  hanya kalau Inferhub ngadat), `MOTIONBOT_OUTFIT_BUDGET=260` (4K butuh ±106 dtk per model).
+- **Mutu:** hasil Inferhub **lebih setia ke baju acuan**; App 1 (Qwen-Edit PLUS) pernah **mengarang motif
+  bunga daisy** yang tidak ada di foto acuan (job #39) → itu penyebab keluhan user "hasilnya aneh".
+- **🐞 BUG NYATA yang ketemu (ini akar keluhan "file gedenya gak dikirim"):** `send_photo` Telegram
+  DITOLAK untuk berkas > **10 MB** (`file of size 17149582 bytes is too big for a photo`) dan dulu ini
+  membuat **seluruh job GAGAL** (`state=failed`) sehingga berkas besar tak pernah sampai. **Perbaikan:**
+  bot sekarang **membuat pratinjau JPEG sendiri** (maks 1600 px, ±100 KB) untuk `send_photo`, lalu
+  mengirim **berkas asli sebagai DOKUMEN** (semua berkas ≥3 MB; dilewati kalau >50 MB).
+- **Uji akhir job #41** (mode auto, foto user): Inferhub → gemini 4K → `state=done`, 3072×5504 (16,7 MB),
+  pratinjau 101 KB, **0 koin**, foto + dokumen terkirim. Hasil job #40 yang gagal juga dikirim ulang manual
+  (msg 516 foto / 517 dokumen) sebagai bukti perbaikan.
   Biaya credit user tetap `MOTIONBOT_IMG_COST` (sama seperti fitur gambar lain).
 
 **Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
