@@ -15,11 +15,21 @@
 | Login web akun | **BERHASIL** (vault Hermes handle `vault_5e4871dcae31`, origin runninghub.ai) |
 | Nama profil | Nimara Official |
 
-## 1. ⏰ FREE WINDOW — senjata utama (MANFAATKAN SEKARANG)
-- Promo: **"MiniMax H3 RH Enhanced: All members get 1 month of free unlimited generations, 13 Hours Free Daily"**.
-- Jam gratis: **9 AM–10 PM ET = 21:00–10:00 WIB** (≈13 jam/hari).
-- Artinya: render di jam itu **biaya koin ~NOL**.
-- **Aturan operasional: SEMUA produksi/eksperimen berat dijadwalkan 21:00–10:00 WIB. Di luar itu = bayar koin.**
+## 1. ⏰ "FREE WINDOW" — ⚠️ **KOREKSI 14 OKT 2026: KELIRU KONTEKS, JANGAN DIPAKAI ASAL**
+- Klaim lama *"render 21:00–10:00 WIB gratis"* datang dari promo
+  **"MiniMax H3 RH Enhanced: All members get 1 month of free unlimited generations, 13 Hours Free Daily"**.
+  → Promo itu **khusus model MiniMax H3 RH Enhanced**, **BUKAN** untuk workflow/AI App kita.
+- **Fakta terukur (bukan asumsi):** semua mesin yang kita pakai **selalu memakai koin, jam berapa pun**:
+  | mesin | tarif nyata |
+  |---|---|
+  | Qwen-Edit 2511 (Generate Gambar / Ganti Baju) | **±49–52 koin per gambar** |
+  | AI App `otz` Pose Transfer | **±26,3 koin/detik** (16,4 dtk ≈ 431 koin) |
+  | nightfunnels Wan2.2 Animate | ±25,9 koin/detik |
+- `accountStatus` → **`apiType: NORMAL`** (akun API biasa; bukan VIP/promo MiniMax).
+- **Aturan operasional yang BENAR: hitung koin dulu sebelum render.** Tidak ada jam gratis;
+  menjadwalkan render ke malam **tidak** menghemat koin.
+- ⚠️ Pelajaran: promo di halaman depan RunningHub **spesifik per model** — jangan generalisasi ke
+  workflow mana pun tanpa uji tagihan nyata (cek `remainCoins` sebelum vs sesudah 1 render).
 
 ## 2. 💰 JALUR DAPAT KOIN (diurut potensi)
 ### A. Program Insentif Kreator (创作者激励计划) — POTENSI TERBESAR
