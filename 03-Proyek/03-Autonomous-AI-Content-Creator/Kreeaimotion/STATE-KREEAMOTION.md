@@ -169,6 +169,13 @@ Setelan: `MOTIONBOT_OUTFIT_RH_APP=2095689306085285890` (kosongkan = workflow Qwe
   endpoint itu baru gagal beruntun (`imgedit.sedang_rusak()`, 2 gagal dalam 15 menit) → **langsung** ke AI App
   supaya user tidak menunggu 3 menit sia-sia. Nilai lain: `app` (selalu AI App) / `inferhub` (selalu gratis dulu).
 - **Biaya terukur:** ganti pose ≈ **40 koin** (instance default), ±4 menit, 2 berkas (760×1352 + 2160×3840 10,7 MB).
+- **⚠️ PENTING — berkas 4K hanya ada kalau lewat AI App.** Mode `auto` sempat bikin user bingung
+  ("file gedenya gak dikirim"): job #37 lewat jalur GRATIS Inferhub (endpoint edit sudah pulih sebagian —
+  gpt-image-2 masih timeout, Gemini jalan) dan jalur itu hanya menghasilkan **1 gambar 848×1264 (±1 MB)**,
+  jadi memang tidak ada berkas 4K. **Solusi: `MOTIONBOT_OUTFIT_ORDER=app`** (atas persetujuan user) →
+  setiap ganti baju langsung ke AI App, selalu keluar 2 berkas termasuk 4K. Balik ke hemat: set `auto`.
+- **Uji akhir job #38** (mode app): langsung ke AI App tanpa nunggu Inferhub → 825 KB + 8,7 MB (4K), terkirim
+  berdua tanpa error (tidak ada log `gagal kirim berkas tambahan`).
   Biaya credit user tetap `MOTIONBOT_IMG_COST` (sama seperti fitur gambar lain).
 
 **Peta 137 workflow MiniMax yang punya input video** → `scratch/minimax_video_input.json`.
