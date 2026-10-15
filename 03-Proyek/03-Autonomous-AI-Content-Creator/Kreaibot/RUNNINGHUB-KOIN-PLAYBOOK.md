@@ -135,3 +135,30 @@ Aset yang sudah kita punya: pipeline i2v H3, editor Qwen, faceswap, pose, lipsyn
 | Future Vision XPRIZE | gratis | (indeks: 15 Agu 2026 → kemungkinan sudah lewat/2027) | >$3,5 jt; perlu verifikasi ulang. |
 
 **aibetas.com:** tambahan — "2026亚洲艺术电影节 AI影像奖" (Asia Art Film Festival AI Image Award) buka征片 global; sisanya masih 6 agenda China (butuh KTP China).
+
+---
+## 8. SCAN 15 OKT 2026 — pengurasan makin cepat + koreksi DAIFF + 6 kontes baru
+### Saldo (rh_coins.csv, terverifikasi API)
+22.729 (13 Okt) → 18.847 (14 Okt, −3.882) → **14.411 (15 Okt 08:00, −4.436)**.
+3 hari: **−8.318** (rata 2.773/hari). Kecepatan terakhir 4.436/hari ⇒ **saldo habis ±18 Okt** (rata 3 hari ⇒ ±20 Okt). Membership refill berikutnya baru ±8 Nov ⇒ **RISIKO HABIS sebelum refill.**
+### Penyebab terukur (bukan bocor)
+Log `/var/log/kreeaimotion.log` 14 Okt **13:54–18:24 WIB**: 6 panggilan RunningHub AI App **2095689306085285890** (2× GANTI POSE ~26 koin/dtk + 3× Qwen-Edit PLUS + 4K) + 1 fallback `2003539764081008641`. Ditambah 2 job INFERHUB **GAGAL timeout 179–180 dtk** (job 32 & 33) yang lalu jatuh ke RunningHub ⇒ **bayar dobel**. `.env` kreaibot & kreeaimotion tetap **API key identik** (md5 `047e7ac6bb3cab4713afae5397c6c54b`) = satu kolam.
+### ⚠️ Koreksi: DAIFF GUGUR TOTAL
+FilmFreeway DAIFF: **"open to AUSTRALIAN-BASED applicants"** — bukan cuma mepet (16 Okt), tapi **tidak eligible** untuk kita. Coret dari daftar.
+### Kontes baru (BUKA, global, tanpa KTP China) — belum ada di bagian 3/6/7
+| Kontes | Biaya | Deadline | Catatan |
+|---|---|---|---|
+| **TAIFF — Türkiye Int'l AI Film Fest (ed.3)** | **GRATIS** (FilmFreeway) | **1 Nov 2026** | Istanbul, Atatürk Cultural Center, screening 7–9 Des. 2.000+ submission/100+ negara. Grand Prize Best AI Film + award craft (Director, Cinematographer, Editor, Composer, VFX). **TOP PICK baru.** |
+| **TLVAIFF — Tel Aviv AI Film Fest (ed.1)** | **GRATIS** (tier regular) | **3 Nov 2026** | Cinematheque 10 Nov, bagian Tel Aviv AI Week. 5 kategori (Storytelling, Cross-Cultural, Visual Achievement). Maks 2 film/entrant. |
+| **AI M0V1E Film Festival** | berbayar (tier) | 1 Nov reguler / **15 Nov late** | **Cash: $1.000 Best Feature · $700 Best Series · $500 Best Short** + distribusi di app M0V1E. Wajib bayar fee + akun m0v1e.ai + upload di sana. |
+| **AI New York Awards (ed.1)** | $25–29 (naik per tier) | **15–22 Nov 2026** | NYC, screening. 8 kategori termasuk **Best AI Character Consistency** (= kekuatan pipeline kita) & Best Prompt & Workflow. |
+| **New York AI Indie Awards** | $10 | **5 Nov 2026** | Manhattan 15 Nov, 8 award; genre bebas, dibuat ≥1 Jan 2025, subtitle English. |
+| **Asian Independent Film Fest — AI Generated Film** | $20 | **10 Nov 2026** | Worldwide, India-based; seasonal → annual awards. |
+### Yang hampir tutup (skip)
+AI Filmfest Athens (reguler 15 Okt = hari ini, late 19 Okt €30, total €3.000) · Neuland Cinema Berlin (tutup 15 Okt hari ini) · Chroma S2 tetap 31 Des (masih terbaik).
+### aibetas.com/competition-calendar
+**Tidak ada lomba baru** — tetap 6 agenda China (31 Okt 腾讯SSV, 1 Nov 可灵, 22 Nov 鲸锐, 3 Des 泉州, 6 Des 深圳, 31 Des GBA). Hampir semua butuh KTP China.
+### Aksi
+1. Hentikan/diet jadwal kreeaimotion: hindari AI App 2095689306085285890 kecuali perlu; matikan fallback otomatis Inferhub→RunningHub pada job timeout (bayar dobel).
+2. Klaim ±100 koin login harian (hangus 24 jam).
+3. Prioritaskan **TAIFF (gratis, 1 Nov)** — pendaftaran gratis & banyak kursi award craft; Chroma S2 31 Des sebagai target utama.
