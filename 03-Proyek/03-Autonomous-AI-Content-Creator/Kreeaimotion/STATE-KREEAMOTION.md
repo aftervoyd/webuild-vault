@@ -10,7 +10,28 @@
 
 #
 #
-### 🧑 PEMILIH KARAKTER di Ganti Baju & Ganti Pose (15 Okt 2026)
+#
+### 🆕 RAMBUT HILANG di Motion Control — SUDAH DIPERBAIKI (15 Okt 2026)
+Keluhan user: "hasil aneh, rambut tiba-tiba hilang".
+**Temuan:** kerusakan ada di EKOR video (out_43: rambut panjang hilang mulai detik 14.0 → 15.1;
+bahu/dada jadi kulit). Video acuan & foto sumber rambutnya utuh; dua video lain dari app yang sama
+sehat → artefak AI App, bukan kode bot.
+**Sebab:** AI App Pose Transfer (2083697864529678338) punya **13 field input**; bot cuma pernah
+mengisi 2 (gambar + video). Default **node 265 "simulasi ekspresi" = 1.0** — dokumentasi app-nya
+sendiri: *"wajah akan ikut meniru wajah video acuan"* → kepala/rambut ditulis ulang.
+**Bukti uji (segmen gagal 12→15.1 dtk, foto & video sama):**
+- T1 setelan lama → rambut rusak di 5.8 dtk, HILANG di ekor 6.7 dtk ❌
+- T2 `265=0.2` → rambut panjang UTUH sampai ekor, kualitas lebih bersih ✅
+**Perbaikan LIVE:** `MOTIONBOT_{T10,T15,T20,FULL,S1,FAST,HD}_SET=265:value:0.2` di `.env`.
+Jalur baru: `MOTIONBOT_<KEY>_SET` (bisa banyak binding, dipisah `;`) = selalu DITAMBAHKAN, tidak
+menggantikan CAP. Parser: `parse_caps()` di bot.py (uji: `tools/uji_cap.py`, 9 kasus lulus).
+**Alat uji:** `tools/uji_rambut.py` (A/B setelan app), `tools/ukur_rambut*.py` (ukur rambut),
+`tools/uji_rambut_e2e.py` (jalur produksi run_job), `tools/rh_app_inspect.py app <id>` (baca kontrak input).
+**Sisa setelan yang BELUM dipakai** (bisa dinaikkan kualitas kalau perlu): 316/317 = 576×1024
+(resolusi default terendah; bisa 720×1280), 264 fps=30, 300 batas frame=1200 (=40 dtk), 293 mode
+pose=1, 266 getar=0.35, 271 saklar topeng=false, 348 mode keluaran=1.
+
+## 🧑 PEMILIH KARAKTER di Ganti Baju & Ganti Pose (15 Okt 2026)
 - Keluhan user: "nggak ada pilihan karakter yang gue punya" — dulu alur langsung memakai `base_<uid>.jpg`
   (karakter terakhir) tanpa memberi pilihan.
 - Sekarang: tekan 👕 Ganti Baju / 🕺 Ganti Pose → keluar **tombol tiap karakter** (yang aktif diberi ✅,
