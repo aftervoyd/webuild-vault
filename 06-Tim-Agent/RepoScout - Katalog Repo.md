@@ -369,6 +369,65 @@
 
 ---
 
+## 🛒 WebBuilder / SalesAgent — Toko Online UMKM (e-commerce modern)
+
+> Riset **2026-10-15** (run ulangan — run 06:00 gagal: fallback provider 401) — rotasi topik: **e-commerce / toko online** (belum ada sama sekali di katalog).
+> **Kebutuhan nyata:** rencana bisnis Webuild menyebut **"toko UMKM lokal + kurir lokal"** — dan sampai sekarang katalog punya website, CMS, WhatsApp, analitik… **tapi belum punya mesin tokonya**. Semua lisensi diverifikasi dari file LICENSE asli.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (watchers) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Medusa** | github.com/medusajs/medusa | **Headless commerce backend** — produk, cart, order, multi-region, plugin; frontend-nya kita bikin sendiri | TypeScript / Node | ✅ **MIT (inti)** + `ENTERPRISE-LICENSE.md` (materials EE proprietary) | 36.748 (206) | WebBuilder + OpsAgent | ✅ **REKOMENDASI** — headless = pas prinsip anti-template (frontend Astro/Next milik kita, bukan tema toko) |
+| **Saleor** | github.com/saleor/saleor | Headless commerce API **GraphQL** kelas enterprise | Python / Django | ✅ **BSD-3-Clause** | 23.440 (**362** — paling sehat di kategori) | WebBuilder | ✅ PAKAI — lisensi paling bersih & komunitas paling sehat; ⚠️ **storefront resminya lain lisensi** (lihat catatan) |
+| **Vercel Commerce** | github.com/vercel/commerce | Storefront **Next.js App Router + Tailwind** resmi Vercel (template headless commerce) | TypeScript / Next.js | ✅ MIT | 14.304 (208) | WebBuilder | ✅ PAKAI — contoh storefront Next.js modern, bukan WooCommerce |
+| **Bagisto** | github.com/bagisto/bagisto | eCommerce + **marketplace multi-vendor** (Laravel) | PHP / Laravel | ✅ MIT | 28.240 (181) | WebBuilder | ✅ CADANGAN — justru cocok kalau desa butuh **1 situs banyak penjual** (pasar UMKM desa) |
+| **Spree** | github.com/spree/spree | Platform commerce DTC/B2B + marketplace | Ruby / Rails | ✅ BSD-3-Clause | 15.756 (85) | OpsAgent | ⚠️ CADANGAN — stack Ruby (asing buat tim) |
+| **Sylius** | github.com/Sylius/Sylius | Headless commerce Symfony, multi-channel | PHP / Symfony | ✅ MIT | 8.557 (258) | WebBuilder | ⚠️ CADANGAN — kalau klien memang minta PHP |
+| **astro-shopify** | github.com/thomasKn/astro-shopify | Starter storefront **Astro** ↔ Shopify Storefront API | Astro / Tailwind | ✅ MIT | 504 (9) | WebBuilder | ⚠️ CADANGAN — satu-satunya jalur **Astro↔commerce**; proyek kecil |
+| **OpenUMKM** | github.com/openumkm/openumkm | eCommerce engine **khusus penjual kecil Indonesia**: checkout tamu/akun, **Xendit + transfer manual (upload bukti & review)**, ongkir **RajaOngkir/Komerce (8 kurir)** + metode kustom, admin + dashboard omzet, bilingual ID/EN, AI tulis deskripsi (OpenAI-compatible) | NestJS/Fastify + Postgres + EJS · Docker | ✅ MIT | 69 (**subs 1**) | SalesAgent + WebBuilder | ⚠️ **PELAJARI/PANTAU** — kebutuhannya **paling mirip kita** (Xendit + kurir lokal + klaim jalan di **1 vCPU/1GB RAM**) **tapi** proyek mini & **tak diupdate sejak 2026-06-05** → pakai sebagai **pola/referensi**, bukan fondasi |
+
+### 🔎 Cadangan & jebakan toko online
+| Repo | ⭐ | Catatan |
+|---|---|---|
+| github.com/reactioncommerce/reaction | 12.397 | GPL-3.0 — README-nya sendiri bilang **"Project has been discontinued"** → **jangan dipakai**. |
+| github.com/vendurehq/vendure | 8.517 | ⚠️ **BUKAN MIT walau `spdx=NOASSERTION`**: `LICENSE.md` = **GPLv3 (Community Edition)** atau **Vendure Commercial License (VCL)**. GPLv3 → hati-hati kalau dicampur produk tertutup. |
+| github.com/medusajs/nextjs-starter-medusa | 2.789 | MIT **tapi `archived=true`** (push terakhir 2026-04-23) → starter resmi di repo itu sudah ditinggalkan walau **induknya super aktif**; ambil starter dari docs Medusa / `medusajs/b2b-starter-medusa`. |
+| github.com/woocommerce/woocommerce · PrestaShop/PrestaShop | 10.550 (523) · 9.229 (444) | Raksasa yang **klien UMKM sudah kenal** & watchers besar — tapi berbasis **tema + plugin** (kelihatan generik) dan berat di VPS kecil → bertentangan dengan prinsip **anti-template**; pakai hanya kalau klien memang minta. |
+| github.com/lunarphp/lunar · solidusio/solidus · itswadesh/svelte-commerce | 3.755 · 5.342 · 1.820 | Semua MIT/BSD (Laravel headless · Rails · SvelteKit storefront untuk 26 backend) → referensi kalau stack-nya cocok. |
+
+**Kesimpulan buat Webuilder/SalesAgent:**
+1. **Model yang benar buat kita = headless**: mesin toko (**Medusa MIT** atau **Saleor BSD**) terpisah dari **frontend custom kita** (Astro/Next) → toko tetap *tidak kelihatan template*.
+2. Untuk paket **"toko UMKM desa"** yang ringan, sering **tidak perlu** full commerce stack: **katalog statis (Astro) + checkout lewat WhatsApp/WAHA + bayar via Xendit/transfer** (pola **OpenUMKM**) jauh lebih murah & hemat RAM daripada menjalankan backend commerce.
+3. **Jangan pasang stack commerce di VPS 1,9 GB ini** — commerce butuh Postgres + proses Node/Python terus-menerus; rencanakan **VPS khusus web** (lihat bagian PaaS 2026-10-14).
+
+---
+
+## 🕹️ OpsAgent / RepoScout — Browser Agent (agen yang benar-benar mengoperasikan web)
+
+> Riset **2026-10-15** — rotasi topik kedua: **agentic AI, sudut baru: "computer-use / browser agent"**.
+> Katalog sudah punya `playwright-mcp` (MCP browser), tapi belum ada **framework agen yang mengemudikan web** (isi form, klik, ambil data) — kemampuan yang persis dibutuhkan kalau agen kita harus bekerja di situs **desa/PSE yang tak punya API**, atau menguji situs klien.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (watchers) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **browser-use** | github.com/browser-use/browser-use | Framework Python: **agen LLM mengemudikan browser** seperti manusia (isi form, booking, ambil data) — sekarang **juga jadi MCP server** | Python | ✅ MIT | 117.993 (**481** — rasio ⭐:watchers **245:1**, sehat) | OpsAgent + RepoScout | ✅ **REKOMENDASI** — paling matang di kategori; bisa dicolok ke Hermes via MCP |
+| **Stagehand** | github.com/browserbase/stagehand | **SDK browser agent (TypeScript)** di atas Playwright: primitif `act` / `extract` / `observe` / `agent` — gabung kode + bahasa manusia | TypeScript / Playwright | ✅ MIT | 25.669 (104) | WebBuilder + OpsAgent | ✅ PAKAI — dasar bagus buat **"agen QA"** yang menguji situs klien (sekamar dengan skill `dogfood`) |
+| **Lightpanda** | github.com/lightpanda-io/browser | Headless browser **dibuat dari nol (Zig)** khusus agen/crawler — benchmark: **123 MB vs 2 GB RAM** & 9x lebih cepat dari Chrome (100 halaman); sudah jalan **JS via V8** | Zig (binary) / npm | ⚠️ **AGPL-3.0** | 36.500 (98) | OpsAgent | ✅ **PELAJARI / PAKAI INTERNAL** — kandidat **hemat RAM VPS** (kita ketat memori); AGPL → hati-hati kalau masuk produk yang dijual |
+| **agent-browser** | github.com/vercel-labs/agent-browser | **CLI Rust** buat agen: `npm i -g agent-browser` lalu perintah buka/klik/ekstrak (unduh Chrome for Testing sendiri) | Rust / npm | ✅ Apache-2.0 | 43.983 (107) | OpsAgent | ⚠️ PELAJARI — dari Vercel Labs & commit aktif (66 commit/60 hari), tapi ⭐ 44k dalam 9 bulan → uji dulu |
+| **Skyvern** | github.com/Skyvern-AI/skyvern | Otomasi workflow browser pakai LLM + **computer vision** (klaim tahan perubahan layout), ada UI | Python | ⚠️ AGPL-3.0 | 23.198 (101) | OpsAgent | ⚠️ CADANGAN — AGPL + butuh browser penuh (berat untuk VPS kita) |
+| **Nanobrowser** | github.com/nanobrowser/nanobrowser | Ekstensi Chrome: beberapa agen AI bekerja di browser **punya user sendiri** (bring-your-own API key) | TypeScript | ✅ Apache-2.0 | 14.089 (70) | OpsAgent + user | ⚠️ CADANGAN — buat **PC user (Windows)**, bukan VPS |
+| **Magentic-UI** | github.com/microsoft/magentic-ui | Prototipe Microsoft: agen bekerja lintas **browser + file lokal** (human-in-the-loop) | Python | ✅ MIT | 10.097 (71) | RepoScout | ⚠️ PANTAU — eksperimental |
+| **Steel Browser** | github.com/steel-dev/steel-browser | "Browser API" open-source buat agen: self-host sesi browser siap pakai | TypeScript / Docker | ✅ Apache-2.0 | 7.805 (21) | OpsAgent | ⚠️ CADANGAN |
+
+### 🔎 Catatan browser agent (2026: kategori paling "hype")
+- ⚠️ **Kategori ini penuh repo 2026 yang ⭐-nya meledak dalam hitungan bulan**: `lexmount/moli` 18,4k⭐ (dibuat **2026-08-10**!), `h4ckf0r0day/obscura` 28,9k⭐, `jackwener/OpenCLI` 30,3k⭐, `citrolabs/ego-lite` 17,4k⭐, `jo-inc/camofox-browser` 11,6k⭐, `Leonxlnx/taste-skill` 96,4k⭐ — watchers cuma **30–296** sementara ⭐ puluhan ribu. **Bedanya dengan repo mati:** semuanya **aktif** (66–100+ commit/60 hari, 10–100 kontributor) → jadi sebut **"muda & hype-driven, uji dulu"**, **jangan** langsung cap star-farm. Cek cepat volume kerja nyata:
+  ```bash
+  gh api "repos/O/R/commits?since=2026-08-15&per_page=100" --jq 'length'
+  gh api "repos/O/R/contributors?per_page=100&anon=1" --jq 'length'
+  ```
+- 🚫 **Hindari yang menjual "stealth / bypass anti-bot"** (`camofox-browser` — klaim tembus Cloudflare, `obscura`) buat pekerjaan klien: risiko etis + legal + aturan platform; kebutuhan kita (situs desa/PSE, uji situs sendiri) tidak butuh itu.
+- 💾 **RAM = pertimbangan pertama kita**: browser agen apa pun butuh Chromium/Chrome (~2 GB kalau banyak tab). Urutan hemat: **Lightpanda** (123 MB) → `agent-browser`/Stagehand (Chrome headless per-sesi, matikan setelah selesai) → **browser-use** (paling fleksibel, tapi paling berat). Jalankan sebagai tugas sekali-jalan, **bukan** service yang menetap di VPS.
+
+---
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
