@@ -428,6 +428,60 @@
 
 ---
 
+## 🏛️ WebBuilder / SalesAgent — Ekosistem Digital Desa Indonesia (SID, data wilayah, naik kelas ke kabupaten)
+
+> Riset **2026-10-16** — rotasi topik: **web dev/pemerintah, sudut yang belum pernah disentuh: apa yang SUDAH dipakai desa Indonesia**. Katalog sudah penuh alat "modern" (Astro, CMS, e-commerce), tapi belum pernah mencatat **pemain de-facto di lapangan**: kalau kita jual "desa digital", kita harus tahu desa sudah jalan pakai apa.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (watchers) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **OpenSID** | github.com/OpenSID/OpenSID | **SID de-facto nasional** (1.197 fork!) — administrasi desa, surat, penduduk, statistik, web desa. Dikelola **Perkumpulan Desa Digital Terbuka** (opendesa.id) | PHP 8.1 (CodeIgniter 3 + Illuminate 10, HMVC `Modules/`) | ⚠️ **GPL-3.0-or-later** (spdx `NOASSERTION`, tapi `LICENSE` = GPLv3 & `composer.json` bilang GPL-3.0-or-later) | 1.229 (110) | WebBuilder + SalesAgent | ⚠️ **PELAJARI WAJIB** — jangan lawan, **jangan salin kodenya** (lihat catatan) |
+| **OpenKab** | github.com/OpenSID/OpenKab | **Dasbor tingkat KABUPATEN**: menarik data dari **database gabungan OpenSID** → statistik desa, penduduk, kesehatan, pendidikan; ada **SSO** ke panel admin OpenSID | PHP/Blade (Laravel) | ✅ **GPL-3.0** | 16 (8) — push **2026-10-15** (aktif) | WebBuilder + SalesAgent | ✅ **PELAJARI** — ini **persis jalur "naik kelas ke kabupaten"** versi mereka |
+| **SIDeGa** | github.com/desagarut/sidega-master | SID tingkat kabupaten (**Garut**) — pengelolaan data desa se-kabupaten | PHP | ✅ GPL-3.0 | 104 (1) · push 2026-09-07 | SalesAgent | ⚠️ REFERENSI kompetitor — single-maintainer (forks 1) |
+| **cahyadsn/wilayah** | github.com/cahyadsn/wilayah | **Data kode wilayah Indonesia (Kepmendagri)** — provinsi→desa + aplikasi/API + changelog update | SQL / PHP | ✅ **MIT** | 1.325 (50) · push **2026-10-14** | WebBuilder + OpsAgent | ✅ **PAKAI** — buat dropdown alamat, validasi kode desa, isian form klien |
+| **laravolt/indonesia** | github.com/laravolt/indonesia | Package Laravel: data Provinsi/Kabupaten/Kecamatan/Desa | PHP (Laravel) | perlu cek file | 679 (?) | WebBuilder | 🔸 CADANGAN — hanya kalau proyek Laravel |
+| **edwardsamuel/Wilayah-Administratif-Indonesia** | github.com/edwardsamuel/Wilayah-Administratif-Indonesia | Data wilayah lengkap (Python) | Python | perlu cek | 960 | OpsAgent | 🔸 CADANGAN data |
+| **emsifa/api-wilayah-indonesia** | github.com/emsifa/api-wilayah-indonesia | REST API wilayah populer (kini ada `SKILL.md`, `cli/`, `web/`) | TypeScript | ❌ **TANPA file lisensi apa pun** | 755 (5) · push 2026-10-11 | — | 🚫 **JANGAN PAKAI** — tanpa LICENSE = *all rights reserved* (lihat pelajaran) |
+| **sqllite-api-wilayah-indonesia** | github.com/maftuh23/sqllite-api-wilayah-indonesia | **Database SQLite wilayah Indonesia (BPS)** siap pakai + API 1 container | Dockerfile / SQLite | ✅ MIT | 328 (2) · push 2025-08 (agak idle) | OpsAgent | 🔸 CADANGAN — paling ringan kalau butuh self-host |
+| **wilayah-indonesia-api** | github.com/edopandoyo/wilayah-indonesia-api | REST API + batas GeoJSON wilayah (MinIO) | TypeScript | ❌ tanpa lisensi | 82 (0) · dibuat **2026-08-03** | — | 🚫 SKIP — tanpa lisensi + terlalu muda |
+| **cosmo** (tema OpenSID) | github.com/dikisiswanto/cosmo | Tema web OpenSID minimalis | CSS | ✅ MIT | 58 (1) · push 2022 | DesignerBot | ⚠️ **ARCHIVED** — contoh ekosistem tema OpenSID yang ditinggalkan |
+| **tema-natra** | github.com/OpenSID/tema-natra | Tema resmi OpenSID | Blade | ❌ tanpa file lisensi | 29 (12) | DesignerBot | 🔸 hanya referensi struktur tema |
+| **simdesa** | github.com/pandigresik/simdesa | SID surat-menyurat + kependudukan (dulu populer, 91 fork) | PHP | ❌ tanpa lisensi | 61 (15) · push **2015** | — | 🚫 MATI — legacy, jangan disarankan |
+
+### 🔎 Catatan ekosistem desa (PENTING buat strategi jualan)
+- 🏛️ **Desa Indonesia sudah punya "standar de-facto": OpenSID.** 1.229⭐ + **1.197 fork** + 110 watchers + forum/komunitas (opendesa.id) → **jangan jual "SID baru"**, itu perang di kandang orang. Posisi yang benar buat Webuild: **lapisan modern di atas data desa** (web publik Astro yang cepat + peta/potensi desa + katalog UMKM + transparansi anggaran) **atau** integrasi (pola **OpenKab**: baca **database gabungan** + SSO). Tanya tiap klien desa: *"sudah pakai OpenSID versi apa?"* — jawabannya mengubah penawaran kita total.
+- ⚖️ **OpenSID = GPL-3.0 → ada efek copyleft.** Kita **boleh** memakai/memodifikasi/menjual *jasa* di atasnya, tapi **modifikasi kode OpenSID harus tetap dibuka (GPL-3)**. Jadi **jangan menyalin kode OpenSID ke produk komersial tertutup** kita (web builder/paket berlangganan). Aman: (a) pakai OpenSID apa adanya sebagai aplikasi desa, (b) bikin **frontend/alat terpisah milik kita** yang membaca data yang boleh diakses (API/DB/ekspor), (c) jual jasa instalasi+pendampingan+kustomisasi (GPL memperbolehkan jual jasa).
+- 💰 **Model OpenSID = "open core dengan jendela tunda"**, bukan open source murni: repo GPL-3, tapi ada **"Versi Publik (UMUM)" vs "Versi Premium"** — fitur premium masuk publik **ditunda 6 bulan**, dan **beberapa fitur tidak akan pernah** dirilis publik. **Fakta lapangan: rilis publik terakhir `v2607.0.1` = 24 Juli 2026 (≈12 minggu lalu)** → jalur aktif mereka ada di `OpenSID/premium`. Artinya: jangan janji ke klien "OpenSID selalu selangkah dengan versi premium".
+- 💾 **Ukuran repo OpenSID ≈ 250 MB** (`size=256287` KB) → jangan clone ke dalam vault; kalau perlu uji, ke `/root/repos/` (disk kita 22 GB free, tapi VPS RAM-ketat).
+- ❌ **"Ada di GitHub" ≠ open source.** `emsifa/api-wilayah-indonesia` (755⭐, aktif) **tidak punya file LICENSE sama sekali** → hukumnya *all rights reserved*: dilarang dipakai di produk komersial walau populer. Mitra aman yang berlisensi jelas = **cahyadsn/wilayah (MIT, 1.325⭐)**.
+- 🔍 **Query `desa` = jebakan bahasa (substring!).** GitHub search mencocokkan **potongan kata**, jadi `desa` menarik repo **Portugis Brasil/Sepanyol**: `desafio`/`desafios` (= "tantangan", mis. `backend-br/desafios` 2.712⭐, `PicPay/picpay-desafio-backend` 2.306⭐) dan `desarrollo`. Query yang benar buat tema desa: **`opensid`**, **`sistem+informasi+desa`**, **`aplikasi+desa`**, **`pemerintah+desa`**, atau **`kelurahan`** — plus `+NOT+desafio+NOT+desafios+NOT+desarrollo` kalau tetap pakai kata `desa`.
+
+---
+
+## 🎬 MotionAgent — Video Programmatic & Editing (konten pemasaran klien)
+
+> Riset **2026-10-16** — rotasi topik kedua: **content creation, sudut baru: membuat & mengedit video secara programatik** (katalog punya "video AI" sebatas generator, belum ada **mesin video berbasis kode** — yang paling cocok buat tim agent karena bisa ditulis/di-render otomatis tanpa editor manual).
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (watchers) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Remotion** | github.com/remotion-dev/remotion | **Bikin video pakai React** — komposisi video = komponen TS, render MP4 lewat CLI/SSR. Standar de-facto video programatik | TypeScript / React | ⚠️ **Lisensi DUA TINGKAT**: gratis (termasuk komersial) untuk **individu & perusahaan ≤3 karyawan**; di atas itu wajib **Company License** (remotion.pro) | 64.384 (189) · 100+ commit/60 hari | MotionAgent | ✅ **PAKAI** — Webuild masih kecil → legal; **catat ambang 3 karyawan** |
+| **Motion Canvas** | github.com/motion-canvas/motion-canvas | Animasikan & render video dengan kode TS (editor visual + preview realtime) — pengganti bebas Remotion | TypeScript | ✅ **MIT penuh** (tanpa batas ukuran perusahaan) | 19.345 (91) · push 2026-07-02 | MotionAgent | 🔸 **CADANGAN UTAMA** — pilih ini kalau tak mau repot lisensi; keaktifan melambat |
+| **Revideo** | github.com/midrender/revideo | **API programmatic** untuk membuat video (fork/diturunkan dari Motion Canvas, siap dipanggil dari skrip/agen) | TypeScript | ✅ MIT | 4.111 (17) · push 2026-07-15 | MotionAgent | 🔸 CADANGAN — ⚠️ org **ganti nama**: `redotvideo` → **`midrender`** |
+| **Graphite** | github.com/GraphiteEditor/Graphite | Aplikasi **desain 2D/vektor + motion** berbasis node (alternatif Illustrator/After Effects, gratis) | Rust (desktop/web) | ✅ **MIT + Apache-2.0** (dual) | 27.622 (133) · push 2026-10-15 | DesignerBot + MotionAgent | ✅ **PAKAI di PC user** — bukan untuk VPS (aplikasi desktop, berat) |
+| **openfilm** | github.com/openfilm/openfilm | **"AI video agent"**: agen coding menulis film sebagai halaman web (`film.html`, `frame(t)`), lalu diedit di **Studio** (browser, timeline). `npx skills add openfilm/openfilm` = skill agen | TypeScript / Node 22 + ffmpeg + Chromium (~100 MB) | ✅ MIT | 407 (7) · dibuat **2026-10-04** | MotionAgent | ⚠️ **UJI DULU** — konsepnya paling pas dengan tim kita, tapi repo baru 12 hari |
+| **anything2explainer** | github.com/Vincentwei1021/anything2explainer | **Skill Claude Code/Codex**: topik → **video explainer** motion-graphics + TTS + subtitle (pakai Remotion, ada protokol multi-agen) | TypeScript / Remotion | ❌ **PolyForm Noncommercial 1.0.0** — komersial perlu izin penulis | 2.523 (8) · dibuat 2026-09-08 | MotionAgent | 🚫 **NON-KOMERSIAL** — boleh dipelajari metodenya, **jangan dipakai untuk klien berbayar** |
+| **motionity** | github.com/alyssaxuu/motionity | Editor motion graphics berbasis web (animasi keyframe di kanvas) | JavaScript | ✅ MIT | 4.122 (31) · push **2022** | MotionAgent | ⚠️ DORMANT — referensi UI saja |
+| **mojs** | github.com/mojs/mojs | Toolbelt motion graphics untuk web (animasi mikro di situs klien) | CoffeeScript/JS | ✅ MIT | 18.816 (?) | WebBuilder | 🔸 CADANGAN — animasi web ringan, bukan video |
+| **astrofox** | github.com/astrofox-io/astrofox | Motion graphics dari **audio** (visualizer musik) | TypeScript | perlu cek | 2.003 | MotionAgent | 🔸 CADANGAN niche |
+| **TiXL** | github.com/tixl3d/tixl | Alat **motion graphics realtime** (node graph, Windows) | C# | perlu cek | 5.145 | MotionAgent | 🔸 CADANGAN — desktop Windows |
+| **Klaster "AI video editor" 2026** | `0xsline/OpenChatCut` · `cartesiancs/cartcut` · `WeftCut/WeftCut` | Editor video ber-agen (timeline multi-track, edit lewat chat/teks) | TypeScript | ⚠️ OpenChatCut **AGPL-3.0**; cartcut & WeftCut **MIT** | 2.393 (8) · 814 (6) · 224 (7) | MotionAgent | ⚠️ **UJI DULU** — watchers 6–8 → muda/hype; jangan fondasi |
+
+### 🔎 Catatan video programmatic
+- 🧭 **Buat konten pemasaran klien, urutannya jelas**: butuh video yang bisa di-render ulang otomatis tiap ganti teks/harga → **Remotion (React)**; tak mau terikat lisensi berjenjang → **Motion Canvas / Revideo (MIT)**; mau agen yang menyutradarai sendiri → **openfilm** (paling baru, pantau). Untuk desain grafis/motion statis di PC user → **Graphite**.
+- 💾 **Render video = kerja berat (CPU + disk besar)**. Jangan jadikan Remotion/renderer sebagai *service* menetap di VPS 1,9 GB; **jalankan sekali-jalan** (atau di PC user), lalu simpan hasilnya sebagai file.
+- 🎯 **Untuk "video desa/UMKM" jangan mulai dari video generatif** (biaya API, hasil tak stabil). Yang paling cepat berguna: **slideshow/template Remotion dari data desa** (statistik, potensi, agenda) + **voice-over TTS** (VoiceAgent) → bisa dibikin sekali, dipakai berkali-kali.
+
+---
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
