@@ -8,7 +8,15 @@
 
 
 
-### 💰 HARGA BARU TERPASANG (14 Okt 2026) — 1 credit = Rp 1.000
+#
+### ✂️ /start jadi SATU pesan (15 Okt 2026)
+- Dulu: sambutan (4 baris) **+ pesan kedua** berisi saldo & daftar harga lengkap → user: "terlalu panjang".
+- Sekarang: **satu pesan** (salam 3 baris + `💳 Saldo kamu: N credit`); daftar harga pindah ke tombol
+  **💳 Saldo Credit** (`show_saldo`, satu tap dari menu).
+- Bukti: harness `tools/uji_start.py` (Dispatcher asli + session stub, 0 request ke Telegram) →
+  `jumlah pesan dikirim /start: 1`, 214 char. Commit `8f59e30`.
+
+## 💰 HARGA BARU TERPASANG (14 Okt 2026) — 1 credit = Rp 1.000
 - `.env`: `COST_10=3 · COST_15=5 · COST_20=6 · COST_FULL=18 · IMG_COST=1 · GEN_COST=1 ·
   REAL_COST_ADD=2 · PACKAGES=5:5000,11:10000,28:25000,57:50000`.
 - Paket sekarang diatur lewat SATU baris env `MOTIONBOT_PACKAGES="kredit:harga,..."` (tidak perlu
