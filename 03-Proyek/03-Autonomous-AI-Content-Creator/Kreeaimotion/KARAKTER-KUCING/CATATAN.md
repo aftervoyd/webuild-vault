@@ -44,3 +44,17 @@ Rekomendasi sheet: **master identitas = B** (full body) + **wajah vlogger = W1**
 
 Bukti: satu kaki depan NAIK dengan pose menggenggam, **tidak ada objek** di genggaman (HP tidak
 digambar), mata ke kamera, mulut terbuka. Masih kucing yang sama, tanpa kaki berlebih/tangan manusia.
+
+## Revisi 3 (FINAL, dari user): "paw nya nggak keliatan karena lagi pegang hp"
+Maksudnya: kucing memegang HP di depan → yang terlihat PUNGGUNG HP (+ modul kamera),
+paw-nya TERTUTUP HP / di bawah frame → tidak digambar sama sekali. (Bukan "tanpa HP".)
+| Kode | Isi | Paw kelihatan? | HP |
+|---|---|---|---|
+| K1 | HP di samping muka | tidak | punggung HP + modul kamera |
+| K2 | HP di depan dada | ya (paw di tanah) | punggung HP |
+| K3 | HP gede di depan bawah | tidak | punggung HP, bawah kepotong frame |
+| K4 | HP di bawah kamera, bawah kepotong | tidak | paling wajar "dipegang dari bawah" |
+| K5 | HP miring di bawah kiri | tidak | punggung HP |
+
+Catatan: karena pemegangnya memang tidak boleh kelihatan, HP cenderung terkesan mengambang —
+K4 paling tidak terasa mengambang (bawah HP kepotong tepi frame).
