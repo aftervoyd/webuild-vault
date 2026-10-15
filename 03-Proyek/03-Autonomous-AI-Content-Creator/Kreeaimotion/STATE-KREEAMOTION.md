@@ -11,7 +11,16 @@
 #
 #
 #
-### 🆕 RAMBUT HILANG di Motion Control — SUDAH DIPERBAIKI (15 Okt 2026)
+#
+**Verifikasi jalur produksi (job #47, 15 Okt 18:30→18:37):** `tools/uji_rambut_e2e.py` memanggil
+`run_job()` asli → log membuktikan `job 47: setelan SET node 265 value=0.2` terkirim → hasil
+`data/out_47.mp4` rambut panjang UTUH sampai frame terakhir, setara uji T2. T1 (setelan lama) tetap
+rusak di ekor. Bukti gambar: `BUKTI-RAMBUT/perbandingan_T1_T2_T3.jpg`.
+Catatan: bot sempat di-restart saat render jalan dan **mengadopsi task yang sama** (tidak render ulang,
+koin tidak terbuang) — perilaku ini benar dan disengaja (`_adopt_job`).
+Koin RunningHub: 14.817 → 13.499 (habis ~1.318 koin untuk seluruh investigasi + uji).
+
+## 🆕 RAMBUT HILANG di Motion Control — SUDAH DIPERBAIKI (15 Okt 2026)
 Keluhan user: "hasil aneh, rambut tiba-tiba hilang".
 **Temuan:** kerusakan ada di EKOR video (out_43: rambut panjang hilang mulai detik 14.0 → 15.1;
 bahu/dada jadi kulit). Video acuan & foto sumber rambutnya utuh; dua video lain dari app yang sama
