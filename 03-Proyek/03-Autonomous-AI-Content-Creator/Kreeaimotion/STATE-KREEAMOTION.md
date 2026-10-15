@@ -9,7 +9,24 @@
 
 
 #
-### ✂️ /start jadi SATU pesan (15 Okt 2026)
+#
+### 🧑 PEMILIH KARAKTER di Ganti Baju & Ganti Pose (15 Okt 2026)
+- Keluhan user: "nggak ada pilihan karakter yang gue punya" — dulu alur langsung memakai `base_<uid>.jpg`
+  (karakter terakhir) tanpa memberi pilihan.
+- Sekarang: tekan 👕 Ganti Baju / 🕺 Ganti Pose → keluar **tombol tiap karakter** (yang aktif diberi ✅,
+  urut `last_used DESC`) + tombol **📸 Kirim foto karakter baru**. Pilih → `base_<uid>.jpg` diganti dari
+  foto karakter itu (encode ulang JPEG ≤2160px) → langsung lanjut ke langkah kirim foto baju/pose.
+- Callback baru: `ou:use:<id>` / `po:use:<id>` / `ou:new` / `po:new` (+ helper `_pakai_karakter`,
+  `pick_char_kb(uid, prefix)`).
+- **Fix penting:** `char_photo_path` sekarang menyelesaikan **path relatif ke folder bot**
+  (`_path_ada`) — dulu karakter ber-path relatif bisa dianggap "file hilang" kalau cwd proses beda.
+  Baris DB karakter #7 juga sudah diubah ke absolut.
+- Bukti: `tools/uji_pilih_karakter.py` (Dispatcher asli + session stub) → pemilih muncul, base
+  BERGANTI dan cocok dengan karakter terpilih, state pindah ke `Flow:outfit_photo`. PASS.
+- Jangan tandai karakter aktif dengan membandingkan isi file — base selalu di-encode ulang sehingga
+  byte-nya tidak pernah sama; pakai urutan `last_used`.
+
+## ✂️ /start jadi SATU pesan (15 Okt 2026)
 - Dulu: sambutan (4 baris) **+ pesan kedua** berisi saldo & daftar harga lengkap → user: "terlalu panjang".
 - Sekarang: **satu pesan** (salam 3 baris + `💳 Saldo kamu: N credit`); daftar harga pindah ke tombol
   **💳 Saldo Credit** (`show_saldo`, satu tap dari menu).
