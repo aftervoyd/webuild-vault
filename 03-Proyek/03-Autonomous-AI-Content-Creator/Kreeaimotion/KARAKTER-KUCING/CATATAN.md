@@ -34,3 +34,13 @@
 
 Analisa: ketiganya TANPA HP/kamera/mikrofon/tangan manusia, menatap kamera, dan masih kucing yang sama.
 Rekomendasi sheet: **master identitas = B** (full body) + **wajah vlogger = W1**.
+
+## Revisi 2 (user): "tangannya kaya pegang hp dong" — tangan POSISI menggenggam, HP tidak digambar
+| Kode | Framing | Catatan |
+|---|---|---|
+| X1 | close-up (muka + dada + paw naik) | paw agak seperti mitten, toe kurang jelas |
+| X2 | medium (dada, paw jelas) | mulut terbuka jelas, paw menggenggam |
+| X3 | full body duduk, 1 paw naik | ekor melingkar, latar sudut jalan |
+
+Bukti: satu kaki depan NAIK dengan pose menggenggam, **tidak ada objek** di genggaman (HP tidak
+digambar), mata ke kamera, mulut terbuka. Masih kucing yang sama, tanpa kaki berlebih/tangan manusia.
