@@ -24,3 +24,13 @@
 - `/images/edits` 1 gambar (ganti pose/latar): gpt-image-2 jalan (~1-2 mnt).
 - `/images/edits` 2 gambar (komposit): gpt-image-2 sering 524 → pakai gemini-3.0-pro-image.
 - Ukuran: minta 1024x1536 → gpt-image-2 patuh persis; gemini balik 848x1264.
+
+## Varian VLOG tanpa HP (revisi user: "selfie hp nya jangan keliatan, kaya lagi vlog")
+| Kode | Isi | Catatan |
+|---|---|---|
+| W1 | vlog close-up, mulut terbuka, menatap kamera | **paling pas buat wajah vlogger** — anatomi normal, tanpa HP |
+| W2 | vlog full body di jalan | ❌ berdiri bipedal seperti manusia — tidak natural |
+| W3 | vlog ceria, suasana sore | bagus (anatomi normal), vibe malam |
+
+Analisa: ketiganya TANPA HP/kamera/mikrofon/tangan manusia, menatap kamera, dan masih kucing yang sama.
+Rekomendasi sheet: **master identitas = B** (full body) + **wajah vlogger = W1**.
