@@ -4,7 +4,56 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-16** (run harian · cakupan 15 Okt 2026)
+**Update terakhir: 2026-10-17** (run harian · cakupan 15–16 Okt 2026)
+
+---
+
+## 🆕 Update 2026-10-17 (run harian — cakupan 15–16 Okt 2026)
+
+> Cek sumber resmi 17 Okt 07:00 CST: portal detail `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` via **curl** → **ADA 6 item BARU: id 10600–10605** (5 bertanggal **Kamis 15 Okt 2026, 22:17–23:04** + 1 **Jumat 16 Okt 2026, 19:00**); probe **10606–10645 (40 id) semua 404** → itu batas terbaru. ⚠️ **PENTING: id 10600–10604 bertanggal 15 Okt malam, tapi saat probe kemarin (16 Okt 07:00) masih 404** → **id portal bisa terbit menyusul** (bukan berarti tidak ada). Jadi **jumlah item 15 Okt sebenarnya 6, bukan 1**. `domain.go.id` **200** (berita terbaru tetap **3 Sep 2026**). `jdih.komdigi.go.id/produk_hukum/kategori` **200** (produk terunggah terbaru tetap **Kepmen 141/2026 — 9 Sep 2026**) → **belum ada Permen baru Oktober 2026**; **Rancangan PUU (32 dok)** & **Partisipasi Publik (19 dok)** = **tidak berubah**. ⚠️ **Tidak ada perubahan regulasi baru.** Kabar paling berdampak = pernyataan **Wamen Nezar soal tata kelola agen AI (KYA)** + **PP 33/2026 tinggal ±91 hari**.
+
+### 24. 🤖⭐ Wamen Nezar Patria: **KYA (Know Your Agent)** — kenali identitas & batas kewenangan **agen AI**, terapkan **security by design & privacy by design** — 15 Okt 2026 ⭐ (paling relevan)
+- **Apa yang berubah** (portal **10603**, Kamis 15 Okt 2026 – 23:04, Kategori **Siaran Pers**): di **Hukum Online Executive Breakfast & Networking Session**, Jakarta Pusat (**Kamis 15/10/2026**), Wamenkomdigi **Nezar Patria** menyatakan perusahaan pengguna **agentic AI** harus menerapkan pendekatan **KYA — Know Your Agent**:
+  - Kutipan kunci: *"Bukan lagi KYC, Know Your Customer, tapi harus ada KYA, Know Your Agent."*
+  - **Yang wajib dikenali:** **identitas, kepemilikan, dan batas kewenangan** agen AI — karena agen dapat berinteraksi dengan sistem perusahaan & memproses data berdasarkan otorisasi yang diberikan. *"Dengan mesin bisa membuat keputusan sendiri, risiko meningkat."*
+  - **Risiko yang disebut:** agen AI **mem-bypass peraturan/regulasi atau batasan internal korporasi** (*"karena dia bisa bertindak"*), serta **kebocoran/penyalahgunaan data pribadi** — sumber risikonya bukan hanya keamanan sistem, tapi **cara teknologi baru diberi akses & kewenangan**.
+  - **Prinsip yang ditekankan:** **security by design** dan **privacy by design** *"sejak tahap perancangan sistem"* agar pemrosesan data sejalan dengan ketentuan **pelindungan data pribadi**.
+  - **Sinyal regulasi:** pemerintah **terbuka menerima masukan pelaku usaha** untuk *"mengidentifikasi risiko dan mendalami kebutuhan pengaturan teknis"* AI → tanda **aturan teknis AI sedang disiapkan**.
+- ⚠️ **Catatan akurasi (JANGAN tulis sebagai kebijakan BARU):** istilah **"KYA"** memang **pertama muncul** di sini (semua liputan bertanggal 16 Okt 2026), **tapi substansinya tema berulang Wamen Nezar sejak Agu 2026**: portal **10463** (*"Saat AI Mulai Bertindak, Tata Kelola Tak Boleh Tertinggal"*, **6 Agu 2026** — Perpres **Peta Jalan AI Nasional & Etika AI**, tata kelola berbasis risiko, transparansi/pelabelan konten AI), portal **10505** (*"Agentic AI Mulai Ambil Keputusan Keuangan… Regulasi Tak Bisa Menunggu"*, **27 Agu 2026**, OJK Digination Day), portal **10536** (*"Agentic AI Bisa Bertindak Sendiri… Ingatkan Kendali Manusia"*, **10 Sep 2026**), ePPID (**16 Sep 2026**, Universitas Pradita — **Peta Jalan AI Nasional 2026–2029** + Perpres etika AI). Acuan lama yang masih dipakai: **SE Menkominfo 9/2023 tentang Etika AI**. → Tulis sebagai **penegasan + framing baru (KYA)**, bukan peraturan baru.
+- Sumber: portal **10603** ✅ (teks lengkap terkonfirmasi dari badan HTML) + **≥6 media bertanggal sama**: ANTARA (16 Okt 14:28), **Katadata** (16 Okt 14:48), Koran Jakarta, **wartaekonomi**, pantau.com, InfoPublik (portal pemerintah), tubankab.go.id. ✅ **terverifikasi lintas sumber**.
+- **➡️ Dampak ke Webuild (sedang–tinggi — bahasa jual + rambu produk AI):**
+  - **Kalau Webuild menjual fitur AI** (chatbot desa, asisten dokumen, auto-konten): siapkan **"lembar KYA"** per fitur — **siapa pemilik agen, data apa yang boleh diakses, batas tindakan, manusia yang mengawasi (human-in-the-loop)**. Ini pembeda murah vs vendor yang jual "AI" tanpa penjelasan.
+  - **Frasa resmi siap pakai di proposal:** *"security by design & privacy by design sejak perancangan"* — bahasanya sama dengan **DPIA/PP 33/2026** → perkuat paket **"situs desa patuh PDP by design"** dan paket fitur AI yang aman.
+  - **Relevan ke internal tim:** Webuild sendiri menjalankan banyak agen Hermes → **terapkan KYA internal** (catat agen, kunci akses, batas tindakan). Ini juga **bahan cerita/kredibilitas** ke klien.
+  - **Radar regulasi:** sinyal bahwa **Perpres Peta Jalan AI Nasional & Etika AI** + **aturan teknis AI** akan terbit → pantau di JDIH/Rancangan PUU.
+
+### 25. 👨👩👧🛡️ Wamen Nezar: **AI & anak** — luncurkan **Kelas Pengasuhan Digital** (Komdigi × WhatsApp × ICT Watch × Keluarga Kita) — 16 Okt 2026 — *dampak: rendah–sedang*
+- **Apa yang berubah** (portal **10605**, **Jumat 16 Okt 2026 – 19:00**, Kategori **Siaran Pers**): peluncuran **Kelas Pengasuhan Digital** di Jakarta Selatan (**16/10/2026**). Wamen **Nezar Patria** memperingatkan agar **anak tidak tergantung AI** sampai *"kehilangan kemampuan berpikir kritis"*; menyebut **±70 juta anak Indonesia** akan tumbuh di ekosistem digital ber-AI. Risiko yang disebut: **kontak dengan orang asing, konten tidak sesuai, ancaman terhadap DATA PRIBADI, kecanduan digital**. Rujukan aturan: **PP 17/2025 (PP TUNAS)**.
+  - Detail program (media): berjalan **Okt–Des 2026** di **Jakarta, Padang, Cirebon**; kerja sama **WhatsApp + ICT Watch + Keluarga Kita + Komdigi**; target **±179.000 orang tua** via **parental learning kit** (gadgetdiva.id, 16 Okt 2026).
+- Sumber: portal **10605** ✅ + **gadgetdiva.id** (16 Okt), ANTARA (16 Okt), liputan lain bertanggal sama. ✅ terverifikasi (≥2 media).
+- **➡️ Dampak ke Webuild (rendah–sedang):** bila klien = **sekolah/PAUD/program anak desa** → jangan pasang formulir yang mengumpulkan data anak, jangan iklan/pelacak pihak ketiga, sediakan **halaman kebijakan privasi**. **Titik jual halus:** "situs kami ramah anak & minim data" — satu paket dengan narasi PDP. **Nol dampak** ke situs profil desa biasa.
+
+### 26. 🗂️📊 Sekjen Ismail: **arsip = bahan evaluasi kebijakan digital** (satu rangkaian dengan item 10599) — 15 Okt 2026 — *dampak: rendah*
+- **Apa yang berubah** (portal **10604**, Kamis 15 Okt 2026 – 22:17, **Siaran Pers**): **Sekjen Komdigi Ismail** pada acara **Penyerahan Hasil Pengawasan Kearsipan Internal** (Gedung Sapta Pesona, Jakarta, **15/10/2026**) menegaskan **arsip/historical data** → dasar **evaluasi program, prediksi, dan penyusunan kebijakan digital**: *"belajar dari success story, tetapi juga fail story."* Menambahkan arsip terdigitalisasi = **sumber analisis** yang mendukung **AI & analitik data**. ⚠️ **Satu rangkaian dengan item 10599** (Meutya Hafid, T3) → **bukan kejadian baru/terpisah**, dan **topiknya tetap pengulangan** (T3 sudah Agu 2026; arsip+PDN Mei 2025). Dampak Webuild **rendah** — hanya menguatkan bahasa resmi **retensi arsip** yang sejalan dengan **PP 33/2026**.
+- Sumber: portal **10604** ✅ + ANTARA (*"Menkomdigi: Prinsip T3 fondasi penting dalam pengarsipan digital"*) + viv.co.id (16 Okt). ✅ terverifikasi.
+
+### 27. ℹ️ Lain-lain dari gerombolan 15 Okt (dampak ke Webuild: **nol–rendah**)
+- 🍱💻 **Portal 10600 & 10601 (Kamis 15 Okt, 22:38 & 22:35, Siaran Pers)** — Wamenkomdigi **Angga Raka Prabowo** meninjau **MBG berbasis teknologi digital** di **SKN 01 Kota Tangerang Selatan** (15/10/2026): layanan **Grab + OVO + Yayasan Inklusi Pelita Bangsa** (pemesanan menu oleh sekolah → pengiriman mitra → pelaporan); disebut menjangkau **±5.000 siswa di 12 kabupaten**; Wamen melihat peluang **mengadopsi teknologi swasta untuk BGN** ("dari CSR ke layanan publik"). **➡️ Dampak:** hanya **sinyal umum** bahwa layanan publik digerakkan **aplikasi digital** (pemesanan–pelacakan–pelaporan) → pola yang sama bisa dijual ke desa (surat/layanan desa berbasis form + status). Bukan peluang langsung.
+- 🎮 **Portal 10602 (Kamis 15 Okt, 22:54, Kategori **"Berita Pemerintahan"**)** — Wamen/Menpora **Erick Thohir** di **pelantikan PB ESI 2026–2030** (Jakarta Selatan, 15/10/2026): dorong **gim lokal** bertumbuh, jangan hanya jadi pasar. **➡️ Dampak ke Webuild: nol** (bukan bidang kita; catat saja sebagai item portal).
+- ⚠️ **Catatan kategori:** kategori portal **tidak selalu "Siaran Pers"** — ada **"Berita"** (mis. 10596) dan **"Berita Pemerintahan"** (10602). Baca kategori di badan HTML, jangan asumsikan.
+
+### 📌 Status lain (per 17 Okt 2026)
+- **Regulasi: TIDAK ADA yang baru.** **JDIH** — produk terunggah terbaru tetap **Kepmen 141/2026 (9 Sep 2026)**; **belum ada Permen baru Oktober 2026**. **Rancangan PUU (32 dok)** & **Partisipasi Publik (19 dok)** diperiksa hari ini: **tidak ada dokumen baru** (teratas tetap **RPM pelaksanaan PP 17/2025 – pelindungan anak dalam PSE**; uji publik perubahan **Permen Kominfo 7/2015**). ⚠️ Jangan simpulkan "baru" dari nomor besar — baca **"Diunggah pada …"**.
+- **Domain (`domain.go.id`):** **tetap tak ada berita baru sejak 3 Sep 2026** (HTTP 200). Urutan tetap: 3 Sep → 20 Agu → 7 Agu → 6 Agu → 15 Jul → 24 Jun. **Tidak ada aturan `.desa.id` baru.**
+- 📌 **UU PDP / PP 33/2026 — tenggat makin dekat (tetap perkembangan terpenting non-portal):**
+  - **PP 33/2026 berlaku 16 Jan 2027** → dari 17 Okt 2026 tinggal **±91 hari**. Kewajiban: notifikasi **kebocoran ≤3×24 jam**, **RoPA**, **DPIA** (termasuk **AI/ML/IoT**), **PPDP/DPO**, transfer luar negeri, denda s/d **2% pendapatan tahunan**. ✅ terverifikasi lintas sumber atas **LN 2026 No. 88**.
+  - **Lembaga/Badan PDP BELUM berdiri** (RPerpres diajukan 20 Mei 2026; fungsi sementara di **Ditjen Pengawasan Ruang Digital**; prediksi efektif **2028**). Belum ada Perpres baru hari ini.
+  - 🔗 **Nyambung ke item 10603 (KYA):** frasa resmi **"privacy by design"** dari Wamen Nezar = **jembatan wajar** antara paket **PDP-ready** dan paket **fitur AI** Webuild.
+  - **➡️ Dampak ke Webuild (TINGGI):** jual **"situs desa patuh PDP by design"** — (a) minim data/form sedikit, (b) halaman **kebijakan privasi + retensi + hapus terjadwal**, (c) tanpa pelacak pihak ketiga/kuki non-esensial, (d) bantu desa susun daftar proses data sederhana. **16 Jan 2027 = urgensi jual.**
+- ⚠️ **7 PSE lingkup privat:** tenggat **1 Okt 2026** kini lewat **16 hari** — **tetap belum ada pengumuman resmi** tindak lanjut. Item paling "menggantung".
+- **UU Satu Data Indonesia (sah 6 Okt 2026, 141 pasal):** belum ada berita **PP turunan / Penyelenggara SDI** (wajib dibentuk maks 1 tahun). Status quo.
+- ⚠️ **Sinyal sekunder — RPerpres "Gigabit City" (dokumen pengadaan):** **Kode RUP 67787399**, pagu Rp200 jt, Pengadaan Langsung, kontrak Okt–Des 2026; 2 kode LPSE (11071061000, 11090469000). **Belum ada draf resmi** → perlu verifikasi.
+- 📅 **Pantau dekat:** **Bali Tech Week 2026 — 19–23 Okt (H-2)** (termasuk **Digital Economy Policy Forum** = sinyal kebijakan turunan) · **BDSF 2026 Bandung — 29 Okt (H-12)**.
 
 ---
 
