@@ -118,3 +118,30 @@ Uji "rasa" pertama kena **HTTP 524 (upstream error)** dari Inferhub untuk `gpt-i
 mesin lain. `tools/cosplay.py` sekarang punya **cadangan otomatis**: kalau mesin utama memulangkan
 502/503/504/524 (sibuk/mati), permintaan **langsung jatuh ke mesin kedua** tanpa menggagalkan user.
 Pelajarannya: 524 bukan salah prompt — jangan mengubah prompt, pindah mesin.
+
+---
+
+## 11. PELAJARAN TERPENTING: HASIL YANG DISUKAI ITU UNDIAN, BUKAN RESEP
+Diuji ulang (15 Okt 2026): prompt V2 asli dijalankan lagi dengan gambar & acuan yang **sama persis**
+→ hasilnya **BEDA** (rok jadi panjang penuh tertutup, bukan belah tinggi seperti yang disukai user).
+
+**Sebab:** mesin gambar itu stokastik — satu hasil = satu undian. Mengulang prompt yang sama
+**tidak menjamin** hasil serupa.
+
+**Akibat untuk rancangan (dua aturan baru):**
+1. **Gaya harus DIPERINTAHKAN, bukan diharapkan.** Jangan tulis "rok boleh pendek/belah" (itu cuma
+   izin) — tulis **"rok HARUS pendek atau berbelah tinggi supaya kakinya terlihat; siluet ramping;
+   pose dinamis (tangan di pinggul, satu kaki maju)"**. Sudah dipasang di `PROMPT_ANIME`.
+2. **Kirim BEBERAPA SAMPEL lalu user memilih.** Satu hasil bukan "hasil final" — user yang menilai.
+   Ini juga menutup risiko undian jelek.
+
+**Jangan pernah menjanjikan** "hasilnya pasti seperti contoh yang lu suka" — yang bisa dijamin adalah
+*arahnya sama*, bukan gambar identik.
+
+**Aturan yang sudah dipasang di kode** (`tools/cosplay.py`):
+- `PROMPT_ANIME` = direktif: ramping + rok pendek/belah + pose dinamis + glamor + vibe anime + kunci
+  identitas/kacamata. **Ini default.**
+- `PROMPT_ANIME_RASA` = varian lembut (kebebasan penuh) — hasil: anggun tapi tertutup.
+- `PROMPT_ANIME_SETIA` = salin semua potongan — hasil: kaku seperti kostum panggung. **Jangan dipakai.**
+- Ketahanan: mesin sibuk (502/503/504/524) → **jatuh otomatis ke mesin kedua**; gagal simpan berkas
+  **tidak** memicu render ulang.
