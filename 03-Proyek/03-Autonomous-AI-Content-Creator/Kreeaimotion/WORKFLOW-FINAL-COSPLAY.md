@@ -145,3 +145,32 @@ Diuji ulang (15 Okt 2026): prompt V2 asli dijalankan lagi dengan gambar & acuan 
 - `PROMPT_ANIME_SETIA` = salin semua potongan — hasil: kaku seperti kostum panggung. **Jangan dipakai.**
 - Ketahanan: mesin sibuk (502/503/504/524) → **jatuh otomatis ke mesin kedua**; gagal simpan berkas
   **tidak** memicu render ulang.
+
+---
+
+## 12. IMPLEMENTASI KE BOT — SELESAI (16 Okt 2026, commit `15c6b15`)
+Fitur 🎭 Cosplay sudah **hidup di bot**, bukan lagi rancangan.
+
+**Yang ditambah:**
+| Bagian | Isi |
+|---|---|
+| Menu | tombol **🎭 Cosplay** (baris sendiri, di bawah Ganti Baju/Pose) + perintah `/cosplay` |
+| Setelan | `MOTIONBOT_COSPLAY_COST` (default **1 credit**, isi `0` = gratis) · `MOTIONBOT_COSPLAY_KANDIDAT` (default **2**) |
+| Status alur | `cosplay_base` (minta foto karakter) · `cosplay_ref` (minta acuan) |
+| Alur | tekan 🎭 → **pemilih karakter** yang sudah ada (atau kirim foto baru) → kirim acuan (foto cosplay / gambar anime) → job masuk antrean |
+| Hasil | dikirim **beberapa versi** (label "versi 1 dari 2") + berkas ukuran penuh; ada tombol **🔁 Coba acuan lain** (tanpa pilih karakter ulang) |
+| Mesin | `tools/cosplay.py` dijalankan di worker; **0 koin RunningHub** |
+| Pengaman | mesin sibuk (502/503/504/524) → otomatis pindah mesin kedua · gagal simpan tidak memicu render ulang · gagal total → credit dikembalikan |
+
+**Bukti uji alur** (`tools/uji_cosplay.py`, lewat Dispatcher aiogram asli — tanpa menyentuh Telegram):
+```
+1️⃣ tekan '🎭 Cosplay'      → pemilih karakter ADA (cp:use / cp:new) ✅
+2️⃣ tekan karakter #6       → base BERGANTI & sama persis dengan karakter itu ✅
+                            → state = Flow:cosplay_ref ✅
+3️⃣ kirim foto acuan        → job #50 model=cosplay dibuat, acuan tersimpan 1443 KB, state bersih ✅
+4️⃣ bersih-bersih           → job uji ditandai selesai (tidak ikut jalan saat restart) ✅
+✅ PASS
+```
+
+**Uji end-to-end sungguhan:** job #51 dimasukkan ke bot yang hidup → worker memungutnya →
+`INFO job cosplay 51: karakter=base_8886993492.jpg | acuan=...` → hasil dikirim ke Telegram user.
