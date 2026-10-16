@@ -49,6 +49,17 @@ yang diuji, 5 balas `404 unknown model` (`seedream-*`, `flux-*`, `nano-banana-*`
 `gemini-3.0-pro-image`, `gemini-3.1-flash-image`, `gemini-2.5-flash-image`. Sudah dicatat di skill
 `inferhub-image-models`.
 
+**4) REALISME GAMBAR — SEBABNYA UKURAN, SUDAH DIPERBAIKI.** Mesin sama (gemini), foto & prompt sama:
+diminta 1024x1536 → hasil 848x1264 (26 dtk, Rp 31); diminta 2160x3840 → hasil **3072x5504** (58 dtk,
+Rp 60, berkas 17,7 MB). Panel 4K memperlihatkan tekstur kulit + helai rambut + pantulan lensa yang tidak
+ada di 1,5 MP. `MOTIONBOT_IMAGE_SIZE` dinaikkan `1024x1536 → 2160x3840` (commit `ae27773`) — memakai
+ukuran yang sudah terbukti di Ganti Baju. Margin 16,7x pada harga 1 credit = Rp 1.000. Batas Telegram
+sudah aman (`bot.py:2564`: >9 MB → pratinjau 1600px + dokumen penuh).
+**Mode gagal konten ada TIGA, jangan salah baca:** tolak cepat (`400` 1–4 dtk), **gantung** (timeout
+menit padahal prompt netral 200 — ini yang terjadi pada prompt bikini di gemini), gangguan (`524`), dan
+`429` "Credits exhausted" yang terbukti **transient** (30 dtk kemudian 200 lagi). Rincian + alat:
+**`UJI-REALISME-DAN-BIAYA.md`**. Bug ditutup: Cosplay kini jatuh ke cadangan pada 429/500 (commit `3b7d791`).
+
 ## 🆕 RAMBUT HILANG di Motion Control — SUDAH DIPERBAIKI (15 Okt 2026)
 Keluhan user: "hasil aneh, rambut tiba-tiba hilang".
 **Temuan:** kerusakan ada di EKOR video (out_43: rambut panjang hilang mulai detik 14.0 → 15.1;
