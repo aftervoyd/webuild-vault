@@ -174,3 +174,28 @@ Fitur 🎭 Cosplay sudah **hidup di bot**, bukan lagi rancangan.
 
 **Uji end-to-end sungguhan:** job #51 dimasukkan ke bot yang hidup → worker memungutnya →
 `INFO job cosplay 51: karakter=base_8886993492.jpg | acuan=...` → hasil dikirim ke Telegram user.
+
+---
+
+## 13. HASIL BOT HIDUP + TEMUAN GAYA (16 Okt 2026)
+Job #51 (dimasukkan ke bot hidup, dipungut worker sendiri) → **2 versi terkirim**: `state=done`, tanpa galat.
+
+| | Versi 1 (slug `_1_langsung`) | Versi 2 (slug `_2_realistis`) |
+|---|---|---|
+| Prompt | `PROMPT_ANIME` (direktif: ramping, belah/pendek, pose dinamis, glamor) | `PROMPT_ANIME2` (lewat spesifikasi kain — gaya setia desain) |
+| Rok | **belah/pendek, kaki terlihat** | panjang penuh, tanpa belah |
+| Pose | dinamis (tangan di pinggul, satu kaki maju) | tegak kaku |
+| Kacamata | ✅ tetap | ✅ tetap |
+| Rasa vs V2 lama | **paling mirip** ✓ | kurang mirip |
+
+**Bukti:** `BUKTI-COSPLAY/HASIL_BOT_job51.jpg`
+
+**Temuan:** beda rasa antar versi itu **disebabkan prompt**, bukan mesin — versi 2 masih memakai prompt
+"setia desain" (rok panjang elegan). Kalau user mau dua-duanya bergaya sama (dua undian gaya favorit,
+mesin berbeda) → cukup ganti prompt versi 2 jadi `PROMPT_ANIME`.
+
+## 14. INGATAN KEMACETAN (16 Okt 2026)
+`gpt-image-2` memulangkan **524 tiga kali berturut-turut** saat tiga sampel dibuat (semuanya diselamatkan
+mesin kedua). Setiap percobaan gagal membuang ±60 detik waktu user, jadi ditambah ingatan di
+`tools/cosplay.py`: setelah `AMBANG_SIBUK=2` kali 524 berturut-turut, mesin itu **didoakan** 15 menit —
+mesin kedua didahulukan. Teruji: ambang → didoakan → pulih setelah sukses.
