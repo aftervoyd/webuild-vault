@@ -860,3 +860,44 @@ yang lebih kuat di prompt.
 
 **Uji**: simulasi dispatcher 13/13 hijau (menu → foto → pilih → 🚀 → job+credit benar)
 + job #6 sungguhan lewat service → state=done → gambar terkirim (944×1664, 1,7 MB).
+
+---
+
+## MESIN MOTION CONTROL — DI BONGKAR (16 Okt 2026, dari keluhan wajah job #54)
+Pertanyaan user: "job #54 pake mesin mana? mukanya nggak identik sama character sheet."
+
+**MESIN:** RunningHub AI App `2083697864529678338` — **"Pose Transfer Personal Use"**
+(instance `plus`, sukses 97%, rata-rata 676 dtk, sudah dipakai 8.173 kali).
+Workflow di dalamnya: `2042526099766251522` ("Motion Control - nightfunnels.com", 72 node).
+
+**Model asli di dalamnya (dari graf workflow):**
+- `Wan22Animate/Wan2_2-Animate-14B_fp8_scaled_e4m3fn_KJ_v2.safetensors` → **Wan 2.2 Animate 14B**
+- `WanAnimate_relight_lora_fp16` (kekuatan 1.5 — me-relight karakter ikut cahaya video)
+- `clip_vision_h.safetensors` + `WanVideoClipVisionEncode` → pembaca identitas dari foto
+- `PoseAndFaceDetection` (vitpose_h_wholebody + yolov10m) → deteksi pose **dan wajah**
+- `SeCVideoSegmentation` (SeC-4B-fp8) → pemisah orang/latar
+
+**13 field masukannya:** 299=image (foto), 275=video (acuan), **316=lebar, 317=tinggi**, 264=fps,
+300=batas frame, 293=mode hitung pose, 265=ekspresi, 266=getar, 271=mask, 356=prompt, 348=mode output, 357=super-res.
+
+**SEBAB WAJAH TIDAK IDENTIK (3 sebab, semua terukur):**
+1. **Resolusi keluaran dibiarkan default app: 576x1024 = 0,59 MP.** App sendiri menyarankan
+   1280x720 (0,92 MP). Wajah hanya dapat ~192x230 px → mustahil mirip sheet 858x1280.
+2. **Foto masukan kena kompres Telegram:** 858x1280 tapi **hanya 82 KB**. Foto ini satu-satunya
+   sumber identitas (lewat CLIP-Vision) → detail wajah sudah rusak sebelum masuk mesin.
+3. **Model menggambar ulang seluruh frame** → rahang/hidung/mata bergeser. Atribut ikonik tetap
+   (rambut pirang, kacamata kotak hitam, tanda berlian ungu ✓).
+
+Catatan penting: node 265 = **0.2 sudah benar** (rekomendasi app). Kalau 1.0, wajah justru
+**meniru wajah video acuan** → makin tidak identik.
+
+**PERBAIKAN YANG DIPASANG (.env, tanpa ubah kode):**
+`MOTIONBOT_T10/T15/T20_SET=265:value:0.2;316:value:720;317:value:1280`
+→ 720x1280 rasionya **SAMA PERSIS** dengan 576x1024 (0,5625) jadi komposisi tidak berubah, +56% piksel.
+`full` tetap 576x1024 karena acuannya sampai 30 dtk (720x1280 aman hanya ≤26 dtk).
+Trade-off jujur: resolusi lebih besar = mesin lebih lama = **koin RunningHub lebih boros**.
+
+**Saran untuk user (gratis, dampak besar):** kirim character sheet sebagai **FILE (bukan foto
+terkompres)** dan pakai **crop setengah badan/wajah**, supaya wajahnya besar di gambar.
+
+Bukti: `BUKTI-MOTION/BANDING_WAJAH.jpg`
