@@ -162,3 +162,26 @@ AI Filmfest Athens (reguler 15 Okt = hari ini, late 19 Okt €30, total €3.000
 1. Hentikan/diet jadwal kreeaimotion: hindari AI App 2095689306085285890 kecuali perlu; matikan fallback otomatis Inferhub→RunningHub pada job timeout (bayar dobel).
 2. Klaim ±100 koin login harian (hangus 24 jam).
 3. Prioritaskan **TAIFF (gratis, 1 Nov)** — pendaftaran gratis & banyak kursi award craft; Chroma S2 31 Des sebagai target utama.
+
+## 9. SCAN 16 OKT 2026 — burnout melambat (−1.132/24 jam) + kontes baru
+Saldo: **13.279 RH Coins** (Δ −1.132 vs 14.411). Rantai: 18.847 → 14.411 → 13.279 (rata −2.784/hari 2 hari terakhir).
+
+### Kontes baru (sumber: aifc.news, diperbarui 14–16 Okt 2026)
+| Kontes | Hadiah | Deadline | Catatan |
+|---|---|---|---|
+| **Artefact AI Film Festival × mk2** (Prancis) | **$15.000 cash** | 13 Jan 2027 | fee belum dipublikasi — top pick baru |
+| **AI Film Award 2027 — 1 Billion Followers Summit (UAE)** | **$1.000.000 cash** | 20 Nov 2026 | ⚠️ wajib tool **Seedance** + 5–7 mnt satu cerita |
+| **Chroma Awards S2** (koreksi angka) | **$430K+ pool** (bukan $175K) | 7 Jan 2027 | gratis via Devpost, kategori banyak |
+| Hollywood AI Short Film Awards (AS) | $3.000 cash | 11 Jan 2027 | ≤22 mnt, berbayar |
+| IA Play IFF Madrid (Spanyol) | $1.000 cash | 1 Jan 2027 | 100% AI, berbayar |
+| AI ZONE International (online) | $500 cash | 30 Nov 2026 | **gratis** |
+| AI Film Festival Africa / AIFFA (Madagaskar) | top-3 prizes | 31 Okt 2026 | **gratis** |
+| WAIFF London (baru) | jalur ke Cannes | 17 Nov 2026 | berbayar bertingkat |
+| Gossip Goblin x Showrunner | $20K, **gratis** | 15 Des 2026 | ❌ **wajib Showrunner Studio** — bukan toolchain kita |
+| AI for Good Film Festival | undangan summit | 1 Mei 2027 | gratis, 1–10 mnt |
+
+### Koreksi/peringatan
+- **TLVAIFF Tel Aviv**: deadline reguler **15 Okt** (sudah lewat); fest 10 Nov. Jangan andalkan.
+- **T-AIFF Türkiye** tidak sepenuhnya gratis: kategori internasional **$1** (nasional gratis), ≤20 mnt, maks 5 karya.
+- **PixLight 2026** deadline 31 Okt, $300K, tapi **wajib PixVerse Canvas**.
+- Jangan pernah menjadwalkan render ke malam dengan alasan "jam gratis" — **tarif koin 24 jam penuh** (Qwen-Edit ±50/gambar; motion ±26 koin/detik; H3 i2v ±16,4 koin/detik).
