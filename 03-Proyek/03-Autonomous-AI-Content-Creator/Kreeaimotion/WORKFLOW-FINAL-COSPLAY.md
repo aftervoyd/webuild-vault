@@ -38,7 +38,8 @@ Kode: `tools/cosplay.py` · uji: `python3 tools/cosplay.py <gambar_orang> <gamba
 | **KUNCI IDENTITAS** | wajah, fitur wajah, warna kulit, bentuk badan, pose, sudut kamera, framing, latar, cahaya = sama persis |
 | **KACAMATA** | "kacamata di gambar pertama WAJIB tetap di wajahnya, jangan pernah dihapus/diganti" |
 | **RAMBUT / WIG** | diganti mengikuti wig karakter acuan (warna, panjang, gaya) + makeup senada — **wajah tidak berubah** |
-| **SALIN SEMUA POTONGAN** | "jangan menyederhanakan, jangan memendekkan rok, jangan mengubah cape panjang jadi pendek, jangan membuang panel/armour/bot" ← ini perbaikan kelemahan V2 |
+| **INTERPRETASI BEBAS + RASA** | "adaptasi bebas, tidak wajib menyalin setiap potongan" · rok boleh pendek/belah, siluet lebih ramping, cape boleh pendek · **suasana fantasi/anime dipertahankan**: warna pekat, cahaya dramatis, kesan fotografi cosplay sinematik |
+| ~~SALIN SEMUA POTONGAN~~ | ❌ **DIBATALKAN.** Perintah ini bikin hasil kaku seperti kostum panggung dan **wajahnya ikut bergeser** (dinilai mesin & dibuktikan user). Disimpan sebagai `PROMPT_ANIME_SETIA`, bukan default |
 | **REALISTIS** | pori kulit terlihat, serat & berat kain nyata, bayangan natural · BUKAN ilustrasi/anime/kartun/cel-shading/warna flat |
 | **TANGAN** | kedua tangan terlihat utuh, jari natural (artefak tangan muncul di semua uji) |
 | **LARANGAN** | tanpa teks, tanpa watermark, tanpa logo |
@@ -89,3 +90,31 @@ Uji: Arunika (`data/base_8886993492.jpg`, **berkacamata**) + acuan karakter anim
 | Waktu | 67 dtk (A) + 42 dtk (B) · **0 koin RunningHub** |
 
 Bukti: `BUKTI-COSPLAY/FINAL_uji_kacamata.jpg` · kode: `tools/cosplay.py`
+
+---
+
+## 9. KOREKSI SELERA USER (15 Okt 2026) — aturan "salin semua" DIBATALKAN
+User menilai hasil FINAL (perintah "salin semua potongan") **kalah** dari V2 lama, dengan alasan:
+*"hasilnya jadi sedikit sexy tanpa ngerubah wajah dan vibes animenya"*.
+
+Dibuktikan mesin (perbandingan `BUKTI-COSPLAY/BANDING_V2LAMA_vs_KAKU.jpg`):
+| | V2 lama (interpretasi bebas) | FINAL "salin semua" |
+|---|---|---|
+| Rok | panjang **dengan belah tinggi** (kaki terlihat) | panjang penuh tertutup |
+| Cape | lebih pendek/sedang | sampai lantai |
+| Siluet | **ramping** | lebar (A-line) |
+| Pose | dinamis (satu kaki maju) | tegak kaku |
+| Kesan | **glamor, modis, atraktif** | seperti kostum panggung |
+| Wajah | **lebih natural/hidup** | lebih kaku |
+
+**Kesimpulan teknis:** memaksa kostum menyalin acuan **juga menarik wajah menjauh** — jadi jalur
+interpretasi bebas lebih baik di dua hal sekaligus (estetika + identitas).
+
+**Aturan baru (default):** interpretasi bebas + rasa glamor (`PROMPT_ANIME` di `tools/cosplay.py`).
+Versi setia desain disimpan sebagai `PROMPT_ANIME_SETIA` (bukan default).
+
+## 10. PERBAIKAN KETAHANAN (15 Okt 2026)
+Uji "rasa" pertama kena **HTTP 524 (upstream error)** dari Inferhub untuk `gpt-image-2` → diuji
+mesin lain. `tools/cosplay.py` sekarang punya **cadangan otomatis**: kalau mesin utama memulangkan
+502/503/504/524 (sibuk/mati), permintaan **langsung jatuh ke mesin kedua** tanpa menggagalkan user.
+Pelajarannya: 524 bukan salah prompt — jangan mengubah prompt, pindah mesin.
