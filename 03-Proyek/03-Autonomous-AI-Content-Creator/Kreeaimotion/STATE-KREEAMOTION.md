@@ -901,3 +901,20 @@ Trade-off jujur: resolusi lebih besar = mesin lebih lama = **koin RunningHub leb
 terkompres)** dan pakai **crop setengah badan/wajah**, supaya wajahnya besar di gambar.
 
 Bukti: `BUKTI-MOTION/BANDING_WAJAH.jpg`
+
+### BUG: alur motion MENOLAK character sheet berbentuk FILE (16 Okt 2026) — SUDAH DIPERBAIKI
+Gejala: user mengirim character sheet sebagai FILE → bot balas "Kirim FOTO ya (bukan teks)".
+Sebab: handler `step_photo` (state `Flow.photo`, baris 680) hanya memeriksa `m.photo`.
+Handler alur lain (cosplay `cosplay_base`, ganti baju `outfit_base`, `img_photo`) SUDAH menerima
+dokumen — jadi hanya alur motion yang rusak. Ini penting karena FILE justru yang kita sarankan:
+foto Telegram dikompres (job #54: 858x1280 tapi 82 KB).
+
+Perbaikan: terima `m.document` dengan mime `image/*` (batas 20 MB), ekstensi dipertahankan
+(.jpg/.jpeg/.png/.webp), balasan menyebut "(resolusi utuh — bagus untuk kemiripan wajah)".
+Prompt durasi juga diubah: "💡 Kirim sebagai *FILE* (bukan foto) biar wajahnya lebih mirip".
+
+Bukti uji `tools/uji_foto_file.py` (4 kasus, semua PASS):
+- teks → ditolak, state tetap
+- FILE PNG → diterima, tersimpan **84.957 byte = persis ukuran asli** (tanpa kompres), state → video
+- FILE pdf → ditolak, state tetap
+- FOTO Telegram → tetap diterima seperti dulu
