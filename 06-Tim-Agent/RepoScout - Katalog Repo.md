@@ -482,6 +482,75 @@
 
 ---
 
+## 📚 RepoScout / OpsAgent — RAG: tanya-jawab DOKUMEN (dokumen desa, proposal, regulasi)
+
+> Riset **2026-10-17** — rotasi topik: **agentic AI, sudut baru: RAG (tanya-jawab atas dokumen)**.
+> Katalog sudah punya *memori codebase* (`codebase-memory-mcp`) & *knowledge graph* (`Graphify`), tapi **belum punya mesin RAG buat DOKUMEN** — padahal tim kita kebanjiran PDF (dokumen desa, proposal ke kades, regulasi Komdigi/LKPP). Kebutuhannya konkret: *"tanya dokumen apa pun → dijawab, plus ada sitasi halaman"*.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **haiku.rag** | github.com/ggozad/haiku.rag | **Agentic RAG tanpa server**: database **LanceDB tertanam** (tanpa server DB & tanpa API key), ingest PDF/office/HTML/MD/gambar pakai **Docling** (heading, tabel, provenance halaman tersimpan), pencarian **hybrid vector+full-text** + reranking opsional, **jawaban bersitasi nomor halaman + heading**, cek sitasi dengan menggambar chunk di gambar halaman, bisa jalankan **Python sandbox** atas dokumen (hitung/agregasi), ada **MCP server** + CLI + TUI + Python API + service ingester (filesystem/HTTP/S3/WebDAV, antrean SQLite/Postgres) | Python 3.12 / LanceDB / Pydantic AI / Docling | ✅ **MIT** | 629 (**7**) | RepoScout + OpsAgent + ContentWriter | ✅ **REKOMENDASI** — paling cocok VPS kita (nol container, nol API key); aktif: **100 commit/60 hari**, 13 kontributor |
+| **AnythingLLM** | github.com/Mintplex-Labs/anything-llm | **All-in-one "ChatGPT privat"**: chat dengan dokumen, agen bawaan, multi-user + permission, vector DB & pipeline dokumen, **agent builder no-code (Agent Flows)**, **MCP-compatible**, **Scheduled Tasks** (cron), **chat widget yang bisa ditempel di situs klien** (versi Docker), desktop app Win/Mac/Linux | JavaScript / Node + React | ✅ **MIT** (`LICENSE`; ada `TERMS_SELF_HOSTED.md` = privasi/telemetri, **bukan** pembatas lisensi; **tanpa** folder `ee/`) | 67.210 (**418**) | OpsAgent + SalesAgent | ✅ **REKOMENDASI (Docker)** — `docker/docker-compose.yml` = **1 service saja**; bisa jadi "tanya dokumen desa" + widget FAQ di situs desa |
+| **RAGFlow** | github.com/infiniflow/ragflow | RAG kelas enterprise: parsing dokumen dalam (layout/tabel), knowledge graph, agent, UI lengkap | Go / Python + Docker | ✅ Apache-2.0 | 92.335 (**362**) | OpsAgent | ⚠️ **PELAJARI (bukan di VPS ini)** — `docker/docker-compose-base.yml` = **17 service** (Elasticsearch/OpenSearch, MySQL, MinIO, Redis/kvrocks, NATS, ClickHouse, Jaeger, sandbox-executor…) |
+| **Dify** | github.com/langgenius/dify | Platform agentic workflow + RAG pipeline + UI builder | Python / TypeScript + Docker | ⚠️ **"modified Apache 2.0"** (lihat catatan) | 158.664 (**841**) | OpsAgent | ⚠️ **INTERNAL SAJA / HATI-HATI JUAL-LAYANAN** — compose (api, worker, web, db_postgres, redis, sandbox, plugin_daemon, ssrf_proxy, nginx, weaviate) berat untuk VPS 1,9 GB |
+| **FastGPT** | github.com/labring/FastGPT | Platform knowledge base + orkestrasi alur AI (UI + API) | TypeScript + Docker | ⚠️ **"FastGPT Open Source License"** (Apache + syarat sama spt Dify) | 29.842 (**152**) | OpsAgent | ⚠️ CADANGAN — **14 service** di `deploy/dev/docker-compose.yml` |
+| **Open WebUI** | github.com/open-webui/open-webui | Front-end chat LLM paling populer (mirip ChatGPT), bisa RAG dokumen, multi-user | Python / Svelte | ⚠️ **"Open WebUI License"** (BSD-3 gaya + **klausul branding**, lihat catatan) | 155.919 (**678**) | OpsAgent | ⚠️ PELAJARI — compose cuma **2 service** (ollama + open-webui) & cepat dipasang, **tapi** jangan dipakai sebagai front-end ber-label kita untuk klien banyak user |
+| **Kotaemon** | github.com/Cinnamon/kotaemon | RAG berbasis UI buat chat dengan dokumen (ada riset GraphRAG, multi-user, hybrid) | Python / Gradio | ✅ Apache-2.0 | 25.808 (**130**) | RepoScout | ⚠️ PANTAU — fungsinya pas, **tapi melambat**: push terakhir **2026-07-14** (±3 bulan) |
+| **localGPT** | github.com/PromtEngineer/localGPT | Chat dengan dokumen **100% lokal/offline** (data tak keluar mesin) | Python / LangChain | ✅ MIT | 22.194 (**180**) | RepoScout | ✅ CADANGAN — repo kecil (6 MB), bagus buat eksperimen cepat di PC user/VPS |
+| **nashsu/llm_wiki** | github.com/nashsu/llm_wiki | App desktop: dokumen → **wiki terorganisir** yang bisa dijelajah & ditanya (nyambung dgn skill `llm-wiki` kita) | TypeScript / Electron | ⚠️ **GPL-3.0** (API bilang `NOASSERTION`!) | 20.709 (**88**) | RepoScout | ⚠️ PELAJARI metodenya — **jangan salin kodenya** ke produk tertutup kita (GPL) |
+| **Fess** | github.com/codelibs/fess | **Search server** self-hosted (di atas OpenSearch): crawl web & file → pencarian situs/internal | Java / OpenSearch | ✅ Apache-2.0 | 1.141 (**58**) | OpsAgent | 🔸 CADANGAN — jalur "pencarian isi situs desa", tapi Java + OpenSearch = berat |
+
+### 🔎 Catatan RAG (PENTING: hitung service dulu, jangan janji self-host)
+- 💾 **Urutan dari paling ringan** (hasil hitung nyata dari file compose): **haiku.rag** = **0 container** (LanceDB tertanam) → **AnythingLLM** = **1 service** → **Open WebUI** = 2 → **Dify** ≈ 10 core → **FastGPT** = 14 → **RAGFlow** = **17** (Elasticsearch + MySQL + MinIO + Redis + NATS + ClickHouse + Jaeger). VPS kita (1,9 GB, available ~200–330 MB) **hanya realistis untuk 2 yang pertama**.
+- ⚖️ **Jebakan lisensi ke-9 — "modified Apache 2.0" (fair-code versi platform AI).** **Dify** & **FastGPT** menulis di baris pertama LICENSE: Apache-2.0 **+ syarat**: (a) **dilarang menjalankan sebagai multi-tenant** (1 workspace = 1 tenant) tanpa lisensi komersial tertulis, (b) **dilarang menghapus/mengubah LOGO & copyright di frontend** (`web/`). Jadi kode boleh dipakai, **tapi jangan dijual sebagai layanan ber-label sendiri**.
+- ⚖️ **Jebakan lisensi ke-10 — lisensi buatan sendiri dengan AMBANG PENGGUNA.** **Open WebUI** pakai "Open WebUI License": klausul 4 **melarang** menghapus/mengubah branding "Open WebUI" **kecuali** (i) total end-user **≤50 orang dalam 30 hari bergulir**, (ii) ada izin tertulis, atau (iii) punya lisensi enterprise. Untuk klien desa (puluhan user) masih aman, **tapi** jangan jadikan front-end bertanda Webuild untuk ratusan user.
+- 📄 **File terms terpisah ≠ pembatas lisensi.** **AnythingLLM** punya `TERMS_SELF_HOSTED.md` — isinya **privasi/telemetri & no-warranty** dan **menegaskan inti = MIT**. Baca dulu, tapi jangan salah klasifikasi seperti `LICENSE_EE.md` / `LICENSING.md` (yang itu memang gerbang komersial).
+- 🧩 **GPL masih bisa sembunyi di balik `NOASSERTION`**: `nashsu/llm_wiki` API-nya `NOASSERTION`, file LICENSE = **GPL-3.0**.
+
+**Kesimpulan buat tim:** (1) **pemahaman dokumen desa** → JANGAN mulai dari platform besar; mulai **`haiku.rag`** (MIT, embedded, ada MCP → bisa dicolok ke agen kita) untuk uji cepat "tanya APBDes/proposal"; (2) kalau butuh **UI untuk klien/desa** → **AnythingLLM** (MIT, 1 container, ada widget embed); (3) **jangan** pasang RAGFlow/Dify/FastGPT di VPS ini; (4) nada jualan yang benar: *"FAQ & tanya-jawab dokumen desa, jalan di server sendiri, data tidak ke luar"* — sejalan dengan paket **"situs desa PDP-ready"**.
+
+---
+
+## 🎨 DesignerBot / ContentWriter / SocialAgent — Bahan baku visual BEBAS (ikon, emoji, avatar, font)
+
+> Riset **2026-10-17** — rotasi topik kedua: **design/UI, sudut yang belum ada**. Katalog sudah penuh **ALAT** desain (`designlang`, `Dembrandt`, shadcn, Magic UI), tapi belum pernah mencatat **BAHAN-nya**: aset visual legal buat dipakai di situs klien. Ini pengungkit anti-template paling murah: ganti font + set ikon + ilustrasi, situs langsung tidak terasa "theme beli".
+> Semua lisensi diverifikasi dari **file lisensi asli** (bukan `spdx_id`), termasuk file yang mudah terlewat (`LICENSE-GRAPHICS`).
+
+| Nama | URL | Fungsi | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|
+| **Lucide** | github.com/lucide-icons/lucide | Toolkit ikon stroke konsisten (dipakai ekosistem shadcn), tree-shakeable, banyak framework | ✅ **ISC** (API bilang `NOASSERTION`!) | 25.082 (60) | DesignerBot + WebBuilder | ✅ **PAKAI** — default ikon UI Webuild |
+| **Tabler Icons** | github.com/tabler/tabler-icons | **6.200+ ikon** SVG konsisten (outline & filled) | ✅ MIT | 22.342 (110) | DesignerBot + WebBuilder | ✅ PAKAI — set besar buat ikon fitur/layanan desa |
+| **Iconify** | github.com/iconify/iconify | **Satu API/komponen → 243 set ikon** (runtime, SVG on-demand) | ✅ MIT (**framework**) ⚠️ **lisensi per-SET** | 6.366 (24) | WebBuilder + DesignerBot | ✅ PAKAI — **tapi pilih set berlisensi MIT/Apache** (lihat catatan) |
+| **Iconoir** | github.com/iconoir-icons/iconoir | Set ikon konsisten (1.500+), React/TS siap pakai | ✅ MIT | 4.584 (28) | DesignerBot | 🔸 CADANGAN |
+| **Heroicons** | github.com/tailwindlabs/heroicons | Ikon resmi Tailwind Labs (outline/solid/mini/micro) | ✅ MIT | 23.870 (166) | WebBuilder | ⚠️ CADANGAN — push terakhir 2026-05 (melambat, tapi stabil) |
+| **Simple Icons** | github.com/simple-icons/simple-icons | **3.000+ logo merek** (buat tautan sosmed/footer klien) | ✅ **CC0-1.0** (merek tetap milik pemiliknya — jangan seolah endorse) | 26.022 (178) | WebBuilder + SocialAgent | ✅ PAKAI |
+| **Material Symbols** | github.com/google/material-design-icons | Set ikon raksasa Google (Material Symbols, variable font) | ✅ Apache-2.0 | 54.120 (**1.800**) | DesignerBot | ✅ CADANGAN — kalau butuh ikon "familiar" & sangat banyak |
+| **pqoqubbw/icons** | github.com/pqoqubbw/icons | **Ikon beranimasi** siap tempel (React + motion) — micro-interaction landing | ✅ MIT | 8.214 (**14**) | DesignerBot + MotionAgent | ✅ PAKAI — bikin landing terasa "mahal" tanpa video |
+| **Meteocons** | github.com/basmilius/meteocons | Ikon **cuaca** beranimasi tangan (juga buat widget data desa) | ✅ MIT | 1.672 (25) | MotionAgent | 🔸 CADANGAN |
+| **react-useanimations / animateicons** | github.com/useAnimations/react-useanimations · github.com/Avijit07x/animateicons | Koleksi ikon beranimasi React (menu, loading, social) | ✅ MIT (keduanya) | 1.248 (10) · 1.261 (5) | WebBuilder | 🔸 CADANGAN |
+| **Fontsource** | github.com/fontsource/fontsource | **Self-host font open source lewat npm** (tanpa CDN Google) — variable font, i18n | ✅ MIT (**paketnya**) ⚠️ **font-nya lisensi sendiri** | 6.205 (18) | WebBuilder + DesignerBot | ✅ **PAKAI** — ganti font = cara #1 bikin situs tidak kelihatan template |
+| **google-webfonts-helper** | github.com/majodev/google-webfonts-helper | Ambil font Google → **woff/woff2 + CSS siap self-host** (tanpa request ke Google) | ✅ MIT | 13.073 (103) | WebBuilder + OpsAgent | ✅ PAKAI — bonus privasi (sejalan paket "PDP-ready") |
+| **Subfont** | github.com/Munter/subfont | **Subsetting font agresif** sesuai teks yang benar-benar dipakai + preload | ✅ MIT | 1.636 (12) | OpsAgent + WebBuilder | ✅ PAKAI — situs desa lebih cepat (font sering jadi beban terberat) |
+| **Fluent Emoji** | github.com/microsoft/fluentui-emoji | Set emoji resmi Microsoft (3D/flat) buat konten & ikon | ✅ MIT | 10.166 (65) | SocialAgent + ContentWriter | ✅ PAKAI — emoji legal buat konten sosmed |
+| **Noto Emoji** | github.com/googlefonts/noto-emoji | Emoji Noto Google (juga **monokrom**, cocok jadi ikon) | ✅ OFL-1.1 | 5.074 (**119**) | ContentWriter | ✅ CADANGAN |
+| **DiceBear** | github.com/dicebear/dicebear | **Generator avatar** (banyak gaya) — buat profil UMKM/warga tanpa upload foto | ✅ MIT (**kode**) ⚠️ **gaya = lisensi masing-masing** | 9.870 (34) | WebBuilder + DesignerBot | ✅ PAKAI — cek `/licenses` per gaya (banyak minta atribusi) |
+| **OpenMoji** | github.com/hfg-gmuend/openmoji | Set emoji open source (garis, konsisten) | ⚠️ **CC-BY-SA-4.0** (atribusi **+ share-alike**) | 4.564 (45) | — | 🚫 **HATI-HATI** — buat klien berbayar pakai **Fluent Emoji (MIT)** |
+| **Twemoji** | github.com/jdecked/twemoji | Emoji Twitter (dipakai luas) | ⚠️ **kode MIT, GRAFIS CC-BY 4.0** (`LICENSE-GRAPHICS`) | 1.881 (21) | — | ⚠️ atribusi wajib kalau dipakai |
+
+### 🔎 Catatan aset visual (jebakan lisensi ke-8: **lisensi paket ≠ lisensi ISI paket**)
+- 🧩 **Repo "katalog aset" harus dicek PER-ITEM.** **Iconify** (framework MIT) mendistribusikan **243 set**: **112 MIT · 52 CC BY 4.0 (wajib atribusi) · 31 Apache-2.0 · 13 OFL · 6 CC BY-SA · 4 GPL · 6 CC0 · 4 ISC** — contoh nyata: set **`solar` = CC BY 4.0**. Cara cek cepat:
+  ```bash
+  curl -s https://api.iconify.design/collections | python3 -c "import sys,json,collections;d=json.load(sys.stdin);print(len(d));print(collections.Counter((v.get('license') or {}).get('title') for v in d.values()).most_common(8))"
+  ```
+- 🔤 **Fontsource: paketnya MIT, font-nya tidak.** README-nya sendiri berbunyi: *"Always make sure to read the license for each font you use. Most of the fonts in the collection use the SIL Open Font License, v1.1. Some fonts use the Apache 2 license. The Ubuntu fonts use the Ubuntu Font License v1.0."* → tiap font dicek di `README.md` paketnya. **Ini juga berlaku untuk Google Fonts** (helper-nya MIT, font-nya tetap berlisensi sendiri).
+- 🧑🎨 **DiceBear: kode MIT, gaya avatar bergantung pembuatnya** (README: *"The avatar styles are the work of their respective creators and carry their own licenses… many only ask for attribution"*) — banyak gaya populer **CC BY 4.0**.
+- 🎨 **Emoji: dua lapis lisensi.** **Twemoji** = kode MIT **+ grafis CC-BY 4.0** (file `LICENSE-GRAPHICS` terpisah!). **OpenMoji** = **CC-BY-SA-4.0** → **share-alike**: turunannya harus berbagi dengan lisensi sama → hindari untuk aset komersial klien; pilih **Fluent Emoji (MIT)** / **Noto Emoji (OFL)**.
+- ✅ **ISC & CC0 itu bebas, tapi API-nya bisa bilang `NOASSERTION`** — **Lucide = ISC**, **Simple Icons = CC0-1.0** → jangan simpul "lisensi tak jelas" lalu buang repo-nya.
+- 📋 **Praktik aman sekali bikin:** tiap situs klien diberi halaman **`/kredit`** (atau komentar di CSS) yang menyebut aset + lisensinya → atribusi CC BY / OFL / CC0 terpenuhi, urusan legal beres sejak awal. Ini juga argumen jualan ("semua aset legal & bebas royalti").
+- 🔍 **Query aset: pakai kata kategori, bukan kata "library".** Yang tajam: `icons+in:name,description+stars:>3000+NOT+awesome`, `animated+icons`, `fonts+self-host`, `emoji+in:name,description`. **`illustration(s)` = zonk** (hasilnya repo *AI illustration skill*, bukan katalog aset) → untuk ilustrasi/pattern, cari **nama proyek langsung** (mis. `openpeeps`, `humaaans`) atau situs katalognya.
+
+---
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
