@@ -20,6 +20,35 @@ Catatan: bot sempat di-restart saat render jalan dan **mengadopsi task yang sama
 koin tidak terbuang) — perilaku ini benar dan disengaja (`_adopt_job`).
 Koin RunningHub: 14.817 → 13.499 (habis ~1.318 koin untuk seluruh investigasi + uji).
 
+## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
+
+**1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
+→ tulis prompt gerakan → video. BEDA dari Motion Control: **tanpa video acuan**.
+- Mesin: **Hailuo H3 (MiniMax H3) I2V Accelerated** app `2087081647066263554` (8.686x dipakai, sukses
+  100%, rata-rata 322 dtk, 10 dtk video). Ganti mesin cukup ubah `.env` `MOTIONBOT_GV_APP/_NODES/_SET`.
+- Biaya: `MOTIONBOT_GV_COST=3` credit (1 credit = Rp 1.000).
+- `fill_nodes()` sekarang mendukung placeholder **`@prompt`** (dulu cuma @photo/@video/@ratio/@duration).
+- Jalur video di `bot.py` ternyata SUDAH generik (digerakkan kunci model job) → tak perlu cabang baru.
+- Diuji `tools/uji_gv.py` (Dispatcher aiogram asli, tanpa Telegram): **PASS** — menu merespons, foto
+  tersimpan, job `gv` masuk antrean dengan prompt benar dan video acuan KOSONG.
+- Commit `d31f05b`. Skrip uji **menimpa base aktif** saat menyimpan foto → base dipulihkan ke karakter
+  #7 "Arunika · Kamar (Latar A)" 987 KB; skrip tes berikutnya harus simpan+pulihkan base.
+
+**2) Uji mesin KLING MOTION CONTROL 3 PRO REPLICA** (`2101901146469191682`) dengan input job #54 PERSIS:
+- **86 koin** (diukur dari selisih saldo 12.457 → 12.371) vs mesin sekarang **≈390 koin** → ±4,5x murah
+- Tetapi resolusi **480x848** (mesin sekarang 720x1280) — dan klaim deskripsi app "Full HD 1080p"
+  **TIDAK terbukti**. App hanya punya 2 field masukan → resolusi terkunci, tak bisa dinaikkan.
+- Fakta visual: kacamata tetap ada di kedua video, rambut/pakaian/latar sama, rahang+dagu+hidung mesin
+  baru lebih dekat ke foto input. Penilaian akhir = user.
+- Skrip: `tools/uji_kling.py`, `tools/banding_kling.py` · bukti: `BUKTI-MOTION/out_kling.mp4` +
+  `BUKTI-MOTION/BANDING_KLING.jpg` · rincian penuh: **`UJI-MESIN-KLING.md`**.
+
+**3) PELAJARAN REALISME GAMBAR:** `GET /v1/models` = **katalog iklan, bukan ketersediaan**. Dari 6 model
+yang diuji, 5 balas `404 unknown model` (`seedream-*`, `flux-*`, `nano-banana-*`, `gpt-image-2.5-*`) dan
+`gpt-image-2` mati di batas 180 dtk (butuh >300 dtk). **Hanya 4 model gambar yang hidup**: `gpt-image-2`,
+`gemini-3.0-pro-image`, `gemini-3.1-flash-image`, `gemini-2.5-flash-image`. Sudah dicatat di skill
+`inferhub-image-models`.
+
 ## 🆕 RAMBUT HILANG di Motion Control — SUDAH DIPERBAIKI (15 Okt 2026)
 Keluhan user: "hasil aneh, rambut tiba-tiba hilang".
 **Temuan:** kerusakan ada di EKOR video (out_43: rambut panjang hilang mulai detik 14.0 → 15.1;
