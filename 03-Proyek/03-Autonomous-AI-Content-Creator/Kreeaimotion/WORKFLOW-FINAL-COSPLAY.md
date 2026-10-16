@@ -199,3 +199,26 @@ mesin berbeda) → cukup ganti prompt versi 2 jadi `PROMPT_ANIME`.
 mesin kedua). Setiap percobaan gagal membuang ±60 detik waktu user, jadi ditambah ingatan di
 `tools/cosplay.py`: setelah `AMBANG_SIBUK=2` kali 524 berturut-turut, mesin itu **didoakan** 15 menit —
 mesin kedua didahulukan. Teruji: ambang → didoakan → pulih setelah sukses.
+
+---
+
+## 15. VERSI 2 = GAYA ELEGAN (16 Okt 2026) — permintaan user
+User memilih **sampel2** sebagai rasa favorit → versi 2 diubah mengikuti rasa itu.
+
+**Prompt baru `PROMPT_ANIME_ELEGAN`** (dipakai kandidat 2): rok **panjang penuh dengan belahan tinggi
+di satu sisi** (satu kaki terlihat lewat belahan) · **bukan** rok mini · bodice ketat → pinggang ramping ·
+rok tetap bervolume A-line sampai lantai · cape menyampir dari bahu · pose tenang: berdiri tegak, satu
+tangan di pinggul, dagu sedikit terangkat · tetap setia desain (armour, gown, cape, trim metalik) ·
+realistis (bukan anime) · kunci identitas + **kacamata wajib tetap**.
+
+**Hasil uji (2 kandidat sekali jalan):**
+| | Mesin | Waktu | Realism | Ciri |
+|---|---|---|---|---|
+| Versi 1 (glamor) | gemini-3.0-pro-image (utama) | **44 dtk** | 7/10 | belahan lebih tinggi, glamor |
+| Versi 2 (elegan) | gpt-image-2 | 84 dtk | **8/10** | **"sangat mirip" sampel2** ✓ + sepatu bot perak ✓ |
+
+**Enggine utama dibalik** (lihat §14): gemini jadi utama karena gpt-image-2 0/5 sukses sehari penuh.
+Sesudah dibalik: kandidat 1 selesai 44 dtk (dulu 126 dtk karena menunggu mesin ngadat).
+Bisa dibalik tanpa ubah kode: `MOTIONBOT_COSPLAY_ENGINE` / `MOTIONBOT_COSPLAY_ENGINE2` di `.env`.
+
+Bukti: `BUKTI-COSPLAY/UJI_ELEGAN.jpg`
