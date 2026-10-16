@@ -222,3 +222,26 @@ Sesudah dibalik: kandidat 1 selesai 44 dtk (dulu 126 dtk karena menunggu mesin n
 Bisa dibalik tanpa ubah kode: `MOTIONBOT_COSPLAY_ENGINE` / `MOTIONBOT_COSPLAY_ENGINE2` di `.env`.
 
 Bukti: `BUKTI-COSPLAY/UJI_ELEGAN.jpg`
+
+---
+
+## 16. PELAJARAN DARI TES USER (16 Okt 2026) — job #52
+User mengirim **foto karakter BARU** lewat "📸 foto baru" (bukan Arunika) → job #52 jalan ✓
+(foto base jadi 987 KB, tidak cocok dengan karakter mana pun yang tersimpan).
+
+**Tiga cacat yang ketemu dari tes itu:**
+
+1. **Restart bot = job dirender ULANG dari nol.** Nama berkas dulu memakai detik (`cosplay_<detik>_1_...`),
+   jadi saat bot di-restart di tengah job, run baru memakai nama berbeda → `edit()` tidak melihat
+   berkas lama → kandidat 1 dirender ulang (44 dtk terbuang; job #52 total jadi ±8 menit).
+   **PERBAIKAN:** nama berkas pakai **id job** (`cosplay_job52_1_langsung.png`) → hasil yang sudah jadi DILEWATI.
+   Bot meneruskan `kunci=f"job{id}"` ke `COSPLAY.cosplay(...)`.
+
+2. **Batas waktu 420 detik terlalu sabar.** Kandidat 2 job #52 menggantung ±7 menit menunggu
+   `gpt-image-2` yang mengantre (bukan error, jadi tidak memicu cadangan sampai timeout).
+   **PERBAIKAN:** default `timeout` 420 → **180 detik** (permintaan normal 31–84 dtk).
+
+3. **Teks mesin di bot salah** ("GPT Image (utama)") setelah urutan dibalik.
+   **PERBAIKAN:** jadi "🤖 Gemini (utama) + GPT Image (cadangan)".
+
+**ATURAN BARU:** jangan restart bot selagi ada job berjalan. Cek `pending_jobs()` dulu.
