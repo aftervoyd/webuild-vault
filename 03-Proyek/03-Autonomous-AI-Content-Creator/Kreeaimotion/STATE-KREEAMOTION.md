@@ -161,6 +161,31 @@ jadi tukar app berikutnya cukup ganti `.env` (format `nodeId:field=peran`, peran
 app gaya lama bisa dipulihkan lewat `20:image=orang,21:image=orang,41:image=acuan,113:text=prompt`).
 Bukti: `BUKTI-SPEK/BANDING_FIRERED_NAMI.jpg`, `BANDING_FIRERED_ANIME.jpg`.
 
+**10) KOREKSI NAMA ACUAN (user, 17 Okt malam) — BELUM TUNTAS.** User menegur: *"plenger bukan frieren tolo,
+nami"*. Yang terlihat di berkas (3× pembacaan penglihat, sama semua): **A** `cosplay_8886993492_1792216581.jpg`
+= ilustrasi anime, **telinga runcing/elf, rambut perak panjang, dress putih trim emas, kerah tegak, capelet,
+legging charcoal, boots coklat** → cocok dengan desain **Frieren**; **B** `cosplay_8886993492_1792225490.jpg`
+= FOTO cosplayer, **rambut oranye gelombang, bikini garis teal-putih, jeans denim, sabuk stud + buckle,
+tato pinwheel, jeruk** → **Nami**. User menyebut "bukan Frieren, Nami" — kemungkinan yang dimaksud: karakter
+**milik user sendiri (disebut "arunika")** yang memakai kostum itu, atau penamaan yang berbeda dari sisi user.
+**Jangan berdebat; label di kartu ini pakai "acuan A / acuan B" sampai user memutuskan namanya.** Nama karakter
+TIDAK memengaruhi pipeline: app menyalin apa pun yang tampak di gambar acuan.
+Bukti: `data/uji_firered/ACUAN_A_B.jpg` (A|B berdampingan).
+
+**11) INSIDEN + PERBAIKAN: VALIDATOR "HANYA GAMBAR" MEMATIKAN JOB VIDEO (bug sendiri).** Saat membetulkan app
+upscale yang mengembalikan ZIP (18:12), `rh.py` diberi validasi berbasis `PIL.Image.verify()` — itu **menolak
+MP4** ✗ sehingga **job 66 (Generate Motion Control, 18:35, foto + video acuan FB 20 dtk, task
+`2111413087620321282`) GAGAL 19:04** dengan *"semua keluaran task tidak bisa dibuka sebagai gambar"* ✗
+(setelah task SUKSES di server). Biaya terbakar **701 koin** (11.216 → 10.515; ≈570 untuk job itu + 133 upscale HD).
+**Perbaikan (commit `bb5281c`):** validator menerima **gambar DAN video** dari byte kepala (JPEG ffd8ff, PNG,
+WEBP RIFF+WEBP, GIF, MP4/MOV ftyp@4, WEBM 1a45dfa3) + ukuran minimum; ZIP dibuka lalu divalidasi; prioritas
+gambar→video→zip; teks/sampah tetap ditolak. Uji unit: JPEG ✓ MP4 ✓ ZIP ✗ .py ✗.
+**Pelajaran penting:** bot **mengadopsi task lama** (`ADOPSI task lama <id> (bukan render ulang)`) → tidak ada
+render kedua & tidak ada koin tambahan; kalau job lokal gagal padahal task sukses, **tarik hasil lewat
+`task_id`** (kolom `jobs.task_id`) alih-alih render ulang. Sudah ditulis ke skill
+`runninghub-ai-app-integration`.
+**Status bot 19:13:** active (workers=2, poller Aulaa ✓), antrean 0, koin 10.515, job 66 `running` (menerima video ✓).
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
