@@ -119,6 +119,26 @@ Gejala gangguan baru yang tercatat: `gpt-image-2` sempat balas **HTTP 503 "unabl
 try again shortly"** (verifikasi kunci pun ikut goyah, bukan cuma daftar model).
 Bukti: `BUKTI-SPEK/BANDING_FOTO.jpg`.
 
+**8) MENCARI APP YANG BENAR (bukan app lemah) — keluhan user "nggak sesuai gambar".** Katalog app diambil
+lewat **POST** `/api/webapp/list` (GET → `PARAMS_INVALID`; bukan katalog kosong). Penyisiran 30 kata → **374
+app unik**. Penyaring gratis sebelum bakar koin: `POST /api/workflow/export` → cari node berkelas
+`RH_OpenAPI_*` (**app proxy = butuh saldo terpisah** ✗; terukur `RH_OpenAPI_SeedreamV5ProImageToImage` →
+`Submit failed: Your balance is insufficient … [errorCode: 605]`, gagal SETELAH task dibuat = koin tetap
+terbakar). Bentuk export ada di **level atas**, bukan di `data`.
+**Diuji 17 Okt (±18:00):**
+- ❌ `2075457737781235714` Seedream v5 Pro 换装 — proxy, saldo terpisah ✗
+- ❌ `2075087723240714241` **Krea 2 Identity Edit** — LOKAL & identitas terjaga ✓ TAPI **salah alat**: keluarannya
+  **KOLASE DUA ORANG** (foto user + cosplayer acuan berdampingan), bukan ganti baju. Sebab: **prompt bawaan
+  app-nya** = *"Make an image of Girl in white pants and girl in black skirt best friend together in a bar"*
+  → app itu dibuat untuk adegan dua orang. Biaya pelajaran 157 koin (1024x1024, 73 + 84).
+  **Pelajaran: prompt bawaan app itu BOCORAN jujur fungsi app — baca dulu sebelum memilih.**
+- ✅ DIPAKAI: `2075460030073237505` **FireRed 一键换衣服** — 16 node, lokal, **tanpa field prompt** (2 gambar
+  saja: node 207 = image1 orang, 208 = image2 baju, urutan dibaca dari `LayerUtility: ImageReel`), cover
+  app-nya = before/after **orang yang sama** ✓. Sedang diuji.
+- Cadangan berikutnya: `1938438216678834178` Kontext Dual (150 → ImageConcanate, 153 → RMBG), `2001496602491645953`
+  qwen outfit transfer (39 node), dan lapis pemulih wajah `2070874410734678017` **InstantID 换脸** (`CropFace`+`ApplyInstantID`).
+**Alat baru permanen:** `tools/rh_app_run.py` (runner app generik: `--node 72:image=…`).
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
