@@ -99,6 +99,26 @@ Yang BELUM → **boots tan mid-calf diganti sepatu hak gelap** ✗ dan tunic **d
 melarang) + ada kesan uncanny di area kacamata/telinga. Catatan: jalur cadangan memang "menafsir ulang";
 versi paling setia menunggu jalur utama. Bukti: `BUKTI-SPEK/BANDING_SETIA.jpg`.
 
+**7) JALUR FOTO DIPERBAIKI + BATAS CADANGAN TERUKUR (acuan foto cosplayer "Nami").** Acuan yang dikirim
+user = **FOTO ASLI cosplayer** (bukan ilustrasi) → jalur foto. Dua cacat jalur itu diperbaiki (commit
+`29c2092`): (a) kunci lama "pertahankan pose/kamera/latar/cahaya" **dibuang** (itu bikin hasil hibrida
+"foto user + baju tempelan"); (b) pembaca gambar sekarang **mengisi spesifikasi outfit untuk acuan foto**
+(dulu sengaja dikosongkan → mesin menebak) + **1 percobaan ulang** supaya gagal-baca tidak diam-diam
+menjalankan prompt tanpa spesifikasi.
+**Hasil uji (cadangan, 89 koin):** SEMUA potongan acuan muncul ✓✓ — bikini halter putih bergaris teal,
+jeans denim biru low-rise, sabuk kulit hitam berstud logam + buckle bulat, rambut oranye, **tato pinwheel**,
+jeruk di tangan; kacamata tetap ✓; tetap foto ✓.
+**TAPI wajahnya BUKAN orang yang sama dengan karakter sheet** ✗ (mesin membangun ulang wajah dari acuan),
+plus jari tangan yang memegang jeruk menyatu & wajah terlalu mulus; muncul tambahan dari karakter sheet
+(latar ruang tamu, sepatu hak putih, kalung tipis).
+**Kesimpulan terukur:** app cadangan RunningHub MENGUTAMAKAN penyalinan outfit dan **membangun ulang
+wajah** → untuk pekerjaan yang identitas wajahnya wajib (aturan keras user), jalur cadangan TIDAK layak
+sebagai hasil akhir; jalur utama (`/images/edits`) yang menjaga identitas. **Jangan bakar koin lagi untuk
+menguji jalur cadangan** — pakai pengawas cron yang menunggu gateway pulih.
+Gejala gangguan baru yang tercatat: `gpt-image-2` sempat balas **HTTP 503 "unable to verify api key —
+try again shortly"** (verifikasi kunci pun ikut goyah, bukan cuma daftar model).
+Bukti: `BUKTI-SPEK/BANDING_FOTO.jpg`.
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
