@@ -139,6 +139,28 @@ terbakar). Bentuk export ada di **level atas**, bukan di `data`.
   qwen outfit transfer (39 node), dan lapis pemulih wajah `2070874410734678017` **InstantID 换脸** (`CropFace`+`ApplyInstantID`).
 **Alat baru permanen:** `tools/rh_app_run.py` (runner app generik: `--node 72:image=…`).
 
+**9) SELESAI: APP GANTI BAJU YANG BENAR (FireRed) — DIPASANG KE BOT.** `2075460030073237505` **FireRed
+一键换衣服**: 16 node, lokal (bayar koin), **tanpa field prompt** (2 slot gambar saja). Peta node dibaca dari
+graf `LayerUtility: ImageReel`: **207 = image1 = ORANG**, **208 = image2 = BAJU/ACUAN**; cover app = before/
+after orang yang SAMA.
+**Hasil uji 2 acuan (17 Okt malam):**
+- acuan **foto cosplayer (Nami)**: **1152x2064 (2,4 MP)**, **25 koin** — 1 orang ✓, wajah mirip karakter
+  sheet + **kacamata tetap** ✓, SEMUA potongan acuan masuk (bikini teal-putih, jeans denim, sabuk stud +
+  buckle, rambut oranye, **tato pinwheel**); jeruk (properti) tidak ikut.
+- acuan **ilustrasi anime (princess-knight)**: **1152x2064**, **22 koin** — 1 orang ✓, wajah mirip +
+  kacamata tetap ✓, potongan masuk: mini dress putih + trim gold, capelet, kerah tegak, **bros permata
+  merah**, atasan bergaris, tights charcoal, **boots tan mid-calf** (dulu app lama menukarnya jadi sepatu
+  hak ✗), **telinga elf**, twintails perak (depan masih hitam — hibrida identitas ✓); **tiara tidak ikut** ✗.
+- Cacat konsisten: wajah agak mulus/"plastis", kacamata sedikit asimetris, jari tangan di pinggul menyatu,
+  latar ruangan karakter sheet ikut terbawa.
+**Perbandingan mesin:** app lama 760x1360 (1,0 MP) ~90 koin + prompt wajib; **FireRed 1152x2064 (2,4 MP)
+22–25 koin tanpa prompt** → **2,3× lebih besar, ±3,6× lebih murah, wajah lebih mirip**.
+**Pemasangan (commit menyusul):** `.env` `MOTIONBOT_OUTFIT_RH_APP=2075460030073237505` +
+**`MOTIONBOT_OUTFIT_RH_NODES=207:image=orang,208:image=acuan`** — peta node kini **konfigurasi, bukan kode**,
+jadi tukar app berikutnya cukup ganti `.env` (format `nodeId:field=peran`, peran ∈ orang/acuan/prompt;
+app gaya lama bisa dipulihkan lewat `20:image=orang,21:image=orang,41:image=acuan,113:text=prompt`).
+Bukti: `BUKTI-SPEK/BANDING_FIRERED_NAMI.jpg`, `BANDING_FIRERED_ANIME.jpg`.
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
