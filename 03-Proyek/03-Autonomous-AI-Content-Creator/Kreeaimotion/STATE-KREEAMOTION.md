@@ -186,6 +186,17 @@ render kedua & tidak ada koin tambahan; kalau job lokal gagal padahal task sukse
 `runninghub-ai-app-integration`.
 **Status bot 19:13:** active (workers=2, poller Aulaa ✓), antrean 0, koin 10.515, job 66 `running` (menerima video ✓).
 
+**UTANG KOIN KAMI (tracker: `data/utang_koin.json`).** Job 66 → **701 koin** kebakar karena bug kode kami
+(validator hanya-gambar menolak MP4). Kredit user TIDAK terpotong (pembukuan bersih) → utang murni di sisi
+koin RunningHub. **Dilunasi dari penghematan nyata**: FireRed ±65 koin/job tersimpan, app motion lebih murah
+(sedang disisir), + bonus undangan RunningHub di layar referral bot. **Kalau video job 66 tidak sampai ke user,
+kami render ulang atas biaya kami (±700 koin) tanpa diminta.**
+
+**PENGAMAN BIAYA (kode, commit `bb5281c` + patch pengaman di `bot.py`).** Kalau task di server SUCCESS tapi
+pemrosesan lokal gagal: bot **tidak pernah render ulang** — dia menarik ulang hasil task yang sama (0 koin),
+dan kalau bot restart di tengah job dia **mengadopsi `jobs.task_id`** yang tersimpan. Aktif pada restart
+berikutnya (restart ditunda selama ada job berjalan).
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
