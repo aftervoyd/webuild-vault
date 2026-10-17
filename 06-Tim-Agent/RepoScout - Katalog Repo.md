@@ -551,6 +551,59 @@
 
 ---
 
+## 🧪 WebBuilder / OpsAgent — MUTU SITUS KLIEN: performa, aksesibilitas, pencarian, pratinjau sosial
+
+> Riset **2026-10-18** — rotasi topik: **web dev, sudut yang belum ada: MENGUKUR & MENJAMIN MUTU situs** yang kita jual.
+> Katalog sudah penuh alat *membuat* situs (template, komponen, token desain, aset, CMS/mutu), tapi **belum punya satu pun alat untuk membuktikan situs kita cepat, aksesibel, dan tak punya tautan mati**. Buat jualan ke desa/pemda, **angka lebih kuat daripada klaim "modern"** — situs desa dibuka dari HP murah & sinyal lemah.
+> Semua lisensi dibaca dari **file lisensi asli** (bukan `spdx_id`).
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Pagefind** | github.com/Pagefind/pagefind | **Pencarian statis tanpa server**: index dibuat saat build; pengunjung mengunduh hanya potongan index sesuai halaman (hemat kuota), multilingual (termasuk Indonesia), highlight, filter/faceted | Rust (WASM) + JS | ✅ **MIT** (`LICENSE`) | 5.519 (**16**) · 59 commit/60 hari · 88 kontributor | WebBuilder + OpsAgent | ✅ **PAKAI** — situs desa "banyak berita" jadi bisa dicari warga, **tanpa** Elasticsearch/Meilisearch di VPS |
+| **astro-pagefind** | github.com/shishkin/astro-pagefind | Integrasi **Pagefind ↔ Astro** (index otomatis saat build + komponen siap pakai) | Astro | ✅ MIT | 567 (3) · push **2026-10-17** | WebBuilder | ✅ PAKAI — jalur "30 menit" masang pencarian di demo Desa Pamekaran |
+| **Unlighthouse** | github.com/harlan-zw/unlighthouse | Jalankan **Lighthouse ke SELURUH halaman** situs sekaligus → dashboard + skor per halaman (bukan cuma 1 URL) | Node / Vue / Chromium | ✅ **MIT** | 4.903 (**27**) · 24 commit/60 hari | WebBuilder + OpsAgent | ✅ **PAKAI** (di PC user / sekali-jalan) — ⚠️ butuh Chromium → **jangan** jadi service di VPS 1,9 GB |
+| **Lighthouse CI** | github.com/GoogleChrome/lighthouse-ci | Otomatiskan Lighthouse tiap commit/PR + **jaga ambang skor** (build gagal kalau performa turun) | Node (resmi Google) | ✅ Apache-2.0 | 7.113 (**79**) · push 2026-10-17 | OpsAgent + WebBuilder | ✅ PAKAI — pasang di repo situs klien (GitHub) → "skor tak boleh turun" |
+| **lychee** | github.com/lycheeverse/lychee | **Pemeriksa tautan mati** super cepat (Rust, async): file lokal, situs live, atau Markdown | Rust (CLI + GitHub Action) | ✅ **MIT ATAU Apache-2.0** (dual: `LICENSE-MIT` + `LICENSE-APACHE`) | 4.017 (**14**) · 45 commit/60 hari · 100 kontributor | OpsAgent + WebBuilder | ✅ **PAKAI** — gerbang wajib sebelum serah-terima situs klien (tautan mati = malu di depan desa); sekalian buat **vault kita** (banyak tautan keluar) |
+| **axe-core** | github.com/dequelabs/axe-core | **Mesin uji aksesibilitas** de-facto (dipakai Lighthouse/Playwright/Cypress), 100+ aturan WCAG | JS (npm; browser/Node) | ⚠️ **MPL-2.0** (bukan MIT — copyleft per-FILE) | 7.658 (**173**) · push 2026-10-15 | DesignerBot + WebBuilder | ✅ PAKAI — dipanggil via `axe-playwright` / `cypress-axe` untuk audit situs klien otomatis |
+| **pa11y** | github.com/pa11y/pa11y | **CLI audit aksesibilitas** satu perintah (banyak URL, output JSON/HTML) | Node | ⚠️ **LGPL-3.0** | 4.577 (**215**) · push 2026-10-13 | WebBuilder + DesignerBot | ✅ PAKAI sebagai **alat terpisah** (CLI) — LGPL aman selama tak "dikaitkan" jadi library di produk tertutup kita |
+| **Takumi** | github.com/kane50613/takumi | **Render gambar OG & PDF dari JSX/HTML/CSS TANPA headless browser** (Rust + binding JS/WASM) → 1200×630 PNG, WebP, animasi | Rust + JS/TS | ✅ **MIT atau Apache-2.0** (dual, README nyebut jelas) | 3.118 (**2**!) · **100 commit/60 hari** · 37 kontributor | WebBuilder + SocialAgent | ⚠️ **UJI DULU** — ⭐ tinggi tapi watchers **2** & muda (created 2025-06); repo ±**333 MB** (jangan full-clone). Unggulan: **tanpa Chromium** → bisa jalan di VPS kecil |
+| **Satori** | github.com/vercel/satori | Library Vercel: HTML/CSS → **SVG** (bahan gambar OG), pasangan `resvg`/`sharp` | TypeScript | ⚠️ **MPL-2.0** | 14.098 (**78**) · push 2026-10-16 | WebBuilder | ✅ CADANGAN — paling matang, tapi butuh renderer tambahan & lebih berat; **Next.js sudah punya `next/og` (ImageResponse) bawaan** |
+| **Squoosh** | github.com/GoogleChromeLabs/squoosh | Kompres gambar (WebP/AVIF) **di browser** — siapkan foto desa/UMKM sebelum upload | Web app (WASM) | ✅ Apache-2.0 | 26.035 (**251**) | DesignerBot + ContentWriter | ✅ PAKAI (manual, di PC user) — foto 5 MB → ~150 KB = situs ringan di kuota warga |
+| **optimizt** | github.com/funbox/optimizt | CLI kompresi gambar (PNG/JPEG/SVG/WebP) | Node | ✅ MIT | 947 (21) · push **2023-10** | — | 🚫 **MATI** — jangan pakai (3 tahun tanpa update); pakai `sharp` (bawaan Astro) atau Squoosh |
+
+### 🔎 Catatan mutu situs (jadikan "kartu mutu" = bahan jualan)
+- 🧾 **Bikin "kartu mutu situs" 1 halaman per klien** — bukti, bukan klaim: skor **Lighthouse per halaman (Unlighthouse)** + **0 tautan mati (lychee)** + hasil **pa11y/axe** (aksesibilitas) + ukuran halaman + gambar OG tampil benar. Untuk penawaran ke desa/pemda ini pembeda murah: *"situs Bapak/Ibu kami uji dulu, ini hasilnya."*
+- ⚙️ **Bagi beban VPS vs PC user:** semua yang butuh **Chromium** (Unlighthouse, pa11y, axe via browser, Lighthouse CI lokal) itu berat → jalankan **sekali-jalan di PC user / CI GitHub**, bukan service menetap di VPS (RAM ketat). Yang cocok menetap/berulang di VPS: **lychee** (Rust, ringan) & **Pagefind** (index dibuat saat build).
+- 🖼️ **Gambar OG otomatis = situs klien ber-"brand" saat dibagikan di WhatsApp/FB** (kanal utama desa). Pilihan hemat RAM: **Takumi** (tanpa browser). Untuk situs Next.js: **`next/og` bawaan** — tak perlu repo tambahan.
+- ⚖️ **Lagi-lagi `spdx_id` menyesatkan:** **Satori & axe-core = MPL-2.0** (bukan MIT), **pa11y = LGPL-3.0**, **lychee & Takumi = MIT *ATAU* Apache-2.0 (file lisensinya DUA)**. MPL/LGPL aman dipakai & dijual, **tapi copyleft tingkat file**: kalau **file berlisensi MPL itu kita ubah**, perubahannya wajib dibuka.
+
+---
+
+## 🔗 SocialAgent / SalesAgent — Link-in-bio & Tombol Bagikan (kartu digital UMKM)
+
+> Riset **2026-10-18** — rotasi topik: **social media, sudut yang belum ada: halaman 1-link & tombol bagikan**.
+> Katalog sudah punya *penjadwal posting* (Postiz dkk) tapi **belum punya** yang paling sering diminta UMKM: **satu halaman berisi semua tautan** (WA, IG, TikTok, katalog, Maps) — produk mikro yang bisa dijual cepat sekaligus **pintu masuk** ke paket situs.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **LittleLink** | github.com/sethcottle/littlelink | **Template link-in-bio DIY** (HTML/CSS, 100+ tombol merek siap pakai) — "linktree tanpa server", tinggal diedit | HTML / CSS | ✅ **MIT** (`LICENSE.md`) | 3.097 (25) · **0 commit/60 hari** (push 2026-07) | SocialAgent + WebBuilder | ✅ **PAKAI (ambil desain/CSS-nya)** — jalur terbaik: **generate halaman statis Astro sendiri** bergaya LittleLink (nol server, nol AGPL) |
+| **LittleLink-Server** | github.com/timothystewart6/littlelink-server | Versi **berjalan**: satu halaman tautan dikonfigurasi dari **environment variable** (tema, avatar, tombol, analytics, health-check) | Next.js / React / TS | ✅ **MIT** (`LICENSE.md`) | 1.154 (12) · 9 commit/60 hari · **compose = 1 container** (`little-link`) | SocialAgent + OpsAgent | ✅ **PAKAI** kalau klien mau ganti tautan sendiri **tanpa** deploy ulang — 1 container ringan |
+| **LinkStack** | github.com/LinkStackOrg/LinkStack | **Aplikasi link-in-bio penuh** (mirip Linktree): akun, tema, statistik klik, admin UI | PHP (Laravel) + Docker | ⚠️ **AGPL-3.0** | 3.907 (**31**) · push 2026-10-04 · 441 fork | SocialAgent | ⚠️ **HATI-HATI** — paling lengkap, **tapi AGPL**: kalau kita host & **modifikasi** untuk banyak klien, pengguna jaringan berhak atas kode modifikasinya; butuh PHP + DB di VPS |
+| **react-share** | github.com/nygardk/react-share | Tombol bagikan siap pakai untuk React (WA, FB, X, Telegram, email…) + hitungan share | React / TS | ✅ MIT | 2.818 (13) · push 2026-10-12 | WebBuilder + SocialAgent | ✅ PAKAI kalau situsnya Next.js/React |
+| **sharer.js** | github.com/ellisonleao/sharer.js | Tombol bagikan **vanilla JS tanpa dependency** (atribut `data-` di HTML) — pas buat Astro | JS (repo 916 KB) | ✅ MIT | 2.096 (48) · push 2026-10-14 | WebBuilder + SocialAgent | ✅ **PAKAI** — paling pas buat situs Astro kita (tanpa framework) |
+| **Shareon** | github.com/kytta/shareon | Tombol bagikan **tanpa pelacakan**, bundle <8 KiB, logo resmi | JS / CSS | ✅ MIT | 478 (**2**) | WebBuilder | 🔸 CADANGAN — "ethical & no tracking" nyambung narasi **PDP-ready**, tapi kecil/pemakaian pribadi |
+| **BioDrop (dulu LinkFree)** | github.com/EddieHubCommunity/BioDrop | Dulu link-in-bio **paling populer** di GitHub (profil + proyek + event) | Next.js | ✅ MIT | 5.680 (13) | — | 🚫 **JANGAN PAKAI — `archived=true`** (push terakhir **2024-07-01**) walau ⭐ tertinggi di kategori ini |
+| **Singlelink** | github.com/singlelink-co/Singlelink | Alternatif Linktree (mono-repo TS) | TypeScript | ⚠️ GPL-3.0 | 585 (11) · push **2023-03** | — | 🚫 SKIP — stale 3 tahun + GPL |
+
+### 🔎 Catatan link-in-bio & bagikan
+- 🌟 **Kategori ini bukti lagi: repo ber-⭐ TERTINGGI justru sudah mati.** **BioDrop/LinkFree 5.680⭐ (MIT) = ARCHIVED** → jangan direkomendasi walau namanya paling dikenal; **LittleLink 3.097⭐ = 0 commit/60 hari** → ambil desainnya saja, jangan harap fitur baru. Cek `.archived` + commit 60 hari sebelum rekomendasi.
+- 💡 **Cara paling hemat buat klien UMKM: halaman link-in-bio STATIS milik kita** (Astro 1 halaman, data per klien dari JSON) bergaya **LittleLink (MIT)** → nol server, nol AGPL, dan bisa jadi **pintu masuk**: link-in-bio murah → upsell situs + katalog + order WhatsApp. Pakai **LittleLink-Server (MIT, 1 container)** hanya kalau klien wajib bisa ubah tautan sendiri.
+- ⚖️ **LinkStack = AGPL-3.0 → pikir dua kali jadi layanan ber-merek kita.** AGPL = copyleft untuk pemakaian **lewat jaringan**: kalau kita modifikasi & host untuk banyak klien, kode modifikasi wajib bisa diakses pengguna. Kalau tetap mau: pakai **apa adanya** (tanpa modifikasi) atau taruh di server klien.
+- 📲 **Yang benar-benar dipakai warga/UMKM bukan tombol "bagikan ke X/Twitter", tapi WhatsApp.** Urutan pasang: (1) **WhatsApp** + (2) salin tautan, baru (3) IG/FB. Astro → **sharer.js (MIT)**; Next.js → **react-share (MIT)**.
+- 🔍 **Query tajam:** **`linktree alternative in:name,description`** jauh lebih berguna daripada **`link in bio`** (yang terakhir isinya proyek pribadi kecil semua). Buat tombol bagikan: `social share buttons in:name,description` (`social share` saja = plugin WordPress).
+
+---
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
