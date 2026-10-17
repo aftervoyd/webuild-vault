@@ -84,6 +84,21 @@ sexy masih "sedang" karena capelet + kerah tegak memang menutup dada sesuai desa
 Commit `f7a53c8`, `2e53359`, `edccf35`; pengawas cron kini merender alur ini lewat JALUR UTAMA begitu
 gateway pulih. Bukti: `BUKTI-SPEK/BANDING_SPEK.jpg` (uji-1) + `BANDING_SPEK2.jpg` (uji-2).
 
+**6) KOREKSI USER: "TERLALU BANYAK EDIT PROMPT SAMPAI HASILNYA NGGAK SESUAI FOTO KARTUN CONTOH".**
+Diagnosis user benar. Lapisan yang gue tumpuk (spesifikasi + kunci vibe + 2 register sexy + larangan) justru
+MENJAUHKAN hasil dari acuan; dan "KUNCI" identitas lama ikut mengunci **pose, sudut kamera, latar, cahaya**
+→ mesin mempertahankan segalanya dari karakter sheet lalu menempelkan baju baru (HIBRIDA, bukan cosplay).
+Perbaikan = `PROMPT_SETIA_SPEK` (commit `9c0e0ed`): **pemisahan bersih** — wajah + kacamata dari karakter
+sheet, SEMUA sisanya (rambut, kostum, aksesori, siluet) dari kartun acuan; NOL lapisan gaya; kunci
+pose/latar/cahaya dilepas; larangan "jangan dipendekkan/ditambah/dikurangi/di-redesign". Prompt ringkas
+cadangan juga jadi versi setia (vibe & register sexy dibuang).
+**Hasil uji-setia (cadangan, 103 koin):** yang IKUT acuan → rambut perak + twintails ✓ (pertama kali rambut
+mengikuti kartun, bukan karakter sheet), tunic putih A-line ✓, trim gold hem ✓, capelet bercelah depan ✓,
+kerah tegak ✓, bros permata merah ✓, atasan bergaris ✓, tights charcoal ✓, tetap FOTO ✓, kacamata tetap ✓.
+Yang BELUM → **boots tan mid-calf diganti sepatu hak gelap** ✗ dan tunic **dipendekkan** ✗ (meski prompt
+melarang) + ada kesan uncanny di area kacamata/telinga. Catatan: jalur cadangan memang "menafsir ulang";
+versi paling setia menunggu jalur utama. Bukti: `BUKTI-SPEK/BANDING_SETIA.jpg`.
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
