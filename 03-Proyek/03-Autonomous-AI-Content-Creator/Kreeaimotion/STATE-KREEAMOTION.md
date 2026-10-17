@@ -65,6 +65,25 @@ mencatat kalau dilewati; `cosplay()` memakai cadangan SEKALI per job (bukan per 
 mereproduksi job #61 PERSIS melalui `tools/cosplay.py` saat gangguan masih hidup: kedua mesin dicoba →
 `CADANGAN RunningHub — task 2111358433019072513`. Pelajaran ditulis ke skill `inferhub-image-models`.
 
+**5) PROMPT COSPLAY: DARI "SEWENANG MESIN" → BERBASIS SPESIFIKASI (perbaikan keluhan user).** Keluhan
+user (17 Okt): *"bajunya tidak mirip dengan contoh anime, vibes nya harus mirip tapi versi sexy"* lalu
+*"tidak mirip dengan karakter sheet gue dan hasilnya nggak sexy"*. Akar masalah: pembaca gambar (MATA)
+sudah mengeluarkan spesifikasi kostum potong-per-potong, TAPI prompt hanya bilang "pakai kostum dari
+gambar 2" secara umum → mesin mengarang potongan (uji-1: cuma capelet + kerah yang ikut). Perbaikan:
+(a) prompt `PROMPT_ANIME_SPEK` memasukkan spesifikasi itu apa adanya + "SALIN, jangan tukar potongan";
+(b) `MATA` sekarang juga mengembalikan **vibe** (palet/suasana/cahaya) yang dikunci ke hasil;
+(c) 2 register sexy (`SEXY_1`/`SEXY_2`) yang menjaga potongan tapi membuka siluet;
+(d) prompt ringkas untuk cadangan (`prompt_cadangan`) dengan **URUTAN PENJAGA**: identitas + kacamata di
+AWAL, blok SEXY di tengah (430 char), "jangan salin wajah image 2" di AKHIR — karena medan teks cadangan
+(1.600 char) memotong ekor; penataan lama (1.300 char, spesifikasi 700 + vibe 260) membuat blok SEXY dan
+baris "keep her glasses" KEPOTONG → hasil uji-1 bajunya mirip tapi kacamata hilang & tidak sexy.
+**Hasil uji-2 (cadangan, 47 koin):** wajah sama + kacamata tetap + rambut ikut karakter sheet, SEMUA
+potongan acuan muncul (mini dress putih/trim gold/capelet/kerah tegak+bros merah/atasan bergaris/tights/
+boots tan), mini + belahan tinggi (sexy) → DUA keluhan user beres. Sisa cacat: jari tangan menyatu;
+sexy masih "sedang" karena capelet + kerah tegak memang menutup dada sesuai desain acuan.
+Commit `f7a53c8`, `2e53359`, `edccf35`; pengawas cron kini merender alur ini lewat JALUR UTAMA begitu
+gateway pulih. Bukti: `BUKTI-SPEK/BANDING_SPEK.jpg` (uji-1) + `BANDING_SPEK2.jpg` (uji-2).
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
