@@ -53,6 +53,18 @@ GAGAL 404 karena gangguan** → dijadwalkan ulang otomatis: cron `616528fd9526` 
 DIAM selagi turun) menjalankan `tools/cron_sexy_saat_pulih.py` → begitu gateway pulih, 4 varian dirender
 dan lembar banding dikirim sendiri ke user.
 
+**4) BUG: CADANGAN TIDAK PERNAH MENYALA (job #60/#61 gagal) — DIPERBAIKI.** Dua cacat, keduanya lolos dari
+uji sebelumnya karena uji itu memanggil app RunningHub LANGSUNG (menguji MESIN-nya, bukan SAMBUNGANnya):
+ (a) `edit()` memulangkan `None` begitu mesin saat itu menolak dengan kode NON-sibuk (`404 unknown model`)
+     → blok cadangan di bawah loop tak pernah tercapai (cadangan cuma hidup untuk 502/524);
+ (b) `os.getenv` tidak membaca berkas `.env`, jadi id app terbaca KOSONG di proses yang tidak memuat dotenv
+     → cadangan dilewati DIAM-DIAM (0 dtk, tanpa satu baris log pun).
+Perbaikan: `break` (bukan `return None`) saat daftar mesin habis; cadangan memuat `.env` sendiri + SELALU
+mencatat kalau dilewati; `cosplay()` memakai cadangan SEKALI per job (bukan per kandidat — 2 kandidat =
+184 koin kalau dibiarkan). Commit `a56324e` + lanjutannya, bot sudah restart. Diverifikasi dengan
+mereproduksi job #61 PERSIS melalui `tools/cosplay.py` saat gangguan masih hidup: kedua mesin dicoba →
+`CADANGAN RunningHub — task 2111358433019072513`. Pelajaran ditulis ke skill `inferhub-image-models`.
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
