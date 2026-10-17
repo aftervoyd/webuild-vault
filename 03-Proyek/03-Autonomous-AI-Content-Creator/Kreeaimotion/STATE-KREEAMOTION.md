@@ -20,6 +20,39 @@ Catatan: bot sempat di-restart saat render jalan dan **mengadopsi task yang sama
 koin tidak terbuang) — perilaku ini benar dan disengaja (`_adopt_job`).
 Koin RunningHub: 14.817 → 13.499 (habis ~1.318 koin untuk seluruh investigasi + uji).
 
+## 🆕 (17 Okt) GANGGUAN PENYEDIA: SEMUA MODEL GAMBAR 404 → CADANGAN RunningHub + PROTO COSPLAY SEXY SIAP
+
+**1) GANGGUAN SISI PENYEDIA (bukan kode kita).** Mulai ±13:35, gateway Inferhub membalas
+`404 unknown model` untuk SEMUA model gambar (`gemini-3.0-pro-image`, `gpt-image-2`,
+`gemini-3.1-flash-image`, versi `cb/` juga) — **di dua kunci berbeda** (kunci bot + kunci provider
+Hermes). Jalur TEKS tetap sehat. Katalog `/models` masih mengiklankan model itu → pola sama dengan model
+video dulu: "diiklankan, tidak dirutekan". Akibatnya Generate Gambar / Ganti Baju / Cosplay mati selama
+gangguan.
+
+**2) CADANGAN OTOMATIS RunningHub (commit `e78c85f`).** Kalau SELURUH jalur Inferhub gagal (404 semua
+model / timeout / 524), job TIDAK mati — otomatis pindah ke RunningHub (server & koin sendiri):
+`tools/imgedit.py` (`_rh_cadangan`) + `tools/cosplay.py`. Saklar `MOTIONBOT_OUTFIT_RH_FALLBACK` (default 1).
+**Teruji 2 kasus** (`tools/uji_cadangan_rh.py`, total 148 koin):
+- A. Cosplay dengan acuan GAMBAR ANIME → ✅ 760x1360, 470 dtk, **92 koin**. Fakta: kacamata tetap, wajah
+  masih dikenali, tetap foto (bukan gaya anime), elemen kostum ikut (putih/biru/emas, japa biru, permata
+  merah, gauntlet perak, sabuk) tapi BELUM lengkap (tiara/rambut perak/gaun panjang tidak penuh), latar
+  di-regenerate → layak DARURAT, di bawah jalur normal (4K).
+- B. Edit berperintah dari SATU foto (kasus Generate Gambar) → ✅ 760x1352, 289 dtk, **56 koin**: gaun
+  putih floral → bikini navy sesuai perintah, wajah + kacamata tetap, latar di-regenerate.
+- Bukti: `data/uji_cadangan_rh/BANDING_CADANGAN.jpg`, `BANDING_EDIT.jpg`.
+
+**3) PROTO COSPLAY "SEXY + VIBE ACUAN" — SIAP, TINGGAL RENDER.** Permintaan user: *"hasilnya sexy tapi
+vibes-nya sesuai gambar anime yang dikirim"*. Desain acuan (princess-knight) itu SOPAN (rok panjang tanpa
+belahan, bahu tertutup) → sexy harus DIPERINTAHKAN; vibe harus DIBACA tiap kali (user ganti gambar).
+Solusi: **pembaca vibe** (model mata) mengembalikan palet/suasana/pencahayaan/latar + siluet + bagian yang
+terbuka → disuntik ke prompt. Dari acuan user terbaca: "Regal princess-knight; palet royal blue/white/gold/
+silver; cahaya siang terang; korset + sweetheart neckline + rok panjang + kapa terbuka". Empat register
+diuji di `tools/cosplay_sexy.py`: `1_belah_tinggi`, `2_mini_depan`, `3_glamor_megah`, `4_berani` (semua
+tetap: kacamata + wajah identitas, palet/mood acuan, material nyata, bukan gaya gambar). **Render 4 varian
+GAGAL 404 karena gangguan** → dijadwalkan ulang otomatis: cron `616528fd9526` tiap 15 menit (tanpa LLM,
+DIAM selagi turun) menjalankan `tools/cron_sexy_saat_pulih.py` → begitu gateway pulih, 4 varian dirender
+dan lembar banding dikirim sendiri ke user.
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
