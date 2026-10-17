@@ -197,6 +197,13 @@ pemrosesan lokal gagal: bot **tidak pernah render ulang** — dia menarik ulang 
 dan kalau bot restart di tengah job dia **mengadopsi `jobs.task_id`** yang tersimpan. Aktif pada restart
 berikutnya (restart ditunda selama ada job berjalan).
 
+**TEMUAN BIAYA BESAR (17 Okt 19:2x, commit `e06de3f`).** Semua tier motion dipaksa `INSTANCE=plus`
+(`MOTIONBOT_MC16/MC916/T10/T15/T20/FULL_INSTANCE=plus` — disetel 13 Okt untuk menghindari OOM mesin
+default), padahal skill ini sendiri sudah mengukur instance `plus` menagih **2,4× lipat (96 vs 40 koin)**
+untuk berkas hasil identik → satu render motion 20 dtk menembus **±700 koin** (bukan harga wajar).
+Perbaikan: **percobaan pertama pakai instance DEFAULT**, percobaan ulang baru `plus` (keandalan tetap ada).
+Proyeksi lunas utang 701 koin: **≤2 job motion** (bukti = delta `remainCoins` pada job motion berikutnya).
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
