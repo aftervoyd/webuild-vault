@@ -264,7 +264,7 @@ Uji prompt sendiri (stub `edit` → `hasil` kosong) **memicu jalur cadangan Runn
 ke `data/utang_koin.json` → **utang jadi 1.050, terbayar 0**. Pelajaran: uji mesin harus **mematikan**
 `MOTIONBOT_OUTFIT_RH_FALLBACK=0` dulu, atau stub harus mengembalikan berkas palsu.
 
-**19) KENAPA HASIL COSPLAY "RAMBUT MASIH HITAM" — MESIN CADANGAN TANPA SLOT PERINTAH (18 Okt, commit `806ed8f`).**
+**19) KENAPA HASIL COSPLAY "RAMBUT MASIH HITAM" — MESIN CADANGAN TANPA SLOT PERINTAH (18 Okt).**
 Pertanyaan user: *"mesin apa sih yang lu pakai, rambutnya ada yang hitam padahal gue udah kirim referensi Marin Kitagawa"*.
 Jawaban berbasis bukti: gambar yang dikirim user = hasil **job 69 (15:58)** dan dijalankan oleh **app cadangan
 RunningHub `2075460030073237505` (一键换装 FireRed — 2 slot gambar, TANPA slot teks)** ✗ — log:
@@ -273,19 +273,27 @@ RunningHub `2075460030073237505` (一键换装 FireRed — 2 slot gambar, TANPA 
 identitas tidak terkirim`. Jadi **perintah rambut + catatan identitas TIDAK PERNAH sampai ke mesin mana pun** ✗.
 Acuan user diperiksa sendiri: **Marin Kitagawa** (pirang → ujung pink, **TANPA bagian hitam**) ✓ — hitamnya
 berasal dari foto base, bukan dari acuan ✓. Job 70 user (16:03 "perbaiki rambut") lewat jalur **Generate
-Gambar** (1 foto + teks, **tanpa acuan gambar**) → hasilnya **hitam total** ✗ → cara itu memang tidak bisa
-menjawab; alat yang benar = 🎭 Cosplay + acuan Marin.
+Gambar** (1 foto + teks, **tanpa acuan gambar**) → hasilnya **hitam total** ✗.
 
-**AKARNYA (aturan gateway, terukur 2 probe 0 koin): di jalur EDIT, begitu body memuat `prompt`, gateway
-merutekan permintaan seperti jalur chat → WAJIB nama ber-prefix `<prefix>/<model-id>`.** Bukti: `{"model":"gpt-image-2"}`
-→ 400 `prompt is required` ✓ diterima; `{"model":"gpt-image-2","prompt":"x"}` → **404 unknown model** ✗;
-`cb/gemini-2.5-flash-image` → **dikenali** ✓; `cx/gpt-image-2-codex` dikenali tapi `cannot accept an input image`;
-`ag/gemini-3.8-flash-high` dikenali tapi `does not generate images`. **Perbaikan:** `MOTIONBOT_COSPLAY_ENGINE=cb/gemini-2.5-flash-image`,
-`MOTIONBOT_COSPLAY_ENGINE2=gemini-2.5-flash-image`, `MOTIONBOT_OUTFIT_MODEL=cb/gemini-2.5-flash-image`,
-`MOTIONBOT_IMAGE_FALLBACK=gemini-2.5-flash-image` (cadangan `.env.bak-*`). Jalur **generate-dari-nol tetap
-memakai nama telanjang** (`gpt-image-2`) karena di sana tanpa gambar-masukan → rute "images" → diterima ✓
-(terbukti job 70 menghasilkan PNG). **BELUM terbukti** ✗: apakah `cb/gemini-2.5-flash-image` menghasilkan
-cosplay yang benar-benar mengikuti acuan (pirang+pink) + kacamata → butuh 1 render berbayar (izin user).
+**AKAR SEBENARNYA = OUTAGE TABEL RUTE PROVIDER, bukan nama model.** Terukur 18 Okt dengan payload lengkap:
+SEMUA id gambar telanjang (`gpt-image-2`, `gemini-3.0-pro-image`, `gemini-2.5-flash-image`) menjawab
+**`404 unknown model`** ✗ walau token sehat, sementara kembaran ber-prefix (`cb/gemini-3.0-pro-image`) masih
+terjangkau ✓. **Koreksi penting:** uji "0 biaya" tanpa `prompt` **tidak sahih** — payload tanpa prompt
+divalidasi LEBIH DULU oleh router sehingga SETIAP id (asli/karangan) menjawab `400 prompt is required`
+(klaim asisten sebelumnya "nama telanjang mati → wajib prefix" **ditarik** ✗; yang benar = outage ✗).
+Mesin cosplay dikembalikan ke mutu terbaik: `MOTIONBOT_COSPLAY_ENGINE=cb/gemini-3.0-pro-image` +
+`MOTIONBOT_COSPLAY_ENGINE2=cb/gemini-3.1-flash-image` (commit `62cdcb0`).
+
+**JALUR YANG BEKERJA SAAT RUTE GAMBAR GATEWAY RUSAK — APP RUNNINGHUB BER-SLOT PROMPT.** Kesalahan asisten:
+menyimpulkan "tidak ada app berslot prompt" dari 4 kata kunci INGGRIS ✗; pemilik koin menegur ✓ benar.
+Resep benar: `POST /api/webapp/list` dengan kata kunci **Mandarin** (`图像编辑`, `提示词`, `修图`, `一键换装`,
+`换发型`) → 77 kandidat → detail (`id` + `webappId`) → slot prompt = `fieldType STRING` + `fieldName text`.
+**App terpilih & terbukti: `2067570858536824834` (自用-Qwen2511图像编辑一键换装)** — slot `35:image` +
+`38:text` + saklar `64:value`(高清) & `94:value`; **sukses 100%**, rata-rata **110 dtk**, tanpa node proxy.
+Pemakaian nyata: memperbaiki rambut user (hitam → senada pirang→pink ✓, kacamata tetap ✓, wajah/pose/latar
+utuh ✓, 714x1280 → 856x1536) **−18 koin** (9.777 → 9.759 ✓ terukur dari delta `remainCoins`). Skrip:
+`tools/perbaiki_rambut.py` (jalur gateway, cadangan) + runner `tools/rh_app_run.py`; pelajaran ditulis ke
+skill `runninghub-ai-app-integration` (resep pencarian slot prompt + aturan outage).
 
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
