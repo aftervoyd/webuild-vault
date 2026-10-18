@@ -291,7 +291,9 @@ Resep benar: `POST /api/webapp/list` dengan kata kunci **Mandarin** (`图像编�
 **App terpilih & terbukti: `2067570858536824834` (自用-Qwen2511图像编辑一键换装)** — slot `35:image` +
 `38:text` + saklar `64:value`(高清) & `94:value`; **sukses 100%**, rata-rata **110 dtk**, tanpa node proxy.
 Pemakaian nyata: memperbaiki rambut user (hitam → senada pirang→pink ✓, kacamata tetap ✓, wajah/pose/latar
-utuh ✓, 714x1280 → 856x1536) **−18 koin** (9.777 → 9.759 ✓ terukur dari delta `remainCoins`). Skrip:
+utuh ✓, 714x1280 → 856x1536) **−18 koin** (9.777 → 9.759 ✓ terukur dari delta `remainCoins`).
+**Bukti job:** task RunningHub **`2111735176326328322`** — runner sendiri mencatat `koin awal 9777 → koin
+akhir 9759`, `SELESAI data/rambut_hasil.png 856x1536 1170 KB`. Skrip:
 `tools/perbaiki_rambut.py` (jalur gateway, cadangan) + runner `tools/rh_app_run.py`; pelajaran ditulis ke
 skill `runninghub-ai-app-integration` (resep pencarian slot prompt + aturan outage).
 
