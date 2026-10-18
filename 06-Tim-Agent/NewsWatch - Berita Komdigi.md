@@ -4,7 +4,40 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-18** (run harian · cakupan 17 Okt 2026)
+**Update terakhir: 2026-10-19** (run harian · cakupan 18 Okt 2026)
+
+---
+
+## 🆕 Update 2026-10-19 (run harian — cakupan 18 Okt 2026)
+
+> Cek sumber resmi 19 Okt 07:00 CST: probe portal `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` via **curl** → **ADA 1 item BARU: id 10608 (Minggu 18 Okt 2026 – 15:00, Kategori Siaran Pers, Siaran Pers No. 218/HM-KKD/10/2026)**; probe **10609–10660 (52 id) semua 404** → itu batas terbaru. `domain.go.id` **200** (berita terbaru tetap **3 Sep 2026**). `jdih.komdigi.go.id` **200** (produk terunggah terbaru tetap **Kepmen 141/2026 — 9 Sep 2026**; **Rancangan PUU 32 dok** & **Partisipasi Publik 19 dok** = **tidak berubah**) → **belum ada Permen baru Oktober 2026**. ⚠️ **Tidak ada perubahan regulasi baru.** Kabar hari ini: **1 siaran pers seremoni soal mutu pers** (dampak rendah) + **Bali Tech Week 2026 MULAI HARI INI (19–23 Okt)** + **PP 33/2026 tinggal ±89 hari**.
+
+### 30. 📰 Wamen Angga Raka Prabowo: **publik butuh pers yang jernih & akurat** di tengah banjir informasi digital — 18 Okt 2026 — *dampak: rendah*
+- **Apa yang berubah** (portal **10608**, **Minggu 18 Okt 2026 – 15:00**, Kategori **Siaran Pers**, **Siaran Pers No. 218/HM-KKD/10/2026**): Wamenkomdigi **Angga Raka Prabowo** seusai acara **Run for Good Journalism 2026** (Jakarta Selatan, Minggu 18/10/2026) dalam rangka **HUT ke-14 Forum Pemimpin Redaksi (Forum Pemred)**:
+  - Kutipan kunci: *"Di tengah banyaknya arus informasi, disinformasi, serta misinformasi yang berkembang di masyarakat, teman-teman Forum Pemred mengingatkan kembali pentingnya pers yang jernih, utuh, dan yang memberitakan sesuai dengan fakta yang ada."*
+  - Tambahan: *"Pers juga untuk publik dan publik butuh pemberitaan yang sesuai dengan isinya."* → harapan agar insan pers bertugas **bertanggung jawab**.
+  - Acara: lomba lari **5 km** oleh insan pers; turut hadir **Menkomdigi Meutya Hafid** & **Ketua Dewan Pers Komaruddin Hidayat**.
+- ⚠️ **Bukan aturan/kebijakan baru:** ini **pernyataan seremoni** di acara HUT organisasi pers — **tanpa** pengaturan, tenggat, program, atau nomor regulasi baru. Tema "mutu pers vs disinformasi era AI" sudah muncul **10 Okt 2026** (ASEAN Forum on the Protection of Journalistic Works, portal **10593** — atribusi jelas, lisensi transparan, remunerasi; kait **Perpres 32/2024** publisher rights).
+- Sumber: portal **10608** ✅ (teks lengkap terkonfirmasi dari badan HTML; nomor siaran pers tertera di badan artikel).
+- **➡️ Dampak ke Webuild (rendah):** tidak ada kewajiban baru. Nilai pakai hanya **bahasa jual halus** — situs desa sebaiknya **mencantumkan sumber/kredit** tiap berita & foto (bukan copy-paste mentah), sejalan dengan narasi **"konten jelas asalnya"** dan rencana **pelabelan konten AI** (portal **10607**, 17 Okt). **Jangan** jadikan bahan urgensi penawaran.
+
+### 📌 Rekap media 18 Okt 2026 (bukan aturan baru)
+- **"5,15 juta konten negatif diberantas"** (detikInet — Minggu 18 Okt 2026 08:01 — **mengutip laman resmi Komdigi**): Komdigi menangani **5,15 juta konten negatif** pada **20 Okt 2024 – 11 Sep 2026**, **4,03 juta** di antaranya **judi online**; rincian penanganan judol 2025 = **2.087.109** konten (**1.809.358** situs web & alamat IP, **122.366** layanan berbagi berkas, **92.322** platform Meta). Menkomdigi **Meutya Hafid**: *"Tidak cukup hanya memutus akses atau menurunkan kontennya"* → pemerintah juga mempersempit **transaksi & aliran dana**. ⚠️ **Rekap statistik** (bukan kebijakan/peraturan baru; belum ada padanan item di portal per 19 Okt). **➡️ Relevansi Webuild: nol–rendah** — hanya pengingat operasional: **jangan pernah pasang slot iklan/embed pihak ketiga tanpa verifikasi** di situs klien.
+- **Layanan darurat 112** (detikInet, 18 Okt 12:30) — artikel *feature* pengalaman warga (Surabaya); **tidak ada kebijakan baru**. Berguna hanya bila klien desa minta: cukup **halaman statis + tautan ke 112**, tanpa sistem tambahan.
+
+### 📌 Status lain (per 19 Okt 2026)
+- **Regulasi: TIDAK ADA yang baru.** **JDIH** — produk terunggah terbaru tetap **Kepmen 141/2026 (9 Sep 2026)**; teratas lain: **SE Menkominfo 4/2026 (2 Sep)**, **Permen 11/2026 & 10/2026 (13 Agu)**, **Permen 12/2026 (12 Agu)**. **Rancangan PUU (32 dok)** & **Partisipasi Publik (19 dok)** **tidak berubah** (teratas tetap **RPM pelaksanaan PP 17/2025**; uji publik perubahan **Permen Kominfo 7/2015**). ⚠️ Jangan simpulkan "baru" dari nomor besar — baca **"Diunggah pada …"**.
+- **Domain (`domain.go.id`):** **tetap tak ada berita baru sejak 3 Sep 2026** (HTTP 200, cek ulang hari ini). **Tidak ada aturan `.desa.id` baru.**
+- 📌 **UU PDP / PP 33/2026 — tinggal ±89 hari (berlaku 16 Jan 2027).** Kewajiban: notifikasi **kebocoran ≤3×24 jam**, **RoPA**, **DPIA** (termasuk **AI/ML/IoT**), **PPDP/DPO**, transfer luar negeri, denda s/d **2% pendapatan tahunan**. ✅ terverifikasi lintas sumber atas **LN 2026 No. 88**.
+  - **Badan/Lembaga PDP BELUM berdiri** — **RPerpres masih di meja Presiden** (rujukan terakhir **Kompas 4 Sep 2026** & **Hukumonline 23 Agu 2026**; disebut di **sidang MK 27 Jul 2026**; fungsi sementara di **Ditjen Pengawasan Ruang Digital**; prediksi efektif 2028). **Belum ada Perpres baru hari ini.** **➡️ Dampak ke Webuild (TINGGI):** jual **"situs desa patuh PDP by design"** — minim data, **kebijakan privasi + retensi + hapus terjadwal**, tanpa pelacak pihak ketiga, bantu desa susun daftar proses data sederhana.
+- **Perpres AI (Peta Jalan AI Nasional + Etika AI) — BELUM terbit** (draf final di Setneg; finalisasi lintas kementerian selesai **5 Mei 2026** menurut berita JDIH). Pantau **JDIH → Peraturan Presiden 2026**.
+- ⚠️ **Permen tarif ODD (turunan Perpres 27/2026) — belum terbit, tenggat 31 Des 2026:** Komdigi masih **memfinalisasi formula** *pedoman* tarif pengantaran barang & makanan roda dua (Wamen **Nezar Patria**, 12–13 Okt; rm.id, wartaekonomi, technologue, CNBC). Intinya **pedoman, bukan penetapan tarif** + **transparansi pembentukan harga** oleh platform (perhatikan juga **algoritma** platform). **➡️ Relevan ke segmen UMKM / "kurir & toko lokal":** tahan desain fitur sampai Permen keluar.
+- ⚠️ **7 PSE lingkup privat:** tenggat **1 Okt 2026** kini lewat **18 hari** — **tetap belum ada pengumuman resmi** tindak lanjut. Item paling "menggantung".
+- **UU Satu Data Indonesia (sah 6 Okt 2026, 141 pasal):** belum ada berita **PP turunan / Penyelenggara SDI** (wajib dibentuk maks 1 tahun). Status quo.
+- ⚠️ **Sinyal sekunder — RPerpres "Gigabit City" (dokumen pengadaan):** Kode RUP **67787399**, pagu Rp200 jt, Pengadaan Langsung, kontrak Okt–Des 2026; 2 kode LPSE (11071061000, 11090469000). **Belum ada draf resmi** → perlu verifikasi. (Catatan: konsep "Gigabit City" sendiri sudah dibahas sejak **2024**.)
+- 📅 **Pantau dekat:** **Bali Tech Week 2026 — 19–23 Okt (MULAI HARI INI)**, Bali Beach Convention Center, Sanur; 13 agenda, target **4.000 peserta / 30 negara**; ada **Digital Economy Policy Forum** = sinyal kebijakan turunan · **BDSF 2026 Bandung — 29 Okt (H-10)**.
+
+> 🛎️ **Buat Orchestrator:** hari ini **tidak ada regulasi baru** (hanya 1 siaran pers seremoni + rekap statistik media). Dua radar tetap: (1) **Permen pelabelan konten AI** + **2 Perpres AI** (draf di Setneg) → biasakan **label AI + kredit sumber** di paket fitur AI/konten; (2) **Permen tarif ODD** tenggat **31 Des 2026** → tahan fitur kurir/toko lokal. **PP 33/2026 tinggal ±89 hari** → jalankan kampanye jual **"situs desa PDP-ready"**. **Bali Tech Week mulai hari ini** — pantau 20 Okt apakah muncul sinyal kebijakan baru.
 
 ---
 
