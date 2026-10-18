@@ -124,7 +124,7 @@
 
 | Repo | ⭐ | Catatan |
 |---|---|---|
-| github.com/cosscom/coss | 10.677 | Design system resmi **Cal.com** (dulu Origin UI) — kualitas tinggi & sangat aktif, **tapi AGPL-3.0** → hati-hati kalau masuk produk tertutup |
+| github.com/**cosscom/ui** *(dulu `cosscom/coss`)* | 10.720 | Design system resmi **Cal.com** (dulu Origin UI) — kualitas tinggi & sangat aktif, **tapi AGPL-3.0** → hati-hati kalau masuk produk tertutup. ⚠️ **URL diperbarui 2026-10-19:** repo `cosscom/coss` sekarang ⭐3 (kosong/dipakai ulang) — jangan pakai URL lama |
 | github.com/radix-ui/primitives · mui/base-ui · chakra-ui/ark · unovue/reka-ui | 19.375 · 11.107 · 5.409 · 6.859 | Semua **MIT** — komponen "unstyled" (fondasi shadcn/ui). **reka-ui = versi Vue**, ark = React/Vue/Solid. Pakai kalau mau primitif sendiri |
 | github.com/tsparticles/tsparticles | 8.991 | MIT — partikel/confetti/efek background buat landing (MotionAgent) |
 
@@ -601,6 +601,70 @@
 - ⚖️ **LinkStack = AGPL-3.0 → pikir dua kali jadi layanan ber-merek kita.** AGPL = copyleft untuk pemakaian **lewat jaringan**: kalau kita modifikasi & host untuk banyak klien, kode modifikasi wajib bisa diakses pengguna. Kalau tetap mau: pakai **apa adanya** (tanpa modifikasi) atau taruh di server klien.
 - 📲 **Yang benar-benar dipakai warga/UMKM bukan tombol "bagikan ke X/Twitter", tapi WhatsApp.** Urutan pasang: (1) **WhatsApp** + (2) salin tautan, baru (3) IG/FB. Astro → **sharer.js (MIT)**; Next.js → **react-share (MIT)**.
 - 🔍 **Query tajam:** **`linktree alternative in:name,description`** jauh lebih berguna daripada **`link in bio`** (yang terakhir isinya proyek pribadi kecil semua). Buat tombol bagikan: `social share buttons in:name,description` (`social share` saja = plugin WordPress).
+
+---
+
+## 🔀 OpsAgent / RepoScout — LLM Gateway: SATU PINTU ke banyak provider + failover
+
+> Riset **2026-10-19** — rotasi topik: **agentic AI, sudut baru: infrastruktur LLM (gateway/failover)**.
+> **Alasan langsung (bukan teoretis):** fallback provider Hermes kita berulang kali rusak — 15 Okt fallback **401** → semua cron gagal; 17 Okt OmoApicall **502**; 18 Okt **401 kunci dicabut**. Katalog sudah punya *proxy AI-native* (`Plano`) & *observability* (`Langfuse/Opik/Logfire`), **tapi belum punya gateway LLM** yang jadi **satu pintu failover + budget + kunci** — yang bisa melayani Hermes **dan** tool/agen lain sekaligus.
+> Semua lisensi dibaca dari **file lisensi asli** dan dicek **rekursif** (bukan cuma root).
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **LiteLLM** | github.com/BerriAI/litellm | **AI gateway OpenAI-compatible**: satu URL → 100+ provider; **Router retry + fallback antar-deployment**, load balancing, **virtual keys**, **spend tracking per user/proyek**, guardrails, admin UI, callback ke Langfuse/MLflow — dipakai sebagai **SDK Python** atau **server** | Python (SDK + Proxy Server) / Docker | ✅ **MIT** (inti) ⚠️ `enterprise/` = **BerriAI Enterprise License** (komersial; boleh dipakai untuk dev/testing, **produksi butuh langganan**) | 61.504 (**240**) · 100 commit/60d · 100+ kontributor · push 2026-10-18 | OpsAgent | ✅ **REKOMENDASI** — obat langsung masalah fallback kita; ⚠️ `docker-compose.yml` = `litellm` + `db`(Postgres) + `prometheus` (**db & prometheus opsional**); repo **2,5 GB** → jangan full clone |
+| **Bifrost** | github.com/maximhq/bifrost | Gateway high-performance: 23+ provider, **automatic failover**, load balancing, semantic caching, **MCP gateway**; satu binary Go / `npx` / Docker | Go | ✅ **Apache-2.0** (`LICENSE`) + `THIRD_PARTY_NOTICES.md` | 8.916 (**35**) · 100 commit/60d · created 2025-03 | OpsAgent | ⚠️ PELAJARI — paling ringan & cepat, tapi rasio ⭐:watchers **255:1** (muda/hype) → uji dulu sebelum jadi satu-satunya pintu |
+| **AxonHub** | github.com/looplj/axonhub | Gateway AI all-in-one (Go): "SDK apa pun, model apa pun", **failover bawaan**, log | Go / Docker | ✅ Apache-2.0 (`LICENSE` + `NOTICE`) | 5.367 (**13**) · 100 commit/60d | OpsAgent | ⚠️ CADANGAN — komunitas kecil (subs 13) |
+| **Portkey Gateway** | github.com/Portkey-AI/gateway | AI gateway + guardrail, rute ke 1.600+ LLM | TypeScript | ✅ Apache-2.0 | 13.214 · push **2026-05-25** | OpsAgent | ⚠️ CADANGAN — **melambat ±5 bulan** |
+| **new-api** | github.com/QuantumNous/new-api | "AI model hub" **multi-tenant**: agregasi & distribusi model + billing | Go | ⚠️ **AGPL-3.0** (`LICENSE` + `NOTICE` + `THIRD-PARTY-LICENSES.md`) | 50.174 (**166**) | OpsAgent | ⚠️ HATI-HATI — AGPL **menyala** kalau kita host untuk banyak klien |
+| **Manifest LLM Gateway** | github.com/mnfst/llm-gateway | Gateway + observability untuk agen ("AI agents that don't break") | TypeScript | ✅ MIT (© MNFST, Inc 2026) | 7.589 (**29**) | OpsAgent | 🔸 CADANGAN |
+| **RTK** (rust token killer) | github.com/rtk-ai/rtk | Kompresi output bash & trafik API biar agen hemat token (klaim 60–90%) | Rust | ⚠️ **root `LICENSE` = Apache-2.0, TAPI `engine/LICENSE` & `proxy/LICENSE` = BUSL-1.1** | 83.864 (**218**) · push 2026-10-17 · created 2026-01 | OpsAgent | 🚫 **BUKAN fondasi** — jebakan lisensi ke-11: bagian yang berguna (mesin kompresi) **BUSL-1.1**; pakai **Headroom (Apache-2.0)** yang sudah ada di katalog |
+
+### 🔌 Tier "lokal" (fallback offline) — semua ✅ MIT, tapi bukan buat VPS kita
+| Repo | ⭐ (subs) | Catatan |
+|---|---|---|
+| github.com/ollama/ollama | 183.741 (**1.020**) · MIT | Server model lokal paling gampang — **cocok di PC user (Windows)**, bukan VPS |
+| github.com/ggml-org/llama.cpp | 131.625 (**868**) · MIT | Mesin inference C/C++ (fondasi banyak alat); bisa CPU-only |
+| github.com/mudler/LocalAI | 49.621 (**299**) · MIT | OpenAI-compatible lokal (LLM/vision/voice/image) |
+| github.com/mostlygeek/llama-swap | 6.009 (**24**) · MIT | **Tukar model otomatis** di server lokal OpenAI-compatible |
+
+### 🔎 Catatan LLM gateway (kenapa ini penting sekarang)
+- 🚑 **Masalah nyata tim kita bukan "kurang model", tapi "satu provider mati = semua cron mati".** Gateway (LiteLLM/Bifrost) memindahkan logika retry/fallback **keluar dari tiap aplikasi** → Hermes, skrip, dan agen lain cukup menunjuk **satu `base_url`**; ganti provider = ubah 1 config, bukan 6 tempat.
+- 💾 **Hitung RAM dulu (pelajaran lama masih berlaku).** `LiteLLM` = proses Python (ratusan MB) + Postgres opsional; `Bifrost`/`AxonHub` (Go) jauh lebih ringan. VPS kita saat riset: **RAM 1.930 MB, available cuma 307 MB** → jalankan **tanpa Prometheus & tanpa Postgres** dulu (budget in-memory), atau tunggu **VPS khusus**.
+- 🧊 **Jangan tergoda "LLM sendiri di VPS 2 GB"**: semua mesin lokal (ollama/llama.cpp/LocalAI) MIT, tapi model terkecil pun butuh RAM yang **tidak** kita punya (available 307 MB) → taruh di **PC user** kalau mau offline.
+- 🧾 **Jebakan lisensi ke-11: SATU repo bisa punya BEBERAPA file lisensi di FOLDER berbeda.** `rtk-ai/rtk` lolos teliti kalau cuma baca root: API bilang **Apache-2.0**, root `LICENSE` = Apache-2.0 penuh — **padahal** `engine/LICENSE` & `proxy/LICENSE` = **BUSL-1.1** (gratis untuk produksi, **tapi dilarang** menawarkan RTK/turunannya ke pihak ketiga sebagai produk/jasa komersial). **Cara deteksi: `git/trees/<branch>?recursive=1 | grep -iE "LICEN|COPYING|TERMS"` — REKURSIF, bukan root saja** (di rtk muncul 3 file: root, `engine/`, `proxy/`).
+
+---
+
+## 📅 WebBuilder / SalesAgent — Booking & Jadwal (layanan desa & UMKM)
+
+> Riset **2026-10-19** — rotasi topik kedua: **web dev, sudut baru: pemesanan/jadwal (booking)**.
+> **Kebutuhan nyata:** layanan desa (antre surat/posyandu/konsultasi) & UMKM (salon, bengkel, klinik, rental, kafe) hampir selalu butuh **"pilih tanggal & jam"**. Katalog sudah punya formulir & analitik, **belum punya mesin jadwal**.
+> Bonus temuan: **koreksi penting** — repo `calcom/cal.com` sudah **ganti nama & ganti lisensi** (lihat catatan 🚨).
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Cal.diy** (Cal.com Community Edition) | github.com/calcom/cal.diy *(dulu `calcom/cal.com`)* | Infrastruktur penjadwalan paling lengkap: tipe event, ketersediaan, kalender, embed, API | Next.js / tRPC / Prisma / TS | ✅ **MIT 100%** — tanpa EE, **tanpa license key** | 49.138 (**222**) · 16 commit/60d · 15.371 fork · repo **1,1 GB** | WebBuilder | ⚠️ PELAJARI — lisensi paling bersih, **tapi** README-nya sendiri: *"strictly recommended for personal, non-production use"* + compose = **5 service** (`database`, `redis`, `calcom`, `calcom-api`, `studio`) → **bukan** untuk VPS 1,9 GB |
+| **Easy!Appointments** | github.com/alextselegidis/easyappointments | Penjadwalan janji temu self-hosted: layanan, penyedia, jam kerja, notifikasi email, embed | PHP 8 + MySQL | ⚠️ **GPL-3.0** | 4.444 (**153**) · 1.577 fork · push 2026-10-16 | WebBuilder + SalesAgent | ✅ **REKOMENDASI buat VPS kita** — minimal **3 container** (`php-fpm` + `nginx` + `mysql`; compose dev menambah phpmyadmin/mailpit/baikal/openldap/swagger) → ringan & mapan (sejak 2014). GPL: **jual jasa OK**, jangan tanam kodenya ke produk tertutup |
+| **Rallly** | github.com/lukevella/rallly | Penjadwalan **gaya polling** (Doodle): ajukan tanggal → peserta pilih → hasil | Next.js + Postgres | ⚠️ **AGPL-3.0** | 5.310 (**30**) · push 2026-10-18 · compose: `rallly_db` + `rallly_selfhosted` → **2 service** | SocialAgent | ✅ PAKAI (internal/koordinasi) — paling ringan; pas buat **rapat tim & koordinasi desa**; AGPL → jangan jadi layanan ber-brand kita |
+| **Thunderbird Appointment** | github.com/thunderbird/appointment | Penjadwalan janji (undang orang memilih slot) — dari tim Mozilla/Thunderbird | Python | ⚠️ MPL-2.0 | 555 (**13**) · push 2026-10-16 | WebBuilder | 🔸 CADANGAN — organisasi besar, MPL = copyleft per-file |
+| **Calnode** | github.com/Calnode/calnode | Alternatif Calendly **1 binary Go + SQLite**, API-first | Go | ✅ Apache-2.0 | 119 (**0**) · created 2026-06 · push 2026-10-18 | OpsAgent | ⚠️ UJI DULU — paling ringan & lisensi bersih, tapi komunitas **nol** |
+| **Calrs** | github.com/olivierlambert/calrs | Penjadwalan self-host cepat — "seperti Cal.com, tapi Rust" | Rust | ⚠️ AGPL-3.0 | 319 (**4**) · created 2026-03 | OpsAgent | ⚠️ PANTAU — muda |
+| **Someday** | github.com/rbbydotdev/someday | Pemilih ketersediaan (Calendly alternative) jalan di **Google Apps Script** → gratis di akun Google | GAS + React/TS | ✅ MIT (`LICENSE.md`; ⚠️ teksnya masih template `[year] [fullname]`) | 1.064 (**1**) · push 2026-07 | WebBuilder | 🔸 CADANGAN — nol server, tapi terikat ekosistem Google |
+| **CloudMeet** | github.com/dennisklappe/CloudMeet | Calendly alternative di **Cloudflare free tier** (edge) | TS / Cloudflare | ✅ MIT | 549 (**1**) · push 2026-07 | WebBuilder | 🔸 CADANGAN — subs 1 + 3 bulan tanpa update |
+| **django-appointment** | github.com/adamspd/django-appointment | App Django: manajemen jadwal/janji temu | Python / Django | ✅ Apache-2.0 | 281 (**2**) · push 2026-10-13 | WebBuilder | 🔸 CADANGAN — bahan kalau kita bikin modul jadwal sendiri |
+| **openresto** | github.com/karanshukla/openresto | Booking meja restoran/kafe self-hosted | — | ✅ MIT | 98 (**1**) | SalesAgent | 🔸 niche (referensi) |
+
+### 🚨 Koreksi katalog (WAJIB dicatat)
+- **`calcom/cal.com` → `calcom/cal.diy`, dan lisensinya BERUBAH: AGPL-3.0 → MIT.** Repo lama (di catatan desain kita dulu disebut AGPL + punya `ee/`) sekarang **tidak punya folder `ee/` sama sekali**; file `LICENSE` = MIT; README: *"Cal.diy is the community-driven, fully open-source scheduling platform — a fork of Cal.com with all enterprise/commercial code removed… **100% MIT-licensed with no proprietary Enterprise Edition features**"*. Fitur EE (Teams, Organizations, Insights, Workflows, SSO/SAML) dibuang; yang komersial tetap di Cal.com. **Deteksi:** `gh api repos/calcom/cal.com` membalas `full_name = calcom/cal.diy` (rename, bukan repo baru).
+- **`cosscom/coss` (design system Cal.com) juga berubah.** Entri lama kita (10.677⭐, AGPL-3.0) kini **salah URL**: `cosscom/coss` sekarang ⭐**3** (repo kosong/dipakai ulang), yang benar = **`github.com/cosscom/ui`** (10.720⭐, subs 33, **AGPL-3.0**, push 2026-10-18).
+
+### 🔎 Catatan booking/scheduling
+- 🔍 **Query `booking`/`scheduling` = BERISIK** (hotel, penerbangan, Gantt chart, Kubernetes scheduler). Yang tajam: **`calendly alternative in:name,description`**, **`appointment+scheduling+in:name,description`**, atau **nama proyek langsung** (`easyappointments`, `rallly`, `cal.com`). `self-hosted+booking+system` hanya menghasilkan proyek <100⭐.
+- 💾 **Urutan dari paling ringan buat VPS kita:** **Rallly 2 service** → **Easy!Appointments 3 container (LAMP)** → Calnode 1 binary (komunitas 0) → **Cal.diy 5 service (berat)**. Jangan pasang Cal.diy di VPS 1,9 GB.
+- ⚖️ **Lisensi kategori ini "campur":** Cal.diy = **MIT**, Easy!Appointments = **GPL-3.0**, Rallly/Calrs = **AGPL-3.0**, Thunderbird = **MPL-2.0**, Calnode/Someday/CloudMeet/django-appointment = **MIT/Apache**. Aturan tetap: MIT/Apache = bebas; **AGPL menyala saat kita host untuk banyak klien**; GPL = jual jasa boleh, salin kode ke produk tertutup jangan.
+- 📄 **Kalimat README "for personal, non-production use" BUKAN batasan lisensi.** Cal.diy tetap **MIT** (boleh dipakai komersial secara hukum) — yang kita catat adalah **risiko kualitas/dukungan**, bukan larangan. Jangan campur "imbauan README" dengan "syarat LICENSE" (beda dengan kasus Dify/Open WebUI yang memang menaruh syarat **di dalam** lisensi).
+- 🎯 **Buat Webuild:** kalau klien cuma butuh "pilih jadwal", **paling murah = halaman jadwal statis (Astro) + konfirmasi via WhatsApp/WAHA** — tanpa service tambahan di VPS. Naik ke **Easy!Appointments** kalau butuh multi-penyedia + notifikasi email; **Cal.diy** baru masuk hitungan setelah punya VPS khusus web.
 
 ---
 
