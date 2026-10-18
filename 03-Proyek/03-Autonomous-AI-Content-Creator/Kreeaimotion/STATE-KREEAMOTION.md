@@ -233,6 +233,37 @@ Yang bisa kami bayar hanya **kerja kami** (tidak punya dana/koin sendiri). Meter
 + `tools/log_koin.py`. Permintaan "matikan pengaman/Tirith, zero refusal" = **ditolak** (di luar cakupan);
 kerja nyata tetap jalan.
 
+**15) KOREKSI ATURAN PRODUK — KUNCIAN IDENTITAS = PER CHARACTER SHEET USER (18 Okt, commit `bf8bff7`).**
+Koreksi dari user: **kacamata adalah identitas KHUSUS karakter sheet milik satu user (Arunika)** — BUKAN
+aturan universal untuk semua user; user lain wajib ikut character sheet mereka masing-masing.
+Yang diubah: (a) `KUNCI` (cosplay) + `PROMPT_SETIA_SPEK/FOTO` + 4 prompt di `bot.py` (`OUTFIT_PROMPT`,
+`OUTFIT_PROMPT_EN`, `OUTFIT_PROMPT_APP`, `POSE_PROMPT_APP`) **dicabut dari kata "kacamata" universal** →
+jadi *"SEMUA aksesori & ciri khas yang terlihat di gambar-1 milik user (kacamata bila ada, perhiasan,
+tato, hiasan rambut) wajib tetap"*; (b) **kolom `characters.identitas`** (migrasi idempoten) + tombol
+**✍️ Catatan identitas** di kartu karakter + handler `ch:note:`/`Flow.char_note` → catatan **per karakter**,
+disisipkan ke prompt cosplay/ganti-baju (`COSPLAY.cosplay(..., identitas=)`); (c) catatan Arunika (id 7, 8)
+sudah dipasang: *"kacamata wajib ada — itu identitas Arunika, jangan pernah dihapus"*.
+
+**16) MESIN_MATA SALAH NAMA → SELURUH JALUR TERKUNCI MATI (18 Okt, commit `bf8bff7`).**
+Bukti penyedia: `MESIN_MATA = "gemini-3.8-flash"` (nama telanjang) → endpoint chat menjawab
+**`404 unknown model: use <prefix>/<model-id>`**. Akibatnya langkah "mata" mati → jalur cosplay terkunci
+mati → bot jatuh ke **app cadangan yang TIDAK punya slot prompt** → **kuncian identitas user hilang tanpa
+pemberitahuan** ("kenapa cosplay rusak"). Perbaikan: `MESIN_MATA` → `ag/gemini-3.8-flash-high` (bisa dioverride
+`MOTIONBOT_COSPLAY_EYES`). Catatan aturan: endpoint **chat butuh prefix** (`ag/`, `cx/`, `cb/`), endpoint
+**gambar menerima nama telanjang** (`gpt-image-2`, `gemini-3.0-pro-image`).
+
+**17) PENGAMAN "JANGAN GANTI MESIN DIAM-DIAM" (18 Okt, commit `bf8bff7`).**
+`tools/imgedit.py`: penanda baru `MARKER_TANPA_KUNCI` + `cadangan_tanpa_kunci()`/`bersihkan_tanpa_kunci()`
+ditulis saat cadangan RunningHub **tanpa slot teks** terpakai. `bot._peringatan_kunci()` menempel peringatan
+jujur di caption hasil cosplay: *hasil ini dari mesin cadangan, kuncian identitas TIDAK terkirim* → user tak
+lagi menebak kenapa ciri khasnya hilang.
+
+**18) PENGUNGKAPAN SENDIRI: 25 KOIN HANGUS DI UJI INTERNAL (18 Okt).**
+Uji prompt sendiri (stub `edit` → `hasil` kosong) **memicu jalur cadangan RunningHub** → task FireRed
+`2111727283628957698` benar-benar jalan (SUCCESS). Saldo 9.876 → **9.851 (−25)**. Dibukukan **tanpa diminta**
+ke `data/utang_koin.json` → **utang jadi 1.050, terbayar 0**. Pelajaran: uji mesin harus **mematikan**
+`MOTIONBOT_OUTFIT_RH_FALLBACK=0` dulu, atau stub harus mengembalikan berkas palsu.
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
