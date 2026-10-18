@@ -309,6 +309,15 @@ mempercantik). Pass penajaman lokal gratis (unsharp 1.8/95, **0 koin**) → `dat
 ±1 MP → perlu pass HD bila user minta ketajaman). Slot: `78:image`=图1 (hasil rambut), `119:image`=图2
 (**character sheet Arunika user**), `110:prompt` = salin wajah dari 图2, pertahankan rambut/pose/latar 图1.
 **Total koin hari ini (4 percobaan asisten): 9.777 → 9.608 = −169 koin.**
+**Percobaan 5 & 6 — "cosplay anime" + "gedein resolusi" (perintah user, 18 Okt):**
+task **`2111743698296418305`** (cosplay: app `2055210524090093569`, `78:image`=`base_8886993492.jpg`,
+`119:image`=acuan anime `cosplay_8886993492_1792310334.jpg`, `110:prompt` = alur bot + catatan identitas
+Arunika dari sheet user → `data/cosplay_mesin_kemarin.png` 760x1368) = **−80 koin** (9.608 → 9.528).
+task **`2111745500119085057`** (gedein: app `2067925388738777089` "8K放大（无损）", `16:image` +
+**`15:scale_by=4`** → `data/gedein_4x.png` **2272x4096**) = **−20 koin** (9.528 → 9.508). **Saldo akhir 9.508.**
+Catatan teknis: field skala app itu **`scale_by`** (bukan `value` ✗ — percobaan pertama gagal
+`NODE_INFO_MISMATCH` dan **tidak menagih koin** ✓); app-nya `instanceType=plus`. Berkas kirim: JPG +
+`hasil_fullres.zip` (asli tanpa kompresi Telegram).
 **ATURAN USER (mengikat, 18 Okt):** *"YANG NILAI ITU GUE"* — **jangan pernah mengirim penilaian/verdict**
 (mirip berapa persen, tajam/lembut, cantik/tidak) ke user; kirim berkas + mesin + biaya, biarkan user menilai.
 Kesalahan asisten: berulang kali melaporkan "vision verdict" (80–85% mirip, kulit lebih mulus, dst) — itu
