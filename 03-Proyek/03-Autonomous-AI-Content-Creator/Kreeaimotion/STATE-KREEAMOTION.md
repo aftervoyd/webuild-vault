@@ -298,10 +298,17 @@ akhir 9759`, `SELESAI data/rambut_hasil.png 856x1536 1170 KB`.
 (**−24 koin**), `data/rambut_hasil_hd.png` **2048x3670 / 8.602 KB** (dari input 714x1280). Verifikasi vision
 berdampingan (`data/banding_wajah.jpg`): rambut ✓ senada, kacamata ✓ tetap, resolusi ✓ naik 2,9×, **tetapi
 wajah bergeser ±80–85% mirip** ✗ (dagu V, mata membesar, hidung mengecil, bibir penuh, kulit dihaluskan —
-mode HD justru menambah kehalusan). **Akar:** app mempercantik otomatis. **Rencana B terverifikasi (belum
-dijalankan):** 12 app berkunci identitas ditemukan; terbaik `2055210524090093569` (Qwen Edit 2511 双图版,
-slot `图1`+`提示词`+`图2` → 图1 dipakai sebagai jangkar wajah). Yang **dihindari**: app "人物一致性"
-dengan slot `api节点（注意价格）`/`api价格` = node API saldo terpisah (bukan koin RunningHub). Skrip:
+mode HD justru menambah kehalusan). **Akar:** app mempercantik otomatis. **Percobaan 3 (prompt anti-cantik, dari foto asli, HD):** task **`2111739265681743873`** — `koin 9711 → 9675`
+(**−36 koin**), `data/rambut_hasil_hd2.png` 2048x3670 / 8.520 KB. Verifikasi vision 3 panel
+(`data/banding_wajah3.jpg`): **paling mirip dari ketiganya** ✓ (bentuk wajah/mata/hidung/bibir lebih dekat ke
+asli), rambut ✓ senada, kacamata ✓ tetap; **kulit masih lebih mulus dari asli** ✗ (batas app — memang
+mempercantik). Pass penajaman lokal gratis (unsharp 1.8/95, **0 koin**) → `data/rambut_hasil_hd2_tajam.*`.
+**Total biaya 3 percobaan: 9.777 → 9.675 = −102 koin.**
+**Rencana B (terverifikasi, belum dijalankan):** 12 app berkunci identitas ditemukan; terbaik
+`2055210524090093569` (Qwen Edit 2511 双图版, slot `图1`+`提示词`+`图2` → 图1 dipakai sebagai jangkar wajah);
+alternatif penajam+identitas `1970049702286794753` (无损高清放大 + 最强人物一致性, 4 slot gambar). Yang
+**dihindari**: app "人物一致性" dengan slot `api节点（注意价格）`/`api价格` = node API saldo terpisah (bukan
+koin RunningHub). Skrip:
 `tools/perbaiki_rambut.py` (jalur gateway, cadangan) + runner `tools/rh_app_run.py`; pelajaran ditulis ke
 skill `runninghub-ai-app-integration` (resep pencarian slot prompt + aturan outage).
 
