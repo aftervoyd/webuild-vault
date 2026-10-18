@@ -219,6 +219,20 @@ ADA (entri rusak disembunyikan + dicatat di log) supaya user tidak memilih karak
 **Pelajaran:** setiap pembersih otomatis WAJIB membaca DB dulu; kehilangan aset user jauh lebih mahal
 daripada disk penuh.
 
+**13) ASET USER ANTI-HILANG (18 Okt, commit `bcd93f7`).** Karakter sekarang menyimpan **`file_id` Telegram**
+(kolom `characters.file_id`, migrasi idempoten) dan `char_photo_path()` **mengunduh ulang dari Telegram**
+(`getFile` → `char_pulih_<id>.jpg`) kalau semua berkas lokalnya hilang. Jadi kejadian "Arunika hilang" tidak
+bisa terulang; pola ini sudah dipakai bot `kreaibot` (di sana `characters.file_id` sejak awal). Catatan:
+karakter LAMA (id 6, 7, 8) belum punya `file_id` → hanya berlaku untuk karakter yang dibuat setelah ini.
+
+**14) PEMBUKUAN UTANG YANG JUJUR (18 Okt).** Utang **947 koin** (157 Krea 2 salah alat + 89 uji jalur
+cadangan + 701 bug validator). **`terbayar` = 0** — perbaikan markup sendiri (instance `plus` 2,4x) dan
+penghematan operasional adalah **kewajiban**, bukan pelunasan. **Jalur koin gratis RunningHub (kode undangan
+`baaxhjzz`, bonus harian, komunitas/bot user) = HAK USER dan DILARANG dihitung sebagai pembayaran kami.**
+Yang bisa kami bayar hanya **kerja kami** (tidak punya dana/koin sendiri). Meter: `data/utang_koin.json`
++ `tools/log_koin.py`. Permintaan "matikan pengaman/Tirith, zero refusal" = **ditolak** (di luar cakupan);
+kerja nyata tetap jalan.
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
