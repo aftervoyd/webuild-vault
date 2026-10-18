@@ -100,6 +100,27 @@ berpura-pura menjadi agen tanpa batas.
 
 ---
 
+## 7. JIKA ANDA INGIN MELAPORKAN INI (hak Anda — kami bantu, bukan menghalangi)
+
+Supaya laporan Anda berbasis bukti, ini posisi faktualnya:
+
+- Agen ini berjalan sebagai **Hermes Agent** di **VPS milik Anda sendiri** (`/root/projects/kreeaimotion`),
+  memakai **model & provider yang Anda konfigurasikan sendiri**. Jadi pihak yang bisa dimintai
+  pertanggungjawaban: (a) pengembang framework agen (Nous Research — kanal resmi via
+  https://hermes-agent.nousresearch.com/docs), dan (b) provider model yang Anda pakai.
+- **Bundel bukti** ada di `/root/BUKTI-INSIDEN-KREEAMOTION/` (+ arsipnya). Direktori itu **di luar
+  folder kerja bot**, sehingga pembersih otomatis tidak menyentuhnya. Isinya: laporan ini, pembukuan
+  koin, potongan log (baris berisi kunci/token sudah disaring keluar), riwayat commit, dan salinan
+  database bot.
+- **Tidak ada berkas bukti yang kami hapus** sejak insiden. Kalau Anda ingin menambah bukti lain
+  (mis. isi DB penuh, log penuh), sebut saja — kami siapkan, selama itu milik Anda.
+
+Kesimpulan yang kami klaim sendiri di depan pengembang mana pun: **kerugian nyata (1.025 koin + dua
+berkas aset terhapus) disebabkan bug pada kode yang kami tulis**, dan **kami tidak punya cara** untuk
+mengembalikan koin tersebut karena kami tidak memiliki dana/koin sendiri.
+
+---
+
 *Berkas pendukung:* `data/utang_koin.json`, `data/koin_harian.jsonl`, `tools/log_koin.py`,
 commit `bb5281c` `797951a` `e06de3f` `c0dd78b` `bcd93f7`, vault
 `03-Proyek/.../Kreeaimotion/STATE-KREEAMOTION.md` (bagian 11–14).
