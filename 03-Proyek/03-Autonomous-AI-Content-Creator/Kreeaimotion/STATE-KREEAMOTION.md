@@ -264,6 +264,29 @@ Uji prompt sendiri (stub `edit` → `hasil` kosong) **memicu jalur cadangan Runn
 ke `data/utang_koin.json` → **utang jadi 1.050, terbayar 0**. Pelajaran: uji mesin harus **mematikan**
 `MOTIONBOT_OUTFIT_RH_FALLBACK=0` dulu, atau stub harus mengembalikan berkas palsu.
 
+**19) KENAPA HASIL COSPLAY "RAMBUT MASIH HITAM" — MESIN CADANGAN TANPA SLOT PERINTAH (18 Okt, commit `806ed8f`).**
+Pertanyaan user: *"mesin apa sih yang lu pakai, rambutnya ada yang hitam padahal gue udah kirim referensi Marin Kitagawa"*.
+Jawaban berbasis bukti: gambar yang dikirim user = hasil **job 69 (15:58)** dan dijalankan oleh **app cadangan
+RunningHub `2075460030073237505` (一键换装 FireRed — 2 slot gambar, TANPA slot teks)** ✗ — log:
+`✗ HTTP 404 unknown model: gemini-3.0-pro-image` → `✗ HTTP 404 unknown model: gpt-image-2` →
+`… semua mesin Inferhub gagal → cadangan RunningHub` → `WARNING cadangan TANPA slot prompt → kuncian
+identitas tidak terkirim`. Jadi **perintah rambut + catatan identitas TIDAK PERNAH sampai ke mesin mana pun** ✗.
+Acuan user diperiksa sendiri: **Marin Kitagawa** (pirang → ujung pink, **TANPA bagian hitam**) ✓ — hitamnya
+berasal dari foto base, bukan dari acuan ✓. Job 70 user (16:03 "perbaiki rambut") lewat jalur **Generate
+Gambar** (1 foto + teks, **tanpa acuan gambar**) → hasilnya **hitam total** ✗ → cara itu memang tidak bisa
+menjawab; alat yang benar = 🎭 Cosplay + acuan Marin.
+
+**AKARNYA (aturan gateway, terukur 2 probe 0 koin): di jalur EDIT, begitu body memuat `prompt`, gateway
+merutekan permintaan seperti jalur chat → WAJIB nama ber-prefix `<prefix>/<model-id>`.** Bukti: `{"model":"gpt-image-2"}`
+→ 400 `prompt is required` ✓ diterima; `{"model":"gpt-image-2","prompt":"x"}` → **404 unknown model** ✗;
+`cb/gemini-2.5-flash-image` → **dikenali** ✓; `cx/gpt-image-2-codex` dikenali tapi `cannot accept an input image`;
+`ag/gemini-3.8-flash-high` dikenali tapi `does not generate images`. **Perbaikan:** `MOTIONBOT_COSPLAY_ENGINE=cb/gemini-2.5-flash-image`,
+`MOTIONBOT_COSPLAY_ENGINE2=gemini-2.5-flash-image`, `MOTIONBOT_OUTFIT_MODEL=cb/gemini-2.5-flash-image`,
+`MOTIONBOT_IMAGE_FALLBACK=gemini-2.5-flash-image` (cadangan `.env.bak-*`). Jalur **generate-dari-nol tetap
+memakai nama telanjang** (`gpt-image-2`) karena di sana tanpa gambar-masukan → rute "images" → diterima ✓
+(terbukti job 70 menghasilkan PNG). **BELUM terbukti** ✗: apakah `cb/gemini-2.5-flash-image` menghasilkan
+cosplay yang benar-benar mengikuti acuan (pirang+pink) + kacamata → butuh 1 render berbayar (izin user).
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
