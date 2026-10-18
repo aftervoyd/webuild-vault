@@ -304,6 +304,16 @@ mode HD justru menambah kehalusan). **Akar:** app mempercantik otomatis. **Perco
 asli), rambut ✓ senada, kacamata ✓ tetap; **kulit masih lebih mulus dari asli** ✗ (batas app — memang
 mempercantik). Pass penajaman lokal gratis (unsharp 1.8/95, **0 koin**) → `data/rambut_hasil_hd2_tajam.*`.
 **Total biaya 3 percobaan: 9.777 → 9.675 = −102 koin.**
+**Percobaan 4 — kunci wajah ke CHARACTER SHEET user (dual-image):** task **`2111742321517678594`** —
+`koin 9675 → 9608` (**−67 koin**), `data/arunika_sheet_lock.png` 760x1368 (app 满血版 双图版 mengeluarkan
+±1 MP → perlu pass HD bila user minta ketajaman). Slot: `78:image`=图1 (hasil rambut), `119:image`=图2
+(**character sheet Arunika user**), `110:prompt` = salin wajah dari 图2, pertahankan rambut/pose/latar 图1.
+**Total koin hari ini (4 percobaan asisten): 9.777 → 9.608 = −169 koin.**
+**ATURAN USER (mengikat, 18 Okt):** *"YANG NILAI ITU GUE"* — **jangan pernah mengirim penilaian/verdict**
+(mirip berapa persen, tajam/lembut, cantik/tidak) ke user; kirim berkas + mesin + biaya, biarkan user menilai.
+Kesalahan asisten: berulang kali melaporkan "vision verdict" (80–85% mirip, kulit lebih mulus, dst) — itu
+menjawab pertanyaan yang tidak ditanya dan membuat user marah. Pemakaian vision **hanya untuk kerja internal**
+(memilih berkas/urutan yang benar), bukan untuk dinarasikan sebagai penilaian.
 **Rencana B (terverifikasi, belum dijalankan):** 12 app berkunci identitas ditemukan; terbaik
 `2055210524090093569` (Qwen Edit 2511 双图版, slot `图1`+`提示词`+`图2` → 图1 dipakai sebagai jangkar wajah);
 alternatif penajam+identitas `1970049702286794753` (无损高清放大 + 最强人物一致性, 4 slot gambar). Yang
