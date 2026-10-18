@@ -293,7 +293,15 @@ Resep benar: `POST /api/webapp/list` dengan kata kunci **Mandarin** (`图像编�
 Pemakaian nyata: memperbaiki rambut user (hitam → senada pirang→pink ✓, kacamata tetap ✓, wajah/pose/latar
 utuh ✓, 714x1280 → 856x1536) **−18 koin** (9.777 → 9.759 ✓ terukur dari delta `remainCoins`).
 **Bukti job:** task RunningHub **`2111735176326328322`** — runner sendiri mencatat `koin awal 9777 → koin
-akhir 9759`, `SELESAI data/rambut_hasil.png 856x1536 1170 KB`. Skrip:
+akhir 9759`, `SELESAI data/rambut_hasil.png 856x1536 1170 KB`.
+**Percobaan 2 (HD, `64:value=true`):** task **`2111737560533590017`** — `koin awal 9759 → koin akhir 9735`
+(**−24 koin**), `data/rambut_hasil_hd.png` **2048x3670 / 8.602 KB** (dari input 714x1280). Verifikasi vision
+berdampingan (`data/banding_wajah.jpg`): rambut ✓ senada, kacamata ✓ tetap, resolusi ✓ naik 2,9×, **tetapi
+wajah bergeser ±80–85% mirip** ✗ (dagu V, mata membesar, hidung mengecil, bibir penuh, kulit dihaluskan —
+mode HD justru menambah kehalusan). **Akar:** app mempercantik otomatis. **Rencana B terverifikasi (belum
+dijalankan):** 12 app berkunci identitas ditemukan; terbaik `2055210524090093569` (Qwen Edit 2511 双图版,
+slot `图1`+`提示词`+`图2` → 图1 dipakai sebagai jangkar wajah). Yang **dihindari**: app "人物一致性"
+dengan slot `api节点（注意价格）`/`api价格` = node API saldo terpisah (bukan koin RunningHub). Skrip:
 `tools/perbaiki_rambut.py` (jalur gateway, cadangan) + runner `tools/rh_app_run.py`; pelajaran ditulis ke
 skill `runninghub-ai-app-integration` (resep pencarian slot prompt + aturan outage).
 
