@@ -204,6 +204,21 @@ untuk berkas hasil identik → satu render motion 20 dtk menembus **±700 koin**
 Perbaikan: **percobaan pertama pakai instance DEFAULT**, percobaan ulang baru `plus` (keandalan tetap ada).
 Proyeksi lunas utang 701 koin: **≤2 job motion** (bukti = delta `remainCoins` pada job motion berikutnya).
 
+**12) KRITIS — JANITOR MENGHAPUS ASET USER (18 Okt 14:13).** `janitor()` menghapus berkas di `data/` yang
+umurnya > `MOTIONBOT_KEEP_DAYS` (3 hari) **tanpa memeriksa database** ✗ → character sheet user
+**"Arunika · Kamar (Latar A)"** (`data/char_8886993492_latarA_2160x3840.jpg`, dibuat 14 Okt) dan
+**"Arunika"** (`char_..._IMG_4237.JPG`) **terhapus**; baris `characters` tetap ada → karakter HILANG dari menu
+(user: *"KARAKTER ARUNIKA LATAR A GUA HILANG!"*). **Pemulihan:** Latar A dikembalikan dari salinan vault
+`BACKGROUND/character_sheet_latarA.jpg` (3072x5504) ke jalur persis yang dipakai DB ✓; id 6 (IMG_4237) **tidak
+ada salinan** → perlu user kirim ulang foto.
+**Perbaikan (commit `c0dd78b`):** janitor membaca daftar berkas yang masih dirujuk DB (`characters.sheet_path/
+photo_path`, `jobs.photo/photo2/video`) → **tidak pernah menghapusnya**; prefix `char_` selalu aman; kalau
+pembacaan DB gagal → **menghapus NIHIL** (fail-safe; terbukti aktif sebelum `import sqlite3` ditambahkan).
+**Tambahan:** pemilih karakter (`char_pick_kb`/`pick_char_kb`) kini hanya menampilkan karakter yang berkasnya
+ADA (entri rusak disembunyikan + dicatat di log) supaya user tidak memilih karakter yang bikin job gagal.
+**Pelajaran:** setiap pembersih otomatis WAJIB membaca DB dulu; kehilangan aset user jauh lebih mahal
+daripada disk penuh.
+
 ## 🆕 (16 Okt) FITUR 🎬 GENERATE VIDEO HIDUP + UJI MESIN KLING 3 PRO REPLICA
 
 **1) Menu 🎬 Generate Video TIDAK LAGI PLACEHOLDER.** Alur: tekan menu → pilih karakter (atau foto baru)
