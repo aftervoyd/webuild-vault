@@ -668,6 +668,73 @@
 
 ---
 
+## 🎙️ VoiceAgent / RepoScout — Suara Bahasa Indonesia TANPA GPU (pengumuman desa, audio WA, voice-over)
+
+> Riset **2026-10-20** — rotasi topik: **TTS/voice**, sudut yang belum ada: katalog punya mesin suara **butuh GPU + cuma EN/ZH** (voice cloning, studio), **belum punya jalur "suara Indonesia, jalan di CPU, gratis"**.
+> **Kebutuhan nyata:** (1) **voice-over Bahasa Indonesia** buat video promosi desa/UMKM tanpa bayar ElevenLabs, (2) **audio pengumuman** yang bisa dibroadcast ke WA grup warga, (3) **"mode baca"** di situs desa (aksesibilitas untuk warga lansia / rendah literasi).
+> Semua angka & lisensi diverifikasi hari ini via `gh api` + **file lisensi asli** + `curl` ke HuggingFace. **Suara Indonesia gratis diverifikasi dengan menjalankan `edge-tts --list-voices | grep id-ID`** (bukan asumsi).
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **sherpa-onnx** | github.com/k2-fsa/sherpa-onnx | Runtime **CPU-only tanpa GPU**: STT + **TTS** + diarisasi + pemisahan suara; menjalankan model VITS/**piper** (termasuk suara **Indonesia** `csukuangfj/vits-piper-id_ID-news_tts-medium` di HF) | C++ (+ binding Python/JS/Swift/Android) | ✅ **Apache-2.0** (`LICENSE`) | 15.383 (**123**) · **66 commit/60d** · 100 kontributor · push 2026-10-17 | VoiceAgent + OpsAgent | ✅ **REKOMENDASI** — inilah "mesin suara offline" buat kita: **pengganti resmi piper** (repo `rhasspy/piper` **ARCHIVED**, 11.301⭐) & jalan di CPU |
+| **Kokoro-FastAPI** | github.com/remsky/Kokoro-FastAPI | Server **OpenAI-compatible `/v1/audio/speech`** untuk TTS: `docker run -p 8880:8880 ghcr.io/remsky/kokoro-fastapi-cpu:latest` (**1 container, CPU**) — bisa dicolok jadi provider TTS custom Hermes | Python / FastAPI / Docker | ✅ **Apache-2.0** (`LICENSE`) | 5.560 (**36**) · **60 commit/60d** · 53 kontributor · push 2026-10-14 | VoiceAgent + OpsAgent | ✅ **PAKAI** — paling praktis buat voice-over konten; ⚠️ **suara Kokoro = en/es/fr/hi/it/ja/pt/zh → TIDAK ada Bahasa Indonesia** (buat desa pakai jalur lain di bawah) |
+| **edge-tts** | github.com/rany2/edge-tts | TTS **gratis** lewat layanan Edge Microsoft (tanpa API key) — **2 suara Indonesia terverifikasi**: `id-ID-ArdiNeural` (pria) & `id-ID-GadisNeural` (wanita) + `ms-MY-OsmanNeural`/`Yasmin` | Python (CLI + library) | ⚠️ **LGPL-3.0** | 12.330 (?) · 8 commit/60d · 22 kontributor | VoiceAgent + SocialAgent | ✅ **PAKAI (jalur tercepat hari ini)** — voice-over Indonesia & audio pengumuman WA **sekarang juga**; ⚠️ **butuh internet** (bukan offline) → jangan jadi satu-satunya jalur |
+| **ArboTTS** | github.com/ARBO-TEAM/arboTTS | TTS **bilingual Indonesia + Inggris** super ringan: VITS/Kokoro/**Piperlite INT8** (1,55 MB buat ESP32), **inference CPU (klaim RTF 0,025x)**, **API REST kompatibel OpenAI**, demo **WASM jalan di browser (nol server)** | Python / ONNX / WASM | ✅ **MIT** (`LICENSE`, © ARBO-TEAM 2026) | **3** (**0**) · 34 commit/60d · **1 kontributor** · dibuat **2026-10-12** | VoiceAgent | ⚠️ **UJI DULU** — paling pas secara fitur (Indonesia + CPU + browser), **tapi** repo umur 8 hari, ⭐ 3, tim 1 orang, klaim besar → verifikasi kualitas audio dulu sebelum masuk produk klien |
+| **kokoro-onnx** | github.com/thewh1teagle/kokoro-onnx | Kokoro-82M via **ONNX Runtime** (CPU) — TTS ringan tanpa PyTorch | Python / ONNX | ✅ **MIT** | 2.792 (18) · **1 commit/60d** · push 2026-09-01 | VoiceAgent | 🔸 CADANGAN — nyaris statis; pakai **Kokoro-FastAPI** kalau mau server |
+| **hexgrad/kokoro** (model) | github.com/hexgrad/kokoro | Sumber model **Kokoro-82M** (bobot di HF: **apache-2.0** ✅) — kualitas terbaik di kelasnya (82 juta parameter) | JS/ONNX/model | ✅ Apache-2.0 (kode & bobot) | 9.494 (71) · **0 commit/60d** · push **2025-08-06** | VoiceAgent | ⚠️ **STAGNAN** (14 bulan tanpa commit) & **tanpa suara Indonesia** → pakai bobotnya saja, jangan harap fitur baru |
+
+### 🇮🇩 Suara Indonesia offline (model, bukan kode) — cek lisensinya satu-satu
+| Model (HuggingFace) | Catatan | Lisensi |
+|---|---|---|
+| `rhasspy/piper-voices/id/id_ID/news_tts/medium` | Satu-satunya suara piper Bahasa Indonesia (22,05 kHz, 1 pembicara) — jalan via **sherpa-onnx** | ⚠️ **TIDAK JELAS** — `MODEL_CARD` cuma bilang *"Dataset License: See URL"* (korpus Kaggle Indic TTS) |
+| `csukuangfj/vits-piper-id_ID-news_tts-medium` | Salinan siap-pakai untuk sherpa-onnx (dikelola maintainer sherpa-onnx) | ⚠️ sama (turunan voice di atas) |
+| `grandhigh/Chatterbox-TTS-Indonesian` | Finetune Chatterbox → Indonesia (±0,5B) — kualitas bagus | ⚠️ perlu **GPU/berat di CPU**; lisensi model harus dibaca di HF |
+| `alkhrzmy/qwen3-tts-0.6b-indonesian` · `Wikidepia/indonesian-tts` | Finetune Qwen3-TTS 0,6B & Coqui lama (2022) | ⚠️ bobot besar (CPU lambat) / **Wikidepia = tanpa lisensi** → jangan dipakai komersial |
+
+### 🔎 Catatan voice/TTS Indonesia (kenapa ini penting buat Webuild)
+- 🎯 **Urutan paling realistis buat kita (VPS tanpa GPU, RAM ketat):** **edge-tts (id-ID-Ardi/Gadis, gratis, online)** buat mulai hari ini → **sherpa-onnx + voice id_ID** kalau butuh offline & stabil → **Kokoro-FastAPI** buat voice-over bahasa Inggris/pasar luar → **ArboTTS** tinggal diuji (dia satu-satunya yang janji "Indonesia + browser + CPU").
+- 🖥️ **"Mode baca" situs desa = fitur murah yang langsung jadi bahan jualan:** tombol 🔊 di tiap artikel/kabar desa. Dua jalur: **(a) Web Speech API bawaan browser** (suara id-ID dari Android/iOS — nol kode baru, nol biaya) atau **(b) audio MP3 yang kita prasetel** pakai edge-tts/sherpa-onnx (kualitas konsisten, bisa diputar berkali-kali, hemat kuota warga). Untuk desa, (b) lebih tahan banting karena **Android murah sering tak punya suara id-ID terpasang**.
+- 📻 **Audio pengumuman → WA grup warga** = paket "pengumuman suara" (MP3 dari edge-tts) yang bisa jadi layanan mikro tambahan untuk paket desa; sekalian jalan pintas buat warga yang malas baca teks panjang.
+- ⚖️ **Jebakan lisensi ke-12 (baru): "SDK/model RESMI" ≠ berlisensi, dan MODEL SUARA punya lisensi PER-SUARA.** `xendit/xendit-node` (SDK resmi Xendit) **tak punya file LICENSE sama sekali**, sementara `xendit-php/go/python` = **MIT** — jadi satu keluarga SDK pun bisa beda. Untuk suara: lisensi **bukan** di repo piper, tapi di file **`MODEL_CARD` tiap voice** (piper id_ID = *"See URL"* / tidak jelas). **Kokoro = Apache-2.0 termasuk bobotnya** (aman) — tapi tak ada suara Indonesia.
+- 🔍 **Query tajam kategori ini:** `text-to-speech in:name,description stars:>1500 pushed:>2025-06-01` (yang muncul: Handy, DeepSpeech, index-tts, sherpa-onnx…) · **`kokoro tts`** · untuk Indonesia **nama bahasa Indonesia jauh lebih berguna daripada kata umum**: `tts indonesian in:name,description` & `indonesian speech` (yang muncul malah dataset deteksi ujaran kebencian → saring manual). Cari **model** di HuggingFace, bukan GitHub (query `https://huggingface.co/api/models?search=indonesian%20tts`).
+- 💡 **Keaktifan ≠ ⭐, lagi-lagi:** `hexgrad/kokoro` 9.494⭐ tapi **0 commit/60 hari**, `kokoro-onnx` 1 commit/60d, sementara `Kokoro-FastAPI` (⭐ lebih kecil) **60 commit/60d** → yang dipilih **Kokoro-FastAPI**.
+
+---
+
+## 💳 WebBuilder / SalesAgent — Checkout UMKM Indonesia: QRIS & pembayaran (tanpa biaya gateway)
+
+> Riset **2026-10-20** — rotasi topik kedua: **web dev**, sudut yang belum ada: katalog punya *mesin toko* (Medusa/Saleor/openumkm) & *katalog statis + checkout WhatsApp*, **belum punya bagian yang paling ditanya UMKM: "uangnya masuk bagaimana?"**
+> **Kebutuhan nyata:** untuk penjual kecil (warung, katering, olshop rumahan) **jangan** pasang gateway berbunga di VPS kecil — cukup **checkout WhatsApp + QRIS**. Yang dicari: library **QRIS statis → dinamis** (nominal otomatis) + SDK gateway resmi kalau klien naik kelas.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **QRIS Dinamis** | github.com/verssache/qris-dinamis | **Parse / validasi / generate QRIS**: ubah QRIS **statis merchant → dinamis** (nominal + biaya otomatis, NMID tetap) + CLI & API | TypeScript (Vite/React) | ✅ **MIT** (`LICENSE`, © 2020 QRIS Dinamis) | 521 (**1**) · **0 commit/60d** · 1 kontributor · push 2026-04-01 | WebBuilder + SalesAgent | ✅ **PAKAI (referensi utama)** — kode kecil & stabil, persis kebutuhan "warung punya QRIS sendiri"; ⚠️ tak dirawat 6 bulan & subs 1 → **salin logikanya**, jangan berharap fitur baru |
+| **qris-static-dynamic-core** | github.com/nurafandito/qris-static-dynamic-core | Inti konversi QRIS statis→dinamis (parser, validator, converter) + 4 fork | TypeScript | ✅ **MIT** (`LICENSE`, © 2026 Nur Afandi) | 44 (**0**) · 1 commit/60d · push 2026-09-15 · repo **21 KB** | WebBuilder | ✅ **PAKAI** — alternatif lebih segar dari `qris-dinamis`, kode ringan (21 KB) buat dipelajari |
+| **Midtrans SDK resmi** | github.com/Midtrans/midtrans-nodejs-client | SDK resmi Midtrans untuk **Node/Next.js** (Snap, QRIS, VA, e-wallet) — 422⭐ versi PHP, 142⭐ versi Go juga ada | JS/TS (juga PHP/Go) | ✅ **MIT** (`midtrans-nodejs-client`, `midtrans-php`, `midtrans-go`) | Node **220** (11) · **0 commit/60d** (push 2025-06) · PHP 422⭐ (push 2025-03) | WebBuilder + SalesAgent | ✅ **PAKAI** kalau klien mau gateway sungguhan — API stabil walau SDK melambat 16–19 bulan (⚠️ perhatikan update dependency) |
+| **Xendit SDK resmi** | github.com/xendit/xendit-node | SDK resmi Xendit (Invoice, QRIS, VA, disbursement) untuk Node | TypeScript (juga PHP/Go/Python) | ⚠️ **xendit-node = TIDAK ADA file lisensi** (php/go/python = **MIT**) | Node 150 (21) · push 2025-10-01 | WebBuilder | ⚠️ **HATI-HATI** — repo resmi tapi **tanpa lisensi = all rights reserved**; untuk produksi klien pakai **jalur PHP/Go/Python (MIT)** atau **panggil REST API langsung** |
+| **pakasir-sdk** | github.com/zeative/pakasir-sdk | Klien API **Pakasir** (gateway lokal ringan, fee kecil, QRIS) | Go | ✅ **MIT** | 24 (3) · push 2026-09-29 | SalesAgent | 🔸 CADANGAN — pihak ketiga tak resmi; cocok buat jualan kecil (digital/UMKM) |
+| **ongkir-sdk** | github.com/cakfan/ongkir-sdk | SDK multi-penyedia **ongkos kirim Indonesia** (Biteship, Komship) | TypeScript | ✅ **MIT** | 3 (**0**) · push 2026-08-04 | WebBuilder | 🔸 CADANGAN — kecil/unofficial; kalau butuh: **panggil API RajaOngkir/Biteship langsung** dari Astro API route |
+| **go-payment** | github.com/imrenagi/go-payment | Konektor pembayaran Midtrans + Xendit (Go) | Go | ✅ MIT | 406 (7) · push **2023-07** | — | 🚫 **USANG** (3 tahun) — pakai SDK resmi langsung |
+| **rajaongkir (kavist)** | github.com/kavist/rajaongkir | Klien API RajaOngkir (PHP) | PHP | ✅ MIT | 131 (3) · push **2022-03** | — | 🚫 **USANG** — referensi saja |
+| **gopay/goBiz mutation scrapers** | github.com/ahmadzakiyox/gopay-api-gateaway · github.com/rzkyyds/gobiz-payment-v2 | "Gateway" yang memantau **mutasi GoPay/GoBiz** (auto-konfirmasi pembayaran) | JS/TS | GoPay = tanpa lisensi · gobiz-v2 = MIT | 240 (?) · 34 | — | 🚫 **JANGAN** — menyalahi ToS GoPay/GoBiz & **risiko akun klien diblokir**; ini yang paling ditakutkan merchant |
+
+### 🚨 Yang populer TAPI **tanpa lisensi** (jangan dipakai di produk klien)
+| Repo | ⭐ | Masalah |
+|---|---|---|
+| github.com/idlanyor/qris-api | 78 | `license = NONE` (tidak ada file lisensi) — = *all rights reserved* |
+| github.com/Adytm404/qris-dinamis-generator | 65 | tanpa lisensi, push Juli 2025 (web tool) |
+| github.com/mmenghancurkan/dynaQRIS | 50 | tanpa lisensi (Python) |
+| github.com/Wimboro/qris | 35 | tanpa lisensi |
+
+### 🔎 Catatan checkout UMKM (penting & jujur)
+- ✅ **Pola paling hemat buat penjual kecil (nol biaya bulanan):** situs/katalog statis → tombol **"Pesan via WhatsApp"** (pesan otomatis berisi barang+jumlah) → pembeli **scan QRIS** merchant. Kalau merchant sudah punya **QRIS statis**, kita bisa bikin **QRIS dinamis** dengan `qris-dinamis`/`qris-static-dynamic-core` (**MIT**) supaya nominal & pesanan tercatat otomatis — **tanpa MDR tambahan, tanpa daftar merchant baru**.
+- ⚖️ **Kejujuran soal legalitas QRIS statis→dinamis:** sampai riset ini **tidak ada aturan Bank Indonesia yang secara eksplisit melarang atau mengizinkan** konversi QRIS statis→dinamis oleh pihak ketiga (yang berubah hanya tag 01/54/63; **NMID merchant tidak diubah** sehingga dana tetap masuk ke rekening merchant yang sama). Karena itu **jangan kita klaim "legal"**: tulis di kontrak/penawaran bahwa **merchant wajib mengonfirmasi ke akuirer/PJSP & bank-nya**; kalau bank melarang → pakai jalur gateway. Yang **jelas dilarang/haram**: meng-*scrape* mutasi GoPay/GoBiz akun klien (blokir akun + ToS).
+- 🪜 **Tangga eskalasi pembayaran (dari murah ke mahal):** (1) **transfer/QRIS manual + konfirmasi WA** [nol kode, nol biaya] → (2) **QRIS dinamis otomatis** (`qris-dinamis` MIT) [nol biaya bulanan, ada catatan pesanan] → (3) **Pakasir** (gateway fee kecil, pihak ketiga) → (4) **Midtrans/Xendit SDK resmi** [klien serius: invoice, VA, e-wallet, refund otomatis] → (5) mesin toko penuh (**Medusa MIT**) hanya kalau butuh stok/varian/multi-penjual.
+- 🧾 **Ini menjawab utang keputusan `t_2af5e946` (segmen toko UMKM, `ready` sejak 15 Okt):** untuk **mulai jualan sekarang** cukuplah (1)+(2) — **tidak butuh VPS khusus web & tidak butuh keputusan Xendit dulu**; Xendit/Midtrans ditunda sampai ada klien yang benar-benar minta checkout otomatis.
+- 🔍 **Query tajam kategori ini:** **`qris in:name,description`** (+ filter `license:mit` atau cek file lisensi!), **`midtrans in:name,description`**, **`xendit in:name,description`**, `payment gateway indonesia` (hasilnya kecil-kecil & sebagian tanpa lisensi). ⚠️ Kata **`qris`** juga menarik **`qrisp`** (pemrograman kuantum), **`qri-io`** (data tooling), dan `rajaongkir` menarik proyek PHP lama → saring manual. **`rajaongkir`/`ongkir` = semua usang (2022–2023)** → untuk ongkir, panggil API langsung.
+
+---
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
