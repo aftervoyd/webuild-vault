@@ -185,3 +185,20 @@ Saldo: **13.279 RH Coins** (Δ −1.132 vs 14.411). Rantai: 18.847 → 14.411 �
 - **T-AIFF Türkiye** tidak sepenuhnya gratis: kategori internasional **$1** (nasional gratis), ≤20 mnt, maks 5 karya.
 - **PixLight 2026** deadline 31 Okt, $300K, tapi **wajib PixVerse Canvas**.
 - Jangan pernah menjadwalkan render ke malam dengan alasan "jam gratis" — **tarif koin 24 jam penuh** (Qwen-Edit ±50/gambar; motion ±26 koin/detik; H3 i2v ±16,4 koin/detik).
+
+---
+## 8. SCAN 19 OKT 2026 (08:00 WIB) — saldo kritis + kontes baru
+**Saldo:** 7.040 RH Coins (**Δ -2.784** vs 18 Okt 9.824). Rantai: 18.847 → 14.411 → 13.279 → 12.188 → 9.824 → **7.040**. Rata-rata 3 hari terakhir ≈ **-2.400/hari** ⇒ kalau berlanjut, koin habis **±22 Okt** (refill membership baru **8 Nov** = defisit 13-17 hari). Belum ada bukti render besar hari ini; tren turun konsisten.
+**Aksi:** rem koin — DILARANG render kecuali submit kontes gratis. Klaim ±100 koin login (hangus 24 jam).
+
+### Kontes BARU (belum ada di bagian 3/6/7)
+| Kontes | Biaya | Deadline | Catatan |
+|---|---|---|---|
+| **Artefact AI Film Festival 3rd ed. " (Dis)Connection" (Paris, mk2)** | **GRATIS** | **2 Des 2026** | **TOP PICK** — Grand Prize **€10.000** + potongan 30 dtk tayang 1 minggu di semua bioskop mk2. Peserta ed.2: 223 sutradara/52 negara. Global. |
+| **AKOOL AI Film Challenge** | gratis (wajib pakai tool AKOOL) | 20 Des 2026 | Grand Prize **$50.000** — TAPI AKOOL harus dipakai signifikan ⇒ kita belum punya tool-nya (butuh akun+koin AKOOL). |
+| Showrunner AI Film | cek | 15 Des 2026 | $20.000 |
+| **T-AIFF Türkiye 3rd ed. (Istanbul, AKM)** | simbolis via FilmFreeway | **1 Nov 2026** (14 hari) | Gratis submit, worldwide, ≤20 mnt, **11 kategori** (banyak kursi juara), film dibuat ≥1 Jan 2025, belum tayang TV/online. Est. 4.000 submission. |
+| AI M0V1E Film Festival | cek | 1 Nov 2026 | $1.000 Feature / $700 Series / $500 Short — **wajib upload ke m0v1e.ai**. |
+| AI Filmfest Athens ("Myths Meet Machine") | cek | **19 Okt (HARI INI, lewat)** | €1.000/kategori — skip. |
+
+**aibetas.com:** tidak ada agenda baru (masih 6 China: 31 Okt, 1 Nov, 22 Nov, 3 Des, 6 Des, 31 Des).

@@ -1269,3 +1269,29 @@ Bukti uji `tools/uji_foto_file.py` (4 kasus, semua PASS):
 - FILE PNG → diterima, tersimpan **84.957 byte = persis ukuran asli** (tanpa kompres), state → video
 - FILE pdf → ditolak, state tetap
 - FOTO Telegram → tetap diterima seperti dulu
+
+## 19 Okt 2026 — MESIN COSPLAY JADI DEFAULT RUNNINGHUB (perintah pemilik)
+
+Perintah: *"gua cuma mau simple bot cosplay: gue kirim karakter sheet atau load yang ada di bot, gue kirim
+foto cosplay acuan, lu kirim ke runninghub — gausah banyak filter prompt"* + *"jadiin default, fix nanti"*.
+
+- `tools/cosplay.py`: jalur **RunningHub dipanggil PALING DEPAN** (sebelum `baca_acuan`), jadi pembaca
+  acuan/vision **tidak jalan**. App = `2095689306085285890` (Outfit Transfer + Pose + 4K), peta slot
+  `20:image=orang,21:image=orang,41:image=acuan,113:text=prompt`, **prompt satu baris**
+  (`让图1中的人物穿上图3的服装`). Default app id ada di KODE; mengosongkan `MOTIONBOT_COSPLAY_RH_APP`
+  di `.env` = balik ke Inferhub lama. `.env` dicadangkan ke `.env.bak-20261019-1431-cosplayRH`.
+- Hasil terukur lewat fitur bot: **2144x3840** (dari 832x1248 sebelumnya). Biaya **≈107 koin/render 4K**
+  (app menagih mengikuti ukuran keluaran; perkiraan lama "±40" SALAH).
+- **Bug yang diperbaiki di `rh.py`**: dulu `_ambil_hasil` memulangkan berkas PERTAMA yang sah → app ini
+  memulangkan pratinjau 760px + 4K, jadi **4K-nya dibuang** dan itu akar keluhan "hasil cosplay nggak tajam".
+  Sekarang semua keluaran diunduh → dipilih piksel terbesar (gambar menang atas video). Uji unit tanpa
+  jaringan 4/4 lulus (`tools/uji_pilih_keluaran.py`).
+- `bot.py`: pengaman pemantau nyangkut (≤20 dtk, job 84) + adopsi task yang sudah MATI → dikembalikan ke
+  antrean untuk render baru. Commit: `3809992`.
+- **Cacat lama yang BELUM dibetulkan (fix nanti)**: pembaca acuan (`MESIN_MATA`, default kode
+  `ag/gemini-3.8-flash-high`) kadang menggolong **foto asli sebagai "ilustrasi"** → alur masuk cabang
+  ilustrasi → hasil menyalin acuan & mengabaikan karakter (terukur job 69, 80, 85, 86 — sudah ada sejak
+  18 Okt, sebelum perubahan operator; bukti: log `jenis acuan:` per job). Sekarang tidak berdampak karena
+  pembacanya dilewati di jalur RunningHub.
+- Commit kreeaimotion: `3809992`. Berkas hasil: `data/imgjob_87/cosplay_job87_rh4k.png` (2144x3840),
+  `data/varian_A_sheet_plus_baju_taman.png`, `data/varian_B_foto_taman_plus_kostum_sheet.png`.
