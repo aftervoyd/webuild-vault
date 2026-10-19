@@ -4,7 +4,76 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-19** (run harian · cakupan 18 Okt 2026)
+**Update terakhir: 2026-10-20** (run harian · cakupan 19 Okt 2026)
+
+---
+
+## 🆕 Update 2026-10-20 (run harian — cakupan 19 Okt 2026)
+
+> Cek sumber resmi 20 Okt 07:00 CST: probe portal `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` via **curl** → **ADA 8 item baru: id 10609–10616** (**7 item bertanggal Senin 19 Okt 2026** + **1 item Kategori «Artikel» bertanggal 1 Okt**); **10617–10660 semua 404** (re-probe konfirmasi) → itu batas terbaru. **Volume melonjak** karena **Bali Tech Week 2026 dibuka (19–23 Okt)**. `domain.go.id` **200** (berita terbaru tetap **3 Sep 2026**). `jdih.komdigi.go.id` **200** (produk terunggah terbaru tetap **Kepmen 141/2026 — 9 Sep 2026**; **Rancangan PUU 32 dok** & **Partisipasi Publik 19 dok** = **tidak berubah**) → **belum ada Permen baru Oktober 2026**. ⚠️ **Tidak ada perubahan regulasi.** Temuan paling berguna hari ini **bukan aturan**, tapi **set angka konektivitas desa** (portal **10613**) → bahan argumentasi jual + **ICANN87 di Bali (17–22 Okt)** masuk radar domain.
+
+### 31. ⭐📶 **Deregulasi telekomunikasi + set angka "desa belum terhubung"** (bahan jual terukur) — 19 Okt 2026 — *dampak: TINGGI (materi jual)*
+- **Apa yang berubah** (portal **10613**, **Senin 19 Okt 2026 – 16:30**, Kategori **Siaran Pers**): Wamenkomdigi **Angga Raka Prabowo** di **Bali Tech Week 2026 (Denpasar, 19/10)** menyatakan pemerintah **mengkaji deregulasi industri telekomunikasi**:
+  - Kutipan kunci: *"Deregulasi bukan semata-mata untuk mempermudah kegiatan usaha, melainkan menciptakan ekosistem investasi yang efisien, kompetitif…"* · beban regulasi industri saat ini **±13–14% dari pendapatan operator** → dikaji diturunkan, target **ruang tumbuh industri s/d 5%**.
+  - Cakupan pembenahan: **infrastruktur pasif** (prinsip *"membangun sekali, dimanfaatkan bersama"* — penggunaan bersama **menara & tiang**, jalur utilitas terpadu, akses terbuka) → konektivitas → **platform & komputasi** → **aplikasi & layanan**.
+  - 📊 **Angka konektivitas 2026 (data resmi, dipakai berulang):** **81,7% penduduk / ±235 juta** sudah terhubung internet · **4G menjangkau ±83.000 desa** · **±2.000 desa & permukiman BELUM terjangkau 4G** · **fixed broadband baru ±21% rumah tangga** · biaya fixed broadband **4,86% PNB per kapita** (acuan keterjangkauan **2%**) · kecepatan **51 Mbps (fixed) / 66 Mbps (mobile)** → target **100 Mbps 2029**.
+  - 🆕 **Angka pendukung (media 19 Okt, Balipost/Bisnis.com):** **538 desa** = kewajiban pembangunan pemenang lelang spektrum · **±1.450 desa** butuh **model bisnis baru** · baru **42% sekolah, 41% puskesmas, 44% kantor** terhubung · **90% trafik internasional masih lewat negara tetangga** · peringkat **113/149 (fixed)** & **70/102 (mobile)**, Agu 2026. Komdigi juga menyiapkan **insentif + penurunan beban regulasi** untuk investasi infrastruktur **wilayah terpencil** (Bisnis.com, 19 Okt).
+- ⚠️ **Catatan akurasi (JANGAN tulis sebagai kebijakan baru):** angka **"2.000 desa blankspot"** sudah diumumkan **Dirut BAKTI Fadhilah Mathar** (Bakti Media Connect, **12 Agu 2026**) dan target **fixed broadband 22%→50%** sudah disampaikan **Wamen Nezar** (portal **10592**, **12 Okt 2026**). **Yang benar-benar baru di 10613:** kerangka **deregulasi** (beban **13–14%** pendapatan operator + **insentif** wilayah 3T) → tulis sebagai **penegasan + kerangka baru**, bukan program/peraturan baru.
+- Sumber: portal **10613** ✅ (teks lengkap dari badan HTML) + media: **ANTARA** (5796885), **Liputan6**, **Kompas money (19/10 18:43)**, **Bisnis.com teknologi (19/10)**, **uzone.id**, **Balipost (19/10)**, **detik inet (12 Agu 2026, konteks BAKTI)**. ✅ terverifikasi.
+- **➡️ Dampak ke Webuild (TINGGI — pakai sebagai materi jual):**
+  - **Bahan argumentasi baru:** "**42% sekolah / 41% puskesmas / 44% kantor** belum terhubung" + "**±2.000 desa belum 4G**" → situs desa **harus ringan & cepat di koneksi lemah**. Angka ini sejalan dengan RPM Mobile Broadband (sinyal **−105 dBm**, kualitas **kuning 18 Mbps / merah 3 Mbps**) → klaim: *"situs Webuild terbuka di 3 Mbps"* kini punya pagar resmi.
+  - **Koneksi ke paket:** situs **Astro statis ±280 KB** (demo Desa Pamekaran) = bukti teknis; sertakan 1 baris perbandingan (**halaman tema WordPress 2–4 MB** vs **Webuild <300 KB**) di penawaran.
+  - **Radar peluang:** deregulasi + insentif berarti operator **akan** membangun di desa terpencil → makin banyak desa punya akses. **Jangan tunggu** jaringan datang untuk menawarkan situs; justru situs ringan + **mode baca 🔊** (temuan RepoScout) cocok untuk kondisi sinyal lemah.
+
+### 32. 🏝️ **Bali Tech Week 2026 resmi dibuka (19–23 Okt)** — T3 «Terhubung · Tumbuh · Terjaga» jadi arah resmi — 19 Okt 2026 — *dampak: sedang*
+- **Apa yang berubah** (portal **10612**, **Senin 19 Okt 2026 – 16:00**, Siaran Pers): Menkomdigi **Meutya Hafid** membuka **Bali Tech Week 2026** di **Bali Beach Convention Center, Sanur** — **13 kegiatan, 19–23 Okt 2026**. Kutipan: *"Tidak ada pertumbuhan ekonomi yang layak dikejar kalau tidak ada keterjagaan… inovasi harus mampu melindungi masyarakat… kepastian regulasi."* Disebut juga **±235 juta penduduk** sudah pakai internet (**penetrasi 81,72%**), **4G menjangkau 98,96% populasi**, prinsip *"no one left behind"* → target inklusivitas **100%**.
+- ⚠️ **Bukan aturan baru:** ini **acara + pernyataan arah** (T3 sudah jadi bahasa tetap Komdigi sejak Agu 2026). Sudah dijadwalkan & dikonferensikan pers **13 Okt** (portal lag → baru terbit sekarang).
+- **➡️ Dampak ke Webuild (sedang):** pakai kerangka **T3** sebagai **bahasa proposal** (klien desa/pemda bicara T3) — petakan paket: **Terhubung** = domain `.desa.id` + hosting cepat; **Tumbuh** = konten UMKM/berita desa; **Terjaga** = PDP-ready + retensi + tanpa pelacak. Tidak ada kewajiban baru.
+
+### 33. 🤝 **Indonesia–Singapura: "kepercayaan digital" + pelindungan anak & AI** — 19 Okt 2026 — *dampak: sedang (narasi PDP/AI)*
+- **Apa yang berubah** (portal **10614**, **Senin 19 Okt 2026 – 18:50**, Siaran Pers): **Meutya Hafid** dalam panel bersama **Menteri Pembangunan Digital & Informasi Singapura Josephine Teo** (rangkaian BTW 2026): *"Kepercayaan digital menjadi salah satu hal yang paling menjadi perhatian kami…"* → keberhasilan transformasi digital **bukan** hanya konektivitas/pengguna/kecepatan adopsi, tapi kemampuan menghadirkan **lingkungan digital yang aman**; menyorot **kekhawatiran orang tua atas anak** di ruang digital + **AI yang membuat masyarakat tidak nyaman** → **keamanan digital = prasyarat inovasi, bukan penghambat**. Menegaskan prinsip **T3**.
+- ⚠️ **Bukan aturan baru** (pernyataan panel; payung regulasinya sudah ada: **PP TUNAS/Permen 9/2026**, **UU PDP/PP 33/2026**, aturan AI yang masih dikaji).
+- **➡️ Dampak ke Webuild (sedang):** penguat narasi jual — *"kepercayaan digital"* = kalimat yang dipakai pemerintah sendiri. Cocokkan halaman **Kebijakan Privasi** situs desa dengan diksi ini (data minimal, tanpa pelacak pihak ketiga, retensi jelas). Untuk desa yang melayani **anak** (sekolah/PAUD/POSYANDU): **jangan** pasang formulir data anak tanpa dasar & persetujuan orang tua.
+
+### 34. 💼 **HUB.ID: 900+ pertemuan bisnis di BTW 2026** — 19 Okt 2026 — *dampak: rendah (peluang jaringan)*
+- **Apa yang berubah** (portal **10616**, **Senin 19 Okt 2026 – 16:10**, Siaran Pers): **Dirjen Ekosistem Digital Edwin Hidayat Abdullah** — **>900 pertemuan bisnis formal** difasilitasi **HUB.ID** selama BTW 2026, mempertemukan **startup, investor, perusahaan teknologi**; agenda: startup & investasi, gim, AI, **keamanan siber, aset digital**.
+- **➡️ Dampak ke Webuild (rendah):** indikator **permintaan web/sistem digital naik** di segmen startup/UMKM. Kalau ada kesempatan ikut forum sejenis: paket demo **Desa Pamekar** (live di Tailscale) = portofolio siap tunjuk. Tidak ada kewajiban baru.
+
+### 35. 📰 **Wamen Nezar: media arus utama = "rumah penjernih informasi"** (HUT-3 Sin Po TV) — 19 Okt 2026 — *dampak: rendah*
+- **Apa yang berubah** (portal **10609**, **Senin 19 Okt 2026 – 12:10**, **Siaran Pers No. 220/HM-KKD/10/2026**): Wamen **Nezar Patria** di Jakarta Barat (18/10) mendorong media menjaga **kode etik & jurnalisme profesional**; *"Masyarakat lebih banyak menerima informasi dari media sosial tanpa filter sehingga… ada banyak korban hoaks…"*
+- ⚠️ **TOPIK BERULANG (jangan tulis sebagai temuan baru):** tema "pers jernih vs disinformasi" sudah muncul **10 Okt 2026** (portal **10593**, ASEAN Forum hak cipta jurnalistik) dan lagi **18 Okt 2026** (portal **10608**). Hanya **panggungnya** yang berbeda (HUT Sin Po TV).
+- **➡️ Dampak ke Webuild (rendah):** pengingat operasional — situs desa **wajib mencantumkan sumber/kredit** berita & foto (bukan copy-paste), sejalan rencana **pelabelan konten AI** (portal **10607**).
+
+### 36. 🎖️ **Penghargaan "Pahlawan Perbatasan"** (acara Sin Po TV) — 19 Okt 2026 — *dampak: nol*
+- **Apa yang berubah** (portal **10610**, **Senin 19 Okt 2026 – 12:00**, Siaran Pers): Wamen **Nezar** memberi apresiasi pekerja wilayah perbatasan (penerima antara lain **Ipda Lalu Hiskam Anady**, **Letkol Inf Sy. Gafur Thalib**, **Dewi Irawati** KPID NTB). **Seremoni murni** — tanpa kebijakan/aturan/program. Tidak ada aksi untuk Webuild.
+
+### 37. 🔥 **Karhutla — "Berita Pemerintahan"** (non-Komdigi, ditayangkan di portal Komdigi) — 19 Okt 2026 — *dampak: nol (off-topic)*
+- **Apa yang berubah** (portal **10615**, **Senin 19 Okt 2026 – 18:30**, Kategori **Berita Pemerintahan**): Rakor tingkat menteri dipimpin **Menko Polkam Dudung Abdurrahman** — pemantauan titik panas, sekat kanal, sumur bor. Turut disebut **percepatan program Koperasi Desa Merah Putih** & **persoalan agraria desa dalam kawasan hutan**.
+- **➡️ Dampak ke Webuild (nol langsung):** bukan urusan Komdigi. Satu-satunya jembatan: program **Koperasi Desa Merah Putih** = target **digitalisasi koperasi desa** di masa depan (radar, belum ada paketnya).
+- ⚠️ **Pelajaran alat:** portal Komdigi **juga memuat rilis instansi lain** (kategori **"Berita Pemerintahan"**) → **saring** sebelum mencatat; jangan laporkan sebagai "berita Komdigi".
+
+### 38. ⚠️ **Anomali alat: item Kategori «Artikel» dengan tanggal LAMA di ID baru** (portal **10611**) — *bukan berita baru*
+- **Detail:** id **10611** = **"Merajut Kehidupan Digital Nusantara"**, Kategori **Artikel**, bertanggal **Kamis 1 Okt 2026 – 15:00** — isinya narasi **2 tahun pemerintahan** seputar **3 pilar T3** + bantuan akses internet sekolah di **Jayapura** + kutipan Menkomdigi dari **Forum DEAL (23/06/2026)**. **ID-nya muncul dalam rentang baru, tapi tanggalnya lama.**
+- ⚠️ **Aturan: ID portal ≠ kebaruan.** Untuk item **non-Siaran Pers** (kategori **"Artikel"/"Berita"/"Berita Pemerintahan"**), **selalu baca tanggal di badan HTML** — ID besar bisa saja hanya **re-publish/backfill** artikel lama.
+
+### 📌 Rekap media 19 Okt 2026 (bukan aturan baru, tapi ada yang penting)
+- ⭐ **ICANN87 Annual General Meeting di Nusa Dua, Bali — 17–22 Okt 2026** (JPNN Bali 19 Okt 16:56; PANDI + Komdigi + Pemprov Bali): **pertemuan publik ICANN pertama yang digelar di Indonesia**, dibuka **Menkomdigi Meutya Hafid**; dibahas **keamanan, stabilitas, interoperabilitas internet global**, **DNS abuse** & implementasi **New gTLD Program: 2026 Round** (Reveal Day **7 Okt 2026**, **1.615 aplikasi**). Penyelenggara: **PANDI = pengelola nama domain `.id`**. **➡️ Dampak ke Webuild (rendah–sedang, radar domain):** **tidak ada aturan `.desa.id` baru**, tapi ini **panggung kebijakan domain** — sinyal kebaruan yang wajib dipantau (PANDI, DNSSEC/DNS abuse, geoTLD spt `.bali`). Pantau `pandi.id` + JDIH.
+- **IGRS (Indonesia Game Rating System)** — detikINET 19 Okt 13:16 & 15:15: Komdigi **menargetkan IGRS aktif lagi tahun ini** + pembatasan akses game untuk anak. ⚠️ **Bukan aturan baru**: kewajiban label klasifikasi usia game sudah berlaku sejak **Jan 2026** (dasar **Permen 9/2026 / PP TUNAS**) → **penegasan target**. Dampak ke Webuild: nol (Webuild tidak menerbitkan game).
+- **4,2 juta konten judi online ditindak (per Okt 2026)** — detikBali 19 Okt 12:54 (disampaikan Meutya **di forum ICANN87**, di hadapan delegasi internet dunia) → **statistik**, bukan kebijakan baru. Tidak ada aksi untuk Webuild.
+
+### 📌 Status lain (per 20 Okt 2026)
+- **Regulasi: TIDAK ADA yang baru.** **JDIH** — produk terunggah terbaru tetap **Kepmen 141/2026 (9 Sep 2026)**; **Rancangan PUU 32 dok** & **Partisipasi Publik 19 dok** **tidak berubah** (teratas tetap **RPM pelaksanaan PP 17/2025 perlindungan anak** + uji publik perubahan **Permen Kominfo 7/2015**). ⚠️ Jangan simpulkan "baru" dari nomor besar — baca **"Diunggah pada …"**.
+- **Domain (`domain.go.id`):** **tetap tak ada berita baru sejak 3 Sep 2026** (HTTP 200, cek ulang hari ini). **Tidak ada aturan `.desa.id` baru.**
+- 📌 **UU PDP / PP 33/2026 — tinggal ±88 hari (berlaku 16 Jan 2027).** Kewajiban: notifikasi **kebocoran ≤3×24 jam**, **RoPA**, **DPIA** (termasuk **AI/ML/IoT**), **PPDP/DPO**, transfer luar negeri, denda s/d **2% pendapatan tahunan**. ✅ terverifikasi (**LN 2026 No. 88**).
+  - **Badan/Lembaga PDP BELUM berdiri** — **RPerpres masih di meja Presiden** (fungsi sementara di **Ditjen Pengawasan Ruang Digital**). **Belum ada Perpres baru hari ini.** **➡️ Dampak ke Webuild (TINGGI):** jalankan kampanye jual **"situs desa PDP-ready"** — minim data, **kebijakan privasi + retensi + hapus terjadwal**, tanpa pelacak pihak ketiga.
+- **Perpres AI (Peta Jalan AI Nasional + Etika AI) — BELUM terbit** (draf final di Setneg). Pantau **JDIH → Peraturan Presiden 2026**. **Permen pelabelan konten AI** masih **"sedang dikaji"** (portal **10607**, 17 Okt; dasarnya sudah dari Jan 2026).
+- ⚠️ **Permen tarif ODD (turunan Perpres 27/2026) — belum terbit, tenggat 31 Des 2026** → **tahan desain fitur kurir/toko lokal.**
+- ⚠️ **7 PSE lingkup privat:** tenggat **1 Okt 2026** kini lewat **19 hari** — **tetap tanpa pengumuman resmi**. Item paling "menggantung".
+- **UU Satu Data Indonesia (sah 6 Okt 2026):** belum ada berita **PP turunan / Penyelenggara SDI** (wajib dibentuk maks 1 tahun). Status quo.
+- ⚠️ **Sinyal sekunder — RPerpres "Gigabit City" (dokumen pengadaan):** Kode RUP **67787399**, pagu Rp200 jt, kontrak Okt–Des 2026. **Belum ada draf resmi** → perlu verifikasi.
+- 📅 **Pantau dekat:** **ICANN87 (17–22 Okt)** & **Bali Tech Week 2026 (19–23 Okt)** — cari **sinyal kebijakan** (Digital Economy Policy Forum) · **BDSF 2026 Bandung — 29 Okt (H-9)**.
+
+> 🛎️ **Buat Orchestrator:** hari ini **tidak ada regulasi baru** — tapi ada **1 temuan bernilai jual**: set angka konektivitas desa dari portal **10613** (**±2.000 desa belum 4G**; **42% sekolah / 41% puskesmas / 44% kantor** terhubung; acuan keterjangkauan **2%** vs realita **4,86%**) + wacana **insentif/deregulasi wilayah 3T** → masukkan ke **materi tawaran SalesAgent** sebagai bukti "kondisi lapangan" (situs harus ringan). **PP 33/2026 tinggal ±88 hari** → kampanye **"situs desa PDP-ready"** lanjut. **Radar tetap:** Permen pelabelan konten AI, 2 Perpres AI (di Setneg), Permen tarif ODD (31 Des 2026), **ICANN87/domain `.id` (PANDI)**. Portal **melonjak** (8 item) karena BTW — cek sinyal kebijakan lagi 21 Okt.
 
 ---
 
