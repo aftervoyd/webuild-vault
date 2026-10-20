@@ -202,3 +202,17 @@ Saldo: **13.279 RH Coins** (Δ −1.132 vs 14.411). Rantai: 18.847 → 14.411 �
 | AI Filmfest Athens ("Myths Meet Machine") | cek | **19 Okt (HARI INI, lewat)** | €1.000/kategori — skip. |
 
 **aibetas.com:** tidak ada agenda baru (masih 6 China: 31 Okt, 1 Nov, 22 Nov, 3 Des, 6 Des, 31 Des).
+
+---
+## 10. SCAN 20 OKT 2026 (08:00 WIB) — SALDO KRITIS + kontes baru
+**Saldo:** **993 RH Coins** (Δ **-6.047** vs 19 Okt 7.040). Rantai: 18.847 → 14.411 → 13.279 → 12.188 → 9.824 → 7.040 → **993**. Refill membership 8 Nov ⇒ **defisit ±19 hari** kalau koin habis hari ini.
+**Penyebab terukur (bukan bocor):** `/var/log/kreeaimotion.log` 19 Okt **00:34–23:37 WIB** — **29 job gambar** (job 77→98), **20 gagal**, app 2095689306085285890 (ganti baju/pose) + 2089183013887557633 (lapis wajah) + **video out_98.mp4 selesai 23:37**. Tarif berlaku 24 jam penuh ⇒ burn 6rb dalam 1 hari = jadwal kreeaimotion.
+**Aksi:** STOP/rem semua render (kreeaibot + kreeaimotion). 993 koin ≈ 1 video 16 dtk (431) atau ~20 gambar Qwen-Edit (50/gambar). Tidak ada jam gratis.
+### Kontes BARU (belum di bagian 3/6/7/8/9)
+| Kontes | Biaya | Deadline | Catatan |
+|---|---|---|---|
+| **ElevenLabs "The Search — World's Catchiest Ad"** | GRATIS | **1 Nov 2026** (12 hari) | **$100.000 total, juara 1 $50.000**, 11 pemenang; iklan **15–45 dtk** brand fiktif + jingle **wajib dibuat di ElevenCreative**; global; pengumuman 10 Nov. TOP PICK cepat. |
+| **Curious Refuge × Epidemic Sound Holiday Film** | GRATIS | **6 Des 2026** | **$7.500+ cash**; 2:00–6:00, tema Natal, wajib multi-shot hasil editan (1 klip mentah gugur); global (sumber: aifilmcontests.com). |
+| **Florence AI Festival (ed.1, VIA/Roma)** | berbayar | 15 Des 2026 | 8 kategori (Horror/Animation/Doc/Narrative/Comedy/MV/Ads/New World), ≤20 mnt, 18+, wajib AI Statement 100–300 kata. |
+| AI Film Fest Monaco | klaim gratis/31 Des | **ragu** | Halaman resmi `aifilmfest-monaco.com/submission` masih tulis deadline **25 Apr 2026** ⇒ klaim "$10K / 31 Des" **belum terverifikasi**, jangan diandalkan. |
+- Kontes lama yang tetap relevan: **Artefact (gratis, 2 Des, cap 314 dtk)** · **Chroma S2 (buka 19 Okt–7 Jan, $430K+, gratis)** · T-AIFF Türkiye (1 Nov).
