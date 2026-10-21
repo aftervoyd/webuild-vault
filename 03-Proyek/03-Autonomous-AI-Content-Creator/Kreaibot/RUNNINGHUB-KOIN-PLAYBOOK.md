@@ -216,3 +216,30 @@ Saldo: **13.279 RH Coins** (Δ −1.132 vs 14.411). Rantai: 18.847 → 14.411 �
 | **Florence AI Festival (ed.1, VIA/Roma)** | berbayar | 15 Des 2026 | 8 kategori (Horror/Animation/Doc/Narrative/Comedy/MV/Ads/New World), ≤20 mnt, 18+, wajib AI Statement 100–300 kata. |
 | AI Film Fest Monaco | klaim gratis/31 Des | **ragu** | Halaman resmi `aifilmfest-monaco.com/submission` masih tulis deadline **25 Apr 2026** ⇒ klaim "$10K / 31 Des" **belum terverifikasi**, jangan diandalkan. |
 - Kontes lama yang tetap relevan: **Artefact (gratis, 2 Des, cap 314 dtk)** · **Chroma S2 (buka 19 Okt–7 Jan, $430K+, gratis)** · T-AIFF Türkiye (1 Nov).
+
+---
+## 11. SCAN 21 OKT 2026 (08:00 WIB) — 🔴 SALDO HABIS TOTAL (0 KOIN)
+**Saldo:** **0 RH Coins** (Δ **-993** vs 20 Okt). Wallet $0,01. Tugas jalan: 0.
+Rantai penuh: 26.765 (10 Okt) → 18.847 → 14.411 → 13.279 → 12.188 → 9.824 → 7.040 → 993 → **0**.
+**Bukti kegagalan nyata (bukan estimasi):** `/var/log/kreeaimotion.log` & DB `jobs` → error RunningHub
+`{"code": 605, "msg": "NOT_ENOUGH_BALANCE"}`:
+- job **104** (video, 20 Okt) → **605 NOT_ENOUGH_BALANCE**
+- job **107** (21 Okt 00:01 WIB, gambar) → **605 NOT_ENOUGH_BALANCE**
+- job 106 (gambar) masih `done`; job 103 & 105 motion selesai 20 Okt 13:55 & 15:05.
+⇒ 20 Okt kira-kira: 8 job gambar (99–107an) + 2 video motion (103, 105) = menghabiskan 993 sisa koin.
+**Konsekuensi:** semua render (kreaibot + kreeaimotion) **mustahil jalan** sampai koin diisi; refill membership baru **±8 Nov** ⇒ defisit **±18 hari**.
+**Aset yang masih hidup:** kreeaimotion service `active` (siap terima order tapi render PASTI gagal 605) · kreaibot `active` · 0 proses render nyangkut.
+
+### Kontes — hasil scan hari ini (aibetas, aifilmcontests, melies, screenweaver, huskistudio)
+**TIDAK ADA kontes baru** yang layak & belum tercatat. Yang muncul di indeks sudah kita punya:
+- AKOOL AI Film Challenge ($50K, 20 Des, wajib tool AKOOL) · Showrunner ($20K, 15 Des, wajib Showrunner Studio)
+- Artefact Paris (gratis, €10K, 2 Des) · Berlin AIFF (31 Jan 2027) · AI ZONE (gratis, $500, 30 Nov) · Chroma S2 (7 Jan)
+- Kandidat "baru" yang saya cek & **gugur**: **Reply AI Film Festival** (€8K + Venice) → *"no 2027 window published"*, edisi 2026 tutup 2 Jun ⇒ **belum bisa dilamar**. **Astana AIFF** ($450K grand) → deadline tidak terkonfirmasi, jangan diandalkan.
+- `aibetas.com/competition-calendar` — masih 6 agenda China (butuh KTP China / +86) ⇒ tidak layak.
+
+### Aksi 21 Okt (urutan wajib)
+1. **Hentikan jualan/order di kreeaimotion** (tombol/maintenance) — user masih bisa bayar via Aulaa QRIS tapi render pasti gagal `605` ⇒ risiko komplain & refund. Bukan masalah harga, tapi kehabisan kolam koin.
+2. **Klaim ±100 koin login harian** (hangus 24 jam) → cukup untuk ~2 gambar Qwen-Edit (±50/gambar). Video 16 dtk (431 koin) **di luar jangkauan**.
+3. Jalur isi ulang tanpa bayar: **Program Insentif Kreator** (publish workflow `qwen-consistency-edit`, id 2108638842228461570 — tersisa aksi UI 1-klik, lihat `RUNNINGHUB-CREATOR-PROGRAM.md`) + **invite `baaxhjzz`** (500 koin/pasangan, dilarang farming).
+4. Kontes: prioritas **ElevenLabs "The Search"** (gratis, 1 Nov, $100K) dan **Artefact Paris** (gratis, 2 Des, €10K) — keduanya nol koin RunningHub.
+⚠️ **Tidak ada jam gratis.** Tarif koin berlaku 24 jam penuh. Hitung koin dulu sebelum render.
