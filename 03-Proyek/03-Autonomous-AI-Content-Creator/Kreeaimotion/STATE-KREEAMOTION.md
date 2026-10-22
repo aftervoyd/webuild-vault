@@ -14,7 +14,8 @@
 - `.env`: `MOTIONBOT_POSE_APP=2070852171243016194` · `MOTIONBOT_POSE_NODES=13:image=orang,41:text=prompt`
 - Alur bot: 🕺 Ganti Pose → pilih karakter → **Langkah 1 latar** (`🔄 Ganti Background` / `🚫 Latar Tetap`) → **Langkah 2 pose** (4 pilihan) → job antre → hasil dikirim.
 - 4 pose di `POSE_PRESETS` (bot.py): 1 berdiri tangan di pinggang · 2 berdiri tangan menyilang di dada · 3 duduk kaki menyilang + dagu ditopang · 4 berdiri tangan menyentuh rambut.
-- Tombol "Ganti Background" saat ini → latar **studio polos bersih** (pemilik belum menentukan daftar latar).
+- Tombol "🔄 Ganti Background" → **6 pilihan latar** (permintaan pemilik 23 Okt): **Studio polos · Kamar tidur rapi · Pantai tropis · Kafe modern · Jalanan kota malam · Taman bunga** (`POSE_LATAR_PRESETS` di bot.py) + tombol "↩️ Balik (latar tetap)" & "✖️ Batal".
+- Alur bisa **3 langkah** (kalau ganti latar): latar → pilih latar (6) → pose (4). Kalau "Latar Tetap" tetap 2 langkah.
 - Ukuran hasil app ini: 1152×2048 (atau 1144×2072 / 1104×1968 sesuai input) — **tidak ada slot ukuran** → tidak bisa dipaksa 1080×1920.
 - Yang mendekati 1080×1920: **Krea2 `2102587008920174594` → 1088×1928** (rasio `9:16 (Portrait Widescreen)`) · **K2 `2099140760918974465` → 1104×1968** (`aspect_ratio` + `megapixels=2.07`).
 - ⚠️ **JEBAKAN BARU (penting):** app `2070852171243016194` mengembalikan **2 output: [0] JSON meta, [1] arsip ZIP berisi gambar** → **jangan unduh mentah**; pakai **`rh.wait()`** (sudah menangani ZIP + prioritas). Kalau salah, berkas hasil bukan gambar.
