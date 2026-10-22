@@ -6,6 +6,38 @@
 
 ---
 
+## 0. STATUS TERKINI (22 Okt 2026, malam) — MESIN COSPLAY = APP F
+
+**Mesin cosplay FINAL (pilihan PEMILIK, dipilih dari 6 mesin yang diuji banding):**
+RunningHub app **`2028768223767826433`** = "Cosplay any character HD upscale".
+- Slot: `33:image=orang` · `69:image=acuan` · `129:text=prompt`
+- Setelan `.env`: `MOTIONBOT_COSPLAY_RH_APP=2028768223767826433` · `MOTIONBOT_COSPLAY_RH_NODES=33:image=orang,69:image=acuan,129:text=prompt` · `MOTIONBOT_COSPLAY_FACE=0`
+- Terukur: **231 dtk · 43 koin · hasil 2304×4096 (11 MB)**
+
+**Hasil uji banding hari ini** (bahan sama: sheet Arunika Latar A + acuan anime, prompt sama):
+- A `2012848202482978818` One-click outfit change → 62 dtk, 12 koin, 750×1344
+- B `2081918045866913794` Portrait V2 char-consistency → 397 dtk, 77 koin, 864×1536
+- C `2080564893979271170` Qwen/Krea2 outfit → 78 dtk, 13 koin, 864×1536
+- **F `2028768223767826433` Cosplay any character HD → 231 dtk, 43 koin, 2304×4096 ← DIPILIH PEMILIK**
+- G `2060413327708352514` S20 dual + face consistency → 78 dtk, 13 koin, 1144×2064
+- H `2096573289271795713` Krea2 char consistency → 123 dtk, 22 koin, 1088×1928
+- E `1967936759080321026` Change Clothes - Nano Banana → GAGAL (task FAILED, 0 koin)
+- D Inferhub `cb/gemini-2.5-flash-image` → **masih rusak** (timeout 2×303 dtk / SSL handshake)
+
+**Jebakan yang mudah bikin salah (WAJIB diingat):**
+- **Nama kolom node BEDA TIAP APP**: app lama `113:text`, app A `223:value` (galat `803 NODE_INFO_MISMATCH` kalau salah).
+- **Prompt wajib cocok jumlah gambar**: app 2 gambar → jangan menyebut "gambar 3" (mesin jadi bingung).
+- Katalog model RunningHub ≠ app; penyisir app = `tools/sisir_runninghub.py` (**GRATIS, 0 koin**).
+- Saldo koin: `/uc/openapi/accountStatus` body `{"apiKey": …}` — pola lain menjawab `403 TOKEN_MISSION`.
+
+**Top-up (Aulaa):** QRIS **MATI untuk ID** (`payment method qris not available in ID`) → dipindah ke
+`shopee_pay` (min Rp1.000; contoh fee Rp50.000→Rp3.500) + **User-Agent sendiri** di `aulaa.py`
+(Cloudflare error 1010 memblokir UA bawaan aiohttp). Backup: `.env.bak-<tgl>-qrisfix`.
+
+**Koin RunningHub:** 18.006 → 17.007 (180 koin untuk uji banding hari ini). Utang asisten: tetap 2.328 (`data/utang_koin.json`).
+
+---
+
 
 
 #
