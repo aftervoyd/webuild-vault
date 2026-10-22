@@ -243,3 +243,18 @@ Rantai penuh: 26.765 (10 Okt) → 18.847 → 14.411 → 13.279 → 12.188 → 9.
 3. Jalur isi ulang tanpa bayar: **Program Insentif Kreator** (publish workflow `qwen-consistency-edit`, id 2108638842228461570 — tersisa aksi UI 1-klik, lihat `RUNNINGHUB-CREATOR-PROGRAM.md`) + **invite `baaxhjzz`** (500 koin/pasangan, dilarang farming).
 4. Kontes: prioritas **ElevenLabs "The Search"** (gratis, 1 Nov, $100K) dan **Artefact Paris** (gratis, 2 Des, €10K) — keduanya nol koin RunningHub.
 ⚠️ **Tidak ada jam gratis.** Tarif koin berlaku 24 jam penuh. Hitung koin dulu sebelum render.
+
+---
+## 7. ADDENDUM KONTES — scan 22 Okt 2026 (aifilmcontests.com + aifc.news)
+**Konteks saldo: RH Coins = 0** (job render gagal 605). Prioritas HANYA kontes GRATIS sampai koin terisi.
+| Kontes | Biaya | Deadline | Hadiah | Catatan layak |
+|---|---|---|---|---|
+| **Gossip Goblin Competition** | **GRATIS** | 15 Des 2026 | **$20K** | 2–20 mnt, AI film, online — **BARU, potensi terbesar gratis** |
+| **Cue Xmas '26 (Cue Film Fest / AFRO TV)** | **GRATIS** | 20 Nov 2026 | 4 kategori cash + tayang TV kabel nasional | Tema Natal, 2–6 mnt, 18+, wajib multi-shot (bukan 1 klip mentah) |
+| **Cine Prague AI Film Festival 2026** | berbayar | 28 Nov 2026 | **$1.000 Grand Prix** | Global, ≤5 mnt, terima film AI & tradisional — BARU |
+| **Chroma Awards** | GRATIS | ~7 Jan 2027 | **$430K+ pool** | Global, any AI tool — tetap terbaik |
+| IA Play Int'l FF Madrid | berbayar | 1 Jan 2027 | $1K cash | 100% AI |
+| AI Film Award 2027 (1 Billion Followers Summit, UAE) | fee TBA | 20 Nov 2026 | **$1M** | ⚠️ wajib tool Seedance → cek feasibility |
+| AIFFA (Madagascar) | GRATIS | 31 Okt 2026 | Top 3 | Short/video, any AI tool |
+| WAIFF London | £55–75 | 17 Nov 2026 | Jalur ke Cannes | ✗ **UK-only** — tidak eligible |
+| PAIFF Prague | cek | 31 Okt 2026 | — | BARU, cek fee |
