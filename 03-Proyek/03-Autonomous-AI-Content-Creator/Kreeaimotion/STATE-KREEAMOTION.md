@@ -24,6 +24,16 @@
 
 ---
 
+### Mesin GENERATE GAMBAR = R3 `2079593513483165697` (keputusan pemilik 23 Okt) — fitur HIDUP lagi
+- "KQ12Z Realistic Portrait - Ultra Stunning Text-to-Image" — 3.435 pakai · **±36 koin** · **2048×3648** · ±165–190 dtk · instance `plus`.
+- Slot: `216:text`=prompt · `181:value`=slider realism (dipakai **6**) · `243:aspect_ratio`=**9:16 (Portrait Widescreen)** · `243:megapixels`=1.8 (app memulangkan 2 keluaran → `rh.wait` memilih yang terbesar).
+- `.env`: `MOTIONBOT_GEN_APP=2079593513483165697` · `MOTIONBOT_GEN_NODES=216:text=prompt,181:value=6,243:aspect_ratio=9:16 (Portrait Widescreen),243:megapixels=1.8`
+- Runner baru `_gen_preset_run()` (bot.py) + cabang job di awal `run_image_job`: job `image` dengan **photo KOSONG** → jalur teks→gambar. **Sebelumnya fitur ini MATI** karena `MOTIONBOT_IMAGE_BASE` menunjuk Inferhub (endpoint gambarnya rusak: HTTP 400/502).
+- Mesin fotoreal lain yang diuji 23 Okt: **FLUX.3 Klein** `2112115642487824386` (7 koin · 49 dtk · 832×1216) · **Qwen-Image 2.1 Turbo** `2112396201193725954` (19 koin · 94 dtk · 1312×1760, ada slot negative_prompt). Dua mesin Krea2 (`2072260025107701761` · `2083894278044372993`) dinilai pemilik **"kurang realistis dan tidak seperti manusia"**.
+- Backup: `bot.py.bak-20261023-*-genR3`, `.env.bak-20261023-*-genR3`.
+
+---
+
 ### Mesin GANTI BAJU = H2 `2065364018803863552` (keputusan pemilik 23 Okt)
 - "One-Click Outfit Change" — 5.919 pakai · 100% sukses · **±26 koin** · 1152×2048 · ±120–140 dtk.
 - Slot: `207:image`=orang · `208:image`=baju (acuan) · `274:text`=prompt.
