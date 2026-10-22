@@ -24,6 +24,16 @@
 
 ---
 
+### Mesin GANTI BAJU = H2 `2065364018803863552` (keputusan pemilik 23 Okt)
+- "One-Click Outfit Change" — 5.919 pakai · 100% sukses · **±26 koin** · 1152×2048 · ±120–140 dtk.
+- Slot: `207:image`=orang · `208:image`=baju (acuan) · `274:text`=prompt.
+- `.env`: `MOTIONBOT_OUTFIT_ENGINE=runninghub` · `MOTIONBOT_OUTFIT_ORDER=app` (JANGAN Inferhub dulu — endpoint gambar Inferhub MATI) · `MOTIONBOT_OUTFIT_RH_APP=2065364018803863552` · `MOTIONBOT_OUTFIT_RH_NODES=207:image=orang,208:image=acuan,274:text=prompt`
+- Runner baru `_outfit_preset_run()` di bot.py (node-map, 2 foto + prompt, ambil hasil via `rh.wait()` → tahan keluaran JSON-meta/ZIP). Jalur lama (`IMAGE.edit_image_app`, node hardcode 20/21/41/113) tetap dipakai kalau `MOTIONBOT_OUTFIT_RH_NODES` kosong.
+- Mesin ganti baju lain yang diuji 23 Okt: H1 `2012848202482978818` (185 rb pakai, **cuma 7 koin**, tapi hasil **750×1344**) · `2065651452896669696` (374 rb pakai, tapi bajunya dari TEKS bukan foto) · `1977229030422388737` (tukar ORANG, bukan baju).
+- Backup: `bot.py.bak-20261023-*-outfitH2`, `.env.bak-20261023-*-outfitH2`.
+
+---
+
 ## 0b. STATUS SEBELUMNYA (22 Okt 2026, malam) — MESIN COSPLAY = APP F
 
 **Mesin cosplay FINAL (pilihan PEMILIK, dipilih dari 6 mesin yang diuji banding):**
