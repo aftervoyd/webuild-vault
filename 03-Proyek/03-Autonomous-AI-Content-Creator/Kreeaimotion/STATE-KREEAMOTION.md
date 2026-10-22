@@ -6,7 +6,24 @@
 
 ---
 
-## 0. STATUS TERKINI (22 Okt 2026, malam) — MESIN COSPLAY = APP F
+## 0. STATUS TERKINI (23 Okt 2026, dini hari) — FITUR GANTI POSE: 4 PRESET + PILIHAN LATAR
+
+**Fitur 🕺 Ganti Pose SUDAH DIBANGUN ULANG dan LIVE di bot** (perintah pemilik: pakai mesin Q3 khusus fitur ganti pose, alur klik latar → klik pose, 4 pilihan):
+- Mesin: RunningHub app **`2070852171243016194`** (Image-to-Image; 53 rb pemakaian; 100% sukses; 50–95 dtk; **7–18 koin**) — **khusus fitur Ganti Pose SAJA** (fitur lain tidak tersentuh).
+- Slot: `13:image` (foto karakter) + `41:text` (prompt) → **cukup 1 FOTO; TIDAK perlu foto pose acuan**.
+- `.env`: `MOTIONBOT_POSE_APP=2070852171243016194` · `MOTIONBOT_POSE_NODES=13:image=orang,41:text=prompt`
+- Alur bot: 🕺 Ganti Pose → pilih karakter → **Langkah 1 latar** (`🔄 Ganti Background` / `🚫 Latar Tetap`) → **Langkah 2 pose** (4 pilihan) → job antre → hasil dikirim.
+- 4 pose di `POSE_PRESETS` (bot.py): 1 berdiri tangan di pinggang · 2 berdiri tangan menyilang di dada · 3 duduk kaki menyilang + dagu ditopang · 4 berdiri tangan menyentuh rambut.
+- Tombol "Ganti Background" saat ini → latar **studio polos bersih** (pemilik belum menentukan daftar latar).
+- Ukuran hasil app ini: 1152×2048 (atau 1144×2072 / 1104×1968 sesuai input) — **tidak ada slot ukuran** → tidak bisa dipaksa 1080×1920.
+- Yang mendekati 1080×1920: **Krea2 `2102587008920174594` → 1088×1928** (rasio `9:16 (Portrait Widescreen)`) · **K2 `2099140760918974465` → 1104×1968** (`aspect_ratio` + `megapixels=2.07`).
+- ⚠️ **JEBAKAN BARU (penting):** app `2070852171243016194` mengembalikan **2 output: [0] JSON meta, [1] arsip ZIP berisi gambar** → **jangan unduh mentah**; pakai **`rh.wait()`** (sudah menangani ZIP + prioritas). Kalau salah, berkas hasil bukan gambar.
+- Gagal cepat = **0 koin**: `433 prompt_outputs_failed_validation` (nilai LIST salah; `aspect_ratio` harus `9:16 (Portrait Widescreen)`) · `missing_node_type` (app rusak di sisi RunningHub, mis. `1965020046382743554` "Multi-Pose Generator").
+- Backup: `bot.py.bak-20261023-*-pose4`, `.env.bak-20261023-*-pose4`.
+
+---
+
+## 0b. STATUS SEBELUMNYA (22 Okt 2026, malam) — MESIN COSPLAY = APP F
 
 **Mesin cosplay FINAL (pilihan PEMILIK, dipilih dari 6 mesin yang diuji banding):**
 RunningHub app **`2028768223767826433`** = "Cosplay any character HD upscale".
