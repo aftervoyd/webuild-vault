@@ -4,7 +4,7 @@
 
 ---
 
-## 0. STATUS AKUN (terverifikasi via API, 10 Okt 03:00 WIB)
+## 0. STATUS AKUN (historis 10 Okt 03:00 WIB — ⚠️ angka di bawah BASI; status terkini lihat §8)
 | Item | Nilai |
 |---|---|
 | Koin tersisa | **28.362 RH Coins** (`remainCoins`) |
@@ -258,3 +258,32 @@ Rantai penuh: 26.765 (10 Okt) → 18.847 → 14.411 → 13.279 → 12.188 → 9.
 | AIFFA (Madagascar) | GRATIS | 31 Okt 2026 | Top 3 | Short/video, any AI tool |
 | WAIFF London | £55–75 | 17 Nov 2026 | Jalur ke Cannes | ✗ **UK-only** — tidak eligible |
 | PAIFF Prague | cek | 31 Okt 2026 | — | BARU, cek fee |
+
+---
+
+## 8. ADDENDUM KONTES + SALDO — scan 23 Okt 2026 (08:00 WIB)
+**💰 SALDO PULIH: 13.881 RH Coins** (Δ **+13.881** vs 22 Okt yang **0**). Wallet $0,010. Tugas jalan: 0.
+Rantai: 28.362 (10 Okt) → … → 0 (21–22 Okt) → **13.881 (23 Okt)**.
+⚠️ Penyebab kenaikan **belum dikonfirmasi** (kemungkinan top-up / settlement insentif / pembelian) — bukan bukti renewal membership (jadwal renewal ±8 Nov). Verifikasi manual di `runninghub.ai/my-income`.
+⇒ **Render kembali MUNGKIN**, tapi batasnya: gambar Qwen-Edit ±50 koin/gambar · motion ±26 koin/detik (16 dtk ≈ 431) ⇒ 13.881 koin ≈ 276 gambar ATAU ±32 video 16 dtk. **Tetap hitung koin sebelum render.**
+
+### Kontes BARU yang layak (belum tercatat di §7)
+| Kontes | Biaya | Deadline | Hadiah | Catatan layak |
+|---|---|---|---|---|
+| **Curious Refuge x Epidemic Sound — AI Holiday Film 2026** | **GRATIS** | **6 Des 2026** | **$7.500+ cash** | **Global, any AI tool**, short liburan AI penuh — hadiah cash gratis TERBESAR yang baru · terverifikasi 13 Sep |
+| **Artefact AI Film Festival 3rd (Paris)** | **GRATIS** | 2 Des 2026 | **€10.000** Grand Prix + 3×€1.000 | Global, ≤314 dtk, **tanpa wajib tool**; wajib AI di pra+produksi+pasca · tayang 1 minggu di semua bioskop mk2 |
+| **MetaMorph x TapNow — Winter** | **GRATIS** | 30 Des 2026 | £500 + 20.000 kredit | ⚠️ wajib ≥50% digenerate di TapNow canvas publik |
+| **NEXMUSE AI Music Video Contest 2027** | cek | 28 Des 2026 | **₩21.000.000** (±$15K), 32 pemenang | Baru — musik video/idol; cek fee & hak cipta lagu |
+| **Florence AI Festival (FAIF) — 1st** | berbayar | 15 Des 2026 | Best of Festival + 8 kategori | 8 kategori (Horror/Docu/Comedy/New World), cap 20 mnt, wajib AI Statement 100–300 kata |
+
+### Kontes yang ditolak / sudah tutup (jangan diangkut lagi)
+- ✗ **Future Vision XPRIZE** ($3,5jt; grand $2,5jt + $100K) — **TUTUP 15 Agu 2026**, pemenang sudah diumumkan 25 Sep 2026 (trailer AI "The Gifted"). Situsnya masih menyebut "largest film competition 2026" tapi **sudah lewat** — jangan alokasikan waktu.
+- ✗ **WAIFF Africa (Abidjan)** 31 Des — hanya 10 negara Afrika Barat ⇒ tidak eligible.
+- ✗ **TAIFF Türkiye** 1 Nov — gratis tapi **tanpa hadiah cash**; prioritas rendah.
+- ✗ **AI Slop FF S2 / Berlin AIFF / LAAIMPA / WAICF Jaipur** — berbayar atau hadiah non-cash.
+
+### Aksi 23 Okt (prioritas)
+1. **Klaim ±100 koin login harian** (hangus 24 jam) — pakai ke 2 gambar Qwen-Edit.
+2. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) — aksi UI 1-klik, masih `$0,00`; jalur pendapatan koin jangka panjang.
+3. Kontes: satu film pendek gratis bisa masuk **Artefact (2 Des) + Chroma S2 (31 Des) + Curious Refuge (6 Des)** sekaligus — nol koin RunningHub.
+⚠️ **Tidak ada jam gratis.** Tarif 24 jam penuh; hitung koin dulu sebelum render.
