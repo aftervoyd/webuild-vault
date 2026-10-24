@@ -287,3 +287,31 @@ Rantai: 28.362 (10 Okt) → … → 0 (21–22 Okt) → **13.881 (23 Okt)**.
 2. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) — aksi UI 1-klik, masih `$0,00`; jalur pendapatan koin jangka panjang.
 3. Kontes: satu film pendek gratis bisa masuk **Artefact (2 Des) + Chroma S2 (31 Des) + Curious Refuge (6 Des)** sekaligus — nol koin RunningHub.
 ⚠️ **Tidak ada jam gratis.** Tarif 24 jam penuh; hitung koin dulu sebelum render.
+
+
+---
+
+## 12. SCAN 24 OKT 2026 (08:00 WIB) — pembakaran normal (-2.110) + kontes $1 JT baru
+**SALDO: 11.771 RH Coins** (delta **-2.110** vs 23 Okt 13.881). Wallet $0,0100. Tugas jalan: 0.
+Rantai: 0 (21-22 Okt) -> 13.881 (23) -> **11.771 (24)**. Laju bakar +/-2.110/24 jam -> **~5,5 hari** sisa (habis +/-29 Okt) tanpa pemasukan.
+=> Kapasitas: 11.771 koin = +/-235 gambar Qwen-Edit ATAU +/-27 video 16 dtk (motion +/-26 koin/dtk).
+
+### Kontes BARU (belum tercatat di bagian 3/6/7/8/11)
+| Kontes | Biaya | Deadline | Hadiah | Catatan layak |
+|---|---|---|---|---|
+| **1 Billion Followers Summit - AI Film Award 2027 (Dubai)** | **GRATIS** | **20 Nov 2026** | **$1.000.000** grand prize (1 pemenang) | Global, 18+, 5-7 mnt, 16:9 1080p, subtitle Inggris. WAJIB >=70% digenerate dengan ByteDance Seedance. Shortlist 10 film 15 Des, finalis 5 film 25 Des, pemenang diumumkan di summit Dubai 8-10 Jan 2027. Backed BytePlus + TikTok |
+| **FilmsAI Halloween Contest 2026** | GRATIS | **28 Okt 2026** (+/-4 hari) | $1.000 total (6 pemenang) | Tema Halloween, min 90 dtk, wajib akun FilmsAI + TANPA watermark generator. Livestream X 30 Okt-1 Nov. Cocok kalau ada short jadi |
+| **Wandura Drama Challenge** | GRATIS | 31 Okt 2026 | **$10.000** (5K/3K/2K + $2K favorit) | WAJIB 100% dibuat di Wandura Drama/Cinema Studio + storyboard direview <=48 jam |
+| **Tencent Cloud "AI CAN DO IT"** (Singapura) | GRATIS | 30 Okt 2026 | SGD 2.000 + kredit | Tool lock GenTube + Miora; BELUM jelas entrant luar Singapura boleh menang |
+| **AIAF Atlanta AI Ad Fest** | $10 | 15 Nov 2026 (koreksi, bukan 25 Okt) | **$2.500 cash** + kredit | Spec ad Home Depot / Chick-fil-A; registran dapat 1.500 kredit Bloomway |
+
+### Catatan penting
+- **AI Film Fest Monaco** (klaim $10K / 31 Des) - masih BELUM terverifikasi (halaman resmi tulis deadline lama) => jangan diandalkan.
+- **Qolaba** (tutup 18 Okt), **Higgsfield Global Film Festival** (tutup 16 Sep), **Reply AIFF** (tutup 2 Jun) => SUDAH LEWAT, jangan diangkut.
+- Backend `web_extract` error (ddgs search-only) - verifikasi halaman resmi manual kalau mau submit.
+
+### Aksi 24 Okt (prioritas)
+1. **Klaim +/-100 koin login harian** (hangus 24 jam).
+2. **Hitung koin dulu** sebelum render (TIDAK ADA jam gratis - tarif 24 jam penuh).
+3. Kalau ada short jadi: **upload FilmsAI Halloween sebelum 28 Okt** (nol koin).
+4. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) - masih $0,00.
