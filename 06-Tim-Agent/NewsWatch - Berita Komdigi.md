@@ -4,7 +4,49 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-24** (run harian · cakupan 21–23 Okt 2026)
+**Update terakhir: 2026-10-25** (run harian · cakupan 24–25 Okt 2026)
+
+---
+
+## 🆕 Update 2026-10-25 (run harian — cakupan 24–25 Okt 2026)
+
+> Cek sumber resmi 25 Okt 07:00 CST: probe `portal.komdigi.go.id/kanal-publik/berita-kini/<id>` via **curl** → **TIDAK ADA id baru** (id terbaru tetap **10641**; **10642–10680 = 404 semua**). `domain.go.id/berita` **200** (berita terbaru tetap **3 Sep 2026**). `djtpd.komdigi.go.id/berita` **200** (terbaru tetap **3 Sep / 11 Okt**). `jdih.komdigi.go.id` **200** — **Rancangan PUU 32 / Partisipasi Publik 19 = tidak berubah**; produk terunggah terbaru tetap **Kepmen 336/2026 (23 Okt)**. ⚠️ **Portal Komdigi "sepi" untuk 24–25 Okt — tapi bukan berarti tidak ada apa-apa: tambang berita hari ini berasal dari BSSN + CSIRT Komdigi + PANDI/media, bukan portal.**
+> ⭐ **TEMUAN TERPENTING HARI INI — relevan LANGSUNG ke stack Webuild (Next.js/Node): BSSN menerbitkan Security Advisory 24 Okt 2026 "Rekapitulasi Kerentanan pada NodeJS" (10 CVE, Node.js 22/24/26).** Satu rangkaian dengan PHP2Shell: **dua fondasi web (PHP & Node) ditambal pada 21 Okt 2026.** **Ini memunculkan pertanyaan jual baru: "stack Webuild bebas PHP" saja belum cukup — runtime Node juga harus di-patch.** (Tidak ada item di portal Komdigi untuk kedua insiden ini.)
+
+### 63. 🟢🚨 **BSSN Security Advisory 24 Okt 2026 — "Rekapitulasi Kerentanan pada NodeJS" (10 CVE, Node.js 22/24/26)** — *dampak: TINGGI (runtime stack Webuild!)*
+- **Apa yang berubah** (**sumber primer ✅** `bssn.go.id/security-advisory-rekapitulasi-kerentanan-pada-nodejs/`, **24 Oktober 2026**; disiarkan juga via X `@BSSN_RI`): **Node.js merilis pembaruan keamanan 21 Okt 2026**; BSSN merangkum **10 kerentanan** pada **Node.js 22.x / 24.x / 26.x**. Rincian severity dari tabel BSSN:
+  - **HIGH (4):** `CVE-2026-105482` (CWE-158 NUL byte, `dns.resolve()`) · `CVE-2026-105483` (CWE-297 validasi sertifikat TLS dengan host mismatch) · `CVE-2026-106069` (CWE-416 *Use After Free*, TLS) · `CVE-2026-111497` (CWE-252 *unchecked return value* + CWE-787 *out-of-bounds write*, dekoder **Brotli**).
+  - **MEDIUM (3):** `CVE-2026-105481` (CWE-444 *request smuggling*/HTTP Keep-Alive) · `CVE-2026-106072` (CWE-295 validasi sertifikat TLS) · `CVE-2026-106074` (CWE-330 nilai acak lemah, `crypto.randomUUID()` / `crypto.randomInt()`).
+  - **LOW (3):** `CVE-2026-106070` (ZipFile, Node 26) · `CVE-2026-106071` (*Permission Model*, Node 26) · `CVE-2026-106073` (`fs.realpathSync()`).
+  - **Mitigasi resmi (BSSN):** update ke **Node.js 22.23.4 / 24.22.1 / 26.12.1** (sesuai lini), periksa **dependensi & runtime**, batasi akses jaringan ke layanan Node, tinjau konfigurasi TLS/HTTP/filesystem.
+  - **Sumber pendukung ✅:** `nodejs.org/en/blog/vulnerability/october-2026-security-releases` (rilis resmi Node.js 21 Okt 2026), `acaranews.com` (24 Okt: *"Pada Rabu, 21 Oktober 2026, dua fondasi teknologi web dunia sama-sama menambal kerentanan serius — PHP merilis 8.5.12/8.4.27/8.3.36/8.2.35 … "*), `codekop.com` (24 Okt).
+- ⚠️ **Status verifikasi:** advisory BSSN ✅ **sumber primer**; angka CVE/severity/versi patch ✅ dari BSSN + rilis resmi Node.js. **Tidak ada kaitan resmi yang menyebut Node.js dampak ke Indonesia** — jangan klaim "situs RI terdampak Node".
+- **➡️ Dampak ke Webuild (TINGGI — perlu aksi teknis):**
+  - **Nuansa penting yang MENGOREKSI narasi item 56:** "Astro/Next.js bebas PHP" tetap benar, **tapi Next.js SSR / API routes berjalan di runtime Node.js** → **rentan terhadap advisory Node ini**. Astro dengan output **statis** (seperti **demo Desa Pamekaran**, output statis) **paling aman** (tak ada runtime server-side Node yang terpapar); Astro/Next dengan **SSR/serverless** harus pakai Node ≥ versi patch.
+  - **Aksi:** **(1)** cek versi Node di setiap server/VPS klien (`node -v`) & di CI/build; **(2)** update ke **22.23.4 / 24.22.1 / 26.12.1**; **(3)** `npm audit` + update dependensi; **(4)** utamakan **output statis** untuk situs desa (permukaan serang paling kecil, konsisten dengan narasi "<300 KB, terbuka di 3 Mbps").
+  - **Kalimat jual yang lebih jujur & tahan diperiksa (revisi dari item 56):** *"Situs desa Webuild berjalan sebagai **situs statis** — tanpa runtime PHP **maupun** Node yang diekspos ke internet. Jadi bebas dari celah kritis PHP2Shell (PHP, 22 Okt) **sekaligus** advisory Node.js (BSSN, 24 Okt) yang bulan ini menambal dua fondasi web dunia."*
+
+### 64. 🧯🛡️ **Komdigi IKUT terbitkan peringatan PHP2Shell (CSIRT Komdigi, 22 Okt) + minta pengelola website update PHP** — *dampak: TINGGI (koreksi/eskalasi item 56)*
+- **Apa yang berubah:** **CSIRT Komdigi** menerbitkan peringatan **PHP2Shell (CVE-2026-109618 & CVE-2026-109619)** di `csirt.komdigi.go.id/content/php2shell-.../detail` — *"Tim pengembang PHP merilis security update pada 21 Oktober 2026 … kedua kerentanan dapat memungk…"* — dan **detikINET** (24 Okt 2026 20:08) memberitakan **"Komdigi Minta Pengelola Website Update PHP, Ada Celah Kritis PHP2Shell"** (peringatan disampaikan **CSIRT Komdigi, 22 Okt 2026**). ⚠️ **KOREKSI/ESKALASI catatan 24 Okt:** run kemarin menulis Komdigi hanya *"berkoordinasi dengan BSSN"* dan *"penanganan teknis berada dalam kewenangan BSSN"* — **kini jelas Komdigi punya advisory SENDIRI via CSIRT** + seruan publik ke pengelola website. Narasi "ini cuma urusan BSSN" **tidak lagi akurat**.
+- **Sumber ✅:** `riauonline.id/komdigi-peringatkan-ancaman-celah-kritis-php2shell/` (25 Okt 04:10, memuat rincian CSIRT Komdigi) · `inet.detik.com/security/d-8722498` (24 Okt) · judul halaman `csirt.komdigi.go.id` (terkonfirmasi via pencarian). ⚠️ **`csirt.komdigi.go.id` = HTTP 403 ke curl (WAF, seperti `www.komdigi.go.id` & `spse.inaproc.id`)** → isi hanya terbaca via media pencarian/mirror.
+- **➡️ Dampak ke Webuild (TINGGI):** **(a)** peringatan resmi Komdigi = **pembenaran otoritatif** untuk menawarkan **audit & migrasi situs ber-PHP klien** (bukan sekadar jualan) → pakai nomor CVE + imbauan CSIRT Komdigi sebagai bukti; **(b)** **checklist "cek versi PHP"** kini punya dasar resmi Indonesia → siapkan sebagai **layanan gratis (lead magnet)** lalu tawarkan migrasi ke stack tanpa PHP. Momentum masih hangat (baru 22–24 Okt).
+
+### 65. 🏛️💾 **Perpres Pusat Data & SKKL: Kupang (NTT) & Bitung (Sulut) dibidik jadi lokasi pusat data baru** — *dampak: sedang (radar PDN/hosting, lanjutan item 39)*
+- **Apa yang berubah:** pemerintah membidik **Kupang (NTT)** dan **Bitung (Sulawesi Utara)** sebagai lokasi pengembangan **pusat data baru** → memperluas pemerataan ke **Indonesia Timur** (sebelumnya terkonsentrasi Jawa & Batam). Konteks: **Komdigi menyiapkan Perpres Data Center + SKKL** (**Dirjen Infrastruktur Digital Wayan Toni Supriyanto**) — **lanjutan catatan 20 Okt** (portal **10621**/Bisnis.com, item 39).
+- **Sumber ✅:** `cnbcindonesia.com/tech/20261023101930-37-778811` (23 Okt) · `wartaekonomi.co.id/read642993` (23 Okt 14:00) · `inet.detik.com/law-and-policy/d-8719483` (22 Okt 20:00) · `antaranews.com/berita/5800293`.
+- **Terkait:** **IKTII** mengusulkan **jalur SKKL alternatif non-Singapura → langsung Cina Selatan** (`teknologi.bisnis.com/read/20261023/101/2014862`, 23 Okt) ⚠️ (usulan asosiasi, bukan kebijakan).
+- ⚠️ **Bukan kebijakan baru:** masih **radar RPerpres** — belum ada draf di JDIH (`Rancangan PUU 32` tak berubah). **Belum ada kewajiban** untuk Webuild.
+- **➡️ Dampak ke Webuild (sedang, sebagai radar):** memperkuat narasi **"hosting/data di dalam negeri"** (nyambung PDN/SPBE + PP 33/2026). Kalau Perpres terbit → cek apakah memuat **insentif/rekomendasi penyedia lokal** yang bisa dipakai Webuild sebagai nilai jual hosting domestik. **Tidak ada aksi sekarang.**
+
+### 66. 🌐🆕 **Domain: `.ai.id` resmi dibuka untuk publik sejak 5 Okt 2026 (PANDI × Korika)** — *dampak: rendah–sedang (katalog domain Webuild)* — ⚠️ *temuan menyusul (belum tercatat)*
+- **Apa yang berubah:** **PANDI** membuka pendaftaran **domain `.ai.id` untuk publik sejak 5 Okt 2026** — *"siapa pun dan dari mana pun bisa mendaftarkan … tanpa persyaratan dokumen khusus"* (diumumkan PANDI 6 Okt). Sebelumnya `.ai.id` diluncurkan bersama **Korika** (Organisasi Kolaborasi Riset & Inovasi Industri AI), dan sejak 6 Okt PANDI juga mempromosikan **identitas baru** untuk domain ini.
+- **Sumber ✅:** akun resmi `instagram.com/pandi_id` (6 Okt 2026) · `blog.rumahweb.com/domain-ai-id/` (7 Okt, memuat **tanggal 5 Okt + cara daftar**) · `viv.co.id/read/112602` (rilis awal Korika×PANDI, 2 Jun 2026).
+- ⚠️ **Catatan kronologi:** ini kejadian **5–7 Okt**, **baru tercatat sekarang** — **bukan berita hari ini**. Dicatat karena **relevan domain** dan sebelumnya terlewat; **tanggal asli dipertahankan**.
+- **➡️ Dampak ke Webuild (rendah–sedang):** menambah **pilihan TLD** di katalog Webuild — `.desa.id` (desa), `.id`, dan kini **`.ai.id`** (untuk paket "UMKM/bisnis berbasis AI" atau portofolio AI studio). **Bukan pengganti `.desa.id`** (aturan desa tetap `.desa.id`). Tidak ada aksi mendesak.
+
+> **Buat Orchestrator (2 baris):**
+> 1. **PRIORITAS TEKNIS:** BSSN advisory **Node.js (24 Okt)** + **PHP2Shell (22–24 Okt)** → **cek versi Node & PHP di SEMUA server klien/demo Webuild**, patch ke **Node 22.23.4/24.22.1/26.12.1** (PHP 8.2.35/8.3.36/8.4.27/8.5.12). Pertimbangkan jadikan **output statis** sebagai standar default situs desa (permukaan serang nol-runtime).
+> 2. **PELUANG JUAL (momentum 2–3 pekan):** imbauan **CSIRT Komdigi** = dasar resmi menawarkan **audit PHP + migrasi** situs ber-PHP klien (gratis audit → berbayar migrasi). Siapkan **1 halaman layanan + template surat ke hosting**.
 
 ---
 
