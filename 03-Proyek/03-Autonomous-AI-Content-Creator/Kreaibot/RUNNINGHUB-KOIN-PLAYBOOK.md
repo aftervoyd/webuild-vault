@@ -315,3 +315,29 @@ Rantai: 0 (21-22 Okt) -> 13.881 (23) -> **11.771 (24)**. Laju bakar +/-2.110/24 
 2. **Hitung koin dulu** sebelum render (TIDAK ADA jam gratis - tarif 24 jam penuh).
 3. Kalau ada short jadi: **upload FilmsAI Halloween sebelum 28 Okt** (nol koin).
 4. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) - masih $0,00.
+
+## 13. SCAN 25 OKT 2026 (08:01 WIB) — pembakaran melambat tajam (-256) + 3 kontes baru
+**SALDO: 11.515 RH Coins** (delta **-256** vs 24 Okt 11.771). Wallet $0,0100. Tugas jalan: 0.
+Rantai: 13.881 (23) -> 11.771 (24) -> **11.515 (25)**. Laju bakar turun drastis (+/-256/24 jam, vs +/-2.110 sehari sebelumnya).
+=> Tanpa pemasukan & tanpa render baru: sisa +/-45 hari (habis +/-9 Des), BUKAN lagi 29 Okt.
+=> Kapasitas: 11.515 koin = +/-230 gambar Qwen-Edit ATAU +/-26 video 16 dtk (motion +/-26 koin/dtk).
+Catatan: laju bakar fluktuatif karena top-up (22 Okt 0 koin) & render manual; pakai angka harian, bukan rata-rata lama.
+
+### Kontes BARU (belum tercatat di bagian 3/6/7/8/11/12)
+| Kontes | Biaya | Deadline | Hadiah | Catatan layak |
+|---|---|---|---|---|
+| **Cue Xmas '26 (Cue Film Fest / AFRO TV)** | **GRATIS** | **20 Nov 2026** 23:59 ET | 4 hadiah CASH (Best Film/Image/Sound/AI Music Video) — **nominal BELUM diumumkan** (tergantung sponsor) | Open worldwide, 18+, film 2:00-6:00, natal, WAJIB multi-shot + edit manusia (1 klip mentah = gugur), 16:9 >=1080p, subtitle Inggris kalau bukan Inggris. Tayang live 12 Des di AFRO TV (Xfinity ch.1623) + NOW TV. Film harus dibuat >=1 Jan 2026. |
+| **AI ZONE International AI Film Festival 2026 (edisi 2)** | GRATIS | **30 Nov 2026** | **$500** Grand Prize cash | Online penuh, **semua negara**, TANPA batasan tool AI. Syarat hadiah: film pemenang setuju dipublikasikan non-eksklusif di platform AI ZONE. Festival 15 Jan 2027. |
+| **Cine Prague AI Film Festival (PAIFF)** | GRATIS/cek | **28 Nov 2026** | **$1.000** Grand Prix cash | Praha, short <=5 mnt, menerima AI-generated, AI-assisted, dan film tradisional. Finalis tayang di Kino Edison, pemenang 1 Des. |
+| **AI M0V1E** | cek | 1 Nov 2026 | sampai **$1.000** | ✅ terkonfirmasi ada di daftar Nov; detail aturan belum diverifikasi |
+| ~~WAIFF London~~ | - | 17 Nov | - | ✗ **HANYA kreator UK** (13+) -> tidak layak untuk kita |
+
+### Koreksi/peringatan
+- **Cue Xmas '26**: nominal hadiah = "to be announced", jangan dipakai sebagai target pendapatan; nilai sebenarnya = tayangan TV + seleksi 11 film (peluang masuk lebih besar).
+- Backend `web_extract` masih error (ddgs search-only) -> verifikasi halaman resmi manual sebelum submit.
+
+### Aksi 25 Okt (prioritas)
+1. **Klaim +/-100 koin login harian** (hangus 24 jam).
+2. **Hitung koin dulu** sebelum render. TIDAK ADA jam gratis - tarif 24 jam penuh (Qwen-Edit +/-50 koin/gambar, motion +/-26 koin/dtk).
+3. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) - masih $0,00 -> ini satu-satunya jalur pendapatan koin nyata.
+4. Kontes gratis prioritas: **FiLM AI Halloween (28 Okt, +/-3 hari)** lalu **Cue Xmas '26 (20 Nov)**.
