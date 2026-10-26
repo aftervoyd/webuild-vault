@@ -341,3 +341,30 @@ Catatan: laju bakar fluktuatif karena top-up (22 Okt 0 koin) & render manual; pa
 2. **Hitung koin dulu** sebelum render. TIDAK ADA jam gratis - tarif 24 jam penuh (Qwen-Edit +/-50 koin/gambar, motion +/-26 koin/dtk).
 3. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) - masih $0,00 -> ini satu-satunya jalur pendapatan koin nyata.
 4. Kontes gratis prioritas: **FiLM AI Halloween (28 Okt, +/-3 hari)** lalu **Cue Xmas '26 (20 Nov)**.
+
+## 14. SCAN 26 OKT 2026 (08:00 WIB) — pembakaran tetap pelan (-170) + KONTES $1 JUTA bisa diakses
+**SALDO: 11.345 RH Coins** (delta **-170** vs 25 Okt 11.515). Wallet $0,0100. Tugas jalan: 0.
+Rantai: 13.881 (23) -> 11.771 (24) -> 11.515 (25) -> **11.345 (26)**. Laju bakar +/-170/24 jam (normal, bukan krisis).
+=> Tanpa render baru: sisa +/-66 hari. Kapasitas: +/-226 gambar Qwen-Edit ATAU +/-26 video 16 dtk.
+
+### Kontes BARU (belum tercatat di bagian 3/6/7/8/11/12/13)
+| Kontes | Biaya | Deadline | Hadiah | Layak? |
+|---|---|---|---|---|
+| **AI Film Award 2027 — 1 Billion Followers Summit (Dubai, TikTok/BytePlus)** | **GRATIS** | **20 Nov 2026** | **$1.000.000 cash** (1 pemenang) | ✅ **PALING BESAR & GLOBAL** — 18+, film 5-7 mnt, 16:9 1080p MOV/MP4, bahasa apa pun + subtitle Inggris, tema (Society/Truth/Humans & AI/Climate/Human Relationships), **WAJIB >=70% dihasilkan Seedance**. Top10 + voting publik 15 Des, Top5 25 Des, finalis tayang Dubai 8-10 Jan 2027, bayar via transfer bank <=60 hari. |
+| **Gossip Goblin x Showrunner (Fable)** | GRATIS | 15 Des 2026 | **$20K** pool | ✗ **terkunci Showrunner Studio** (film wajib dibuat di sana, mulai dari kursi Ripper Doc) -> tidak pakai pipeline kita |
+| **Greenlight — Cascade x BytePlus x Seedance** | GRATIS (slot terbatas) | 15 Des 2026 | **$100K pool** (4 pemenang; ±$65K cash + 1,5 jt kredit Cascade) | ✗ wajib pakai **Cascade Studio** |
+| **AI Film Festival Africa (AIFFA)** | GRATIS | 31 Okt 2026 | Top-3 (non-cash) | ⚠️ terlalu mepet |
+| **Gossip Goblin / GAIMVA / Hollywood AI Short Film Awards / IA Play Madrid / Artefact x mk2 / LundinStudio / Jaipur IFF** | berbayar | Des 2026-Jan 2027 | $300-$15K | ⚠️ berbayar, prioritas rendah |
+
+### KOREKSI PENTING
+- **Chroma Awards S2**: deadline terkonfirmasi **7 Jan 2027** (sebelumnya "perkiraan 31 Des"), hadiah **$450K cash**, gratis, via Devpost -> jalur terbaik setelah $1M Seedance.
+- **RunningHub PUNYA Seedance 2.0 global** (`seedance-2.0-global/multimodal-video`, token-based, ±$6,3-7 per 1 juta token; ada juga varian fast `*/multimodal-video-rc`). Artinya syarat ">=70% Seedance" pada kontes $1 juta **secara teknis BISA dipenuhi lewat akun kita**. ⚠️ Biaya token untuk 5-7 mnt 1080p **belum terverifikasi** -> WAJIB ukur dulu 1 klip pendek (cek remainCoins sebelum vs sesudah) sebelum komit produksi.
+- **AI M0V1E**: $1.000 Best AI Feature (wajib 40-90 mnt), $700 Best AI Series, $500 Best AI Short; deadline 1 Nov; **wajib juga upload ke m0v1e.ai** kalau lewat FilmFreeway.
+- WAIFF London tetap **hanya kreator UK** -> skip.
+- Backend `web_extract` masih mati (ddgs search-only) -> pakai `curl` + strip HTML untuk baca halaman resmi.
+
+### Aksi 26 Okt (prioritas)
+1. **Klaim +/-100 koin login harian** (hangus 24 jam).
+2. **Hitung koin dulu** sebelum render. TIDAK ADA jam gratis - tarif 24 jam penuh (Qwen-Edit +/-50 koin/gambar, motion +/-26 koin/dtk, video 16 dtk +/-431 koin).
+3. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) - masih $0,00 -> satu-satunya jalur pendapatan koin nyata.
+4. **Uji biaya Seedance 1 klip (5 dtk)** kalau mau serius ke AI Film Award 2027 ($1 juta, 20 Nov) - tanpa angka biaya, jangan mulai produksi 6 menit.
