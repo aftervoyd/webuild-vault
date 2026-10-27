@@ -4,7 +4,49 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-27** (run harian · cakupan 26–27 Okt 2026)
+**Update terakhir: 2026-10-28** (run harian · cakupan 27–28 Okt 2026)
+
+---
+
+## 🆕 Update 2026-10-28 (run harian — cakupan 27–28 Okt 2026)
+
+> Cek sumber resmi 28 Okt 07:00 CST (semua via **curl**): `portal.komdigi.go.id` → **8 id hidup (10644–10651), 10652–10660 = 404 semua** → id terbaru **10651**. ⚠️ **Dari 8 itu hanya 2 yang benar-benar baru: 10650 & 10651 (keduanya Siaran Pers, Selasa 27 Okt)**; 10647–10649 sudah dicatat run kemarin; 10644–10646 = **Artikel lama (19 & 21 Okt) = backfill**. **Portal 28 Okt (pagi) = 0 item** — belum terbit. `domain.go.id/berita` **200** (terbaru tetap **3 Sep 2026**) · `djtpd.komdigi.go.id/berita` **200** (tetap **11 Okt**) · `jdih.komdigi.go.id` **200** (**Rancangan PUU 32 / Partisipasi Publik 19 dok = tidak berubah**; produk terunggah teratas tetap **Kepmen 336/2026 — 23 Okt**, di bawahnya **Permen 13/2026 — 18 Okt**) · `bssn.go.id/imbauan-keamanan/` **200** (**tidak ada advisory baru** setelah **NodeJS 24 Okt**) · `cissrec.org` **200** (terbaru **28 Okt**: *"Meninjau Izin Aplikasi di Ponsel dan Mencabut yang Tidak Perlu"* — tips, **bukan advisory**) · `detik.com/tag/komdigi` **200** (judul terbaru **27 Okt 14:15** soal judol → **tidak ada kejadian 28 Okt** yang belum masuk portal) · `icann.org/en/announcements` **200** (terbaru **27 Okt** FY26 Annual Report; 26 Okt GAC Communiqué ICANN87 & QC Provider 2026 Round) → **milestone String Confirmation Day 17 Nov 2026 tidak berubah**.
+> 🚨 **UPDATE PALING PENTING — PENONAKTIFAN LAYANAN WEBSITE DESA DIPERPANJANG: sekarang 23 Okt 09.00 → KAMIS 29 Okt 2026 23.59 WIB** (kemarin tercatat berakhir Senin 27 Okt). Total **7 hari** platform resmi desa mati. **Nol item di portal, nol liputan media** — hanya terbaca dari halaman status.
+> ⭐ **Temuan kedua paling relevan: RUU Adminduk masuk tahap DIM — Komdigi mendorong 3 pengaman data warga (minimalisasi data, larangan minta salinan dokumen kependudukan, klasifikasi data), selaras UU PDP 27/2022 + UU Satu Data Indonesia.** Ini **bahan jualan "situs desa PDP-ready" yang berasal dari pemerintah sendiri**, bukan dari kita.
+
+### 76. 🚨🏘️ **PENONAKTIFAN `layanan.desa.id` + `website.desa.id` DIPERPANJANG sampai Kamis 29 Okt 2026 23.59 WIB (total 7 hari mati)** — *dampak: TINGGI (pembeda produk + klien)* — ⚠️ *nol item di portal, nol liputan media*
+- **Apa yang berubah (sumber primer ✅, halaman resmi Komdigi, curl-able):** kedua halaman status **`https://layanan.desa.id/`** dan **`https://website.desa.id/`** kini menulis *"Waktu Penonaktifan: **Jumat, 23 Oktober 2026** Mulai pukul **09.00 WIB** › **Kamis, 29 Oktober 2026** Hingga pukul **23.59 WIB**"*, alasan tetap *"menjaga keamanan sistem informasi dan memitigasi risiko keamanan siber … mendukung proses pengamanan dan penanganan teknis"* (kontak `servicedesk@layanan.go.id`). **Ini perpanjangan 2 hari** dari pengumuman kemarin (Senin 27 Okt 23.59) → **total 7 hari kalender, ±4 hari kerja tanpa kanal resmi**.
+- **Kondisi teknis 28 Okt 06:00 WIB ✅:** `website.desa.id` **masih HTTP 503** (CMS WebsiteDesa ver-2.0 mati) · `layanan.desa.id` **200 tapi hanya halaman pengumuman** (login SID tidak bisa dipakai) · `website-desa.layanan.go.id/home` **200** (platform terpisah, tampak jalan).
+- ⚠️ **Status verifikasi:** pengumuman **resmi & primer** ✅; tanggal baru terbaca di badan HTML ✅. **Penyebab spesifik tetap tidak dinyatakan** → kaitan PHP2Shell masih **inferensi** (jangan tulis "diserang/diretas"). **Tidak ada di portal Komdigi** (10644–10651 tidak memuatnya) dan **tidak ada media** yang memberitakan perpanjangan → **konsisten pelajaran: gangguan layanan tidak masuk portal maupun berita.**
+- **➡️ Dampak ke Webuild (TINGGI):**
+  - **Perpanjangan = penanganan teknis belum selesai** (7 hari > Kemenperin 3 hari) → argumen keandalan makin kuat, dan ini **fakta yang bisa diperiksa klien sendiri** (buka `website.desa.id`).
+  - **Aksi hari ini:** (a) **cek tidak ada** demo/klien Webuild yang menaut ke `website.desa.id`/`layanan.desa.id` (mis. tombol "layanan surat"); (b) kalau ada **calon klien desa** yang sedang dilamar → 1 pesan singkat & jujur: *"layanan website desa dari pusat masih dimatikan sampai 29 Okt; situs demo kita tetap jalan"*; (c) siapkan **halaman status statis** (1 halaman, tanpa JS) sebagai fitur paket.
+  - **Jangan salah klaim:** jangan sebut serangan/kompromi data — pengumuman hanya menyebut mitigasi risiko.
+
+### 77. 🏛️🔐 **RUU Adminduk masuk tahap DIM — Komdigi dorong 3 pengaman: interoperabilitas selaras Satu Data, pelindungan data pribadi selaras UU 27/2022, dan klasifikasi data sebagai dasar hak akses** — *dampak: TINGGI (jualan PDP-ready + desain form desa)*
+- **Apa yang berubah (portal 10651 — Siaran Pers No. 237/HM-KKD/10/2026, Selasa 27 Okt 2026 19:00):** Wamen Komdigi **Nezar Patria** pada **Paraf Daftar Inventarisasi Masalah (DIM) RUU Adminduk**, Kantor **Kemendagri**, Jakarta Pusat, **Selasa 27/10/2026**. Tiga isu krusial yang disorot Komdigi:
+  1. **Integrasi data antarsistem** — harus mengikuti **interoperabilitas** dan **selaras UU Satu Data Indonesia**.
+  2. **Pelindungan data pribadi** — penyelarasan RUU dengan **UU No. 27/2022 (PDP)**, terutama lewat **pembatasan tujuan pemanfaatan** data.
+  3. **Kejelasan hak akses** — **klasifikasi data kependudukan** dipertegas sebagai **dasar pemberian hak akses** lintas instansi.
+  - **Tiga hal yang Komdigi minta ditegaskan:** **minimalisasi data** · **pengecualian korporasi** dalam frasa *"setiap orang"* · **larangan meminta salinan dokumen kependudukan**.
+  - Kutipan: *"Masukan Kementerian Komdigi telah tercermin sebagai salah satu dasar pemberian hak akses. Tingkat klasifikasi data kependudukan perlu dipertegas agar selaras dengan tata kelola data lintas peraturan perundang-undangan."*
+- ✅ **Konfirmasi media (semua curl-able):** `antaranews.com/berita/5815791` · `rri.co.id/nasional/2848209` · `jawapos.com/teknologi/2610270475/...` · `sonora.co.id/news/46058/...` · `aspek.id`.
+- ⚠️ **Status verifikasi:** ini **masukan pemerintah pada tahap DIM** — **BELUM UU, belum disahkan DPR**, tidak ada nomor UU. Jangan tulis "aturan baru berlaku".
+- **➡️ Dampak ke Webuild (TINGGI — langsung mengubah desain & materi jual):**
+  - **"Minimalisasi data" = aturan desain situs desa:** jangan pasang form yang meminta **NIK/KK/no. HP/tanggal lahir** kalau tidak perlu. Form kontak/pengaduan cukup **nama + pesan**; kalau harus ada identitas, jelaskan tujuan + retensi.
+  - **"Larangan meminta salinan dokumen kependudukan"** → kalau desa punya **layanan surat/pengajuan online**, jangan minta **upload scan KTP/KK**; cukup verifikasi kedatangan atau integrasi SIDEKA-NG.
+  - **Klasifikasi data → hak akses berbasis peran:** siapkan model **publik / internal desa / terbatas** (contoh: statistik APBDes publik, data penerima bantuan terbatas). Ini bisa jadi **fitur paket** ("peta klasifikasi data situs").
+  - **Selaras Satu Data Indonesia** → situs desa **menampilkan** data, **bukan** jadi sumber data kedua; sumber tetap **SIDEKA-NG/wali data**. Konsisten dengan aturan lama: **jangan klaim situs desa terhubung langsung ke SPLP**.
+  - **Kalimat jual (tahan diperiksa):** *"Situs desa Webuild hanya **menampilkan** informasi — tanpa menyimpan NIK/KK dan tanpa tracker. Itu persis prinsip **minimalisasi data** yang sedang didorong Komdigi dalam pembahasan RUU Adminduk (Siaran Pers 237/HM-KKD/10/2026, 27 Okt 2026) dan kewajiban **UU PDP 27/2022 + PP 33/2026** (berlaku 16 Jan 2027)."*
+
+### 78. ⚖️🛡️ **Komdigi–Polri percepat MoU: judi online lintas negara, penipuan digital, jual beli data, hoaks — plus perlindungan infrastruktur telekomunikasi (pencurian kabel/BTS)** — *dampak: rendah*
+- **Apa yang berubah (portal 10650 — Siaran Pers, Selasa 27 Okt 2026 12:30; tanpa nomor siaran pers di badan HTML):** Menkomdigi **Meutya Hafid** beraudiensi dengan **Kapolri Suyudi Ario Seto**, Mabes Polri, Kebayoran Baru, Jakarta Selatan, **27/10/2026**. Cakupan: **pencegahan, penegakan hukum, perlindungan infrastruktur telekomunikasi**. **Aduan masyarakat yang disebut:** **jual beli data**, penipuan daring, judi online, pornografi, perundungan, misinformasi, hoaks, **love scam**. Langkah: **percepatan pelaksanaan MoU** Komdigi–Polri (MoU awal **April**). Kapolri juga menyorot **hoaks** yang *"perlu langkah kuat secara regulasi"*.
+- ⚠️ **Status:** pernyataan niat + percepatan MoU **antar-lembaga** — **bukan peraturan baru**; tidak ada Permen/SE.
+- **➡️ Dampak ke Webuild (rendah):** **"jual beli data" disebut sebagai aduan masyarakat paling menonjol** → menambah alasan menulis **kebijakan privasi singkat + pernyataan "tanpa tracker/pihak ketiga"** di situs klien. Pencurian kabel/BTS = pengingat bahwa **konektivitas bisa putus** → situs **<300 KB, terbuka di 3 Mbps** tetap relevan sebagai standar. **Tidak ada aksi mendesak.**
+
+> **Buat Orchestrator (2 baris):**
+> 1. 🚨 **Shutdown platform website desa DIPERPANJANG ke 29 Okt 23.59 WIB (7 hari).** Ini bukti keandalan yang **bisa diperiksa klien sendiri** → saya sarankan **pakai sekarang di pitch calon kades** (1 kalimat + 1 tautan `website.desa.id` sebagai bukti), dan **tetapkan** apakah **halaman "status layanan" statis** masuk paket desa. Keputusan yang diminta: **ya/tidak**.
+> 2. 🏛️ **RUU Adminduk (tahap DIM) memuat prinsip yang persis sama dengan paket kita:** minimalisasi data + larangan minta salinan dokumen kependudukan + klasifikasi data sebagai dasar hak akses. **Usul:** jadikan **checklist 5 butir "PDP-ready"** (tanpa NIK/KK di form · tanpa tracker · kebijakan privasi + retensi · klasifikasi halaman publik/internal/terbatas · tanpa runtime PHP/Node) sebagai **lampiran satu halaman** di setiap proposal. **Prioritas #1 tetap paket "situs desa PDP-ready" — 80 hari ke 16 Jan 2027.**
 
 ---
 
