@@ -368,3 +368,34 @@ Rantai: 13.881 (23) -> 11.771 (24) -> 11.515 (25) -> **11.345 (26)**. Laju bakar
 2. **Hitung koin dulu** sebelum render. TIDAK ADA jam gratis - tarif 24 jam penuh (Qwen-Edit +/-50 koin/gambar, motion +/-26 koin/dtk, video 16 dtk +/-431 koin).
 3. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) - masih $0,00 -> satu-satunya jalur pendapatan koin nyata.
 4. **Uji biaya Seedance 1 klip (5 dtk)** kalau mau serius ke AI Film Award 2027 ($1 juta, 20 Nov) - tanpa angka biaya, jangan mulai produksi 6 menit.
+
+## 15. SCAN 27 OKT 2026 (08:00 WIB) — pembakaran TINGGI (-2.897) = uji workflow, bukan kebocoran
+**SALDO: 8.448 RH Coins** (delta **-2.897** vs 26 Okt 11.345). Wallet $0,0100. Tugas jalan: 0.
+Rantai: 13.881 (23) -> 11.771 (24) -> 11.515 (25) -> 11.345 (26) -> **8.448 (27)**.
+=> Laju 24 jam ini naik tajam (2.897 vs 170 sehari sebelumnya). Tanpa render baru: sisa +/-29 hari.
+
+### Penyebab terukur (bukan bocor)
+Semua task RunningHub terpantau 26 Okt (dari `work/poll_*.py` + `data/uji_wf_favorit/`):
+- Uji **workflow favorit** (`uji_wf_favorit.py`): WF1_nightfunnels (id **2042526099766251522**) & WF2_hifidelity10s (id **2106585458498420737**) -> `WF1_nightfunnels_default.mp4` (16:55), `WF2_hififi_user.mp4` (17:33).
+- Seri **LAMA pose-transfer** (task 2114634612022272002, 2114642576758108162, 2114650563212038146, 2114655582170734594, 2114656960087683073, 2114657298677063681, 2114703142839218178, 2114711121051340801, 2114711799559712770) -> `C_photoreal*.mp4` (18:04-05), `LAMA_pose_transfer_revived.mp4` (21:11), `LAMA_userbaru_1DMY_10s.mp4` (21:42), `LAMA_userbaru_1DMY_full.mp4` (21:50).
+- Job bot kreeaimotion **132** (Kling Motion 720x1280 15 dtk): percobaan 1 **GAGAL GPU OOM (WanVideoSampler)**, percobaan 2 sukses -> `out_132.mp4` (18:10). Retry = bayar 2x GPU.
+=> Kesimpulan: -2.897 = **belasan run workflow/pose-transfer + 1 retry OOM**. Tarif berlaku 24 jam penuh; TIDAK ADA jam gratis.
+
+### Kontes (scan 27 Okt; aifilmcontests.com — aibetas.com masih 6 agenda China/wajib KTP)
+| Kontes | Biaya | Deadline | Hadiah | Status |
+|---|---|---|---|---|
+| **AKOOL AI Film Challenge** (detail terverifikasi 25 Okt) | gratis (wajib tool AKOOL) | 20 Des 2026 | pool **$500.000** Creator Rewards: grand $50K, 2 $25K, 3 $15K, 10 finalis $2,5K, +$100/entry premium | ✅ terverifikasi - tapi terkunci tool AKOOL |
+| **Cannes Film Awards 2027 — kategori AI perdana** | tier FilmFreeway | **21 Jan 2027** | $1K+ cash + $25K+ partner/promosi, laurel Cannes 25-27 Jun 2027 | ✅ **BARU** — internasional, semua tool AI boleh |
+| **Runway Hundred Film Fund** | **GRATIS** | rolling (66 hari ke 31 Des) | **$5K-$1M+ per proyek** + sampai $2M kredit | ✅ **AKSI NYATA SEKARANG** (keputusan +/-14 hari, wajib pakai Runway) |
+| Gossip Goblin x Showrunner | gratis | 15 Des | $20K | ✗ wajib Showrunner Studio |
+| KIAFF Kerala 2027 | cek | 15 Feb 2027 (buka 15 Jan) | non-cash | belum bisa dilamar |
+| AI for Good FF 2027 (ITU/UN Geneva) | cek | 1 Mei 2027 (buka 15 Jan) | non-cash, panggung PBB | belum bisa dilamar |
+| Bengaluru BISFF "Machine Made Movies" | FilmFreeway | 30 Apr 2027 | non-cash, kualifikasi Oscar | belum bisa dilamar |
+Prioritas tetap: **1 Billion AI Film Award ($1 juta, gratis, 20 Nov, wajib >=70% Seedance)** & **Chroma S2 ($450K, 7 Jan, gratis)**.
+
+### Aksi 27 Okt (prioritas)
+1. **Klaim +/-100 koin login harian** (hangus 24 jam) -> cukup +/-2 gambar Qwen-Edit.
+2. **Rem uji-coba workflow**: batasi `uji_wf_favorit.py`/pose-transfer berulang; matikan retry otomatis job OOM (bayar 2x).
+3. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) - masih $0,00, satu-satunya jalur pendapatan koin.
+4. Kontes gratis tanpa koin RH: **Runway Hundred Film Fund (rolling)** + **Chroma S2 (7 Jan)** + **Cue Xmas (20 Nov)**.
+WARNING: hitung koin dulu sebelum render. Tarif nyata: gambar Qwen-Edit +/-50 koin/gambar, motion +/-26 koin/detik (16 dtk = 431 koin).
