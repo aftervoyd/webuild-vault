@@ -57,8 +57,10 @@ class Aulaa:
 
     # ---------- internal ----------
     def _headers(self) -> dict[str, str]:
+        # Cloudflare Aulaa memblokir User-Agent bawaan aiohttp (error 1010) -> pakai UA sendiri
         return {"Authorization": f"Bearer {self.key}", "Content-Type": "application/json",
-                "Accept": "application/json"}
+                "Accept": "application/json",
+                "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"}
 
     async def _req(self, method: str, path: str, payload: dict | None = None) -> dict:
         url = f"{self.base}{path}"

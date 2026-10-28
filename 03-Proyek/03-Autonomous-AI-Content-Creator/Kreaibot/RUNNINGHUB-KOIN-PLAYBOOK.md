@@ -399,3 +399,35 @@ Prioritas tetap: **1 Billion AI Film Award ($1 juta, gratis, 20 Nov, wajib >=70%
 3. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) - masih $0,00, satu-satunya jalur pendapatan koin.
 4. Kontes gratis tanpa koin RH: **Runway Hundred Film Fund (rolling)** + **Chroma S2 (7 Jan)** + **Cue Xmas (20 Nov)**.
 WARNING: hitung koin dulu sebelum render. Tarif nyata: gambar Qwen-Edit +/-50 koin/gambar, motion +/-26 koin/detik (16 dtk = 431 koin).
+## 16. SCAN 28 OKT 2026 (08:00 WIB) — SALDO 5.831, burn tinggi 2 hari berturut = uji render, bukan bocor
+**SALDO: 5.831 RH Coins** (delta **-2.617** vs 27 Okt 8.448). Wallet $0,0100. Tugas jalan: 0.
+Rantai: 11.771 (24) -> 11.515 (25) -> 11.345 (26) -> 8.448 (27) -> **5.831 (28)**.
+Rata-rata burn 3 hari = **+/-1.895/hari** => kalau diteruskan, saldo habis **+/-31 Okt (3 hari lagi)**. KRITIS.
+
+### Penyebab terukur (log kreeaimotion + sqlite + data/)
+- **7 job gambar** bot kreeaimotion (133,134,135 gagal,136,138,139,dll) @ +/-50 koin = **+/-350**.
+- **3 job motion 15 dtk** (137, 140, 141). Job **141 retry otomatis**: percobaan 1 **GPU OOM (WanVideoSampler)**, percobaan 2 sukses => **bayar 2x**. 15 dtk x +/-26 koin = +/-390/job => **+/-1.560**.
+- **Uji workflow favorit lagi**: MT_WanAnimate_0.mp4 (04:02), MT_VACE_0.mp4 (04:04), LAMA_resep_asli.mp4 (17:19) => **+/-700-900**.
+=> Total +/-2.610, cocok dengan delta. TIDAK ADA kebocoran.
+AKSI WAJIB: matikan retry otomatis job motion untuk kasus GPU OOM (retry OOM = koin hangus 2x).
+
+### Kontes — scan 28 Okt (aifilmcontests.com/contests/new + aifc.news)
+| Kontes | Biaya | Deadline | Hadiah | Status |
+|---|---|---|---|---|
+| **SVAIFF Korea 2026** | GRATIS | **25 Nov 2026** | pool **KRW 30 jt (+/-$21.600)**, kategori narrative/animation/documentary | BARU — tool AI bebas, internasional |
+| **NEXMUSE AI Music Video 2027** | GRATIS | 28 Des 2026 | KRW 21 jt (+/-$15.100), **32 pemenang** | BARU — cocok dengan mesin motion kita |
+| Greenlight Cascade x BytePlus Seedance | gratis (wajib Cascade) | 15 Des | $65K + 1,5 jt kredit | terkunci tool |
+| Wandura Drama Challenge Ep.1 | gratis (wajib Wandura) | 31 Okt | $10K | terkunci tool, 3 hari |
+| AIFFA Madagascar | gratis | 31 Okt | top 3 | 3 hari, non-cash |
+| WAIFF London | berbayar tier | 17 Nov | jalur ke Cannes | cek |
+| 1 Billion AI Film Award 2027 | gratis-ish | 20 Nov | **$1 juta** | prioritas #1 (wajib >=70% Seedance) |
+| PixLight 2026 | gratis (wajib PixVerse) | 31 Okt | $300K | terkunci tool |
+| AI Toronto Genre Awards 2027 | - | 22 Mei 2027 | laurel/prize | baru, cash belum jelas |
+| Milan AI Festival 1st | - | 15 Feb 2027 | trofi, non-cash | baru |
+
+### Aksi 28 Okt (prioritas)
+1. **STOP uji render** — saldo cuma cukup +/-3 hari kalau burn tetap. Matikan retry OOM job motion.
+2. **Klaim +/-100 koin login harian** (hangus 24 jam) — cukup 2 gambar Qwen-Edit.
+3. **Daftar SVAIFF Korea 2026 (gratis, 25 Nov)** + **NEXMUSE Music Video (gratis, 28 Des)** — cash nyata, tool bebas, NEXMUSE pas pipeline motion.
+4. **Publish workflow creator qwen-consistency-edit** (id 2108638842228461570) — masih $0,00; satu-satunya jalur koin masuk.
+WARNING: tidak ada jam gratis. Tarif: gambar Qwen-Edit +/-50 koin, motion +/-26 koin/detik (16 dtk = 431 koin).
