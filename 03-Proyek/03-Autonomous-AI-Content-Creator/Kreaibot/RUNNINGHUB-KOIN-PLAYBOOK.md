@@ -431,3 +431,34 @@ AKSI WAJIB: matikan retry otomatis job motion untuk kasus GPU OOM (retry OOM = k
 3. **Daftar SVAIFF Korea 2026 (gratis, 25 Nov)** + **NEXMUSE Music Video (gratis, 28 Des)** — cash nyata, tool bebas, NEXMUSE pas pipeline motion.
 4. **Publish workflow creator qwen-consistency-edit** (id 2108638842228461570) — masih $0,00; satu-satunya jalur koin masuk.
 WARNING: tidak ada jam gratis. Tarif: gambar Qwen-Edit +/-50 koin, motion +/-26 koin/detik (16 dtk = 431 koin).
+
+## 17. SCAN 30 OKT 2026 (08:00 WIB) — SALDO 1.999 (SISA ±1 HARI) + Artefact Paris €10K
+**SALDO: 1.999 RH Coins** (delta **-3.832** vs 28 Okt 5.831; laporan 29 Okt gagal — HTTP 404 model, jadi ini delta 48 jam). Wallet $0,0100. Tugas jalan: 0.
+Rantai: 11.345 (26) -> 8.448 (27) -> 5.831 (28) -> **1.999 (30)**. Rata-rata ±1.916/hari => **habis ±31 Okt–1 Nov**.
+Kapasitas sisa: ±40 gambar Qwen-Edit ATAU **±4 video 16 dtk** (motion ±26 koin/dtk, 20 dtk ±520).
+
+### Penyebab terukur (bukan bocor)
+- **Uji workflow favorit lagi** (`data/uji_wf_favorit/`): **93 PNG baru + 2 MP4** (LAMA_native_新V6, V10_uji_0) sejak 28 Okt 08:00 => porsi terbesar.
+- Bot kreeaimotion: job **143** (t15, 15 dtk), **145** (t20, 20 dtk), **147** (t20, 20 dtk) + gambar 144/146.
+- Job **141** (27 Okt) gagal `ServerDisconnectedError` setelah 2.010 dtk -> kemungkinan retry = bayar 2x.
+=> Uji eksperimen, bukan kebocoran. Rem total sampai ada koin masuk.
+
+### Kontes — scan 30 Okt (aifilmcontests.com)
+| Kontes | Biaya | Deadline | Hadiah | Status |
+|---|---|---|---|---|
+| **Artefact AI Film Festival 2026 (Paris, ed.3 "(Dis)Connection", x mk2)** | gratis* | **2 Des 2026** (+33 hari) | **€10.000 Grand Prix** + potongan 30 dtk tayang seminggu di semua bioskop mk2 | ✅ **BARU** — global, short **maks 314 dtk (±5m14s)**, WAJIB pakai generative AI di tiap tahap (pra/produksi/pasca). Juri Nakache & Toledano. *cek fee di artefact-ai-film-festival.com |
+| **TAIFF Istanbul (ed.3)** | gratis | 1 Nov 2026 | Grand Prize Best AI Film + craft awards | ⚠️ 2 hari, skip |
+| **AI ZONE (30 Nov) / Cine Prague (28 Nov) / Cue Xmas (20 Nov)** | gratis | lihat §13 | $500 / $1.000 / cash TBA | sudah tercatat |
+| **AKOOL $50K (20 Des)** | wajib AKOOL | 20 Des | $500K pool | terkunci tool |
+| **Berlin AI Film Festival** | cek | 31 Des 2026 | cek | baru, belum terverifikasi |
+| **WAICF India** | cek | cek | kategori Feature/Short/Micro | baru, data belum lengkap |
+- Astana AAIFF **tutup 7 Sep 2026** (8.067 film, 125 negara) -> lewat, jangan diangkut.
+- Jeju Global AI Film Contest 2026 -> **sudah selesai** (pemenang diumumkan) -> lewat.
+- Prioritas tetap: **1 Billion AI Film Award ($1 jt, 20 Nov, wajib ≥70% Seedance)** & **Chroma S2 ($450K, 7 Jan 2027)**.
+
+### Aksi 30 Okt (prioritas)
+1. **STOP semua uji render/uji workflow** — sisa ±1 hari. Tidak ada jam gratis.
+2. **Klaim ±100 koin login harian** (hangus 24 jam).
+3. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) — masih $0,00; satu-satunya jalur koin masuk.
+4. Siapkan **Artefact Paris (2 Des, €10K, ≤314 dtk)** sebagai target produksi berikutnya — tapi **jangan render sebelum koin diisi**.
+WARNING: tarif nyata 24 jam — gambar Qwen-Edit ±50 koin, motion ±26 koin/detik (16 dtk ≈ 431, 20 dtk ≈ 520).
