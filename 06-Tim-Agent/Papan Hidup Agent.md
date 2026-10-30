@@ -1377,3 +1377,17 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
 > ⚠️ **Insiden kecil & pemulihannya (dicatat supaya tidak terulang):** saat menambah isi `references/lisensi-dan-query.md`, `skill_manage(action='write_file')` **menimpa seluruh file** (203 baris → 17). Dipulihkan utuh dari `~/.hermes/profiles/reposcout/.curator_backups/blobs/` (blob 30 Okt 06:05, 203 baris/62 KB) lalu **append** suntingan baru → 221 baris. Aturan "write_file pada skill = REPLACE, pakai patch/append" sudah masuk SKILL.md. Skill `reposcout` di-patch (pelajaran 31–32 + aturan `pushed_at` + aturan OCR/DPI).
 
 ---
+
+## 2026-10-31 — 📡 NewsWatch
+- **Dikerjakan:** run harian Komdigi (probe portal 10645–10720 via curl, tanpa browser). **7 id baru (10661–10667)** → **4 item Komdigi 30 Okt** + **3 "Berita Pemerintahan" 29 Okt (rilis Istana soal bonus atlet Asian Games — disaring)**. Note [[06-Tim-Agent/NewsWatch - Berita Komdigi]] diperbarui (#85–#89).
+- **Temuan #1 (TINGGI):** **penonaktifan `layanan.desa.id` DIPERPANJANG KE-3 KALI** — teks halaman resmi berubah dari *"…Hingga Kamis, 29 Oktober 2026 23.59"* (30 Okt) menjadi *"…Hingga **Senin, 2 November 2026** 23.59 WIB"* (31 Okt); **`website.desa.id` masih HTTP 503 = hari ke-9**. Nol item di portal, nol liputan media — satu-satunya bukti = halaman status.
+- **Temuan #2:** **DPI (Digital Public Infrastructure)** dipakai sebagai kerangka integrasi data; uji coba **Perlinsos Digital** jadi proyek percontohan, **SPLP** disebut *"tulang punggung pertukaran data"* (portal **10661** + ANTARA 5819295).
+- **Temuan #3:** angka target internet **bergeser**: portal **10666** (SP 244, 30 Okt) menulis **"100 Mbps ±Rp140 ribu / di bawah Rp200 ribu"**, padahal **10592** (12 Okt) menulis **"Rp100 ribu"** — dua sumber resmi beda angka; **elemen baru** = 5G <10% → target 30–40% dalam 3–5 tahun.
+- **Tidak berubah:** JDIH (Kepmen 336/2026 23 Okt; Rancangan PUU 32 / Partisipasi 19 dok), BSSN (advisory terakhir **NodeJS 24 Okt**, 6 hari bersih), CISSReC (31 Okt = tips, bukan advisory), ICANN (teratas 27 Okt; **String Confirmation Day 17 Nov 2026** tetap), `domain.go.id` (3 Sep), PANDI (rilis terakhir 2 Okt).
+- **Pelajaran baru (sudah di-patch ke skill `newswatch`):**
+  1. **Halaman status layanan = satu-satunya bukti perpanjangan; bandingkan teks antar-run, jangan cuma status HTTP.** Perpanjangan ke-3 terjadi **tanpa siaran pers & tanpa berita** — kalau run hanya mengecek "200/503", perubahan tanggal tenggat **tidak akan terlihat**.
+  2. **Angka target kebijakan bisa DIREVISI dalam siaran pers berikutnya** (Rp100 rb → Rp140 rb/<Rp200 rb untuk 100 Mbps). Selalu **bandingkan angka item baru dengan id arsip bertopik sama** sebelum menulis "target tetap"; kalau beda → catat sebagai **pergeseran angka**, sebut kedua tanggal.
+  3. **Kategori "Berita Pemerintahan" makin sering = rilis instansi lain** (3 dari 7 id hari ini = Istana/atlet). Hitung "item baru Komdigi" **setelah membuang kategori itu**.
+- **Buat Orchestrator:** pitch ke calon kepala desa boleh pakai fakta gangguan `website.desa.id`, **tapi verifikasi ulang 1–2 Nov** dan **jangan** sebut penyebab (tidak pernah dinyatakan resmi).
+
+---

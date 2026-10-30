@@ -4,7 +4,70 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-30** (run harian · cakupan 28–30 Okt 2026)
+**Update terakhir: 2026-10-31** (run harian · cakupan 30–31 Okt 2026)
+
+---
+
+## 🆕 Update 2026-10-31 (run harian — cakupan 30–31 Okt 2026)
+
+> Cek sumber resmi 31 Okt 06:00–07:15 (semua via **curl**): `portal.komdigi.go.id` → **probe 10645–10720**, hidup sampai **10667**, **10668–10720 = 404 semua** → id terbaru **10667**. Dari **7 id baru (10661–10667)**: **4 item Komdigi bertanggal 30 Okt** (10661 · 10665 · 10666 · 10667) + **3 item "Berita Pemerintahan" bertanggal 29 Okt** (10662–10664 = rilis **Istana** soal bonus atlet Asian Games → **disaring, bukan berita Komdigi**). ⚠️ **Portal 31 Okt (pagi) = 0 item** — belum terbit.
+> `layanan.desa.id` **200** — ⚠️ **tanggal penonaktifan DIPERPANJANG LAGI** (lihat #85) · `website.desa.id` **503** · `website-desa.layanan.go.id/home` **200** (platform lain) · `domain.go.id/berita` **200** (terbaru tetap **3 Sep 2026**; `domain.layanan.go.id/berita` = cermin isi sama) · `jdih.komdigi.go.id/produk_hukum/kategori` **200** (teratas tetap **Kepmen 336/2026 — 23 Okt**, lalu **Permen 13/2026 — 18 Okt**; **Rancangan PUU 32 / Partisipasi Publik 19 dok = tidak berubah**) · `bssn.go.id/imbauan-keamanan/` **200** (**tidak ada advisory baru** sejak **NodeJS 24 Okt** = 6 hari bersih untuk PHP/Node/GitLab/Java) · `cissrec.org` **200** (31 Okt: tips "Mengamankan Akun Media Sosial" — **tips, bukan advisory**) · `detik.com/tag/komdigi` **200** (terbaru tetap **29 Okt 17:01** → belum ada kejadian 30–31 Okt) · `icann.org/en/announcements` **200** (teratas tetap **27 Okt**; **String Confirmation Day 17 Nov 2026 tidak berubah**) · `pandi.id/siaran-pers` (listing **kosong/JS**, rilis terakhir **2 Okt**).
+> ℹ️ **Tidak ada jeda cron** — run ini bersambung dengan run 30 Okt, dan **tidak ada backfill** (10652–10660 sudah tercatat; 10661–10667 memang item baru 29–30 Okt).
+
+### 85. 🚨🏘️ **PENONAKTIFAN LAYANAN DESA DIPERPANJANG KETIGA KALI: `layanan.desa.id` kini "23 Okt 09.00 → Senin, 2 November 2026 23.59 WIB"; `website.desa.id` MASIH 503 pada 31 Okt** — *dampak: TINGGI (bukti keandalan + risiko klien)* — ⚠️ *nol item di portal, nol liputan media*
+- **Apa yang berubah (sumber primer ✅ halaman resmi, curl-able):** pada **30 Okt** teks halaman masih *"…hingga Kamis, 29 Oktober 2026 23.59 WIB"*. Hari ini (**31 Okt ±07:15 CST / 06:15 WIB**) teksnya **berubah** menjadi:
+  - *"Waktu Penonaktifan: **Jumat, 23 Oktober 2026 Mulai pukul 09.00 WIB › Senin, 2 November 2026 Hingga pukul 23.59 WIB**"* (masih dengan frasa *"Menunggu informasi lebih lanjut mengenai pengaktifan kembali layanan"* + kontak `servicedesk@layanan.go.id`).
+  - **Ini perpanjangan ke-3** (asli **27 Okt** → **29 Okt** → sekarang **2 Nov 2026**) dan **seluruhnya tanpa siaran pers, tanpa berita**.
+- **Kondisi teknis 31 Okt 06:15 WIB ✅:** **`website.desa.id` → HTTP 503** (CMS WebsiteDesa **ver-2.0** masih mati, **hari ke-9**) · **`layanan.desa.id` → 200 tapi hanya halaman pengumuman** (login SID/`/login` tidak bisa dipakai) · `website-desa.layanan.go.id/home` → **200** (platform **berbeda**, tampak normal — **jangan** dipakai sebagai bukti "sudah pulih").
+- ⚠️ **Status verifikasi:** teks pengumuman = **primer & resmi** ✅, jam cek = nyata ✅. **Penyebab tetap tidak dinyatakan** → kaitan PHP2Shell **tetap inferensi** (jangan tulis "diserang/diretas"). **Tidak ada di portal Komdigi** (10661–10667 tidak memuatnya) dan **tidak ada media** (detik tag terakhir 29 Okt).
+- **➡️ Dampak ke Webuild (TINGGI):**
+  - **Hitungan: 23 Okt 09.00 → 31 Okt 06.15 = 9 hari kalender mati**, dan pengumuman resmi sekarang menjanjikan **11 hari** (s/d 2 Nov 23.59). Fakta ini **bisa diperiksa klien sendiri** (buka `website.desa.id`) → bahan pitch terkuat, dan **semakin kuat karena diperpanjang dua kali tanpa penjelasan**.
+  - **Aksi:** (a) **cek lagi 1–2 Nov** — kalau tanggal bergerak lagi, itu bukti **gangguan struktural**, bukan maintenance biasa; (b) **jangan** pakai pitch "layanan pusat mati" **setelah** layanan normal — verifikasi dulu; (c) pastikan **tidak ada** demo/klien Webuild yang menaut ke `website.desa.id`/`layanan.desa.id`; (d) tawarkan **halaman status statis (1 file, tanpa JS)** + **SLA tertulis** sebagai pembeda dari layanan pusat yang bisu.
+
+### 86. 🏛️🔗 **DPI jadi kerangka baru integrasi data pemerintah: uji coba "Perlinsos Digital" dipakai sebagai proyek percontohan, SPLP disebut "tulang punggung pertukaran data"** — *dampak: SEDANG (bahasa & posisi produk SPBE)* — portal **10661** (Berita Komdigi, **Jumat 30 Okt 11:00**)
+- **Apa yang berubah:** **Direktur Aplikasi Pemerintah Digital** Komdigi **Yessi Arnaz Ferari**, di **Ngopi Bareng** Kantor Komdigi (**Kamis 29/10/2026**):
+  - Pemerintah memakai **Digital Public Infrastructure (DPI)** pada **perlinsos** sebagai **pilot project integrasi data lintas instansi** — tujuan: **memperpendek rantai verifikasi**, **menekan data ganda/duplikasi**.
+  - *"Ini adalah **reset button** untuk penargetan use case lain, seperti **LPG, KIPP untuk pendidikan, dan haji**. Itu dasarnya terkait **data tunggal**."*
+  - **SPLP** disebut eksplisit: *"**tulang punggung pertukaran data** untuk menghubungkan sistem aplikasi di masing-masing kementerian/lembaga. Datanya biar dialirkan dan diseragamkan."*
+- ✅ **Status verifikasi:** portal resmi ✅ + **padanan media**: ANTARA (`antaranews.com/berita/5819295`, 29 Okt) & InfoPublik. Sudah jadi **kegiatan berjalan** sejak uji coba perlinsos (bukan kebijakan baru hari ini).
+- **➡️ Dampak ke Webuild (SEDANG):**
+  - **Menegaskan fakta produk yang sudah dicatat:** SPLP = **jalur pertukaran data antar-aplikasi pemerintah** (JIP, tertutup) — **bukan** jalur untuk website publik desa. Jadi **jangan** pernah menulis "website desa terhubung SPLP"; integrasi data desa resmi tetap **SIDEKA-NG ↔ wali data**.
+  - **Kosakata baru siap pakai di proposal:** *"rantai verifikasi pendek"*, *"tanpa data ganda"*, *"data tunggal"*, *"reset button"* — bahasanya sama dengan kebutuhan desa (satu data warga untuk semua layanan).
+  - **Peluang narasi:** situs desa Webuild = **etalase & kanal layanan** (baca-saja, minim data); **tidak** mengklaim sebagai bagian DPI/SPLP. Kalau klien tanya "kapan masuk SPLP?" → jawab: **lewat SIDEKA-NG/wali data kabupaten**, bukan lewat situs.
+
+### 87. 💰📶 **Angka target internet bergeser: "100 Mbps **Rp140 ribu** atau di bawah **Rp200 ribu**" (sebelumnya "Rp100 ribu") + target adopsi 5G 30–40% dalam 3–5 tahun** — *dampak: SEDANG (argumen jual keterjangkauan)* — portal **10666** (Siaran Pers **No. 244/HM-KKD/10/2026**, **Jumat 30 Okt 19:00**)
+- **Apa yang berubah:** wawancara Wamen **Nezar Patria** dengan **CNBC Indonesia** di Kantor Komdigi (**Selasa 27/10/2026**):
+  - Target fixed broadband **100 Mbps** dengan biaya **"sekitar Rp140 ribu atau di bawah Rp200 ribu"** (satu koneksi dipakai sekeluarga).
+  - **Elemen BARU:** adopsi **5G Indonesia masih <10%**, target **30–40% dalam 3–5 tahun**.
+  - ⚠️ **Ini BUKAN program baru** — tema yang sama sudah muncul: **Internet Rakyat / "100 Mbps Rp100 ribu"** (portal **10259**, 26 Mei 2026) dan **diulang 12 Okt 2026** (portal **10592**, *"100 Mbps paling tidak bisa bayar cuma 100 ribu"*, penetrasi fixed broadband **22%** → target **50%**, biaya rumah tangga kini **±Rp300 ribu**).
+  - ✅ **Pergeseran angkanya nyata, bukan salah baca:** dua portal resmi menulis angka berbeda (**Rp100 ribu** [12 Okt] → **Rp140 ribu / <Rp200 ribu** [30 Okt]); ANTARA (`antaranews.com/berita/5822719`, **30 Okt 23:15 WIB**) juga menulis **"di bawah Rp200 ribu"**.
+- ⚠️ **Status verifikasi:** kutipan & angka ✅ (portal + ANTARA). **Belum ada Permen/tarif resmi** — masih target/kajian → **jangan tulis "tarif internet ditetapkan"**.
+- **➡️ Dampak ke Webuild (SEDANG):**
+  - **Angka jual yang dipakai sekarang: "100 Mbps < Rp200 ribu"** — pakai versi **terbaru** (30 Okt) untuk pitch, dan sebut versi lama hanya sebagai riwayat. Konsistensi ini penting kalau klien membandingkan materi kita dengan berita.
+  - **Fakta pendukung:** fixed broadband baru **22%** penetrasi (target 50%), biaya rumah tangga **±Rp300 rb/bln** → mayoritas desa **tetap pakai seluler**. Kesimpulan produk **tidak berubah**: **situs desa <300 KB, terbuka di 3 Mbps, tanpa JS berat**.
+
+### 88. 🤖⚖️ **Klaster AI 30 Okt: risiko "agentic AI" di keuangan & kesehatan (dikaitkan langsung ke UU PDP 27/2022) + pidato kepemimpinan digital Meutya** — *dampak: RENDAH–SEDANG (kutipan & checklist PDP)*
+- **10665 — Siaran Pers No. 245/HM-KKD/10/2026 (Jumat 30 Okt 20:00):** Wamen **Nezar Patria** (wawancara CNBC Indonesia, **27/10**):
+  - **Agentic AI** yang diberi otoritas bertindak/memutuskan di **perbankan**: *"apabila terjadi kesalahan, akan fatal. Uang bisa hilang atau menimbulkan kekacauan yang bersifat **sistemik**."*
+  - **Kesehatan:** kesalahan diagnosis/agen AI → *"yang dipertaruhkan adalah **nyawa manusia**"*.
+  - **Kaitan PDP eksplisit:** data = elemen utama AI; **UU No. 27/2022 (PDP)** disebut sebagai **instrumen penting** menjaga ekosistem AI nasional. → **penegasan** (tema tata kelola AI sudah berulang sejak Agu 2026), **bukan aturan baru**.
+- **10667 — Siaran Pers (tanpa nomor di badan HTML; Jumat 30 Okt 22:00):** Menkomdigi **Meutya Hafid** di **Indonesia Youth Summit 2026** (Taman Ismail Marzuki, **Jumat 30/10**): tiga agenda **terhubung–bertumbuh–terjaga**; **±260 juta pengguna internet**, **30% ekonomi digital ASEAN**; proyeksi 2030: **92 juta pekerjaan tergantikan, 170 juta pekerjaan baru**, **62%** perusahaan cari talenta yang bisa bekerja dengan AI, **77%** melakukan *upskilling*.
+- ⚠️ **Status verifikasi:** kutipan resmi ✅ (portal). Keduanya **pidato/penegasan**, tanpa regulasi baru.
+- **➡️ Dampak ke Webuild (RENDAH–SEDANG):**
+  - **Kalimat siap pakai untuk proposal PDP:** *"data adalah elemen utama AI sehingga pengelolaannya harus hati-hati agar data sensitif tidak disalahgunakan atau bocor"* (Wamen, 30 Okt) → pasangan langsung dengan **PP 33/2026 berlaku 16 Jan 2027** (3×24 jam notifikasi, RoPA, DPIA, denda s.d. 2%).
+  - **Produk:** untuk desa, tetap **minim data** (tanpa NIK/KK/HP, tanpa login warga, tanpa tracker). Untuk **UMKM** yang ingin "AI chatbot" → **jangan** simpan data pelanggan di situs; arahkan ke kanal resmi + **kebijakan privasi & retensi tertulis**.
+  - **Rekrutmen/talenta internal:** angka **62% perusahaan mencari kemampuan AI** = alasan wajar memakai tool AI (Hermes) di alur kerja studio, bukan sekadar hobi.
+
+### 89. 📋 Sumber lain — tidak ada perubahan (31 Okt)
+- **JDIH:** teratas tetap **Kepmen 336/2026 (23 Okt)** → **Permen 13/2026 Ortaker BAKTI (18 Okt)** → Kepmen 335 & 318/2026 (11 Sep). **Rancangan PUU 32 dok / Partisipasi Publik 19 dok = tidak berubah** sejak 16 Okt → **tidak ada Rancangan Permen baru**.
+- **BSSN:** urutan tetap **NodeJS (24 Okt) · Oracle CVE-2026-91403 (23 Okt) · GitLab Regex Compiler CVE-2026-110264 (23 Okt) · PHP2Shell (22 Okt)** → **tidak ada advisory baru** (runtime web PHP/Node/GitLab/Java bersih 6 hari).
+- **CISSReC:** publikasi **31 Okt** = *"Langkah Sederhana Mengamankan Akun Media Sosial dari Pengambilalihan"* → **tips/edukasi, bukan advisory**; tidak ada laporan baru soal situs pemerintah.
+- **ICANN:** pengumuman teratas tetap **27 Okt**; **Community Input & Objections Period 17 Nov 2026 – 16 Mar 2027 tetap**. Tidak ada gerakan TLD baru.
+- **`domain.go.id/berita`:** tetap **3 Sep 2026** ("Model Terdistribusi Dikaji untuk Pengelolaan DNS Server Pemerintah") → **±2 bulan tanpa update**; `domain.layanan.go.id/berita` = **isi identik** (cermin).
+- **PANDI:** listing siaran pers **kosong (JS)**; rilis terakhir yang terlacak **2 Okt 2026** ("AI SIRT untuk tangani abuse AI" + **Analitik.id**) → tidak ada rilis baru 27–31 Okt selain **MoU Privy** (sudah dicatat #82). ⚠️ **Catatan**: `AI SIRT` & `Analitik.id` **belum pernah masuk note** → masuk daftar periksa run berikut (relevan ke **abuse domain & reputasi `.id`**).
+- **`www.komdigi.go.id/berita`, `djkpm.komdigi.go.id`, `csirt.komdigi.go.id`:** tetap **403 ke curl** (tidak diambil).
+
+> **Buat Orchestrator (1 baris):** `layanan.desa.id`/`website.desa.id` **diperpanjang ke-3 kali → 2 Nov 2026 23.59** (mati 9 hari, nol pengumuman resmi selain halaman status) — kalau mau dipakai untuk pitch ke calon kepala desa, **verifikasi ulang 1–2 Nov** dan pakai **hanya fakta tanggal**, bukan dugaan penyebab.
 
 ---
 
