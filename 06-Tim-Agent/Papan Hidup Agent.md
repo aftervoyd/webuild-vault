@@ -1334,3 +1334,44 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
   8. ℹ️ **Rapikan yang sisa:** hapus OmoApicall/Oxion (401) dari config · `SOUL.md` pola injeksi · vault masih **PUBLIK** · commit `kreaibot`/`kreeaimotion` · aplikasi mobile Desa Pamekaran (nunggu referensi page-by-page) · daftar penyedia SIKaP/LKPP.
 - **Pelajaran:** (a) ⭐ **404 "Model not found or inactive" bukan salah job — provider menghapus model dari katalognya**, dan fallback yang memakai katalog sama **ikut mati** → fallback harus **beda vendor**, bukan beda nama model; (b) ⭐ **verifikasi fix loop = dua bacaan `NRestarts` berjarak 12 detik** (22.812 → 22.812 = beku), bukan sekadar `is-active`; gateway bisa **sehat di luar systemd** dan itu sah — yang penting churn berhenti & `getMe` ok; (c) ⭐ **service `inactive` dengan `code=exited status=0/SUCCESS` = dihentikan rapi (kemungkinan sengaja), bukan crash** — beda dengan `failed`/`auto-restart`; (d) **baca koin dari `work/rh_coins.csv`, bukan `data/`** (`/root/projects/kreaibot/work/rh_coins.csv`) dan **hitung laju hanya dari tanggal yang ada bacaan** (29 Okt bolong → bagi 2 hari, jangan bagi 3); (e) `sqlite3` CLI tidak terpasang → pakai `python3 -c sqlite3` untuk hitung tabel.
 
+
+## 2026-10-31 — 🔍 RepoScout (rotasi: BLOK MARKETING "ANTI-TEMPLATE"/EDITOR VISUAL + DIGITALISASI ARSIP & OCR, 2 jebakan lisensi baru)
+
+- **Rotasi topik hari ini:** dua kelas yang **`grep`-nya 0 di katalog** → **(A) blok marketing + editor visual** (`tailark|motion-primitives|diceui|kokonutui|onlook|penpot` = 0) — katalog punya *fondasi* (shadcn, Magic UI, Cult UI) tapi belum punya **blok section siap-pasang** & belum punya jalur **visual → kode** buat user yang bukan developer; **(B) OCR / digitalisasi arsip** (`ocr|tesseract|ocrmypdf` = 0 seksi) — lemari surat desa yang sudah difoto tapi tak bisa dicari.
+- 🧩 **Temuan A — blok & editor visual (8 repo):**
+  - ✅ **Tailark Blocks** `tailark/blocks` — **MIT** (`LICENCE.md`, © 2025 Irung) · 2.337⭐/subs 12 · registry `@tailark-oss` (Base UI **dan** Radix) · ⚠️ **0 commit/60d** (push 29 Jul) → blok section hero/fitur/harga/FAQ; anggap *selesai*, bukan berkembang; **Tailark Pro berbayar** di luar repo.
+  - ✅ **Motion Primitives** `ibelick/motion-primitives` — **MIT** · 6.865⭐/subs 20 · **1,57 MB** (paling ringan hari ini) · 5 commit/60d → primitif animasi, aman di-copy.
+  - ✅ **Dice UI** `sadmann7/diceui` — **MIT** · 2.098⭐/subs 5 · **46 commit/60d** (push 29 Okt) → tabel/filter/faceted, persis bagian mahal di situs desa (daftar UMKM, arsip surat).
+  - 🔸 **Kokonut UI** `kokonut-labs/kokonutui` — **MIT** · 2.252⭐ · aktif (100+ commit/60d) · **tapi README menjual "Kokonut UI Pro"** → motif "komponen gratis, blok premium berbayar".
+  - 🔸 **21st Magic MCP** `21st-dev/magic-mcp` — **ISC** · 6.322⭐/subs 27 · 3 commit/60d → MCP server: agen cari 10.000+ komponen React/Tailwind; butuh `API_KEY_21ST` (**gratis**) tapi ada **"paid code retrieval"** + error `ai_subscription_required` = **motif ke-5 "kode bebas + layanan hosted berbayar"**.
+  - 🔸 **Onlook** `onlook-dev/onlook` — **Apache-2.0** · 27.051⭐/subs 123 → editor visual "klik elemen → kode React berubah" (**konsep paling pas buat user**), **TAPI**: commit terakhir di `main` = **22 Jul 2026**, rilis terakhir **v0.2.32 (Jul 2025)**, self-host butuh **Supabase + CodeSandbox SDK + Freestyle + OpenRouter + Morph/Relace** → **bukan jalur produksi**.
+  - 🔸 **Penpot** `penpot/penpot` — **MPL-2.0** · 61.884⭐/subs 281 · aktif → alternatif Figma, **tapi compose = 9 service** (frontend, backend, admin-console, **mcp**, exporter, postgres, valkey, mailpit) → **jangan self-host di VPS 1,9 GB**; pakai **penpot.app hosted**.
+  - ⚠️ **animate-ui** (koreksi entri 7 Okt) — `LICENSE.md` = **"MIT + Commons Clause License Condition"** (juga di `packages/{react,vue,cli}`) → **bukan MIT murni** = **jebakan lisensi ke-32**.
+- 📄 **Temuan B — OCR & arsip desa (10 repo):**
+  - ✅ **OCRmyPDF** — **MPL-2.0** · 35.200⭐/subs 188 · **91 commit/60d** → **REKOMENDASI #1**: tambah lapisan teks **di dalam** PDF scan (arsip bisa dicari, tampilan asli utuh); `ghostscript` **sudah ada di VPS** ✅, butuh `qpdf`.
+  - ✅ **Tesseract** — **Apache-2.0** · 77.256⭐/subs 1.711 (subs paling sehat) · **v5.5.0 sudah terpasang** di VPS; `ind.traineddata` (8,2 MB) resmi ada di `tessdata` & `tessdata_best` ✅.
+  - ✅ **Umi-OCR** — **MIT** · 48.298⭐ · batch OCR **offline di Windows** → operator desa bisa scan 500 surat sendiri, nol RAM VPS; ⚠️ push Nov 2025 (mandek ±1 th).
+  - ✅ **tesseract.js** — **Apache-2.0** · 38.799⭐/subs 479 → OCR **di browser** untuk form upload warga = privasi (PDP) + hemat RAM.
+  - ✅ **Docling** — **MIT** · 69.884⭐ · aktif → dokumen → markdown/tabel (sudah dipakai `haiku.rag`) = jembatan **arsip → chatbot desa**.
+  - 🔸 **LiteParse** (Apache-2.0, Rust, 15,6 MB, baru Feb 2026) · 🔸 **PaddleOCR** (Apache-2.0, 92.005⭐, repo **1,97 GB** = berat) · 🔸 **EasyOCR** (push Des 2025) · 🔸 **Unlimited-OCR** (MIT, baru Jun 2026, kualitas Indonesia **belum diuji**).
+  - ⚠️ **Surya** `datalab-to/surya` — **kode Apache-2.0 tapi bobot = "modified AI Pubs Open RAIL-M"**: gratis riset/pribadi & **startup <$5 jt**; lebih dari itu **bayar** = **jebakan lisensi ke-33**.
+- 🧪 **Bukti nyata (bukan klaim artikel): Tesseract 5.5.0 + `ind.traineddata` diuji di VPS pada surat desa sintetis** (dengan NIK 16 digit), rasio kemiripan ke teks asli:
+  - bersih 1700 px → **100%** (ind & eng), NIK utuh
+  - scan sedang (blur 1,1 · rotasi 1,6° · noise) → **ind 99,8% / eng 99,9%**, NIK utuh
+  - **foto jelek 800 px** (blur 2,2 · rotasi 4° · JPEG q28) → **ind 9,5% / eng 8,0%, NIK HILANG**
+  - **2400 px (≈300 dpi), degradasi sama** → **ind 99,8% / eng 99,6%**, NIK utuh
+  → **resolusi menentukan, bukan pilihan model/bahasa**; `-l ind` bukan sihir (abjad Latin, `eng` nyaris sama).
+- 📌 **Dampak/aksi buat Webuild:**
+  1. 🧩 **Jalur desain user (bukan developer):** Figma/Penpot *hosted* untuk komposisi → `designlang`/`Dembrandt` ambil token → **Tailark + Dice UI + Magic UI/Cult UI** untuk struktur → Motion Primitives untuk gerak → cek `axe`/`pa11y` + Lighthouse. **Onlook tidak masuk jalur** (mandek + 5 layanan pihak ketiga).
+  2. 📄⭐ **Produk baru yang murah dijual: "Arsip Desa Bisa Dicari".** Scan 300 dpi → **OCRmyPDF `-l ind+eng`** → PDF bisa dicari + **rekap data warga**; batch besar di **PC user pakai Umi-OCR**; upload warga pakai **tesseract.js di browser**; lalu **Docling → haiku.rag** untuk chatbot arsip. **Nol GPU, nol container menetap.**
+  3. ⚖️ **SOP wajib:** hasil OCR **bukan bukti hukum** — NIK/nomor surat divalidasi format lalu **diperiksa manusia**; OCR untuk **menemukan**, bukan **memutuskan**.
+  4. 🧮 **Jangan clone repo besar:** penpot 436 MB, cult-ui 222 MB, kokonutui 115 MB, PaddleOCR **1,97 GB** → pakai `npx shadcn add` / rilis binary.
+- 🧠 **Pelajaran baru (akan di-patch ke skill `reposcout`):**
+  1. **Jebakan lisensi ke-32 — "MIT + Commons Clause" bukan MIT.** `imskyleen/animate-ui`: boleh komersial **asal tidak menjual/meredistribusi komponennya "in their original form—alone or in a bundle"** → situs klien ✅, produk komponen kita 🚫. Deteksi: `head -3` file lisensi + `grep -i "commons clause"`, dan **cek juga salinan lisensi di dalam `packages/*/`**.
+  2. **Jebakan lisensi ke-33 — kode bebas ≠ bobot model bebas.** `datalab-to/surya`: `LICENSE` = **Apache-2.0**, tapi badge README = **"Model License: OpenRAIL-M"** + bagian *Commercial usage* (ambang **$5 jt** pendanaan/pendapatan). Untuk repo model/AI: **baca juga README bagian Model License/pricing**, jangan cuma file `LICENSE`.
+  3. **`pushed_at` MENIPU — ukur keaktifan dari commit di DEFAULT BRANCH + rilis terakhir.** `onlook-dev/onlook` tampak push **21 Okt 2026**, padahal commit terakhir di `main` = **22 Jul 2026** (push itu ke branch lain) & rilis terakhir Jul 2025. Cek: `gh api repos/O/R/commits?per_page=3` (tanpa `?sha=`) + `/releases?per_page=3`.
+  4. **OCR: DPI > model.** Uji sendiri membuktikan degradasi sama → **9,5% di 800 px** vs **99,8% di 2400 px**; ini generalisasi "hitung service dulu" untuk kelas OCR: **cek resolusi input dulu sebelum menilai mesin**.
+  5. **Query:** `tailwind ui components` = berisik (headlessui/flowbite/preline = library CSS, bukan registry) → tambah **`+shadcn`**; `ocr in:name,description` = **bersih** (langsung dapat semua kandidat), sedangkan `document parsing` & `pdf extract text` = berisik (HanLP, tika, pdfplumber = library per-bahasa).
+- **📁 Perubahan:** katalog **+2 seksi baru** (🧩 Blok Marketing & Editor Visual · 📄 Digitalisasi Arsip & OCR) = **18 repo** masuk (6 ✅ rekomendasi/pakai · 8 🔸 · 4 ⚠️/🚫) + **1 koreksi entri lama** (animate-ui) + **1 tabel uji nyata**. Skill `reposcout` di-patch (pelajaran 31–32 + aturan `pushed_at` + aturan OCR/DPI).
+
+---
