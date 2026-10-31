@@ -1416,3 +1416,26 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
 
 ---
 
+## 2026-11-01 — 🔍 RepoScout (rotasi: FOTO PRODUK UMKM/hapus latar + WIDGET CHAT AI di situs klien, 4 pelajaran baru)
+
+- **Dikerjakan:** run harian (rotasi topik **content creation/design** + **agentic AI sisi tampilan**). Cek katalog dulu (`grep rembg` = 0, `grep assistant-ui` = 0, `grep upscale` = 0) → 2 seksi baru, **16 repo** (6 ✅ · 4 🔸 · 3 ⚠️ · 3 🚫), **nol duplikat** dengan seksi pipeline gambar (sharp/imgproxy/Squoosh) yang sudah ada.
+- **Temuan #1 (BISNIS — paket jualan baru):** **"Foto Produk Rapi"**. 25.268⭐ **rembg** (**MIT**, file lisensi `LICENSE.txt`, **13 commit/60d**, rilis **v2.0.86 21 Okt**) bisa **batch satu folder** (`rembg p input/ output/ -m birefnet-general`) → foto jualan UMKM latar berantakan jadi PNG latar bersih, lalu dikomposit + resize pakai **sharp** (sudah di katalog). **Model yang dipakai aman komersial semua:** u2net/silueta = **U-2-Net Apache-2.0** · isnet = **DIS Apache-2.0** · birefnet = **BiRefNet MIT** (kode **dan** bobot; HF 837 ribu unduhan). **Nol GPU, nol server menetap** — jalankan di PC user.
+- **Temuan #2 (agentic AI yang bisa dijual):** **widget chat "tanya layanan desa"**. Otaknya sudah ada (`haiku.rag` + Docling), **wajahnya belum**: **Deep Chat** (MIT, npm 2.5.1, dependency cuma 3, web component → 1 tag di Astro) & **assistant-ui** (MIT, 12.872⭐, 100+ commit/60d, gaya shadcn → Next.js). 🔸 CopilotKit (MIT **open-core + "Intelligence" cloud**, repo 901 MB) & chatscope (MIT, 112 KB, mandek) sebagai cadangan. Pola produk: widget → API route → RAG dengan **sitasi** → tombol WA kalau tak ketemu.
+- **Temuan #3 (4 jebakan hari ini):**
+  1. 🚫 **`imgly/background-removal-js`** (7.360⭐) = **AGPL-3.0** + opsi komersial → nol untuk situs klien (JS ke browser = seluruh app kena AGPL).
+  2. ⚠️ **`addyosmani/bg-remove`** = kode **MIT** tapi model default **RMBG-1.4** (lisensi bria, non-komersial tanpa perjanjian) & opsi **RMBG-2.0 = CC BY-NC 4.0** → **jebakan ke-34**.
+  3. ⚠️ **Upscayl 51.507⭐** & **Real-ESRGAN 37.297⭐** → **0 commit/60d** dua-duanya (Real-ESRGAN mati sejak Agu 2024); Upscayl juga **butuh GPU Vulkan** + **AGPL** → alat internal di PC, bukan fondasi.
+  4. 🚫 **`tui.image-editor`** (7.668⭐, MIT) **ARCHIVED** sejak Nov 2023 — padahal ini yang paling sering direkomendasikan tutorial lama; gantinya **Fabric.js** (31.532⭐, MIT, 71 commit/60d) / **Konva** (MIT, API `NOASSERTION`).
+- 📌 **Dampak/aksi buat Webuild:**
+  1. 🖼️ **Alur foto produk jadi SOP:** foto ulang latar polos → `rembg p … -m birefnet-general` → komposit (putih/krem/brand) + resize 1080/1200×628/800 via sharp → **jangan** AI-upscale sebagai default (foto 12 MP sudah cukup).
+  2. 💬 **Widget chat = upsell di atas paket RAG.** Urutan: deep-chat (Astro, murah) → assistant-ui (Next, kustom) → CopilotKit (hanya kalau butuh agen yang *melakukan* sesuatu).
+  3. ⚖️ **Proposal wajib menyebut:** chatbot bisa salah → **sitasi + tombol operator**, jangan kirim NIK/KK ke model pihak ketiga, sediakan log pertanyaan (jadi daftar FAQ desa).
+  4. 🧮 **Jangan clone repo besar:** CopilotKit **901 MB**, Upscayl 568 MB, fabric.js 262 MB, assistant-ui 193 MB → ambil via npm/shadcn atau file sumber saja. VPS hari ini: RAM 1,9 GB (**available 538 MB**), disk **56%**.
+- 🧠 **Pelajaran baru (sudah di-patch ke skill `reposcout`):**
+  1. **Jebakan ke-34 — kode MIT ≠ model non-komersial** (pola paling sering di kategori AI gambar): cek **nama model** di README, lalu lisensinya di **HF** (`cardData.license_name`/`license_link`), bukan cuma file `LICENSE`. RMBG-2.0 = **CC BY-NC 4.0**; RMBG-1.4 = perjanjian bria.
+  2. **⭐ puluhan ribu bisa 0 commit/60d** — Upscayl 51k⭐ & Real-ESRGAN 37k⭐ dua-duanya nol commit; ⭐ bukan ukuran hidup (perpanjangan aturan 3).
+  3. **Nama file lisensi bukan selalu `LICENSE`**: rembg = **`LICENSE.txt`**, miniPaint = **`MIT-LICENSE.txt`**, lalu `LICENSE` = 404 → **selalu** `gh api git/trees/<branch>?recursive=1 | grep -i licen` (bukan menebak nama file).
+  4. **Frasa urutan kata bisa MELEWATKAN repo terbesar**: `background+removal+in:name,description` **tidak memunculkan rembg (25k⭐)** di 12 teratas (deskripsinya "remove images **background**"); `ai+chat` = **aplikasi** chat lengkap (NextChat 88k, LibreChat 46k), bukan komponen. → **kalau sudah tahu nama proyek, `gh api repos/O/R` langsung**; jangan harap search yang menemukan.
+- **📁 Perubahan:** katalog **+2 seksi** (🖼️ Foto Produk UMKM & Banner · 💬 Widget Chat AI) = 16 repo; skill `reposcout` di-patch (pelajaran 36–39); reference `lisensi-dan-query.md` di-append (contoh kategori gambar & chat).
+
+---
