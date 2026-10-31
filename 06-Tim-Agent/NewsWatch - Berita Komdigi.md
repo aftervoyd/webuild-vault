@@ -4,7 +4,68 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-10-31** (run harian · cakupan 30–31 Okt 2026)
+**Update terakhir: 2026-11-01** (run harian · cakupan 31 Okt–1 Nov 2026)
+
+---
+
+## 🆕 Update 2026-11-01 (run harian — cakupan 31 Okt–1 Nov 2026)
+
+> Cek sumber 1 Nov 06:00–07:20 (semua via **curl**, browser tidak dipakai): `portal.komdigi.go.id` → **probe 10652–10705 (54 id)** → hidup berakhir di **10667**, **10668–10705 = 404 semua** → **0 item baru** sejak run 31 Okt; **tidak ada backfill** (10652–10660 sekarang semua **200** tapi sudah tercatat di run 30 Okt). **Portal 31 Okt = 0 item, 1 Nov (pagi) = belum terbit.**
+> `layanan.desa.id` **200** — teks **tidak berubah** dari 31 Okt (*"…hingga **Senin, 2 November 2026** 23.59 WIB"*) → **besok = hari terakhir** · `website.desa.id` **503** (hari ke-10) · `website-desa.layanan.go.id/home` **200** (platform lain, bukan bukti pulih) · `jdih.komdigi.go.id/produk_hukum/kategori` **200** (teratas tetap **Kepmen 336/2026 — 23 Okt** → **Permen 13/2026 — 18 Okt**; **Rancangan PUU 32 / Partisipasi Publik 19 dok = tidak berubah**) · `bssn.go.id/imbauan-keamanan/` **200** (**tidak ada advisory baru**; terakhir **NodeJS 24 Okt** = 8 hari) · `cissrec.org` **200** (teratas masih *"Panduan Verifikasi Dua Langkah WhatsApp"* = **tips, bukan advisory**) · `domain.go.id/berita` **200** (terbaru tetap **3 Sep 2026**) · `icann.org` **200** (**String Confirmation Day 17 Nov 2026** & **Community Input & Objections 17 Nov 2026 – 16 Mar 2027 tetap**) · `pandi.id` (listing **kosong/JS**; rilis terakhir terlacak **2 Okt**) · `detik.com/tag/komdigi` **200** (terbaru tetap **29 Okt 17:01**) · ❌ **`tempo.co/tag/komdigi` = 403 Cloudflare** (baru: jangan dipakai).
+> ⭐ **Sumber baru ditemukan: `infradigital.komdigi.go.id` (= Ditjen Infrastruktur Digital, 200 & curl-able)** → memuat berita yang **TIDAK ada di portal pusat** (lihat #93).
+
+### 90. 🚨🏘️ **HARI KE-10 PENONAKTIFAN LAYANAN DESA — BESOK (Senin 2 Nov 2026 23.59 WIB) ADALAH BATAS AKHIR; `website.desa.id` MASIH 503** — *dampak: TINGGI* — ⚠️ *nol siaran pers, nol liputan media*
+- **Apa yang berubah:** **tidak ada perubahan** dari run 31 Okt — teks halaman resmi tetap *"Jumat, 23 Oktober 2026 Mulai pukul 09.00 WIB › **Senin, 2 November 2026** Hingga pukul 23.59 WIB"*, frasa *"Menunggu informasi lebih lanjut mengenai pengaktifan kembali layanan"* + `servicedesk@layanan.go.id` masih sama.
+- **Kondisi 1 Nov ±06:00 WIB ✅:** `website.desa.id` → **HTTP 503** (hari ke-**10**; 23 Okt → 1 Nov = 9 hari penuh, ini hari ke-10) · `layanan.desa.id` → **200 tapi hanya halaman pengumuman** · `website-desa.layanan.go.id/home` → **200** (platform berbeda).
+- ⚠️ **Status verifikasi:** teks pengumuman = **primer & resmi** ✅; **penyebab tidak pernah dinyatakan** → kaitan PHP2Shell **tetap inferensi**. Tidak ada di portal (10661–10667) & tidak ada di detik tag (terakhir 29 Okt).
+- **➡️ Dampak ke Webuild (TINGGI):** besok (2 Nov) harus **dicek pagi**: (a) **pulih** → pitch "pusat mati 10 hari" **berhenti dipakai**, ganti ke "situs mandiri tidak bergantung platform pusat"; (b) **tanggal bergeser lagi** = **perpanjangan ke-4** → bukti **gangguan struktural**, bahan pitch paling kuat (hanya pakai **fakta tanggal**, jangan sebut penyebab). Pengumuman resmi sendiri menjanjikan **10 hari kalender mati** (23 Okt–2 Nov).
+
+### 91. 🚨📜 **LEMBAGA PDP: HARMONISASI **SELESAI**, TINGGAL KEPUTUSAN PRESIDEN — tahap awal lembaga = "awareness + pedoman teknis", BUKAN penindakan** — *dampak: TINGGI (kartu jual PP 33/2026)* — Warta Ekonomi **Rabu 28 Okt 2026 18:10 WIB**
+- **Apa yang berubah:** **Arief Wahyudi** (Analis Kebijakan Ahli Muda, **Direktorat Strategi dan Kebijakan Kawasan Ruang Digital Komdigi**), dalam diskusi **transfer data lintas batas Indonesia–Jerman (IEU-CEPA)**, Jakarta, **28/10/2026**:
+  - *"**Sudah harmonisasi, tinggal keputusan di presiden** nanti bagaimana untuk pembentukannya."*
+  - Komdigi sudah menyiapkan **rekomendasi kebijakan & regulasi teknis**; **"PR-nya memang akan banyak di lembaga PDP"**; kebutuhan SDM juga disiapkan, tapi belum bisa penuh sebelum Kepres.
+  - **Tahap awal lembaga (perkiraan Arief):** *"pasti tidak akan langsung ke **enforcement**, tapi masih ke **peningkatan awareness**, kemudian menyiapkan **technical guidelines**."*
+  - **Kalimat kunci untuk klien:** perusahaan **tidak perlu menunggu** lembaga PDP berdiri — **PP 33/2026** sudah memberi penjabaran teknis (contoh: **pemrosesan otomatis/profiling**); acuan **UU 27/2022 Pasal 56** untuk transfer lintas negara (penilaian tingkat pelindungan negara tujuan, keberadaan otoritas, perjanjian mengikat).
+  - **Raditya Kosasih** (Founder/APPDI): *"**Kepatuhan terhadap PDP ini sudah harus dijalankan** sebetulnya"* + dua prinsip wajib: **transparansi** & **minimalisasi data**.
+- ✅ **Status verifikasi:** Warta Ekonomi ✅ (tanggal & jam di badan artikel) + Bisnis.com (`teknologi.bisnis.com/read/20261028/101/2016478`, **28 Okt** — ⚠️ **403 ke curl**, hanya lewat `web_search`).
+- ⚠️ **JANGAN salah tulis:** **harmonisasi selesai ≠ lembaga terbentuk**. **Belum ada Kepres** → lembaga PDP **belum ada**; fungsi sementara tetap di Ditjen Pengawasan Ruang Digital. Ini **perkembangan status**, bukan aturan baru (RPerpres diajukan **20 Mei 2026**; Juli 2026 masih *"kebut harmonisasi"*).
+- **➡️ Dampak ke Webuild (TINGGI):**
+  - **Timeline jual makin tajam:** **PP 33/2026 berlaku 16 Jan 2027 = 76 hari lagi** (1 Nov) — dan sekarang jalur pengawasnya **sudah harmonisasi selesai**. Pakai kalimat: *"aturannya sudah teknis dan pengawasnya tinggal Kepres — tidak ada alasan menunda"* (mengutip pejabat Komdigi + APPDI).
+  - **Checklist situs desa "PDP-ready" (siap dipakai di proposal):** minimalisasi data (tanpa NIK/KK/HP warga) · tanpa tracker/analytics pihak ketiga · **kebijakan privasi + retensi tertulis** · RoPA sederhana (daftar data yang dikumpulkan: hanya nama kontak/konten) · **DPIA ringan** kalau pakai fitur AI (profiling/pemrosesan otomatis **disebut eksplisit** akan diatur lebih lanjut) · notifikasi kebocoran **3×24 jam**.
+  - **Argumen "sekarang atau nanti":** karena tahap awal pengawas = **awareness + pedoman teknis**, desa/UMKM yang mendaftar lebih awal (dengan situs yang sudah rapi) **tidak akan dikejar penindakan** — tapi yang **telanjur** pakai form data warga tanpa dasar akan **paling repot** saat pedoman keluar. Framing: *"mumpung belum ada sanksi, benahi sekarang lebih murah."*
+
+### 92. 🌐🚨 **PANDI: 36.000 kasus penyalahgunaan domain dalam 6 bulan — ±20.000 terindikasi JUDOL/PINJOL, 25.000 sudah ditangani; deteksi pakai AI** — *dampak: RENDAH–SEDANG (reputasi `.id` & domain klien)* — Ketua PANDI **Isnawan Aslan**, forum **Dialog Nusantara** "Kedaulatan Digital Indonesia, Realistis atau Utopis?", Perpustakaan **Habibie & Ainun**, Jakarta, **Jumat 30/10/2026**
+- **Apa yang berubah (angka baru):**
+  - **36.000 kasus penyalahgunaan domain** dalam **6 bulan** terakhir; **±20.000** di antaranya **judi online & pinjaman online**; **25.000** sudah **ditangani**.
+  - Penanganan memakai **AI** + kerja sama **APJII** & **Internet Exchange domestik**; pengawasan didukung **BSSN** dan **Komdigi**; PANDI menerapkan **SOP ketat** untuk setiap pembaruan sistem DNS.
+  - Konteks forum: **Ilham Akbar Habibie** (Ketua Tim Pelaksana **Wantiknas**) & **Telkom–Ericsson** juga bicara soal kedaulatan digital di forum yang sama (detik, 30–31 Okt).
+- ⚠️ **Bandingkan angka lama:** **32.535 URL** terindikasi penyalahgunaan (PANDI, **Juli 2026**, Kompas 3 Jul) → angka **36.000 kasus/6 bulan** (30 Okt) = **kenaikan bertahap, bukan lonjakan baru**; metriknya juga beda (**URL** vs **kasus**).
+- ✅ **Status verifikasi:** diliput **detikcom** (31 Okt, `inet.detik.com/law-and-policy/d-8732699`) & **riauonline.id** (**1 Nov 2026 03:30** — ✅ curl-able, jam & tanggal di badan) + `spilltekno`/`cnews` (agregator, jangan dijadikan acuan). Rilis resmi di `pandi.id` **belum ditemukan** → ⚠️ **kutipan forum, bukan siaran pers**.
+- **➡️ Dampak ke Webuild (RENDAH–SEDANG):**
+  - **Praktis:** domain klien yang mati/tidak diperpanjang **berisiko dibajak** → jadikan **pengingat perpanjangan domain** bagian layanan (kalender internal + notifikasi ke desa/UMKM).
+  - **Higiene:** jangan pakai domain murah/registrar abal-abal untuk demo; pastikan **WHOIS valid**, **DNSSEC** bila penyedia mendukung, dan email admin aktif — domain yang "ditinggal" adalah sasaran utama judol/pinjol.
+  - **Peluang jual kecil:** paket **"audit domain & reputasi"** (cek blacklist/abuse + perbaikan WHOIS/SPF/DKIM) untuk desa & UMKM — murah dikerjakan, terasa "aman" bagi klien.
+
+### 93. 🏛️🔌 **Komdigi × Uptime Institute: LoI penjajakan KEBIJAKAN & STANDAR PUSAT DATA NASIONAL (PDN)** — *dampak: RENDAH–SEDANG (arah regulasi pusat data)* — `infradigital.komdigi.go.id`, terbit **28/10/2026**; LoI ditandatangani **Selasa 27/10/2026**, Mercure Cikini, Jakarta
+- **Apa yang berubah (sumber baru ✅ curl-able):**
+  - **Dirjen Infrastruktur Digital Wayan Toni Supriyanto** menyaksikan penandatanganan **Letter of Intent** dengan **Uptime Institute**: kerja sama **penjajakan** untuk *"kebijakan dan tata kelola pusat data nasional"* — **pengembangan regulasi**, **standar berbasis kinerja**, **keandalan & keamanan operasional**, **keberlanjutan (sustainability)**, hingga **kompetensi SDM**.
+  - Kutipan: *"Praktik terbaik internasional perlu dinilai dan disesuaikan dengan kondisi nasional… **Kewenangan pemerintah dalam menentukan arah kebijakan dan standar nasional tetap menjadi prinsip utama**."*
+- ⚠️ **Status verifikasi:** artikel **DJID resmi** ✅ (tanggal 28/10 di halaman), **tidak ada di portal pusat** (10652–10654 tidak memuatnya) → contoh nyata **portal pusat melewatkan berita unit**. Masih **LoI/penjajakan**, **bukan** Permen/standar resmi → **jangan tulis "standar pusat data baru terbit"**. (Artikel DJID lain, *"Empat Agenda Penguatan Infrastruktur Digital Pasca Bali Tech Week 2026"*, = **ulangan** portal **10637** 22 Okt — **bukan** temuan baru.)
+- **➡️ Dampak ke Webuild (RENDAH–SEDANG):**
+  - **Arah regulasi:** PDN akan diarahkan ke **standar berbasis kinerja** (keandalan/keamanan operasional) → saat menawarkan ke desa/instansi, sebut **keandalan & keamanan operasional** sebagai kosakata yang sama dengan kebijakan pusat (bukan "murah & cepat" saja).
+  - **Praktis:** jika kelak ada Permen standar pusat data, pilihan **hosting/VPS Webuild & klien** sebaiknya yang punya dokumentasi **tier/uptime/SLA** — siapkan catatan penyedia sekarang supaya tidak migrasi mendadak.
+  - **Jualan:** untuk desa, tawarkan **halaman status statis + SLA tertulis** (1 file, tanpa JS) — melengkapi tema "keandalan" yang sedang jadi perhatian pemerintah.
+
+### 94. 📋 Sumber lain — tidak ada perubahan (1 Nov)
+- **Portal:** **0 item baru** (10668–10705 = 404). **31 Okt = 0 item** (kategori apa pun); 1 Nov pagi belum terbit. ⚠️ **Tetap ingat pelajaran backfill:** id bertanggal 31 Okt/1 Nov bisa **hidup menyusul** 1–2 hari kemudian → **jangan jadikan "0 item" angka final**; run 2 Nov wajib probe ulang rentang ini.
+- **JDIH:** teratas tetap **Kepmen 336/2026 (23 Okt)** → **Permen 13/2026 (18 Okt)** → Kepmen 335 & 318/2026 (11 Sep). **Rancangan PUU 32 / Partisipasi Publik 19 dok = tidak berubah** sejak 16 Okt.
+- **BSSN:** tidak ada advisory baru — urutan tetap **NodeJS (24 Okt) · Oracle (23 Okt) · GitLab (23 Okt) · PHP2Shell (22 Okt)** → **8 hari tanpa advisory baru**.
+- **CISSReC:** teratas **tips** (verifikasi dua langkah WhatsApp) — **bukan advisory**, tidak ada laporan baru soal situs pemerintah.
+- **ICANN:** **String Confirmation Day 17 Nov 2026** & **Community Input/Objections 17 Nov 2026 – 16 Mar 2027** tidak berubah; **Reveal Day 7 Okt**, **String Replacement 8–21 Okt (selesai)**.
+- **`domain.go.id/berita`:** tetap **3 Sep 2026** (±2 bulan tanpa update). **`djtpd.komdigi.go.id/berita`:** tidak ada item baru (terakhir 11 Okt).
+- **Masih menunggu (radar tetap):** **Kepres Badan PDP** (harmonisasi selesai — #91) · 2 **Perpres AI** (Peta Jalan + Etika) · **Permen pelabelan konten AI** · **RPM pelaksanaan PP TUNAS** · **Permen tarif pengiriman (ODD)** — tenggat **31 Des 2026** (**60 hari**) · **PP 33/2026 berlaku 16 Jan 2027** (**76 hari**).
+
+> **Buat Orchestrator (1 baris):** (1) 🚨 **besok 2 Nov 23.59 WIB = batas akhir penonaktifan `layanan.desa.id`/`website.desa.id`** — cek pagi; kalau tanggal bergeser lagi = **perpanjangan ke-4** (pitch paling kuat, pakai fakta tanggal saja). (2) 📜 **Lembaga PDP: harmonisasi SELESAI, tinggal Kepres** → gencarkan **"situs desa PDP-ready"** sekarang (PP 33/2026 tinggal **76 hari**); jangan tulis "lembaga PDP sudah ada". (3) 🔌 Arah baru: **standar pusat data (Komdigi × Uptime Institute)** → siapkan catatan SLA/tier penyedia hosting.
 
 ---
 
