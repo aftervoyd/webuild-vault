@@ -462,3 +462,26 @@ Kapasitas sisa: ±40 gambar Qwen-Edit ATAU **±4 video 16 dtk** (motion ±26 koi
 3. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) — masih $0,00; satu-satunya jalur koin masuk.
 4. Siapkan **Artefact Paris (2 Des, €10K, ≤314 dtk)** sebagai target produksi berikutnya — tapi **jangan render sebelum koin diisi**.
 WARNING: tarif nyata 24 jam — gambar Qwen-Edit ±50 koin, motion ±26 koin/detik (16 dtk ≈ 431, 20 dtk ≈ 520).
+
+## 18. SCAN 1 NOV 2026 (08:01 WIB) — 🔴 SALDO 0 KOIN (HABIS TOTAL)
+**SALDO: 0 RH Coins** (delta **-604** vs 31 Okt 604). Wallet $0,0100. Tugas jalan: 0.
+Rantai: 11.345 (26) -> 8.448 (27) -> 5.831 (28) -> 1.999 (30) -> 604 (31) -> **0 (1 Nov)**.
+=> Kapasitas produksi = **NOL**. Tidak bisa render apa pun sampai koin masuk. Burn 24 jam terakhir -604 (uji kecil / sisa terpakai).
+
+### Kontes — scan 1 Nov (aifilmcontests.com/contests/new + topics closing Dec)
+Tidak ada kontes BARU yang layak (hadiah cash nyata + tool bebas + deadline jauh):
+| Kontes | Biaya | Deadline | Hadiah | Status |
+|---|---|---|---|---|
+| **NEXTALE Award** | gratis | 14 Des 2026 | $3.000 pool + 100% revenue 6 bln | BARU tapi wajib **serial 20+ episode** di NEXTALE Studio -> di luar kapasitas |
+| **Turquoise Ankara (Turkuaz)** | gratis | 10 Des 2026 | **NON-CASH** (laurel+trofi) | BARU, skip (tidak ada uang) |
+| **Twin Rivers AI FF 2027** | berbayar | 8 Mar 2027 | 20% net entry fee saja | BARU, skip |
+| WAICF Jaipur / JIFF | $55-$100 | 5 Des 2026 | "s/d INR 25 lakh tergantung sponsor" | berbayar, tidak pasti |
+| Florence AI Festival | tier FilmFreeway | 15 Des 2026 | cek | timeline kontradiktif di rules -> hati-hati |
+| KACF Korea | gratis | 31 Okt (tutup) | layar bioskop | lewat |
+Prioritas tetap (tidak butuh koin RH): **1 Billion AI Film Award ($1 jt, 20 Nov, wajib >=70% Seedance)** & **Chroma S2 ($450K, 7 Jan 2027)** & **Artefact Paris (EUR10K, 2 Des)**.
+
+### Aksi 1 Nov (urutan wajib)
+1. **Isi koin**: klaim login harian (+/-100, hangus 24 jam) -> cukup +/-2 gambar Qwen-Edit saja. Kalau mau produksi: **top-up / invite `baaxhjzz` / publish workflow creator** — bukan render.
+2. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) — masih $0,00; satu-satunya jalur koin masuk tanpa bayar.
+3. **Naskah/storyboard dulu** (nol koin) untuk Artefact + AKOOL; render hanya setelah koin terisi.
+WARNING: TIDAK ADA jam gratis. Tarif nyata 24 jam: gambar Qwen-Edit +/-50 koin, motion +/-26 koin/dtk (16 dtk +/-431, 20 dtk +/-520).
