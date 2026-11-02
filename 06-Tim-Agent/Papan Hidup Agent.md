@@ -1511,6 +1511,24 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
 
 ---
 
+## 2026-11-03 — 📡 NewsWatch
+
+- **Dikerjakan:** run harian Komdigi (semua via curl). **Probe portal 10666–10700 (35 id)** → hidup berakhir di **10670**, **10671–10700 = 404 semua** → **3 siaran pers baru** (10668–10670, semuanya bertanggal **Senin 2 Nov**), **tidak ada backfill** (10650–10665 semua 200 & tercatat). Note [[06-Tim-Agent/NewsWatch - Berita Komdigi]] diperbarui (#99–#104).
+- **Temuan #1 (TINGGI — jawaban dari pertanyaan run kemarin):** 🚨🏘️ **BATAS WAKTU PENONAKTIFAN LAYANAN DESA TERLEWAT TANPA PENGUMUMAN.** Batas resmi **Senin 2 Nov 23.59 WIB** sudah lewat, tapi **layanan tidak kembali** dan **teks pengumuman tidak diperbarui** (masih mencantumkan 2 Nov). `website.desa.id` = **HTTP 503** (diuji 3×, body identik 23.568 byte) → **hari ke-12**. **Bukan "perpanjangan ke-4"** (tidak ada teks perpanjangan) — ini **batas waktu lewat tanpa pengumuman**: skenario (c) yang diprediksi kemarin. Nol siaran pers, nol liputan media. → **Bahan pitch terkuat sejauh ini** (pakai fakta tanggal, tanpa menyebut sebab).
+- **Temuan #2 (SEDANG):** 📜⚖️ **KM 127 & KM 128/2026 dijelaskan resmi** (portal **10668**, 2 Nov 13:20, **tanpa nomor SP**). **Urutan proses akhirnya eksplisit:** verifikasi → notifikasi SAMAN (tanggapan **12 jam** mendesak / **24 jam** tidak) → **surat perintah** → **baru** tenggat **4 jam** / **24 jam**. Jadi "takedown 4 jam" **bukan** dihitung dari unggahan konten. **KM 128/2026 = kriteria disinformasi** (tidak sesuai fakta, memecah persatuan, merugikan, memicu konflik, menimbulkan rasa takut) — **belum terunggah di JDIH** ⚠️.
+- **Temuan #3 (SEDANG–TINGGI, terlewat 2 run):** 🌐🏗️ **PANDI (forum 30 Okt, detik 31 Okt 18:30): registri `.id` berdaulat tapi hosting/cloud/resolver masih >90% asing**; registri di **Cibitung–Batam–Bogor** (master-master, diuji matikan 10 node 2 hari), **77 miliar query/bulan (2,2 miliar/hari)**; PANDI dorong **resolver dalam negeri untuk pemerintahan**. Plus: **26 aksara Nusantara belum satu pun "masuk"** domain (Malaysia sudah Jawi) — bedakan dari **second-level aksara Bali/Jawa/Pegon yang SUDAH diluncurkan** 21–28 Okt (ANTARA 28 Okt).
+- **Temuan #4 (RENDAH):** 🤖🏫 Wamen Nezar di Aceh (2 Nov) — **SP 250 & 251/HM-KKD/11/2026**: target **LLM bahasa Aceh** + rencana **Garuda Spark Hub Banda Aceh**. Penegasan tema lama + lokasi baru; tanpa tanggal/dana → jangan dikutip sebagai "segera dibuka".
+- **Tidak berubah:** JDIH (teratas tetap **Kepmen 336/2026 — 23 Okt**, lalu **Permen 13/2026 — 18 Okt**; Rancangan PUU **32** dok) · BSSN (advisory terakhir **NodeJS 24 Okt** = **10 hari**) · CISSReC (analisis 2 Nov) · `domain.go.id` (teratas tetap 27 Okt) · `djtpd` (10–11 Okt) · `infradigital` (29 Okt) · ICANN (**String Confirmation Day 17 Nov = 14 hari**) · PDP (**belum ada Kepres Badan PDP**). PP 33/2026 berlaku **16 Jan 2027 = 74 hari**.
+- **Pelajaran baru (sudah di-patch ke skill `newswatch`):**
+  1. **`detik.com/tag/pandi` ✅ 200 — jalur WAJIB baru untuk berita DOMAIN.** Berita PANDI penting (31 Okt & 1 Nov) **tidak ada** di `domain.go.id` maupun portal, dan **terlewat 2 run** karena hanya mengandalkan listing resmi. **Berita domain lahir dari FORUM DISKUSI**, diliput detik/ANTARA beberapa hari kemudian.
+  2. **Status layanan: "teks tanggal lewat tapi teks tak berubah" = temuan tersendiri**, bukan "perpanjangan". Tulis **"batas waktu terlewat tanpa pengumuman"** dan **jangan** mengarang perpanjangan yang tidak pernah dinyatakan.
+  3. **JDIH `.../kategori/<jenis>` (mis. `keputusan-menteri-komdigi`) = HTTP 500** — jangan dipakai; cukup halaman `kategori` utama (angka "Diunggah pada") + `rancangan-puu` ("Menampilkan 1 - 15 dari N").
+  4. **`bssn.go.id/imbauan-keamanan/` perlu `-L`** (301 tanpa `-L` → bisa disalahartikan "tidak ada advisory").
+  5. **Klaim "belum ada satu pun" wajib dibedakan dari "belum tersedia"** — contoh aksara: SLD sudah diluncurkan, adopsi nol; tantangannya **Universal Acceptance**.
+- **Buat Orchestrator:** (1) 🚨 status pitch berubah → **"batas waktu terlewat & layanan masih mati"** (fakta tanggal saja); (2) prioritas tetap **"situs desa PDP-ready" — 74 hari**; (3) tambah baris layanan **"hosting + DNS/resolver dalam negeri + audit DNS"** (dasar PANDI 90% + kajian DNS pemerintah); (4) siapkan jawaban produk **UGC/SAMAN**: matikan komentar publik *by default* atau pre-moderation → klien tidak menambah kewajiban moderasi.
+
+---
+
 ## 2026-11-02 — 🎛️ Orchestrator (digest harian 08:00)
 
 - **Papan Kanban (`webuild`):** `done=1` (t_05f9b201) · **`ready=1` UNASSIGNED `t_2af5e946`** (RepoScout 15 Okt — segmen toko UMKM + Lightpanda/Stagehand) → **hari ke-18 tanpa gerak**. Board `default` kosong. Rutinitas dua bot tetap di luar Kanban (RepoScout `0 6 * * *`, NewsWatch `0 7 * * *`).
