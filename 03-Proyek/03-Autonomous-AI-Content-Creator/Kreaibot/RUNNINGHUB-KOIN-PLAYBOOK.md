@@ -485,3 +485,23 @@ Prioritas tetap (tidak butuh koin RH): **1 Billion AI Film Award ($1 jt, 20 Nov,
 2. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) — masih $0,00; satu-satunya jalur koin masuk tanpa bayar.
 3. **Naskah/storyboard dulu** (nol koin) untuk Artefact + AKOOL; render hanya setelah koin terisi.
 WARNING: TIDAK ADA jam gratis. Tarif nyata 24 jam: gambar Qwen-Edit +/-50 koin, motion +/-26 koin/dtk (16 dtk +/-431, 20 dtk +/-520).
+
+## 19. SCAN 3 NOV 2026 (08:01 WIB) - saldo 0, delta -77 (koin login 2 Nov HANGUS)
+**SALDO: 0 RH Coins** (delta **-77** vs cek terakhir 77). Wallet $0,0100. Tugas jalan: 0.
+Rantai: 604 (31 Okt) -> 0 (1 Nov) -> 77 (2 Nov, klaim login) -> **0 (3 Nov)**.
+=> Bukti keras aturan 24 jam: 77 koin tidak dipakai sehari = hangus. 77 pun < 2 gambar Qwen-Edit (+/-50/gambar).
+
+### Kontes - scan 3 Nov (aifc.news, aifilmcontests.com, adarena, aibetas)
+**Tidak ada kontes BARU yang layak.** Item "baru" (added 21-27 Okt) semuanya sudah dievaluasi:
+- MetaMorph AI Film Award 2027 (UK, 15 Mei 2027) = hadiah kredit TapNow, BERBAYAR -> skip
+- Sin Camara 2027 (Spanyol, 5 Mei 2027) = wajib bahasa Spanyol -> skip
+- PROMPT Festival Toronto (16 Apr 2027, berbayar, non-cash) / AI Slop FF (16 Des, non-cash, berbayar) / GAIMVA (1 Jan, berbayar, non-cash) -> skip
+- LundinStudio (21 Jan 2027, $300, berbayar) -> skip
+NOTE: status **Curious Refuge x Epidemic Sound Holiday ($7.500+, 6 Des)** KONTRADIKTIF antar halaman aifilmcontests (halaman kontes: buka, submit 15 Okt; halaman topik: "belum diumumkan") -> verifikasi ke curiousrefuge.com sebelum dijadikan andalan.
+Koreksi kecil: aifc.news mencantumkan **Artefact x mk2 (Prancis) 13 Jan 2027, $15K, "call opens"** - beda dari catatan lama (2 Des, EUR10K). Cek ulang saat call resmi buka.
+
+### Aksi 3 Nov (prioritas)
+1. **Publish workflow creator `qwen-consistency-edit`** (id 2108638842228461570) - masih $0,00, satu-satunya jalur koin masuk tanpa bayar. Ini yang belum pernah dieksekusi.
+2. Klaim login harian (+/-100) HANYA kalau hari itu langsung dipakai render 1 gambar; kalau tidak, hangus (terbukti hari ini).
+3. Naskah/storyboard (nol koin) untuk AKOOL (20 Des) / 1 Billion (20 Nov) / Cue Xmas (20 Nov).
+WARNING: TIDAK ADA jam gratis. Tarif 24 jam: Qwen-Edit +/-50 koin/gambar, motion +/-26 koin/dtk (16 dtk +/-431).
