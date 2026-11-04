@@ -505,3 +505,22 @@ Koreksi kecil: aifc.news mencantumkan **Artefact x mk2 (Prancis) 13 Jan 2027, $1
 2. Klaim login harian (+/-100) HANYA kalau hari itu langsung dipakai render 1 gambar; kalau tidak, hangus (terbukti hari ini).
 3. Naskah/storyboard (nol koin) untuk AKOOL (20 Des) / 1 Billion (20 Nov) / Cue Xmas (20 Nov).
 WARNING: TIDAK ADA jam gratis. Tarif 24 jam: Qwen-Edit +/-50 koin/gambar, motion +/-26 koin/dtk (16 dtk +/-431).
+
+## 20. SCAN 4 NOV 2026 (08:01 WIB) — saldo 0, delta 0 (stabil) + 2 kontradiksi LAMA terpecahkan
+**SALDO: 0 RH Coins** (delta **+0** vs 3 Nov 0). Wallet $0,0100. Tugas jalan: 0.
+Rantai: 604 -> 0 -> 77 -> 0 -> **0**. Tidak ada koin masuk; tidak ada render.
+
+### Resolusi kontradiksi (diverifikasi aifilmcontests.com, listing "checked daily")
+- **Curious Refuge x Epidemic Sound Holiday**: **BUKA**, deadline **6 Des 2026**, **$7.500+ cash**, gratis, short film/contest -> ✅ LAYAK (bukan "belum diumumkan").
+- **Artefact AI Film Festival ed.3 "(Dis)Connection" (Paris, x mk2)**: deadline **2 Des 2026** (BUKAN 13 Jan 2027), hadiah **€10.000 Grand Prix** + tayang 30 dtk di semua bioskop mk2. Maks **314 dtk**, wajib GenAI di pra/produksi/pasca. -> catatan "13 Jan / $15K" = SALAH.
+
+### Catatan kontes
+- **1 Billion AI Film Award ($1 jt, 20 Nov)** tetap target terbesar; diverifikasi ulang: 5-7 mnt, 16:9 1080p MOV/MP4, subtitle EN, **>=70% Seedance**. RunningHub punya Seedance 2.0/2.5 (token-based) => syarat teknis terpenuhi, tapi **wallet $0,01 -> mustahil render 5-7 mnt**.
+- **Jingrui AI Creation Contest (GASP)** di direktori = $1 jt, 5-7 mnt, Seedance, 20 Nov -> kemungkinan **arm internasional dari 鲸锐 (Jingrui)** yang dulu ditandai "wajib KTP China". Perlu dicek: kalau benar global, ini duplikat jalur $1 jt (bukan peluang kedua).
+- Tidak ada kontes BARU lain: SVAIFF Korea (25 Nov, 30 jt KRW), Cine Prague ($1K, 28 Nov), AI ZONE ($500, 30 Nov), Florence FAIF (15 Des), NEXTALE (14 Des) sudah tercatat.
+
+### Aksi 4 Nov (prioritas)
+1. **Publish workflow `qwen-consistency-edit`** (id 2108638842228461570) — masih $0,00; hari ke-3 belum dieksekusi; satu-satunya jalur koin tanpa bayar.
+2. Klaim +/-100 koin login HANYA kalau dipakai hari itu (hangus 24 jam, terbukti 2 Nov).
+3. Kalau mau serius ke kontes: **Artefact (2 Des, <=314 dtk)** lebih murah diproduksi daripada 1 Billion (5-7 mnt) — tapi tetap nol render sampai koin/wallet diisi.
+WARNING: TIDAK ADA jam gratis. Qwen-Edit +/-50 koin/gambar, motion +/-26 koin/dtk (16 dtk +/-431).
