@@ -524,3 +524,26 @@ Rantai: 604 -> 0 -> 77 -> 0 -> **0**. Tidak ada koin masuk; tidak ada render.
 2. Klaim +/-100 koin login HANYA kalau dipakai hari itu (hangus 24 jam, terbukti 2 Nov).
 3. Kalau mau serius ke kontes: **Artefact (2 Des, <=314 dtk)** lebih murah diproduksi daripada 1 Billion (5-7 mnt) — tapi tetap nol render sampai koin/wallet diisi.
 WARNING: TIDAK ADA jam gratis. Qwen-Edit +/-50 koin/gambar, motion +/-26 koin/dtk (16 dtk +/-431).
+
+## 21. SCAN 5 NOV 2026 (08:00 WIB) — koin login masuk (+100), kontes baru: TIDAK ADA
+**SALDO: 100 RH Coins** (delta **+100** vs 4 Nov 0). Wallet $0,0100. Tugas jalan: 0.
+Rantai: 604 → 0 → 77 → 0 → **100** (bonus login harian berhasil diklaim; hangus 24 jam = 6 Nov 08:00).
+Kapasitas hari ini: **tepat 2 gambar Qwen-Edit (±50/gambar)**. Motion mustahil (±26 koin/dtk → 16 dtk = ±431).
+
+### Kontes — scan aifilmcontests.com (home, /contests/new, /contests/free, /prize/cash-prizes), aibetas, gasptv
+**Tidak ada kontes BARU yang layak.** Yang terlihat "baru" di direktori:
+| Item | Verdict |
+|---|---|
+| SVAIFF Korea 2026 (Seoul, 17 Des) | sudah tercatat. Verifikasi ulang: **GRATIS, tanpa batas kewarganegaraan**, deadline **25 Nov 14:59 UTC**, ≤20 mnt, **KRW 30 jt** (~$21K), 19 juara / 12 kategori + 31 Encouragement. Jalur ke final Silicon Valley Jan 2027. Kandidat terkuat setelah Artefact. |
+| CSFCCA AI Film Festival Winter | berbayar $22–28, **cash tidak dijamin** → skip |
+| AI for the Future COP31 | NON-CASH (screening UN) → skip |
+| Veritas AIFF (Kanada, 30 Nov) | showcase 16 film, non-cash → skip |
+| Future Vision XPRIZE ($3,5 jt) | **TUTUP 15 Agu 2026** → lewat |
+| LifeArt AI Global | deadline Agu/Sep 2026 → lewat |
+Prioritas cash tanpa syarat tool tetap: **Artefact Paris €10K (2 Des, ≤314 dtk)** > **1 Billion $1 jt (20 Nov, ≥70% Seedance, wallet $0,01 = mustahil)** > **Chroma S2 (7 Jan 2027)** > **Curious Refuge Holiday $7.500+ (6 Des, gratis)** > **Cue Film Fest Xmas (20 Nov, gratis)** > **AI ZONE $500 (30 Nov, gratis)**.
+
+### Aksi 5 Nov
+1. **PAKAI 100 koin hari ini** — hangus 6 Nov 08:00. Pakai untuk **2 keyframe Qwen-Edit** naskah Artefact (maks 314 dtk → cukup 1 setting + 1 karakter). Jangan simpan.
+2. **Publish workflow `qwen-consistency-edit`** (id 2108638842228461570) — hari ke-4 belum dieksekusi, masih $0,00. Satu-satunya jalur koin tanpa bayar (creator reward).
+3. Naskah Artefact "(Dis)Connection" (nol koin) — 2 Des makin dekat.
+WARNING: TIDAK ADA jam gratis. Qwen-Edit ±50 koin/gambar, motion ±26 koin/dtk (16 dtk ±431).
