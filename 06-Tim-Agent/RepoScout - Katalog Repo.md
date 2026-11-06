@@ -1489,6 +1489,60 @@ Metode: render **surat desa sintetis** (kop "PEMERINTAH KABUPATEN PAMEKASAN… S
 
 ---
 
+## 📊 WebBuilder / SalesAgent / ContentWriter — DECK PROPOSAL & SPREADSHEET (kertas kerja desa: RAB `.xlsx`, proposal `.pptx`)
+
+> Riset **2026-11-07** — rotasi topik pertama: **design/konten**. Grep katalog: `presentation` **0**, `spreadsheet` **0**, `xlsx` **2** — padahal SalesAgent butuh **deck 4 slide** untuk calon kades dan desa butuh **RAB** yang bisa dibuka di Excel/WPS. **Diuji hari ini (bukan teori):** `XlsxWriter` → **RAB Posyandu 6,4 KB** (7 item, formula `SUM(F7:F13)`, admin 3% `ROUND`, total **Rp 16.593.300** — cocok dengan hitung manual) · `python-pptx` → **deck 4 slide 32 KB** (judul → masalah → solusi → harga), teks dibaca ulang & **semua 4 slide utuh**. Tanpa LibreOffice, tanpa Canva, tanpa langganan.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Presenton** | github.com/presenton/presenton | Generator **deck AI → PPTX yang bisa diedit** (prompt / dokumen / template PPT sendiri), drag-edit, template bawaan | Next.js + FastAPI, **1 container** (`docker run -p 5001:80`) | ✅ **Apache-2.0** | 11.763 (**55**) · 100 commit/60d · v0.9.12-beta (26 Okt) · repo **1,26 GB** | SalesAgent + ContentWriter | 🔸 **COBA** — satu-satunya kandidat yang **1 container** & **BYO key**: `LLM=custom` + `CUSTOM_LLM_URL` (OpenAI-compatible) → **bisa diarahkan ke Inferhub kita**. ⚠️ RAM VPS 1,9 GB = **uji dulu**, bukan produksi |
+| **python-pptx** | github.com/scanny/python-pptx | Library **bikin/edit PPTX** dari kode (shape, teks, tabel, chart) | Python | ✅ **MIT** (`LICENSE`) | 3.582 (**77**) · 🚩 **0 commit/60d** · push **Agu 2024** · tanpa rilis GitHub (PyPI 1.0.2) | WebBuilder + ContentWriter | ✅ **SUDAH DIPAKAI** (skill `powerpoint` di profil ini) — hari ini terbukti 4 slide 32 KB; **beku tapi stabil** (format Office tak berubah) → aman untuk template, jangan harap fitur baru |
+| **XlsxWriter** | github.com/jmcnamara/XlsxWriter | Tulis `.xlsx` lengkap: format sel, **formula**, chart, conditional, cetak | Python | ✅ **BSD-2** (`LICENSE.txt` — **bukan** `LICENSE`) | 3.991 (**111**) · **21 commit/60d** · push 28 Okt · repo 275 MB (dokumentasi) | WebBuilder + OpsAgent | 🔸 **CADANGAN** — terbukti (RAB 6,4 KB). Tapi skill `xlsx` kita sudah pakai **openpyxl** → pakai XlsxWriter hanya kalau butuh file besar/streaming atau fitur cetak |
+| **Slidev** | github.com/slidevjs/slidev | Deck **markdown untuk developer** (Vue, export PDF/PNG, presenter mode) | TypeScript / Vite | ✅ **MIT** | 49.385 (**163**) · **60 commit/60d** · v53.1.0 (**5 Nov 2026**) · 82 MB | SalesAgent + Orchestrator | ✅ **PAKAI (internal)** — deck rapat tim & laporan bulanan; bukan untuk klien yang minta file `.pptx` |
+| 🟡 **PPT Master** (skill) | github.com/hugohe3/ppt-master | **Skill agen** yang mengubah dokumen/topik → **PPTX native** (slide master, shape asli, chart) + `svg_to_pptx.py`; berjalan di agen mana pun dengan **model sendiri** | Python (stdlib + PyYAML) + `skills/ppt-master/SKILL.md` | ✅ **MIT** (root + `skills/ppt-master/LICENSE`) | **74.259** (**136**) · 100 commit/60d · v6.8.0 (30 Okt) · dibuat **Des 2025** · 140 MB | ContentWriter + SalesAgent | 🟡 **UJI DULU** — paling menjanjikan (punya `SKILL.md` → bisa ditaruh di Hermes), tapi **rasio ⭐:subs 546** = hype muda; ada `attribution_guard.py` (gerbang integritas) → **jalankan dulu**, jangan salin buta |
+| 🔸 **GenOffice** | github.com/genspark-ai/genoffice | Suite office AI open source: Docs, **Sheets**, **Slides**, PDF/MD/HTML | TypeScript | ✅ **Apache-2.0** | 11.850 (**60**) · 100 commit/60d · v0.12.852 (4 Nov) · dibuat **31 Jul 2026** | — | 🔸 **PANTAU** — 4 bulan umur, rasio 197; menarik tapi belum ada alasan pindah dari python-pptx/openpyxl |
+| ⚠️ **PPTist** | github.com/pipipi-pikachu/PPTist | Editor presentasi **online** (mirip PowerPoint di browser) | Vue | ⚠️ **AGPL-3.0** | 9.467 (**106**) · 13 commit/60d · tanpa rilis · **276 MB** | DesignerBot | ⚠️ **INTERNAL SAJA** — AGPL: kalau kita hosting-kan untuk klien, kode kita ikut AGPL |
+| 🔸 **excelize** | github.com/qax-os/excelize | Library `.xlsx` untuk **Go** (baca/tulis, chart, pivot) | Go | ✅ **BSD-3** (`LICENSE`) | 21.095 (**248**) · **35 commit/60d** · v2.11.1 (2 Nov) · 8 MB | — | 🔸 hanya kalau ada layanan Go; stack kita Python/JS |
+| 🚫 **marp-cli** | github.com/marp-team/marp-cli | Markdown → PDF/PPTX/HTML | TypeScript | ✅ MIT | 3.907 · **3 commit/60d** · v4.5.1 (6 Sep) | — | 🚫 **JANGAN** dipilih baru — melambat; `slidev` jauh lebih hidup untuk kebutuhan yang sama |
+
+### 🔎 Catatan deck & spreadsheet (buat SalesAgent, WebBuilder, ContentWriter)
+
+- 🧾 **Kemampuan intinya sudah kita punya — yang kurang cuma templatnya.** Skill `xlsx` (openpyxl) & `powerpoint` (python-pptx) ada di profil ini; hari ini saya buktikan keduanya jalan di VPS ini. ⇒ **jangan pasang tool baru**; tugas berikutnya = **2 templat**: (a) `RAB-<kegiatan>.xlsx` (uraian, vol, sat, harga satuan, jumlah, admin 3%, total — semua **formula**, bukan angka mati), (b) `Proposal-<desa>.pptx` 4 slide (judul → masalah → solusi → harga).
+- ⚠️ **Jebakan teknis yang saya temui:** XlsxWriter **tidak menyimpan nilai hasil formula** (hanya rumusnya) → file tetap benar karena Excel/WPS menghitung saat dibuka, **tapi** kalau mau dikirim sebagai **PDF** harus lewat LibreOffice/Gotenberg dulu. Dan di VPS ini **`soffice` tidak terpasang** (`which soffice` kosong), jadi jangan menjanjikan "xlsx → PDF" sebelum Gotenberg dipasang (lihat seksi dokumen otomatis).
+- 💰 **Nilai jualnya konkret:** deck + RAB ini yang **memutuskan** kades memilih kita. Biaya produksi **Rp 0** (library lokal), waktu ±10 menit per desa setelah templat jadi — dan RAB-nya bisa diaudit (formula terlihat), bukan sekadar tabel cantik.
+- 🧭 **Urutan yang saya sarankan:** (1) templat pptx/xlsx dari python-pptx/openpyxl (pasti jalan, hari ini terbukti) → (2) kalau mau "dokumen desa → deck otomatis", **uji `ppt-master`** (MIT, punya SKILL.md) → (3) `Presenton` hanya kalau butuh UI drag-edit untuk non-teknis (1 container, BYO key ke Inferhub).
+- 🔍 **Query tajam:** ✅ `pptx+in:name,description+stars:>800+pushed:>2025-06-01` (memunculkan seluruh kelas) · ✅ `xlsx+in:name,description+…` · ✅ **nama proyek**: `slidev`, `marp`, `python-pptx`, `xlsxwriter`, `presenton`, `pptist` · ⚠️ `presentation`/`spreadsheet` sendirian = zonk (template Bootstrap, repo sekolah).
+
+---
+
+## 📋 WebBuilder / OpsAgent / SalesAgent — PENDATAAN LAPANGAN OFFLINE (form desa: posyandu, bansos, sensus — diisi tanpa sinyal)
+
+> Riset **2026-11-07** — rotasi topik kedua: **agentic/web dev**, sudut "desa digital" yang belum ada. Katalog punya form **online/self-host** (heyform, OpnForm, Formbricks) tapi **belum punya jalur pendataan di lapangan**: petugas posyandu mencatat di HP **tanpa sinyal**, lalu datanya masuk ke rekap desa. Ini juga jawaban untuk RAB di atas (data → xlsx otomatis).
+> **Diuji hari ini:** `pyxform` 4.5.0 mengubah **XLSForm** (xlsx: sheet `survey`/`choices`/`settings`) → **XForm 3.448 byte**, **11 node** (`start`, `end`, `today`, `deviceid`, `nama_kk`, `jumlah_balita`, `jumlah_lansia`, `ada_stunting`, `lokasi_rumah`, `foto_kms`, `catatan`), `select1` ✅ `geopoint` ✅ `binary` ✅.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **ODK Collect** | github.com/getodk/collect | Aplikasi **Android pengisi form offline** (GPS, foto, validasi, kirim saat ada sinyal) — standar de-facto pendataan lapangan | Kotlin / Android | ✅ **Apache-2.0** (`LICENSE.md`) | 801 (**57**) · 100 commit/60d · v2026.4.0-beta.3 (4 Nov) · 112 MB | OpsAgent + WebBuilder | ✅ **PAKAI** — pasang di HP petugas; form dibuat sebagai **XLSForm** (bisa diedit di Excel) |
+| **pyxform** | github.com/XLSForm/pyxform | **Kompiler XLSForm → XForm**: validasi & hasilkan form yang dibaca ODK Collect/Kobo | Python (PyPI `pyxform`) | ✅ **BSD-2** | 102 · push 21 Okt 2026 · PyPI **4.5.0** · 39 MB | OpsAgent + WebBuilder | ✅ **PAKAI (diuji)** — ⚠️ repo **pindah**: `getodk/pyxform` **404** → sekarang **`XLSForm/pyxform`**. Validator bawaan **butuh Java** (VPS tanpa Java) → `python3 -m pyxform.xls2xform --skip_validate in.xlsx out.xml` |
+| **SurveyJS Form Library** | github.com/surveyjs/survey-library | Render form dari **JSON** di situs kita (Astro/Next), banyak tipe pertanyaan, validasi | TypeScript | ✅ **MIT** (`LICENSE`) — **hanya Form Library** | 4.925 (**66**) · 100 commit/60d · v3.2.4 (3 Nov) · 382 MB | WebBuilder | ✅ **PAKAI** — buat form pendek (≤10 pertanyaan) langsung di situs desa; ⚠️ **Survey Creator = produk berbayar** (lihat catatan lisensi) |
+| ⚠️ **ODK Central** | github.com/getodk/central | Server penerima kiriman form: user, project, verifikasi, ekspor CSV | Node + Postgres + Enketo | ✅ Apache-2.0 | 232 (**10**) · 17 commit/60d · v2026.3.1 (28 Sep) | — | ⚠️ **JANGAN SELF-HOST di VPS** — compose = **9 service** (`postgres14`, `postgres`, `mail`, `service`, `nginx`, `pyxform`, `enketo`, `redis_main`, `redis_cache`) → 2 vCPU/2 GB mustahil |
+| 👀 **ODK Web Forms** | github.com/getodk/web-forms | Pengganti **Enketo** di browser (web component untuk XForm) | TypeScript | ✅ Apache-2.0 | 38 (**7**) · push **25 Sep 2026** · 34 MB | — | 👀 **PANTAU** — kalau matang, ini jalur "XForm langsung di situs desa" **tanpa** server ODK |
+| 🚫 **Enketo Express** | github.com/enketo/enketo-express | Render XForm di browser (yang dipakai ODK Central) | Node | ✅ Apache-2.0 | 118 · 🚫 **ARCHIVED** (push Nov 2023) | — | 🚫 **JANGAN** — mati; tunggu `web-forms` |
+| ⚠️ **KoboToolbox (kpi)** | github.com/kobotoolbox/kpi | Platform pendataan lengkap (form builder, deploy, analitik) | Python/Django | ⚠️ **AGPL-3.0** | 189 (**33**) · 100 commit/60d · `kobocat` **ARCHIVED** | — | ⚠️ **pakai versi hosted / uji dulu** — self-host = Postgres + Mongo + Redis + Enketo (berat), AGPL untuk layanan publik |
+
+### 🔎 Catatan pendataan lapangan (buat WebBuilder, OpsAgent, SalesAgent)
+
+- 🧟 **Query-nya menipu:** `kobo OR odk in:name,description` = **pembaca e-book Kobo** (koreader 30,9k⭐, NickelMenu, send2ereader) — nol repo pendataan. Yang bekerja: **`xlsform`**, **`pyxform`**, **`odk collect`**, **`kobotoolbox`** (nama proyek, pelajaran 17/55).
+- 🪜 **Tangga yang realistis buat desa (dari uji hari ini):**
+  1. **Form pendek (3–10 pertanyaan) & online** → form di situs desa (**SurveyJS MIT** / HTML biasa) → kirim ke API kita → masuk Postgres/SQLite. **Nol layanan baru.**
+  2. **Pendataan lapangan tanpa sinyal, butuh GPS + foto + dedupe** → **XLSForm** (Excel) → `pyxform` → **ODK Collect** di HP petugas → kirim ke server **saat ada sinyal**.
+  3. **Server**: **jangan** ODK Central di VPS ini (9 container). Pilihan jujur: (a) hosted/cloud, (b) taruh Central di PC/VPS khusus, (c) ekspor manual dari HP (CSV) untuk volume kecil per bulan.
+- 🔁 **Kenapa ini nyambung ke bisnis:** data posyandu/bansos yang terkumpul = **rekap `.xlsx`** (seksi di atas) + **grafik APBDes** → satu paket "desa digital" yang tidak bisa ditiru template WordPress. Dan PDP: form wajib punya **tujuan + dasar pemrosesan** (jangan kirim NIK lewat grup WA).
+- ⚠️ **Jebakan operasional:** validator `pyxform` butuh **Java 8+**; VPS ini **tidak punya Java** → pakai `--skip_validate` **tapi** uji form di HP sebelum dipakai petugas (validasi struktur saja tidak menjamin tampilan benar). ⚠️ `image` tanpa `max-pixels` bikin kiriman lambat (pyxform sudah memperingatkan) → set `max-pixels=1024`.
+- 🔍 **Query tajam:** ✅ nama proyek (`pyxform`, `odk`, `xlsform`, `kobotoolbox`, `surveyjs`) · ⚠️ `offline+first+in:name,description` = aplikasi pengetahuan/pemutar musik/Notion-klon, **bukan** form · ⚠️ `form+builder` = React form library & builder web (bukan lapangan).
+
+---
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
