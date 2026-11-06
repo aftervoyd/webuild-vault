@@ -547,3 +547,12 @@ Prioritas cash tanpa syarat tool tetap: **Artefact Paris €10K (2 Des, ≤314 d
 2. **Publish workflow `qwen-consistency-edit`** (id 2108638842228461570) — hari ke-4 belum dieksekusi, masih $0,00. Satu-satunya jalur koin tanpa bayar (creator reward).
 3. Naskah Artefact "(Dis)Connection" (nol koin) — 2 Des makin dekat.
 WARNING: TIDAK ADA jam gratis. Qwen-Edit ±50 koin/gambar, motion ±26 koin/dtk (16 dtk ±431).
+
+
+### §3b. TEMUAN 6 NOV 2026 — dua kontes GRATIS baru (deadline 20 Nov, tinggal 14 hari)
+| Kontes | Hadiah | Deadline | Syarat kunci |
+|---|---|---|---|
+| **1 Billion AI Film Award 2027** (Dubai, TikTok+BytePlus) | **USD 1.000.000** (1 pemenang) | **20 Nov 2026** | GRATIS, 18+, global. Film 5-7 mnt, 16:9 1080p, subtitle Inggris, 5 tema tetap. **>=70% WAJIB Dreamina Seedance** -> pipeline Qwen/MiniMax kita TIDAK memenuhi. Top10 vote 15 Des, Top5 25 Des, final Dubai 8-10 Jan 2027. |
+| **Cue Xmas 26** (AFRO TV) | 4 hadiah cash (Best Film/Image/Sound/Music Video) + tayang TV kabel nasional | **20 Nov 2026** | **GRATIS**, 18+, tema Natal, 2-6 mnt, short film ATAU AI music video. Finalis 10, festival live 12 Des. |
+- Cine Prague: Grand Prix USD 1.000 tapi **fee USD 50 + wajib hadir di Praha** untuk hadiah -> lewati.
+- Catatan: 1B Award = tool-locked (Seedance). Cue Xmas = bebas tool -> satu-satunya yang cocok pipeline kita.
