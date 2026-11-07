@@ -556,3 +556,21 @@ WARNING: TIDAK ADA jam gratis. Qwen-Edit ±50 koin/gambar, motion ±26 koin/dtk 
 | **Cue Xmas 26** (AFRO TV) | 4 hadiah cash (Best Film/Image/Sound/Music Video) + tayang TV kabel nasional | **20 Nov 2026** | **GRATIS**, 18+, tema Natal, 2-6 mnt, short film ATAU AI music video. Finalis 10, festival live 12 Des. |
 - Cine Prague: Grand Prix USD 1.000 tapi **fee USD 50 + wajib hadir di Praha** untuk hadiah -> lewati.
 - Catatan: 1B Award = tool-locked (Seedance). Cue Xmas = bebas tool -> satu-satunya yang cocok pipeline kita.
+
+## 22. SCAN 7 NOV 2026 (08:00) — saldo 0 (delta 0), koin login BELUM masuk + kontes GRATIS baru: M.AI Cagliari
+**SALDO: 0 RH Coins** (delta **0** vs 6 Nov). Wallet $0,0100. Tugas jalan: 0. Rantai: 604 → 0 → 77 → 0 → 100 → 0 → **0**.
+Berbeda dari 5 Nov: bonus login hari ini **belum dikreditkan** (butuh login manual di web) — bukan kebocoran. Kalau diklaim: 100 koin = tepat 2 gambar Qwen-Edit.
+
+### Kontes BARU (belum ada di §3/§3b) — sumber aifilmcontests.com (verified 5 Nov)
+| Kontes | Hadiah | Deadline | Syarat |
+|---|---|---|---|
+| **M.AI International AI Short Film Festival** (Cagliari, Sardinia, 18–20 Des 2026) | **€5.750 cash**, 6 award (Grand Prix, Best Experimental & Visual Innovation, dll) | **20 Nov 2026** (14 hari) | **GRATIS**, global, AI-driven cinema/animation/eksperimental/hybrid. Runtime belum terverifikasi (cek FilmFreeway) |
+- Duplikat yang BUKAN kontes baru: "Jingrui AI Creation Contest" (= 1 Billion AI Film Award 2027, Seedance ≥70%) · "The AI in Anime 2026" (10 Nov, non-cash, screening Las Vegas).
+- Lewati: AI New York Awards (non-cash), WAIFF London (UK-only, £75), IASFF India ($30 fee), Veritas ($9, non-cash).
+Prioritas cash bebas-tool: **Artefact Paris €10K (2 Des)** > **M.AI €5.750 (20 Nov)** > **SVAIFF Korea (25 Nov)** > **Cue Xmas (20 Nov, gratis)** > **AI ZONE $500 (30 Nov, gratis)**.
+
+### Aksi 7 Nov
+1. Login web → klaim ±100 koin → **langsung** habiskan 2 gambar Qwen-Edit (keyframe Artefact). Jangan disimpan, hangus 24 jam.
+2. Publish workflow `qwen-consistency-edit` (id 2108638842228461570) — masih $0,00.
+3. Daftar M.AI (gratis) sebelum 20 Nov; cek runtime di FilmFreeway.
+WARNING: TIDAK ADA jam gratis. Qwen-Edit ±50 koin/gambar, motion ±26 koin/dtk (16 dtk ±431).
