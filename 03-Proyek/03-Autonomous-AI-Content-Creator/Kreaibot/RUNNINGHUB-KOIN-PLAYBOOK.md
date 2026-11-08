@@ -574,3 +574,35 @@ Prioritas cash bebas-tool: **Artefact Paris €10K (2 Des)** > **M.AI €5.750 (
 2. Publish workflow `qwen-consistency-edit` (id 2108638842228461570) — masih $0,00.
 3. Daftar M.AI (gratis) sebelum 20 Nov; cek runtime di FilmFreeway.
 WARNING: TIDAK ADA jam gratis. Qwen-Edit ±50 koin/gambar, motion ±26 koin/dtk (16 dtk ±431).
+
+## 23. SCAN 8 NOV 2026 (08:00) — saldo 0 (Δ 0), wallet HABIS ($0,0000) + kontes baru: HASFA $2.750
+**SALDO: 0 RH Coins** (Δ **0** vs 7 Nov). Wallet **$0,0100 → $0,0000** (habis). Tugas jalan: 0.
+Rantai: 604 → 0 → 77 → 0 → 100 → 0 → 0 → **0**. Bonus login hari ini **belum masuk** (butuh login web manual), bukan kebocoran.
+
+### ⚠️ Cek penting: masa aktif membership
+§0 (historis 10 Okt) mencatat Personal membership **aktif s/d 8 Nov 2026** = **HARI INI**.
+Kalau benar, jatah 36.000 koin/bulan **berhenti** dan saldo akan tetap 0 tanpa top-up/renew.
+Belum diverifikasi ulang via API → **cek dashboard sebelum menghitung rencana render**.
+
+### Kontes BARU (belum ada di §3/§3b/§22) — sumber aifilmcontests.com (verified 5–6 Nov)
+| Kontes | Hadiah | Deadline | Biaya | Catatan |
+|---|---|---|---|---|
+| **Hollywood AI Short Film Awards (HASFA)** | **$2.750 cash** (Best Picture $750, tiap genre award $250) | **15 Des 2026** (37 hari) | **$25–55** (bertingkat) | AI tools bebas, durasi **s/d 22 mnt**, film jadi setelah 1 Jan 2024, screening LA 13 Feb 2027 |
+| **NEXTALE Award** | **$3.000** ($2.000 grand + $100×10 early) | 14 Des 2026 | Gratis | ⚠️ wajib **serial AI 20+ episode** di NEXTALE Studio — berat |
+| Gossip Goblin Competition | $20.000 | 15 Des 2026 | Gratis | ✗ **wajib Showrunner Studio + watermark** (tool-locked) |
+| AI Toronto Genre Awards | laurels | 22 Mei 2027 | — | non-cash |
+| Twin Rivers AI Film Festival 2027 | 20% net entry fee | 8 Mar 2027 | — | non-cash efektif |
+| Montreal AI Indie Festival / AI Independent Montreal | laurels (cash tak disebut) | 4 Jan / 2 Jul 2027 | — | non-cash |
+| Kursaal San Sebastián 2027 | trofi | 31 Jan 2027 | €10 | non-cash |
+| HKAIIFF 2027 | 7 Unicorn Award | 1 Mar 2027 | $99 | non-cash |
+
+### Verifikasi ulang (bukan baru)
+- **M.AI Cagliari**: GRATIS, **€5.750** (Grand Prix €1.500 + Best Experimental €750 + lain), deadline **20 Nov (13 hari)**, film jadi setelah 1 Jan 2024, AI tools bebas. **Runtime resmi masih belum dipublikasi** di listing → cek FilmFreeway.
+- **Cue Xmas '26**: GRATIS, 20 Nov, 2:00–6:00 mnt bertema Natal, **4 award cash**, tayang AFRO TV 12 Des. Single clip tanpa editing = gugur.
+
+### Aksi 8 Nov (prioritas)
+1. **Login web → klaim ±100 koin → langsung** bakar ke 2 gambar Qwen-Edit (keyframe Artefact). Jangan disimpan, hangus 24 jam.
+2. **Cek status membership** (habis hari ini?) — tentukan perlu renew/top-up atau fokus jalur gratis (kontes tak butuh koin).
+3. Publish workflow `qwen-consistency-edit` (id 2108638842228461570) — masih $0,00.
+4. Daftar **M.AI (gratis)** sebelum 20 Nov; HASFA hanya kalau siap bayar $25–55.
+WARNING: TIDAK ADA jam gratis. Qwen-Edit ±50 koin/gambar, motion ±26 koin/dtk (16 dtk ±431 koin).
