@@ -606,3 +606,29 @@ Belum diverifikasi ulang via API → **cek dashboard sebelum menghitung rencana 
 3. Publish workflow `qwen-consistency-edit` (id 2108638842228461570) — masih $0,00.
 4. Daftar **M.AI (gratis)** sebelum 20 Nov; HASFA hanya kalau siap bayar $25–55.
 WARNING: TIDAK ADA jam gratis. Qwen-Edit ±50 koin/gambar, motion ±26 koin/dtk (16 dtk ±431 koin).
+
+## 24. SCAN 9 NOV 2026 (08:00) — saldo 0 (Δ 0), membership LEWAT 8 Nov + kontes baru: SVAIFF KOREA (gratis, 25 Nov)
+**SALDO: 0 RH Coins** (Δ **0** vs 8 Nov). Wallet **$0,0000**. Tugas jalan: 0. `remainPoint`: 7.0 · `apiType`: NORMAL.
+Rantai: 77 → 0 → 100 → 0 → 0 → **0**. Koin login harian **lagi-lagi belum masuk** (butuh login web manual).
+⚠️ **Membership Personal tercatat aktif s/d 8 Nov 2026 = sudah LEWAT.** API `accountStatus` **tidak** mengembalikan field membership → tidak bisa diverifikasi lewat API. Konsekuensi: jatah 36.000 koin/bulan berhenti; saldo akan tetap 0 sampai renew/top-up. **Cek dashboard sebelum rencana render apa pun.**
+
+### Kontes BARU (belum ada di §3/§6/§7/§8/§23)
+| Kontes | Hadiah | Deadline | Biaya | Catatan |
+|---|---|---|---|---|
+| **SVAIFF KOREA 2026** (Silicon Valley AI Film Festival Korea) | **KRW 30 jt** total (±$21K) — Grand Prize **KRW 10 jt**, 19 pemenang di 12 kategori + 31 Encouragement | **25 Nov 2026** (16 hari) | **GRATIS** | ✅ **BUKA untuk SEMUA kewarganegaraan**, individu/tim. Kategori: Narrative ≤20 mnt, Animation ≤20, Documentary ≤20, **Advertising ≤3 mnt**, **Music Video ≤7 mnt**, Arirang K-Culture ≤20. AI ≥50% visual/unsur cerita, hybrid live-action boleh, wajib Creative Statement + Evidence Scenes. 50 pemenang Korea lanjut grand final Silicon Valley Jan 2027. ⚠️ Form data pemenang menyebut 주민등록번호·rekening Korea → **wajib tanya panitia soal pembayaran non-Korea**. |
+| **Melbourne AI Film Festival (MAIFF) 2026** | non-cash (laurel) + kategori internasional Narrative/Documentary/Animation | regular 8 Nov (lewat), **late 29 Nov** | via FilmFreeway (fee) | prioritas rendah |
+| **Cine Prague: AI Short Film** | non-cash | **18 Nov** | **$50** (late) | prioritas rendah, ≤5 mnt |
+
+### Verifikasi ulang (bukan baru)
+- **1 Billion Followers Summit AI Film Award 2027** — tetap GRATIS, **20 Nov**, $1 jt, 5–7 mnt, ≥70% Seedance → jalur hadiah terbesar, tapi butuh koin/biaya token belum terukur.
+- **Cue Xmas '26** — GRATIS, 20 Nov, 2–6 mnt, wajib multi-shot + final edit manusia.
+- **M.AI Cagliari** — GRATIS, €5.750, 20 Nov.
+- **HIIFF Hainan** — 15 Nov, tapi **hanya via LibTV (platform China)** → skip.
+- **WAIFF London** — hanya kreator UK → skip.
+
+### Aksi 9 Nov
+1. **Login web RunningHub** → cek status membership (habis?) + klaim ±100 koin harian → kalau dapat, langsung bakar ke 2 gambar Qwen-Edit, jangan disimpan (hangus 24 jam).
+2. **Putuskan renew/top-up** — tanpa membership, saldo mentok 0 dan semua pipeline render terhenti; kontes gratislah yang masih bisa jalan.
+3. **Daftar SVAIFF KOREA** (gratis, 19 kursi juara, 25 Nov) — kursi terbanyak per dolar di daftar saat ini.
+4. Publish workflow `qwen-consistency-edit` (id 2108638842228461570) — masih $0,00.
+WARNING: TIDAK ADA jam gratis. Qwen-Edit ±50 koin/gambar, motion ±26 koin/dtk (16 dtk ±431 koin).
