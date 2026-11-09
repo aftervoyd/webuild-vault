@@ -9,6 +9,12 @@
 
 ## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 12:45 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
+### 🔴 UPDATE SALDO 9 NOV 2026 (cron harian)
+- **RH Coins 0 · wallet $0,0000 · Δ 0** (rantai: …100 → 0 → 0 → 0). `remainPoint` 7 · `apiType` NORMAL.
+- ⚠️ **Membership Personal tercatat aktif s/d 8 Nov 2026 = sudah LEWAT** → jatah 36.000 koin/bulan berhenti; API `accountStatus` tak punya field membership, jadi **wajib cek dashboard**. Tanpa renew/top-up saldo mentok 0.
+- Koin login harian (±100, hangus 24 jam) **tidak masuk otomatis** — harus login web manual.
+- Kontes gratis yang masih jalan: **SVAIFF KOREA 2026** (25 Nov, KRW 30 jt, semua kewarganegaraan — baru), 1 Billion Followers $1 jt (20 Nov, wajib ≥70% Seedance), M.AI Cagliari €5.750 (20 Nov), Cue Xmas (20 Nov). Detail: `RUNNINGHUB-KOIN-PLAYBOOK.md` §24.
+
 ### 🎬 SESI 10 Okt siang — workflow #2 "Food Photo Studio" (TERBIT ✓)
 - ✅ **TERBIT 10 Okt 12:43 WIB** → https://www.runninghub.ai/post/2108775873615863810
   Judul: *Food Photo Studio: AI Dish & Product Photography* · tag `Product Shots` + `Text-to-Image` · cover 1 (CN) · live (HTTP 200).
