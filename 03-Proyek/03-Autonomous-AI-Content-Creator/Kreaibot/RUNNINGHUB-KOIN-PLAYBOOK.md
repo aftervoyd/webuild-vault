@@ -632,3 +632,31 @@ Rantai: 77 → 0 → 100 → 0 → 0 → **0**. Koin login harian **lagi-lagi be
 3. **Daftar SVAIFF KOREA** (gratis, 19 kursi juara, 25 Nov) — kursi terbanyak per dolar di daftar saat ini.
 4. Publish workflow `qwen-consistency-edit` (id 2108638842228461570) — masih $0,00.
 WARNING: TIDAK ADA jam gratis. Qwen-Edit ±50 koin/gambar, motion ±26 koin/dtk (16 dtk ±431 koin).
+
+## 25. SCAN 10 NOV 2026 (08:00) — saldo 0 (Δ 0, hari ke-6), poin ikut habis (7 → 0) + TIDAK ada kontes cash baru
+**SALDO: 0 RH Coins** (Δ **0** vs 9 Nov). Wallet **$0,0000**. Tugas jalan: 0. `remainPoint`: **0,0** (turun dari 7,0 — pertama kali poin juga 0) · `apiType`: NORMAL.
+Rantai 8 hari: 1999 → 604 → 0 → 77 → 0 → 0 → **100** → 0 → 0 → 0 → **0**. Koin login harian belum masuk lagi (butuh login web manual).
+⚠️ **Membership Personal lewat 8 Nov (hari ke-2 tanpa jatah 36.000 koin/bulan).** `accountStatus` tetap tidak mengembalikan field membership → tidak bisa diverifikasi via API. Saldo akan mentok 0 sampai renew/top-up. Cek dashboard sebelum rencana render apa pun.
+
+### Kontes — hasil scan aifilmcontests.com (66 terbuka, 71 aktif, $3,0 jt+ hadiah)
+**TIDAK ADA kontes CASH baru** dibanding §24. Penambahan terbaru semuanya **non-cash** (FilmFreeway):
+| Kontes | Deadline | Hadiah | Catatan |
+|---|---|---|---|
+| Reel Sessions: The Black AI Film Festival | 31 Des 2026 | belum ada cash terverifikasi | fee FilmFreeway |
+| NeoCinema AI Film Festival | 31 Des 2026 | non-cash (laurel) | fee |
+| AI Cinema Festival Québec City 2027 | 24 Jan 2027 | non-cash | fee |
+| SIAFF Seoul 2027 (ke-6) | 30 Apr 2027 | **trofi/sertifikat, tanpa cash** | fee, Seoul |
+| KCAIF 2027 (K-Culture, ke-2) | 10 Apr 2027 | Grand Prize/Gold/Silver + 16 kategori, **cash tidak terverifikasi** | fee, Gangnam 1 Mei 2027 |
+
+### Verifikasi ulang (bukan baru — tetap prioritas)
+- **SVAIFF Korea 2026** — GRATIS, **25 Nov** (15 hari), KRW 30 jt, 19 kursi juara. ✅ jalur terbaik sekarang.
+- **1 Billion Followers Summit AI Film Award 2027** — GRATIS, **20 Nov** (10 hari), Grand Prize $1 jt, 5–7 mnt, ≥70% Seedance (butuh biaya token belum terukur).
+- **M.AI Cagliari** €5.750 & **Cue Xmas '26** — GRATIS, 20 Nov. **Chroma S2** — 31 Des (tanggal di tracker: 7 Jan), $175K+.
+- Sudah tutup/lewat: The AI in Anime, IASFF (10 Nov). AI New York Awards 15 Nov, WAIFF London 17 Nov (khusus UK).
+
+### Aksi 10 Nov
+1. **Login web RunningHub** → cek status membership (lewat 8 Nov?) + renew/top-up + klaim ±100 koin harian. Kalau dapat koin: bakar 1–2 gambar Qwen-Edit (±50 koin/gambar), jangan disimpan (hangus 24 jam).
+2. Kalau **tidak** renew: semua pipeline render berhenti → alihkan energi ke **SVAIFF Korea (gratis, 19 kursi)** pakai tool/kredit non-RH.
+3. Jangan kejar SIAFF/KCAIF/Québec/NeoCinema dulu — non-cash dan pakai fee.
+
+WARNING: TIDAK ADA jam gratis. Qwen-Edit ±49–52 koin/gambar, motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin). Hitung koin dulu sebelum render.
