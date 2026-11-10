@@ -1677,6 +1677,110 @@ Metode: render **surat desa sintetis** (kop "PEMERINTAH KABUPATEN PAMEKASAN… S
 
 ---
 
+## 🏷️ WebBuilder / DesignerBot / SalesAgent — QR CODE: JEMBATAN KERTAS → WEB (surat desa ber-QR, menu UMKM, WiFi balai desa)
+
+> Riset **2026-11-11** — rotasi **design/UI + web dev**. `grep -iE "qrcode|segno"` katalog = **0** → kelas ini belum ada, padahal QR yang menyambung **kertas ke web** (surat resmi yang bisa diverifikasi, menu warung, kartu nama, WiFi balai desa, poster APBDes) — dan **tanpa layanan pihak ketiga, tanpa API key, jalan offline**.
+> **Semua angka di bawah diukur di VPS ini** (node 26.7.0, `qrcode` 1.5.4, `jsQR` 1.4.0, `pngjs`) — skrip: `/root/repos/qr-lab/{test3.js,final.js}`.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **node-qrcode** | github.com/soldair/node-qrcode | Generator QR Node/browser: PNG, **SVG**, UTF-8, mode byte/alnum, EC L–H — **yang saya pakai mengukur semua angka di bawah** | JavaScript (npm) | ✅ **MIT** (`spdx=MIT`) | 8.191 (**86**) · 🚩 **0 commit/60d** (commit terakhir **Agu 2024**) · tanpa rilis | WebBuilder | ✅ **PAKAI** (terbukti: 71-byte URL → 41 modul EC Q; **8,6 KB gz** di browser) — ⚠️ beku, tapi QR = **spesifikasi mati**, bukan API yang berubah |
+| **QR-Code-generator (Nayuki)** | github.com/nayuki/QR-Code-generator | Library QR **paling sehat & portabel** (Java/TS/JS/Python/Rust/C++/C): low-level (kita menggambar modul sendiri) → kontrol penuh untuk SVG cetak | multi-bahasa | ✅ **MIT** (`Readme`: *"Open-source code under the permissive MIT License"*; `spdx=NULL` di API) | 6.819 (**119**) · **5 commit/60d** (29–30 Okt 2026) | WebBuilder | ✅ **CADANGAN UTAMA** — pilih ini kalau butuh SVG tajam untuk cetak & tidak mau bergantung repo beku |
+| **segno** | github.com/heuer/segno | QR **paling lengkap** di Python: Micro QR, QR bertata artistik (SVG/PDF/EPS), warna, error handling | Python (zero-dep) | ✅ **BSD-3-Clause** | 821 (**11**) · **0 commit/60d** (commit Jul 2026; rilis 1.6.6 Mar 2025) | WebBuilder | ⚠️ **BELUM DIUJI** — **`pip` tidak ada di venv ini**; pilih kalau skrip desa berjalan di PC user (Python ada) |
+| **python-qrcode** | github.com/lincolnloop/python-qrcode | Generator QR Python klasik (PNG/SVG, `StyledPilImage`) | Python + Pillow | ✅ **BSD-2-Clause** — file `LICENSE` = teks BSD 2 klausul, tapi API bilang **`NOASSERTION`** (jebakan yang sama berulang) | 4.959 (**119**) · 🚩 **0 commit/60d** (Mar 2026) · **tanpa rilis** | WebBuilder | ⚠️ CADANGAN — jangan pilih kalau segno cukup |
+| **qr-code-styling** | github.com/kozakdenys/qr-code-styling | QR **bergaya** (titik bulat/persegi, gradien, **logo di tengah**) untuk browser — yang dipakai kalau klien minta "QR cantik" | TypeScript (browser) | ✅ **MIT** | 2.984 (**31**) · 🚩 **0 commit/60d** (Apr 2025) | DesignerBot | 🔸 **UJI DULU** — fitur paling dicari untuk kartu UMKM, tapi repo diam 1,5 tahun |
+| **etiket** | github.com/productdevbook/etiket | **Barcode + QR zero-dependency** → SVG/PNG, **40+ format** (Code128, EAN, QR), tree-shakeable — pengganti modern node-qrcode | TypeScript | ✅ **MIT** | 494 (**subs 0**) · push **10 Nov 2026** | WebBuilder | 🔸 **UJI DULU** — paling baru & aktif, tapi subs 0 = belum ada yang memakai |
+| **wifi-card** | github.com/bndw/wifi-card | Generator **kartu WiFi** (QR + SSID) untuk dicetak & ditempel di balai desa/warung | JavaScript | ✅ **MIT** | 7.211 (**36**) · **11 commit/60d** (6 Nov 2026) | SocialAgent + DesignerBot | ✅ **PAKAI** — 1 halaman, hasil siap cetak; alasan paling sering warga minta tolong |
+| **html5-qrcode** | github.com/mebjas/html5-qrcode | **Pembaca** QR lewat kamera browser (verifikasi surat oleh petugas) | TypeScript (22 MB repo) | ✅ **Apache-2.0** | 6.247 (**89**) · 🚩 **0 commit/60d** (Des 2025) | WebBuilder | 🔸 CADANGAN — ⚠️ **warga tidak butuh ini**: kamera HP sudah memindai QR sendiri |
+| **jsQR** | github.com/cozmo/jsQR | **Decoder** QR murni JS (yang saya pakai untuk menguji semua QR hari ini) | TypeScript | ✅ **Apache-2.0** | 4.051 (**—**) · push Mei 2026 · **45,4 KB gz** | WebBuilder | ✅ **PAKAI untuk UJI/QA** — di produksi hanya *lazy-load* kalau ada fitur "pindai di halaman" |
+
+### 📐 Yang DIUKUR, bukan dikira (URL verifikasi surat 71 byte, EC Q)
+
+**1) Ukuran simbol = fungsi panjang URL, bukan keinginan desainer** (`node test3.js`):
+
+| panjang URL | EC L | EC M | EC Q | EC H |
+|---|---|---|---|---|
+| 30 byte | 25 modul · cetak mín **13,2 mm** | 29 · 14,8 mm | 29 · 14,8 mm | 33 · 16,4 mm |
+| **71 byte** (link verifikasi surat) | 33 · 16,4 mm | 37 · 18,0 mm | **41 · 19,6 mm** | 49 · 22,8 mm |
+| 120 byte | 41 · 19,6 mm | 45 · 21,2 mm | 53 · 24,4 mm | 61 · 27,6 mm |
+| 250 byte | 57 · 26,0 mm | 61 · 27,6 mm | 73 · 32,4 mm | 81 · 35,6 mm |
+| 400 byte (mis. bawa data mentah) | 69 · 30,8 mm | 77 · 34,0 mm | **93 · 40,4 mm** | 101 · 43,6 mm |
+
+(cetak = 300 dpi, aturan **0,4 mm per modul** + margin 4 modul tiap sisi; panjang maksimum URL: **~813 karakter** di EC Q, **~613** di EC H)
+
+**2) Aturan cetak yang terbukti** (`node final.js`, PNG 300 dpi lalu dibaca balik `jsQR`):
+
+| ukuran cetak | piksel @300dpi | px/modul | hasil |
+|---|---|---|---|
+| 2 cm | 236 px (2,5 KB) | 4,8 (**0,41 mm**) | ✅ terbaca |
+| 2,5 cm | 295 px (2,9 KB) | 6,0 (0,51 mm) | ✅ |
+| 3 cm | 354 px (3,2 KB) | 7,2 (0,61 mm) | ✅ |
+| 4 cm | 472 px (4,0 KB) | 9,6 (0,82 mm) | ✅ |
+
+⇒ **minimum 2 cm** untuk link verifikasi; **rekomendasi 2,5–3 cm** di surat/poster; **SVG 2,8 KB** kalau mau tajam di ukuran berapa pun (PNG 600 px cuma 4,8 KB — QR itu file termurah yang pernah kita hasilkan).
+
+**3) Logo desa di tengah:** di gambar digital bersih EC **Q/H** masih terbaca sampai **tutupan 15% area** (EC M putus di 10%, **EC L putus di 5%**). ⇒ aturan aman: **EC H + logo ≤10% area + margin putih 2 modul**, dan **selalu pindai ulang setelah ditempel logo**. ⚠️ Uji "foto kertas" (blur+noise) tidak saya pakai sebagai angka: hasilnya tidak stabil di harness saya (gagal di 8–10 px/modul padahal 6 px/modul lolos) — jangan mengutip angka dari harness yang belum stabil.
+
+**4) Payload praktis:** `WIFI:T:WPA;S:Balai-Desa-Pamekaran;P:rahasia123;;` (**48 byte**, PNG 500 px = **3,4 KB**) · link WhatsApp `wa.me/...?text=...` (**121 byte**, 5,6 KB). ⚠️ Di payload WiFi, karakter `\ ; , : "` harus di-*escape* dengan `\` — kalau password mengandung `;` dan tidak di-escape, QR-nya **valid tapi salah** (HP gagal konek).
+
+### 🎯 Produk yang bisa langsung dijual (dari angka di atas)
+
+1. **"Surat desa ber-QR"** — tiap surat keterangan/undangan diberi QR → halaman `desa.id/verifikasi/<kode>` yang menampilkan **nomor surat, jenis, tanggal, status sah** (+ hash). Ini jawaban paling murah untuk **pemalsuan surat** dan sangat disukai pemda. ⚠️ **Jangan taruh NIK/data pribadi di URL** (URL ikut ter-screenshot & terkirim di WA grup) — simpan **token pendek**, data di server.
+2. **Menu/katalog UMKM** → QR 2,5 cm di meja/stiker; halaman menu **statis** (Astro) = biaya nol, tanpa aplikasi.
+3. **WiFi balai desa/posyandu** → `wifi-card`, cetak A5, tempel di dinding.
+4. **Kartu nama digital** (link-in-bio yang sudah ada di katalog) + QR di belakang kartu fisik.
+5. **Bahan "kartu mutu situs"**: QR halaman verifikasi = bukti bahwa situs klien **dipakai**, bukan cuma jadi.
+
+### 🔎 Catatan & jebakan QR
+- **Kategori ini justru contoh "repo beku tapi tetap benar"**: `node-qrcode` (0 commit/60d, terakhir 2024), `python-qrcode` (0/60d), `qr-code-styling` (0/60d sejak Apr 2025) — semuanya masih dipakai dan jalan. **Sebabnya: QR = standar ISO/IEC 18004 yang tidak berubah.** Jadi untuk kelas *format/spesifikasi* (QR, barcode, iCal, vCard, PDF/A) **umur commit bukan gerbang utama** — gerbangnya **kebenaran spesifikasi** (uji baca balik) + lisensi. Ini pengecualian sadar dari aturan "commit 60 hari dulu".
+- **Yang paling sering dipakai orang (QR generik di internet) bukan yang terbaik untuk cetak**: banyak generator online menghasilkan PNG 200×200 dengan **margin 0** → printer memotong *quiet zone* → tidak terbaca. **Selalu margin ≥4 modul** (kode: `margin: 4`).
+- **Jangan pakai QR untuk data panjang.** 400 byte → 40 mm; lebih baik **token 8–12 karakter** → simbol 1,5–2 cm.
+- **QR statis vs dinamis:** kita **tidak butuh** layanan QR dinamis berbayar (redirect) — cukup URL `desa.id/v/<kode>` milik kita; kalau URL berubah, **cetak ulang** (QR statis tidak bisa diubah).
+- **Andalkan kamera HP, bukan library scanner** — 45,4 KB gz (`jsQR`) untuk fitur yang sudah ada di OS.
+
+---
+
+## 🚨 OpsAgent / WebBuilder — ERROR TRACKING SITUS KLIEN ("situsnya rusak, kita tahu duluan") — tanpa membayar 137 KB
+
+> Riset **2026-11-11** — rotasi kedua: **ops/web dev**. `grep -iE "sentry|glitchtip|bugsink"` katalog = **0**: kita memantau **mati/hidup** situs (Uptime Kuma) dan **cron** (Healthchecks), tapi **tidak** memantau *error di browser warga* — form kontak yang gagal kirim, JS rusak setelah update, tombol WA mati. Ini kelas yang paling sering jadi keluhan pertama klien.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Sentry (self-host)** | github.com/getsentry/sentry · compose: `getsentry/self-hosted` | Standar industri error tracking (trace, release, sourcemap) | Python + Docker | ⚠️ **`NOASSERTION`** (FSL/BSL-1.1 — **bukan OSI**; lisensi inti berubah sejak 2024) | 45.746 (**664**) · 100 commit/60d · 975 MB repo | — | 🚫 **MUSTAHIL DI VPS KITA** — `docker-compose.yml` berisi **±40 service**: postgres, pgbouncer, redis, memcached, **kafka**, **clickhouse**, **seaweedfs**, **snuba-\* ×15**, relay, symbolicator, vroom, taskbroker + belasan worker |
+| **Bugsink** | github.com/bugsink/bugsink | Error tracking **Sentry-SDK compatible**, **1 container** (`docker run` + DB embedded), UI ringan | Python (Django) | 🚩 **PolyForm Shield 1.0.0** (root `LICENSE`; **`ee/` proprietary**; `sentry/` = BSD-3; `api/LICENSE` = MIT untuk schema) — **bukan OSI** | 2.184 (**subs 4** = rasio **546:1** 🚩) · 100 commit/60d · **v2.6.3 (6 Nov 2026)** | OpsAgent | 🔸 **PAKAI INTERNAL SAJA** — paling ringan (1 service), **tapi** PolyForm Shield melarang menjadikannya **produk/layanan yang bersaing** → 🚫 kalau kita jual "monitoring" sebagai layanan; ✅ untuk memantau situs kita sendiri |
+| **GlitchTip** | **gitlab.com/glitchtip/glitchtip-backend** ← *(GitHub `glitchtip/glitchtip` cuma **3⭐** = nama dipakai ulang/kosong)* | Error tracking Sentry-compatible, **MIT**, ada isu/uptime/performance | Python (Django) + Postgres + Redis + Celery | ✅ **MIT** (GitLab API `license.name = MIT License`) | 363⭐ di GitLab · aktif **10 Nov 2026** | OpsAgent | ✅ **PILIHAN KALAU SUDAH PUNYA VPS WEB** — MIT = aman dijual; ±4 service |
+| **errorpush** | github.com/hauxir/errorpush | Kolektor error **minimalis** (kompatibel klien **Rollbar**) | Rust/Node kecil | ✅ **MIT** | 393 (**5**) · push Feb 2026 | OpsAgent | 🔸 **UJI DULU** — ringan tapi ekosistem SDK-nya sempit |
+| **Airbroke** | github.com/icoretech/airbroke | Error catcher ringan, kompatibel **Airbrake/Sentry**, ambil sample event | TypeScript + **Postgres** | ✅ **MIT** | 220 (**4**) · push **10 Nov 2026** · repo 602 MB | OpsAgent | 🔸 CADANGAN |
+
+### 📉 Angka yang menentukan: **berat SDK di halaman klien** (diukur via `bundlephobia`, cek ulang sebelum dipakai)
+
+| SDK | ukuran ter-minify | **gzip** |
+|---|---|---|
+| `@sentry/browser` | 412,3 KB | 🚩 **136,9 KB** |
+| `posthog-js` | 340,1 KB | 115,1 KB |
+| `@bugsnag/js` | 50,2 KB | **15,1 KB** |
+| **beacon buatan kita** (`beacon.js`) | 695 B | ✅ **434 B** |
+
+⇒ Memasang error tracking "standar" = **46% dari janji kita "situs <300 KB"** untuk satu fitur yang **tidak dilihat klien**. Ini alasan teknis — bukan selera — untuk tidak memakai SDK penuh di situs desa.
+
+### 🛠️ Yang saya BANGUN & UJI hari ini (bukan teori)
+
+`/root/repos/qr-lab/beacon.js` → **743 B mentah / 449 B gz** (**434 B gz** versi minified `terser`). Menangkap 4 kejadian yang benar-benar penting untuk situs klien:
+1. `window.onerror` (JS rusak) → `{t, m, u, x}` (pesan, halaman, file:baris)
+2. `unhandledrejection` (fetch/form gagal senyap)
+3. `submit` (form dikirim — dasar hitung **konversi**: "berapa warga benar-benar mengirim form")
+4. klik `tel:` / `mailto:` / `wa.me` (**niat kontak** — metrik jualan paling jujur)
+
+Diuji di Node dengan `navigator.sendBeacon` distub: **2 event terkirim**, payload benar → `{"t":"js","m":"X is not a function","u":"/kontak","x":"app.js:42"}`. Fallback `fetch(..., keepalive:true)` kalau `sendBeacon` tidak ada. **Ukurannya 315× lebih kecil** dari `@sentry/browser`.
+
+### 🔎 Catatan error tracking
+- **Jebakan lisensi ke-44 — "Error Tracking Made Simple" tapi lisensinya PolyForm Shield:** `bugsink` terbaca `NOASSERTION`, dan **file lisensi di root bukan teks lisensi, tapi daftar pembagian per folder** (root → PolyForm Shield · `ee/` → proprietary · `sentry/` → BSD-3 · `api/` → MIT). Persis pola `rtk-ai/rtk`. **PolyForm Shield ≠ Noncommercial**: boleh dipakai komersial, **kecuali** menawarkan produk/layanan yang **bersaing** dengan produk lisensor → jangan pernah menjual "layanan monitoring" di atas Bugsink.
+- **Repo "kanonik" bisa berada di GitLab, dan nama GitHub-nya dipakai ulang jadi repo kosong** (`glitchtip/glitchtip` = 3⭐, 0 KB, 2022). Kalau `gh api` balas ⭐ sangat kecil untuk proyek yang jelas populer: **cari di GitLab** (`https://gitlab.com/api/v4/projects/<ns>%2F<repo>`) sebelum menyimpulkan "proyek mati" — pelajaran lama (#5/#11) sekarang bertambah satu arah.
+- **Jangan self-host error tracking di VPS 2 GB** — angka servicenya objektif (Sentry ±40; GlitchTip ±4; Bugsink 1). Urutan yang benar: **beacon ke endpoint sendiri** (hari ini) → **Sentry SaaS/GlitchTip** begitu ada VPS web → **jangan** Sentry self-host, kapan pun, untuk skala kita.
+- **Aturan main data:** payload error **jangan** memuat isi form (nama/NIK/HP). Yang kita butuh: halaman, pesan error, dan **penanda bahwa submit berhasil** — bukan datanya. Simpan ≤30 hari.
+
+---
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
