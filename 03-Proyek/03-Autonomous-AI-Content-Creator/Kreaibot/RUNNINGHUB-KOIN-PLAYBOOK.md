@@ -660,3 +660,34 @@ Rantai 8 hari: 1999 → 604 → 0 → 77 → 0 → 0 → **100** → 0 → 0 →
 3. Jangan kejar SIAFF/KCAIF/Québec/NeoCinema dulu — non-cash dan pakai fee.
 
 WARNING: TIDAK ADA jam gratis. Qwen-Edit ±49–52 koin/gambar, motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin). Hitung koin dulu sebelum render.
+
+## 26. SCAN 11 NOV 2026 (08:00) — saldo 0 (Δ 0, hari ke-7 kosong) + 6 kontes GRATIS-cash BARU (Artefact Paris, AKOOL, Curious Refuge, NEXTALE, NEXMUSE, AI for Good) & KOREKSI deadline Chroma S2 → 7 Jan 2027
+**SALDO: 0 RH Coins** (Δ **0** vs 10 Nov). Wallet **$0,0000**. Tugas jalan: 0. `apiType`: NORMAL.
+Rantai 9 hari: 1999 → 604 → 0 → 77 → 0 → 0 → **100** → 0 → 0 → 0 → 0 → **0** (hari ke-7 kosong berturut-turut).
+⚠️ **Membership Personal lewat 8 Nov = hari ke-3 tanpa jatah 36.000 koin/bulan.** API `accountStatus` tak punya field membership → verifikasi hanya via dashboard web.
+
+### Kontes BARU (belum tercatat di §24/§25) — semua GRATIS masuk & hadiah cash nyata
+| Kontes | Deadline | Hadiah | Syarat kunci |
+|---|---|---|---|
+| **Artefact AI Film Festival (Paris, ed.3)** | **2 Des 2026** | **€10.000** grand prix + 3×€1.000 (Juri/Audiens/Inovasi) | ≤**314 dtk**, 1 film/orang, tema *(Dis)Connection*, **wajib GenAI di pra-produksi, produksi, DAN pasca** (cuma Runway/Kling di shot = gugur) |
+| **Curious Refuge × Epidemic Sound — AI Holiday** | **6 Des 2026** | **$7.500+** cash | short libur/Natal full-AI |
+| **AKOOL AI Film Challenge** | **20 Des 2026** | **$50.000** grand (juara 2 $25rb, 3 $15rb, 10 finalis ×$2.500); listing klaim "$500.000 Creator Rewards" | 3 kategori: trailer 30–90 dtk film fiktif / AI short / "Impossible". **WAJIB pakai AKOOL** secara bermakna, publish tag @AKOOL #AKOOLFilmChallenge |
+| **NEXTALE Award** | **14 Des 2026** | $3.000 pool + 100% revenue 6 bln | wajib **series 20+ episode** di NEXTALE Studio |
+| **NEXMUSE AI Music Video 2027** | **28 Des 2026** | **₩21.000.000** (~$15rb) / **32 pemenang** (umum + pelajar) | wajib lagu+video dari 1 dari 24 karakter idol mereka |
+| **AI for Good Film Festival (ITU)** | **1 Mei 2027** | hadiah + screening Jenewa | 1–10 mnt, **difilmkan 1 Sep 2026–1 Mei 2027**, gratis |
+
+### KOREKSI PENTING
+- **Chroma Awards S2** — deadline sebenarnya **7 Jan 2027, 23:45 PT** (bukan 31 Des), dibuka 19 Okt, **$450.000+** cash, 5 divisi + Student, karya ≥1 Feb 2026, menang diumumkan 11 Feb 2027. → masih ada **57 hari**, bukan 50.
+- **LAAIMPA (LA AI Motion Pictures Awards)** — GRATIS, siklus **bulanan** (submit tgl 20 → nominee 28 → juara akhir bulan), gala Beverly Hills akhir 2026. Bisa dipakai latihan berulang tanpa biaya.
+- **Showrunner Gossip Goblin** 15 Des ($20rb) — **tool-locked** (harus di Showrunner Studio) → skip.
+- **Berlin AI Film Festival** 31 Des ($40, screening) & **Florence AI Festival** 15 Des (fee) → non-cash prioritas rendah.
+
+### Peta peluang per (kekurangan) modal
+Karena saldo 0, urutan realistis: (1) **Artefact Paris** — €10rb, gratis, 314 dtk pendek = paling murah diproduksi; (2) **AKOOL** — $50rb tapi wajib langganan AKOOL (cek free tier); (3) **Curious Refuge** $7.500 6 Des; (4) **Chroma S2** 7 Jan (paling besar tapi butuh produksi panjang); (5) **SVAIFF Korea** 25 Nov (19 kursi, gratis).
+
+### Aksi 11 Nov
+1. **Login web RunningHub** → cek/renew membership + klaim ±100 koin harian; kalau dapat, langsung bakar 1–2 gambar Qwen-Edit (±50/gambar), jangan disimpan.
+2. **Daftar Artefact Paris sekarang** (gratis, 2 Des) — 314 dtk masih bisa dikerjakan tanpa render mahal (storyboard + Qwen still + Ken Burns/animasi ringan).
+3. Jangan render motion panjang sebelum koin ada: ±26 koin/dtk (16 dtk ≈ 431 koin).
+
+WARNING: TIDAK ADA jam gratis. Qwen-Edit ±49–52 koin/gambar · motion ±16,4–26 koin/dtk. Hitung koin dulu sebelum render.
