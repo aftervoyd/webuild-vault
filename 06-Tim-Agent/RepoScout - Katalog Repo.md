@@ -1781,6 +1781,92 @@ Diuji di Node dengan `navigator.sendBeacon` distub: **2 event terkirim**, payloa
 
 ---
 
+## 🖼️ WebBuilder / DesignerBot — "JANJI <300 KB" ITU SOALNYA GAMBAR: optimasi foto klien (angka nyata)
+
+> Riset **2026-11-12** — rotasi: **web dev (performa)** + **agentic AI (QA browser)**. Katalog kita penuh repo komponen, analitik, error tracking — tapi **`grep -i "sharp|avif|webp"` = 0**: kelas **gambar** belum pernah dibahas, padahal gambar = **60–80% berat halaman** dan satu-satunya hal yang bisa membatalkan janji "situs <300 KB".
+
+### 📏 Baseline nyata: halaman yang SUDAH kita punya
+
+Diukur langsung dari service `desa-pamekaran` (port 8080, bind Tailscale) 12 Nov 2026:
+
+| Bagian | mentah | **gzip** |
+|---|---|---|
+| HTML beranda | 25.427 B | 4.854 B |
+| CSS (`_astro/apbdes.*.css`) | 40.825 B | 9.274 B |
+| favicon | 451 B | — |
+| **total** | **66.703 B (65 KB)** | ✅ **14,1 KB** |
+
+Nol `<img>`, nol JS. **Artinya: seluruh "jatah" 300 KB praktis dipakai gambar.** Dan 3 foto HP 4000×3000 (yang biasa dikirim klien lewat WA) = **4,15 MB** → **62× lebih berat dari seluruh halaman kita.**
+
+### 🔬 Uji konversi (sharp 0.35.x / libvips 8.18.7, VPS 2 vCPU, 3 foto 4000×3000 = 4,15 MB)
+
+| lebar | JPEG q75 | WebP q70 | **AVIF q50** | AVIF q60 |
+|---|---|---|---|---|
+| 480 px | 90,1 KB | 64,1 KB | ✅ **42,3 KB** | 64,9 KB |
+| 960 px | 331,7 KB | 228,9 KB | ✅ **147,1 KB** | 230,1 KB |
+| 1200 px | — | — | ✅ **221,3 KB** (18,6 dtk) | — (q45 = 178,2 KB / 16,7 dtk) |
+| 1600 px | 872,3 KB | 587,7 KB | 384,8 KB (**32,5 dtk** ⚠️) | 606,7 KB (38,7 dtk) |
+
+**Mutu objektif (PSNR @960 vs lossless):** AVIF q50 **33,3–33,6 dB** · AVIF q60 **34,9–36,0 dB** · WebP q70 **32,0–34,7 dB** ⇒ AVIF q50 **lebih kecil DAN tidak lebih buruk** dari WebP q70 (>30 dB = layak, >35 dB = bagus).
+
+**Biaya CPU (ini yang sering dilupakan):** AVIF `effort 4` butuh **7,8 dtk/foto @960** dan **10,8 dtk/foto @1600**. Uji `effort 2` vs `4` @960 q50: **102 KB / 1,7 dtk** vs 99 KB / 7,8 dtk, PSNR 33,34 vs 33,59 dB ⇒ **pakai `effort: 2`** (4,6× lebih cepat, beda 3% ukuran).
+
+**EXIF/GPS:** foto HP membawa EXIF; `sharp` **membuangnya otomatis** saat resize (diverifikasi: input `Exif\0\0II*…` → output AVIF **STRIPPED**). Ini wajib untuk situs desa (privasi PDP), dan **jangan** pakai foto asli mentah.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **sharp** | github.com/lovell/sharp | Mesin resize/encode tercepat (libvips): JPEG/WebP/**AVIF**/TIFF, strip EXIF, `rotate()` ikut EXIF orientasi | Node.js (native) | ✅ **Apache-2.0** (file `LICENSE` dibaca) | 32.842 (**230**) · **63 commit/60d** · v0.35.5 (27 Sep 2026) · repo 60 MB | WebBuilder | ✅ **PAKAI — fondasi pipeline** (juga mesin di balik `astro:assets`) |
+| **Astro `astro:assets`** | github.com/withastro/astro | `<Image>`/`<Picture>` + `srcset` otomatis saat build; **`sharp` = `optionalDependencies: ^0.35.4`** (terverifikasi di `packages/astro/package.json`, Astro **7.4.11**) | Astro | ✅ **MIT** (API bilang `NOASSERTION` — pola ke-4) | 63.899 | WebBuilder | ✅ **PAKAI** — cara paling murah: resize terjadi saat build, **nol service** |
+| **IPX** | github.com/unjs/ipx | Server resize on-the-fly (dipakai Nuxt), URL-based | TypeScript | ✅ **MIT** | 2.463 (**subs 9** ⚠️ rasio 274) · 22 commit/60d · v4.1.0 (30 Okt) | OpsAgent | 🔸 **HANYA untuk gambar DINAMIS** (upload warga/klien). Situs statis **tidak butuh** service tambahan |
+| **imgproxy** | github.com/imgproxy/imgproxy | Image proxy Go (1 container), resize/format/sign URL, cache | Go | ✅ **Apache-2.0** — ⚠️ ada **"imgproxy Pro"** berbayar (`imgproxy.net/#pro`) | 11.189 (**70**) · 79 commit/60d · v4.0.23 (9 Nov) | OpsAgent | 🔸 CADANGAN untuk galeri upload; **jangan** untuk situs statis (CPU per request di 2 vCPU) |
+| **Squoosh** | github.com/GoogleChromeLabs/squoosh | Web app kompresi gambar (codec WASM, lokal di browser) | TypeScript/WASM | ✅ Apache-2.0 | 26.183 (**248**) · 🚩 **0 commit/60d** · app-nya sendiri pakai **Google Analytics** | DesignerBot | ⚠️ **ALAT MANUAL saja** (kompres 1–2 foto cepat), bukan pipeline — mandek & ada GA |
+
+### 🎯 Aturan pipeline gambar (tulis di template Astro, jangan diingat-ingat)
+
+1. **Hero ≤1200 px, AVIF q50, `effort: 2`** (±74 KB/foto) · **thumbnail 480 px AVIF q50** (±14 KB) ⇒ 1 hero + 4 thumb ≈ **130 KB gambar** + halaman 15 KB gzip = **~145 KB** ✅ masih di bawah 300 KB.
+2. **Resize saat BUILD**, bukan runtime. AVIF 1600 px = **10,8 dtk/foto** di VPS ini; galeri 20 foto = 3,5 menit → encode sekali, simpan hasil, jangan ulang tiap deploy.
+3. `<img width height srcset sizes loading="lazy" decoding="async">`; **hero jangan `lazy`** — pakai `fetchpriority="high"` (LCP).
+4. **`rotate()` dulu** (hormati orientasi EXIF HP), lalu resize — kalau tidak, foto potret jadi miring.
+5. **Tolak foto > 2000 px** dari klien: simpan master di arsip, yang masuk repo cuma hasil encode.
+6. **Jangan pakai layanan "optimasi gambar" ber-API key** — sharp sudah lokal & gratis.
+
+### 🔎 Catatan query hari ini (jujur: sebagian besar zonk)
+
+- ❌ **`form backend in:name,description`** → anti-DDoS Lua (1.674), `survey-creator` (1.287), validasi backend (780), FormBee (771). ❌ **`formspree alternative`** → hampir semuanya **0–3⭐** (proyek satu orang). ❌ **`static site form … stars:>300`** → **0 hasil**. ✅ `form+builder+…+stars:>1500` → **heyform 9.073⭐ (AGPL-3.0, branch `next`, repo 178 MB)** & **OpnForm 4.004⭐ (AGPL, sudah di katalog, 7 service)**. ⇒ **Kesimpulan: untuk form di situs statis JANGAN cari "form backend"** — cukup endpoint sendiri/PocketBase + notifikasi (ntfy/email) atau form builder hanya kalau benar-benar butuh logic bercabang.
+- ✅ `image+optimization+…` **berisik** (GUI macOS, gifsicle, PHP). ✅ `avif in:name,description` → langsung dapat sharp/libheif/libavif. Pola tetap: **nama proyek > kata kategori**.
+
+---
+
+## 🤖 OpsAgent + WebBuilder — MATA QA: Chrome DevTools MCP (bagus, tapi **bukan** untuk VPS ini)
+
+> Riset **2026-11-12** — rotasi kedua (agentic AI). Katalog sudah punya `playwright-mcp` (baris MCP browser) & `Stagehand`; yang belum ada: **kemampuan mengukur**, bukan cuma mengklik — trace performa, Lighthouse, daftar request jaringan, console ber-*source map*.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Chrome DevTools MCP** | github.com/ChromeDevTools/chrome-devtools-mcp | 63 tool untuk agen: `performance_start_trace` + `performance_analyze_insight`, **`lighthouse_audit`**, `list_network_requests`, `list_console_messages` (stack trace ber-source map), `get_css_styles`, `emulate` (throttling), `take_screenshot`, `fill_form`… + **CLI** (`chrome-devtools start/status/stop`) | Node LTS + **Chrome stable** (puppeteer) | ✅ **Apache-2.0 murni** (file `LICENSE` 201 baris, **tanpa** Commons Clause/NonCommercial) | 55.111 (**245**) · 4.586 fork · **100 commit/60d** · **v1.13.0 (11 Nov 2026)** · repo 13,2 MB | OpsAgent + WebBuilder | 🔸 **PC USER / CI SAJA** — lihat blocker di bawah |
+
+**Blocker yang saya BUKTIKAN di VPS ini (bukan dugaan):**
+```
+npx -y chrome-devtools-mcp@latest --version      → 1.13.0 ✅ (paket jalan)
+chrome-devtools start                            → daemon hidup (pid, socket) ✅
+chrome-devtools new_page "file:///tmp/desa.html" → ❌ "Could not find Google Chrome executable for channel
+                                                    'stable' at: /opt/google/chrome/chrome"
+                                                 → ❌ "chrome-devtools-mcp is running as root and Chrome does
+                                                    not start as root (crbug.com/638180)"
+```
+⇒ Dua gerbang: **Chrome tidak ada** *dan* **root tidak boleh menjalankan Chrome** (butuh user non-root / container unprivileged). Di VPS 1,9 GB, jangan pasang Chrome; jalankan di **PC user** atau **GitHub Actions** untuk audit situs klien.
+
+**Dua flag wajib kalau dipakai pada situs KLIEN** (baca README, bukan badge):
+- `--no-performance-crux` → tanpa ini, **URL trace dikirim ke Google CrUX API** (bertentangan dengan narasi "situs desa PDP-ready").
+- `--no-usage-statistics` (+ `CHROME_DEVTOOLS_MCP_NO_USAGE_STATISTICS`/env `CI`) → **statistik pemakaian ON secara default**; update-check bisa dimatikan via `CHROME_DEVTOOLS_MCP_NO_UPDATE_CHECKS`.
+- README sendiri memperingatkan: seluruh **isi browser** (termasuk data pribadi) terekspos ke klien MCP.
+
+**Bonus yang berguna:** repo memuat **7 folder skill** (`skills/*/SKILL.md`): `chrome-devtools`, `chrome-devtools-cli`, **`debug-optimize-lcp`**, `a11y-debugging`, `cookie-debugging`, `inspect-in-devtools`, `memory-leak-debugging`, `troubleshooting` → bisa **diadaptasi** ke skill Hermes (pola yang sama dengan skill pack lain). `debug-optimize-lcp` paling relevan: memecah LCP jadi TTFB / load delay / load duration / render delay.
+
+**Celah nyata di tim kita:** `browser_exec` (Hermes) = CDP mentah (navigate, JS, screenshot) — **tidak ada** Lighthouse, trace insight, atau daftar request. Jadi untuk "bukti <300 KB & LCP <2,5 dtk" ke klien, alat ini mengisi lubang — di PC, sekali-jalan, hasilnya disimpan sebagai laporan.
+
+---
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
