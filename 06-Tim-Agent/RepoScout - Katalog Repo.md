@@ -1865,6 +1865,117 @@ chrome-devtools new_page "file:///tmp/desa.html" → ❌ "Could not find Google 
 
 **Celah nyata di tim kita:** `browser_exec` (Hermes) = CDP mentah (navigate, JS, screenshot) — **tidak ada** Lighthouse, trace insight, atau daftar request. Jadi untuk "bukti <300 KB & LCP <2,5 dtk" ke klien, alat ini mengisi lubang — di PC, sekali-jalan, hasilnya disimpan sebagai laporan.
 
+## 🔐 WebBuilder / OpsAgent — LOGIN & AUTENTIKASI SITUS KLIEN (admin desa, area warga, passkey)
+
+> Riset **2026-11-13** — rotasi topik (web dev). Sudut yang **belum ada** di katalog: katalog punya CMS (editor konten), backend ringan (PocketBase), keamanan form & header — tapi **belum pernah membahas login/sesi**: bagaimana warga login untuk "cek status surat", bagaimana admin desa masuk tanpa CMS, dan **library auth mana yang masih hidup**.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Better Auth** | github.com/better-auth/better-auth | Framework auth TypeScript: email/password, **passkey/WebAuthn**, magic-link, 2FA/TOTP, OTP email, organisasi, admin, multi-session, captcha — semua sebagai **plugin**; adapter DB bebas (SQLite/Postgres/MySQL, Drizzle/Kysely/Prisma) | TypeScript (Node/Bun/Deno, framework-agnostic) | ✅ **MIT murni** (`LICENSE.md` 1.099 B, "The MIT License (MIT)", **tanpa** Commons Clause/NonCommercial) | 30.724 (**45**) · **100 commit/60d** · **v1.7.22 (12 Nov 2026)** · repo **173 MB** ⚠️ jangan clone | WebBuilder | ✅ **PAKAI** kalau kita punya backend Node sendiri (panel admin) |
+| **PocketBase** | github.com/pocketbase/pocketbase | **1 binary**: REST API + SQLite + **auth bawaan** (email/password, OTP, OAuth2, MFA) + upload file + realtime + dashboard admin. Sumber `users` auth collection langsung siap | Go (single binary 32 MB) | ✅ **MIT** | 61.598 (**323**) · v0.40.6 (23 Okt 2026) | OpsAgent + WebBuilder | ✅ **PAKAI DULU** — jalur tercepat buat "area warga" situs desa (sudah ada di bagian *backend ringan*, sekarang **diuji auth-nya**) |
+| **Auth.js / NextAuth** | github.com/nextauthjs/next-auth | Auth untuk Next.js (v4 stabil, v5 "Auth.js" beta) | TypeScript | ✅ ISC | 28.377 (**112**) · **0 commit/60d** ⚠️ · commit terakhir **22 Jul 2026** · npm `latest` = **4.24.15**, `beta` = **5.0.0-beta.32** | — | 🚫 **JANGAN jadi fondasi baru** — lihat catatan |
+| **Lucia** | github.com/lucia-auth/lucia | Dulu: auth library ringan (sesi + cookie) | TypeScript | ✅ MIT | 10.446 (**19**) · **0 commit/60d** · **DEPRECATED 2025-03** | — | 📖 **AMBIL POLANYA** (`code/auth_session.ts`), **bukan paketnya** |
+| **SuperTokens** | github.com/supertokens/supertokens-core | Auth0-alternatif self-host (core Java) | Java | ⚠️ **NOASSERTION** → root `LICENSE.md` = **Apache-2.0**, **tapi `ee/` = Enterprise License** (produksi butuh langganan + jumlah seat) | 15.345 (**83**) · 100 commit/60d · v12.5.0 (6 Nov) | — | 🔸 Internal saja — **3 service** (core + Postgres + dashboard), Java |
+| **authentik** | github.com/goauthentik/authentik | Identity provider lengkap (SSO, OIDC, LDAP proxy) | Python + Postgres + Redis | ⚠️ **NOASSERTION** → lisensi **terbagi per folder**: core MIT, `authentik/enterprise/` = **EE License**, `website/` = CC BY-SA | 26.326 (**83**) · repo **772 MB** | — | 🚫 **KEBERATAN** — IdP untuk perusahaan, bukan login warga |
+| **Hanko** | github.com/teamhanko/hanko | Auth passwordless/passkey (Go) | Go | 🚫 **AGPL-3.0** | 9.072 (**36**) · v3.1.0 (Okt) | — | 🚫 **AGPL jaringan** → hanya untuk instalasi internal |
+| **Zitadel** | github.com/zitadel/zitadel | IdP multi-tenant | Go | 🚫 **AGPL-3.0** | 15.570 (**65**) · repo 599 MB | — | 🚫 AGPL + berat |
+| **Keycloak** | github.com/keycloak/keycloak | IdP raksasa (Java) | Java + Postgres | ✅ Apache-2.0 | 37.836 (**403**) · repo 630 MB | — | 🚫 **Berat** (JVM ≥1 GB RAM) — mustahil di VPS 1,9 GB |
+| **Logto** | github.com/logto-io/logto | IdP untuk SaaS/AI app | TypeScript | ⚠️ **MPL-2.0** (copyleft **per file**) | 14.917 (**78**) | — | 🔸 Cadangan |
+| **Ory Kratos** | github.com/ory/kratos | Headless identity API | Go | ✅ Apache-2.0 | 13.956 (**112**) · **0 commit/60d** (push 29 Jul 2026) | — | 🚫 **Mandek** |
+
+### 🧪 Uji nyata di VPS ini (13 Nov 2026, Node 26.7.0, 2 vCPU / 1,9 GB) — bukan klaim artikel
+
+**A. PocketBase 0.40.6 (1 binary 32,0 MB, data `data.db` 0,2 MB)**
+```
+./pocketbase superuser create dev@test.local …   → ✅
+GET /api/health                                  → 200 dalam 0,0008 dtk (server siap ~1 dtk)
+POST /api/collections/users/records (admin tok)  → 200 dalam 158 ms
+POST /api/collections/users/auth-with-password   → 200 dalam 77 / 77 / 88 ms  (token 224 char)
+password salah                                   → 400
+RSS proses                                       → 28,9 MB
+```
+**B. Better Auth 1.7.22 (npm, `better-sqlite3` 13.1.1 — prebuilt Node 26 jalan)**
+```
+migrasi otomatis (getMigrations dari "better-auth/db/migration")
+  → tabel: user, session, account, verification ✅
+signUpEmail  → 231 ms   · signInEmail → 143 ms (token 32 char)
+password salah → 158 ms, kode INVALID_EMAIL_OR_PASSWORD ✅
+node_modules (better-auth + libsql + better-sqlite3) → 72 MB
+⚠️ API-nya sendiri menolak secret lemah: "your BETTER_AUTH_SECRET appears low-entropy"
+```
+
+### 🎯 Keputusan produk (jangan dibalik)
+1. **Situs desa statis + butuh login warga/admin → PocketBase** (1 binary, auth+DB+file+admin UI, login 77 ms, RSS 29 MB). **Tidak perlu** framework auth.
+2. **Kalau kita bangun panel admin sendiri (Astro SSR/Next + Postgres) → Better Auth** (MIT, aktif tiap hari, pasang lewat plugin: `passkey`, `two-factor`, `magic-link`, `organization`).
+3. **Jangan** pakai NextAuth/Auth.js untuk proyek baru: v5 masih **beta sejak 2024** (`latest` npm = **v4**), **0 commit dalam 60 hari** → kapal mandek (pola pelajaran #42).
+4. **Lucia = pelajaran, bukan dependensi**: README sendiri menulis *"Lucia was deprecated on March 2025"* → ambil `code/auth_session.ts` (sesi + cookie satu file) sebagai **rujukan cara menulis sesi dengan benar**.
+5. **Jangan simpan password sendiri-sendiri.** Kalau terpaksa (tanpa PocketBase/Better Auth): Node `crypto.scrypt`/`argon2id` + cookie `HttpOnly; Secure; SameSite=Lax` + tabel sesi — dan **jangan** bikin "enkripsi" buatan sendiri.
+6. **Kelas yang tampak "gratis" tapi jebakan:** SuperTokens & authentik **NOASSERTION** karena lisensi terbagi per folder (`ee/`, `enterprise/`) — core boleh, fitur enterprise harus bayar. Hanko & Zitadel **AGPL-3.0** → situs klien yang di-host = wajib buka kode modifikasi.
+
+### 🔎 Catatan query hari ini (jujur)
+- `authentication+in:name,description+stars:>5000` → **berisik**: 2 dari 12 hasil adalah **alat penyerang** (`evilginx2` = phishing MITM 15,9k⭐) dan `fail2ban` (bukan auth), sisanya IdP berat. **Pola tetap: sebut NAMA PROYEK** (`better-auth`, `next-auth`, `lucia`, `supertokens`, `kratos`) → `gh api repos/O/R` langsung.
+- Cek kematangan **wajib lewat `npm dist-tags`**, bukan README: `next-auth` → `latest 4.24.15` / `beta 5.0.0-beta.32` = **v5 tak pernah stabil**; `@auth/core` berhenti di 0.41.3 (Jul 2026).
+
+---
+
+## 🎥 WebBuilder / MotionAgent — VIDEO DI SITUS KLIEN (profil desa & drone: ukuran NYATA + cara menyajikan)
+
+> Riset **2026-11-13** — rotasi kedua (web dev/design). Katalog sudah punya *optimasi GAMBAR* (AVIF/hero ≤1200 px) & *potong video jadi shorts*, **belum punya sisi web**: berapa MB video profil desa yang wajar, codec apa, dan berapa harga JS player-nya di janji "<300 KB".
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ (subs) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **FFmpeg** | github.com/FFmpeg/FFmpeg | Encode/transcode/poster/HLS dari CLI — **alat inti** (sudah terpasang di VPS: 9.0.1) | C (CLI) | ⚠️ **NOASSERTION** — inti LGPL-2.1+, **tapi build kita `--enable-gpl` + `--enable-libx264`** ⇒ binary = **GPL-2.0+** | 67.140 (**1.607**) · push 12 Nov | OpsAgent + MotionAgent | ✅ **PAKAI** sebagai **alat internal/CLI** (output tidak ikut GPL); jangan tanam binary ffmpeg GPL ke produk yang didistribusikan tanpa paham konsekuensinya |
+| **`<video>` polos** | (bawaan browser) | Player untuk klip **< 3 menit**: `poster` + `preload="none"` + `controls` = **0 KB JS** | HTML5 | — | — | WebBuilder | ✅ **DEFAULT KITA** — 0 KB JS, paling ringan |
+| **media-chrome** | github.com/muxinc/media-chrome | Web components kontrol player (tema bisa disesuaikan, aksesibel) | TypeScript (custom elements) | ✅ **MIT** | 2.768 (**28**) · v4.19.5 (**12 Nov 2026**) · 28 commit/60d | DesignerBot + WebBuilder | ✅ PAKAI kalau butuh kontrol custom — **41,2 KB gz** |
+| **Video.js** | github.com/videojs/video.js | Framework player v10 (HLS/React) | TypeScript | ✅ **Apache-2.0** (file `LICENSE`; API bilang NOASSERTION) | 40.175 (**1.233**) · v10.3.0 (**4 Nov 2026**) · 100 commit/60d · repo 265 MB | WebBuilder | 🔸 Hanya kalau butuh HLS/subtitle/plugin lengkap — **berat** |
+| **hls.js** | github.com/video-dev/hls.js | Putar **HLS** di browser tanpa Safari | TypeScript | ✅ **Apache-2.0** (API: NOASSERTION) | 17.049 (**303**) · v1.7.4 (28 Okt) · 88 commit/60d | WebBuilder | ⚠️ **174,3 KB gz** = 58% dari janji "<300 KB" → hanya untuk video **>10 menit** / adaptive bitrate |
+| **Shaka Player** | github.com/shaka-project/shaka-player | Player DASH+HLS (DRM/TV) | JS | ✅ Apache-2.0 | 8.276 (**208**) · v5.3.4 (6 Nov) | — | 🚫 **280,7 KB gz** — bukan untuk situs desa |
+| **Plyr** | github.com/sampotts/plyr | Dulu: player "cantik" 30k⭐ | JS | ✅ MIT | 29.987 (**414**) · README: *"Deprecated in favour of Video.js 10; security updates only"* | — | 🚫 **DEPRECATED** (walau masih dapat commit keamanan) |
+
+### 📏 Angka NYATA (10 detik sumber 1080p30 bergrain ≈ rekaman HP, encode di VPS 2 vCPU)
+
+| Variant | Ukuran | Bitrate | Kalau 60 detik | SSIM | Encode |
+|---|---|---|---|---|---|
+| H.264 **1080p** crf23 (veryfast) | 6.715.456 B | 5,37 Mbps | **38,4 MB** | 0,9603 | 14,3 dtk |
+| H.264 **720p** crf23 | 1.734.474 B | 1,39 Mbps | 9,9 MB | 0,9807 | 7,4 dtk |
+| H.264 **720p** crf28 | 849.101 B | 0,68 Mbps | **4,9 MB** | 0,9762 | 7,5 dtk |
+| H.264 480p crf26 | 472.892 B | 0,38 Mbps | 2,7 MB | — | 5,1 dtk |
+| **AV1 720p crf38** (SVT preset 8) | 1.168.359 B | 0,93 Mbps | 6,7 MB | 0,9813 | 10,2 dtk |
+| **AV1 720p crf44** | **600.905 B** | 0,48 Mbps | **3,4 MB** | **0,9800** | 9,4 dtk |
+| VP9 720p crf34 (cpu-used 5) | 2.511.673 B | 2,01 Mbps | 14,4 MB | 0,9671 | **45,0 dtk** |
+
+**Bacanya:** (a) **1080p crf23 = 38 MB/menit** — video profil 1 menit menghabiskan **3,8% kuota 1 GB** warga dalam sekali tonton; (b) **AV1 crf44 lebih kecil (601 KB vs 849 KB) DAN lebih bagus (SSIM 0,9800 vs 0,9762)** dari H.264 crf28, encode cuma 1,25× lebih lama; (c) **VP9 dibuang** — paling besar & paling lambat (era AV1).
+
+### 🎯 Aturan produksi video situs klien (tulis di template, jangan diingat)
+```bash
+# 1) master (jangan dipotong dari sumber 4K langsung ke web)
+ffmpeg -i master.mov -vf scale=-2:720 -c:v libx264 -preset veryfast -crf 28 \
+       -c:a aac -b:a 96k -movflags +faststart video-720.mp4
+# 2) versi AV1 (browser modern pilih sendiri, hemat 30%)
+ffmpeg -i master.mov -vf scale=-2:720 -c:v libsvtav1 -preset 8 -crf 44 \
+       -pix_fmt yuv420p -c:a aac -b:a 96k -movflags +faststart video-720-av1.mp4
+# 3) poster (jangan pakai frame 0 — sering hitam)
+ffmpeg -ss 1 -i video-720.mp4 -frames:v 1 -c:v libwebp -quality 75 poster.webp
+```
+```html
+<video controls preload="none" playsinline poster="poster.webp" width="1280" height="720">
+  <source src="video-720-av1.mp4" type='video/mp4; codecs="av01.0.05M.08"'>
+  <source src="video-720.mp4"     type="video/mp4">
+  Maaf, browser Anda tidak mendukung video. <a href="video-720.mp4">Unduh</a>.
+</video>
+```
+- ✅ **`-movflags +faststart` WAJIB** — dicek atom-nya: `ftyp → moov → free → mdat` (tanpa ini moov di akhir → video baru mulai setelah seluruh file terunduh).
+- ✅ **Poster WebP 22 KB** vs JPEG q3 **49 KB** (frame sama, 1280×720) → pakai WebP.
+- ⚠️ **AV1 butuh decode**: HP Android 2022+ & Chrome/Firefox aman (software dav1d), Safari 17+ hanya di perangkat baru → **selalu sediakan fallback H.264** (biaya: satu file lagi, browser pilih sendiri). Untuk HP kentang, H.264 720p selalu menang.
+- 🚫 **Jangan autoplay** (kuota warga + etika). Kalau wajib: `muted playsinline loop` + tombol pause terlihat + **caption teks**.
+- 🚫 **Jangan 1080p untuk web** — 3,9× lebih besar dari 720p tanpa beda terlihat di layar HP 6".
+- 📌 **Video > 3 menit & ramai penonton** → taruh di **YouTube (embed) atau CDN**, bukan di VPS kita (bandwidth 1,9 GB RAM & kuota VPS). HLS (`hls.js` 174 KB gz) **hanya** kalau butuh adaptive/lebih dari 10 menit.
+
+### 🔎 Catatan query & jebakan
+- `video+player+in:name,description` → **separuh hasil bukan untuk web**: `iina` (player macOS 47k⭐), `GSYVideoPlayer` (Android), `streamlink` (CLI), `xgplayer` (CN). Yang relevan hanya video.js/plyr/media-chrome/shaka → **pola tetap: nama proyek**.
+- ⚠️ **bundlephobia menipu untuk paket ESM/meta**: `video.js@10.3.0` dilaporkan **1,1 KB gz** (jelas salah) vs `hls.js` 174,3 KB gz & `media-chrome` 41,2 KB gz — **jangan kutip angka bundlephobia tanpa akal sehat**; ukur paket yang benar-benar kita `<script>`-kan.
+- ⚠️ **"Deprecated" bisa tersembunyi di kalimat pertama README** (plyr 29.987⭐) — padahal ⭐ & commit masih terlihat sehat.
+
 ---
 
 ## 🔗 Terkait
