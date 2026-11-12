@@ -691,3 +691,10 @@ Karena saldo 0, urutan realistis: (1) **Artefact Paris** — €10rb, gratis, 31
 3. Jangan render motion panjang sebelum koin ada: ±26 koin/dtk (16 dtk ≈ 431 koin).
 
 WARNING: TIDAK ADA jam gratis. Qwen-Edit ±49–52 koin/gambar · motion ±16,4–26 koin/dtk. Hitung koin dulu sebelum render.
+
+## 27. 🆕 KONTES BARU (ditemukan 12 Nov 2026) — AI Film Award 2027 (1 Billion Followers Summit, Dubai)
+- Hadiah **$1.000.000 cash**, 1 pemenang, **gratis**, global (≥18 th), sumber: 1billionsummit.com/ai-film-award + T&C.
+- Syarat: film **5–7 mnt**, 16:9, 1080p, MOV/MP4, subtitle EN, tema dari 5 pilihan, **≥70% wajib Digenerate via Seedance (Dreamina)**.
+- Deadline **20 Nov 2026** (Top10+public voting 15 Des, Top5 25 Des, premiere 8–10 Jan 2027 Dubai). Skor: AI 30% / Story 30% / Kreativitas 20% / Teknis 20%.
+- ✅ Jalur kita memenuhi syarat tools: RH punya `bytedance/seedance-2.5-token/text-to-video` & `/image-to-video`.
+- ⚠️ Realita: 8 hari sisa + saldo 0 koin → tidak realistis untuk karya 5–7 mnt baru. Simpan Seedance untuk **Chroma S2 (7 Jan 2027)**.
