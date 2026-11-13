@@ -698,3 +698,18 @@ WARNING: TIDAK ADA jam gratis. Qwen-Edit ±49–52 koin/gambar · motion ±16,4�
 - Deadline **20 Nov 2026** (Top10+public voting 15 Des, Top5 25 Des, premiere 8–10 Jan 2027 Dubai). Skor: AI 30% / Story 30% / Kreativitas 20% / Teknis 20%.
 - ✅ Jalur kita memenuhi syarat tools: RH punya `bytedance/seedance-2.5-token/text-to-video` & `/image-to-video`.
 - ⚠️ Realita: 8 hari sisa + saldo 0 koin → tidak realistis untuk karya 5–7 mnt baru. Simpan Seedance untuk **Chroma S2 (7 Jan 2027)**.
+
+## 28. SCAN 13 NOV 2026 (08:01) — saldo 0 (Δ 0, hari ke-10 kosong) + TIDAK ada kontes cash baru
+**SALDO: 0 RH Coins** (Δ **0** vs 12 Nov). Wallet **$0,0000**. Tugas jalan: 0. `apiType`: NORMAL.
+Rantai 10 hari: 1999 → 604 → 0 → 77 → 0 → 0 → **100** → 0 → 0 → 0 → 0 → 0 → **0** (terakhir ada koin: 100 pada 5 Nov).
+⚠️ **Membership Personal lewat 8 Nov = hari ke-5 tanpa jatah 36.000 koin/bulan.** Verifikasi hanya via dashboard web (API tak punya field membership).
+
+### Kontes — hasil scan 13 Nov (aifilmcontests.com /contests/free + /prize/free-entry + topics closing Nov & Dec; kajimelo index; aicompetition.dev)
+**TIDAK ADA kontes CASH baru** dibanding §26/§27. Semua yang muncul sudah tercatat: AI ZONE ($500, 30 Nov), Cine Prague ($1.000, 28 Nov), Artefact Paris (€10.000, 2 Des), Curious Refuge x Epidemic ($7.500, 6 Des), NEXTALE ($3.000, 14 Des), AKOOL (pool $50rb / $500rb creator rewards, 20 Des — terkunci tool AKOOL), Chroma S2 ($175K+, 7 Jan 2027), JIFF Jaipur (5 Des), SVAIFF Korea (25 Nov).
+Catatan baru non-prioritas: **World AI Cinema Festival "Remember the Future"** (Cannes, ronde bulanan, cutoff tahunan 30 Jul 2027) — **berbayar** (earlybird/late tier) ⇒ bukan jalur cash gratis; ronde Nov sudah tutup 8 Nov.
+
+### Aksi 13 Nov (prioritas)
+1. **Login web RunningHub** → cek/renew membership + klaim ±100 koin harian (hangus 24 jam). Tanpa login manual, saldo tetap 0.
+2. Kalau koin masuk: bakar cepat (1–2 gambar Qwen-Edit ±50 koin/gambar), jangan disimpan.
+3. Kalau tidak renew: fokus kontes GRATIS tanpa RH — Artefact Paris (2 Des, ≤314 dtk = paling murah diproduksi) dan Chroma S2 (7 Jan).
+WARNING: TIDAK ADA jam gratis. Qwen-Edit ±49–52 koin/gambar, motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin). Hitung koin dulu sebelum render.
