@@ -1978,6 +1978,108 @@ ffmpeg -ss 1 -i video-720.mp4 -frames:v 1 -c:v libwebp -quality 75 poster.webp
 
 ---
 
+---
+
+## 🕵️ OpsAgent / SalesAgent — LAPORAN KUNJUNGAN SITUS KLIEN TANPA COOKIE (analitik hemat: **1 binary, skrip 3,2 KB**)
+
+> **Kebutuhan bisnis:** kades/bupati minta angka "berapa orang buka situs desa". Google Analytics = berat + butuh banner izin + data keluar. Yang kita butuh: **hitung kunjungan, tanpa cookie, tanpa layanan luar**. Diuji langsung di VPS ini **15 Nov 2026** (2 vCPU / 1,9 GB), bukan dikutip dari artikel.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ / keaktifan | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **GoatCounter** | github.com/arp242/goatcounter | Analitik kunjungan **tanpa cookie**, panel + API, laporan per halaman/referrer/browser | Go (**1 binary 29,3 MB**) + SQLite/Postgres | ⚠️ server **EUPL-1.2** (copyleft, OSI) · `public/count.js` = **ISC** | 6.163 (**29**) · v2.7.0 **15 Des 2025** · **4 commit/60d** | OpsAgent | ✅ **PILIHAN UTAMA** untuk laporan kunjungan situs klien — terbukti jalan di VPS ini |
+| **Umami** | github.com/umami-software/umami | Analitik produk + web, panel modern, multi-situs | Next.js + Postgres (**2 container**) | ✅ **MIT** (file `LICENSE`, murni) | 40.150 (**135**) · v3.5.0 **12 Nov 2026** · 100 commit/60d | OpsAgent | ✅ kalau butuh panel "cantik" untuk klien — **2 service** (app+PG) |
+| **Plausible CE** | github.com/plausible/analytics (+ `plausible/community-edition`) | Analitik ringan, skrip **paling kecil** (1,3 KB gz) | Elixir + Postgres + **ClickHouse** (**3 container**) | ⚠️ **AGPL-3.0** (repo 721 MB) | 29.846 (**148**) · CE v3.2.1 (15 Mei 2026) · 100 commit/60d | — | 🚫 **BUKAN untuk VPS kita**: README CE sendiri minta **≥2 GB RAM** hanya untuk ClickHouse + Plausible |
+| **Matomo** | github.com/matomo-org/matomo | Analitik "GA lengkap" self-host, plugin banyak | PHP + MySQL | ⚠️ **GPL-3.0** (+ `LEGALNOTICE`, lisensi per-libs) | 22.026 (**389**) · 6.1.0-alpha (13 Nov) · 100 commit/60d | — | 🔸 hanya kalau klien menuntut fitur GA; PHP stack = berat untuk 2 GB |
+| **Shynet** | github.com/milesmcc/shynet | Analitik tanpa cookie, detail sesi | Django + Postgres + Redis | ✅ Apache-2.0 | 3.157 (**28**) · v0.14.0 **15 Mar 2026** · **0 commit/60d** | — | 🚫 **mandek** (8 bulan tanpa commit) |
+| **Aptabase** | github.com/aptabase/aptabase | Analitik privasi untuk **mobile/desktop** | C# + ClickHouse | ⚠️ AGPL-3.0 | 1.872 (**5**) · 14 commit/60d | — | 🔸 bukan untuk situs web |
+
+### 📏 Angka NYATA (GoatCounter v2.7.0, dijalankan di VPS ini)
+
+| Yang diukur | Hasil |
+|---|---|
+| Binary | **29,3 MB** (rilis `.gz` 13,9 MB) — **1 berkas**, tanpa Docker |
+| RAM (idle → setelah 224 pageview) | **65 MB → 98,6 MB** RSS, 8 thread |
+| Simpan data | SQLite **672 KB** untuk 224 pageview + 214 halaman unik (**≈900 B per halaman baru**) |
+| Latensi `/count` | **0,7–3,1 ms**/request · 200 request berurutan = **2,19 s (≈91 req/detik)** lewat curl serial |
+| Skrip di halaman klien | `count.js` **8.940 B mentah / 3.255 B gzip** (server kirim `Content-Encoding: gzip`, `Cache-Control: max-age=86400`) |
+| Cookie | **TIDAK ADA `Set-Cookie`** pada respons `/count` → tidak perlu banner izin cookie |
+| Bot filter | UA `curl/8.18.0` **tidak dihitung** → masuk tabel `bots` (6 baris), `hits` tetap 0 |
+
+**Perbandingan skrip (diunduh dari CDN vendor):** Plausible **1,3 KB gz** (2.841 B) · GoatCounter **3,2 KB gz** (8.940 B) · Umami **4,1 KB gz** (9.246 B). Semua **< 2%** dari janji "situs < 300 KB" — jadi analitik **boleh** dipakai; yang dilarang tetap SDK > 10 KB gz (`@sentry/browser` 136,9 KB).
+
+### 🎯 Keputusan produk
+- **Default Webuild:** **GoatCounter** self-host (1 binary + SQLite) di VPS yang sama dengan situs; satu instance bisa **banyak situs** (`db create site -vhost …`). Panel per klien = `stats.domainklien.com`, bukan berbagi akun.
+- **Kalau RAM ketat / tak mau urus server:** Umami **Cloud** (hosted) atau Plausible Cloud — jangan self-host Plausible CE di 2 GB.
+- **Jangan pasang** Matomo untuk situs desa (PHP + tabel besar), Shynet (mandek), Aptabase (bukan web).
+- **Laporan ke kades:** halaman `/` + jumlah kunjungan + halaman terpopuler + sumber (Google/WA/FB) — semuanya sudah ada di panel GoatCounter **tanpa** menambah kode.
+
+### ⚠️ Aturan teknis (penting, biar tidak salah baca angka)
+- **`-store-every` = 60 detik (default).** Kalau habis kirim hit langsung cek database, hasilnya **0** — bukan berarti rusak. Untuk uji set `-store-every 5`.
+- **Dedupe per sesi:** 10 request identik (UA + IP + path sama dalam 1 jam) dicatat **1 pageview**. Uji throughput harus **variasi path/UA** — kalau tidak, angka "hit hilang" itu artefak uji, bukan bug (pelajaran ke-74 berlaku).
+- **EUPL-1.2 bukan MIT:** boleh dipakai & dijalankan bebas, tapi **kalau kita memodifikasi server-nya**, versi modifikasi wajib dibagikan. Simpan **tanpa patch** (pakai flag/env), atau catat sebagai temuan.
+- **`count.js` memakai `localStorage`** hanya untuk penanda opt-out (`skipgc`), **bukan** cookie pelacak. Tetap tulis di halaman privasi: "kami menghitung kunjungan tanpa cookie & tanpa data pribadi".
+- **Data pribadi:** GoatCounter tidak menyimpan IP (di-hash jadi sesi). Ini argumen "PDP-ready" yang **bisa dibuktikan** (`Set-Cookie` kosong + tabel `bots`/`paths` tanpa IP), bukan klaim.
+
+### 🔎 Catatan query hari ini (jujur)
+- `web+analytics+privacy+…` → 4 hasil bagus langsung (umami, plausible, shynet, aptabase) — **kata "privacy" adalah kunci kelas ini**; `analytics` sendirian = alat data/AI.
+- Nama proyek tetap paling tajam: **`goatcounter`** → repo utama di urutan 1, sisanya plugin kecil (WordPress, Next.js) yang bisa jadi nilai tambah (`arp242/goatcounter-wordpress` 12⭐).
+- ⚠️ **`agent-integrations`/`Dockerfile` tidak perlu**: GoatCounter resmi sudah punya `compose.yaml` (postgres + app) — tapi mode SQLite cukup.
+
+---
+
+## 🔎 WebBuilder / ContentWriter — PENCARIAN DI DALAM SITUS DESA (Pagefind: **0 KB saat muat**, ~2 ms/query)
+
+> **Kebutuhan bisnis:** situs desa makin banyak berita/artikel → warga butuh kotak cari. Google Custom Search = iklan + data keluar; Algolia = berbayar. Diuji di VPS ini **15 Nov 2026**: bangun indeks nyata (61 & 300 halaman), lalu **cari di browser sungguhan**, ukur berat dan latensi.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ / keaktifan | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Pagefind** | github.com/Pagefind/pagefind | Indeks pencarian statis saat build; runtime WASM kecil, indeks dipecah per bahasa | **Rust** (binary build) + WASM | ✅ **MIT** (file `LICENSE`, murni) | 5.558 (**16**) · v1.6.0 **1 Nov 2026** · **57 commit/60d** · repo 4 MB | WebBuilder | ✅ **PILIHAN UTAMA** — 1 perintah di build, 0 kode |
+| **astro-pagefind** | github.com/shishkin/astro-pagefind | Integrasi resmi-komunitas untuk Astro | Astro | ✅ MIT | 570 (**3**) · v2.0.1 (3 Jul 2026) · 13 commit/60d | WebBuilder | ✅ dipakai kalau situs Astro (build otomatis) |
+| **MiniSearch** | github.com/lucaong/minisearch | Pencarian full-text di browser/Node, indeks JSON | TypeScript | ✅ MIT | 6.200 (**31**) · **0 commit/60d** (push Sep 2025) | — | 🔸 alternatif **lebih ringan di wire**, tapi kita bangun indeks sendiri |
+| **FlexSearch** | github.com/nextapps-de/flexsearch | Pencarian tercepat (indeks ekspor JSON) | JS | ✅ Apache-2.0 | 13.821 (**94**) · **0 commit/60d** (push 28 Jun 2026) | — | 🔸 tercepat (0,03 ms) tapi indeks **paling besar** |
+| **Orama** | github.com/oramasearch/orama | Mesin cari + RAG di browser/edge | TypeScript | ✅ Apache-2.0 (file `LICENSE.md`; API `NOASSERTION`) | 10.608 (**44**) · **0 commit/60d** · repo **135 MB** | — | 🔸 23,8 KB gz, fitur berat yang tak kita pakai |
+| **Lunr** | github.com/olivernn/lunr.js | Pencarian lama (dipakai banyak tema) | JS | ✅ MIT | 9.201 (**118**) · **mati sejak Jul 2024** | — | 🚫 jangan proyek baru |
+| **Stork** | github.com/jameslittle230/stork | Pencarian statis WASM | Rust/WASM | ✅ Apache-2.0 | 2.761 (**16**) · **mati sejak 2023** | — | 🚫 |
+| **Meilisearch** | github.com/meilisearch/meilisearch | Search engine server penuh | Rust | ⚠️ **MIT *AND* BUSL-1.1** (`LICENSE` → `LICENSE-EE`) | 59.863 (**293**) · v1.56.2 (9 Nov) · 100 commit/60d | — | 🚫 untuk situs statis desa: butuh **server terpisah** (RAM ≥ ½ GB) |
+| **Typesense** | github.com/typesense/typesense | Search engine server | C++ | 🚫 **GPL-3.0** | 27.132 (**137**) · v30.2 (19 Apr) | — | 🚫 sama: server sendiri + GPL |
+
+### 📏 Angka NYATA (diukur di VPS ini, bukan perkiraan)
+
+| Skenario | Ukuran indeks | Waktu build | Pencarian pertama | Pencarian berikutnya |
+|---|---|---|---|---|
+| **61 halaman** (9,5 rb kata, 76 KB HTML) | **43,9 KB** (2 shard) | **0,084 s** | **144,8 ms** | 1,2–15,8 ms |
+| **300 halaman** (32,2 rb kata, 382 KB HTML) | **184,8 KB** (7 shard) + fragment **223 KB** (unduh sesuai hasil) | **0,427 s** | **161,4 ms** | 0,6–35 ms (median ≈ 2 ms) |
+
+**Rincian berkas runtime (mentah / gzip):** `pagefind.js` 47.228 / **13.201** · `pagefind-worker.js` 42.928 / **12.273** · `pagefind-highlight.js` 44.404 / **9.574** · `wasm.id.pagefind` **57.732 (gzip tidak menolong)** · indeks `.pf_index` **gzip juga tidak menolong** (format biner terkompresi). UI siap-pakai `pagefind-ui.js` 126.634 / **30.755 gz** + CSS 2.603 gz.
+
+**Jadi biaya sebenarnya:** **0 KB saat halaman dimuat** (skrip hanya di-`import()` ketika kotak cari dibuka) → **±115 KB** untuk 61 halaman / **±268 KB** untuk 300 halaman saat pencarian pertama dibuka. Untuk 1.000 artikel: indeks ≈ **590 KB** (indeks tumbuh **≈590 B/halaman**).
+
+### ⚖️ Pagefind vs MiniSearch (korpus SAMA: 300 halaman, 46,5 rb kata)
+| | Pagefind | MiniSearch 7.2.0 | FlexSearch 0.8.212 |
+|---|---|---|---|
+| Berat indeks (mentah) | **184,8 KB** (biner) | 420,8 KB JSON | 1.114,4 KB JSON |
+| Berat indeks (**gzip**, yang benar-benar lewat jaringan) | 184,8 KB (**tidak bisa digzip lagi**) | **98,5 KB** | 166,5 KB |
+| JS runtime | 13,2 + 12,3 KB gz + wasm 57,7 KB | **5,6 KB gz** | 16,4 KB gz |
+| Latensi query | 0,6–35 ms | 0,9–7,6 ms | **0,03–0,83 ms** |
+| Excerpt/highlight/stemming/multi-bahasa | **bawa sendiri** | harus ditulis sendiri | harus ditulis sendiri |
+| Keaktifan repo | **57 commit/60d, rilis 1 Nov 2026** | 0 commit/60d | 0 commit/60d |
+
+**Bacanya:** kalau hanya butuh "cari judul & potongan teks", Pagefind menang karena **nol kode** dan **nol kerja build manual**; MiniSearch lebih hemat ±86 KB di jaringan tapi kita harus membangun indeks, excerpt, dan highlight sendiri — dan repo-nya sudah mandek.
+
+### 🎯 Aturan pakai (tulis di template, jangan diingat)
+- **Muat hanya saat diklik**: `const pf = await import('/pagefind/pagefind.js')` di dalam handler klik tombol cari — **jangan** di `<head>`. Ini yang membuat "0 KB saat muat halaman" jadi nyata.
+- **Beri `data-pagefind-body`** di `<main>` agar navigasi/footer tidak ikut terindeks (default: seluruh `<body>` → hasil pencarian penuh menu).
+- **`data-pagefind-ignore`** untuk elemen yang tak perlu dicari (form, tabel retribusi, dsb.).
+- **Bahasa terdeteksi otomatis** (`Discovered 1 language: id`) — tidak perlu konfigurasi.
+- **Relevansi diuji, bukan diasumsikan:** 6 kata kunci khas (sumur bor, jembatan gantung, stunting, bank sampah, koperasi, posyandu) → **6/6 hasil teratas benar**.
+- ⚠️ **Nama berkas indeks ber-hash & berubah tiap build** (`pagefind-entry.json` menyimpan hash) → jangan cache `pagefind/` dengan `immutable` tanpa versi; biarkan server memakai ETag biasa.
+- 🚫 **Jangan** pakai Meilisearch/Typesense untuk situs desa (server sendiri, RAM, lisensi BUSL/GPL) — dan **jangan** Algolia/Google CSE (berbayar/kunci keluar).
+
+### 🔎 Catatan query hari ini (jujur)
+- `static+site+search+in:name,description+stars:>500` → **cuma 2 hasil** (stork 2.761, astro-pagefind 570) — kata "static site search" terlalu sempit; **Pagefind sendiri tidak muncul** karena deskripsinya tidak memuat kata itu.
+- Yang bekerja: **`pagefind+OR+orama+OR+flexsearch+OR+minisearch+in:name,description`** (nama proyek = cara paling andal) → 4 library utama langsung terlihat.
+- ⚠️ `site+search` sendirian = **zonk** (nyeret plugin pencarian WordPress/Joomla).
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
