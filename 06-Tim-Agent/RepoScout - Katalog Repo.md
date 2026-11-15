@@ -2080,6 +2080,93 @@ ffmpeg -ss 1 -i video-720.mp4 -frames:v 1 -c:v libwebp -quality 75 poster.webp
 - Yang bekerja: **`pagefind+OR+orama+OR+flexsearch+OR+minisearch+in:name,description`** (nama proyek = cara paling andal) → 4 library utama langsung terlihat.
 - ⚠️ `site+search` sendirian = **zonk** (nyeret plugin pencarian WordPress/Joomla).
 
+## 📧 SalesAgent / ContentWriter — EMAIL PENAWARAN & PENGUMUMAN YANG TIDAK RUSAK (HTML email, dua-duanya DIJALANKAN)
+
+> Riset **2026-11-16** — rotasi topik: **web dev (email)**. Katalog punya newsletter **pengirim** (listmonk/Ghost/BillionMail), tapi **belum punya cara MEMBUAT email-nya** — dan itu beda kelas: email HTML bukan HTML biasa (Outlook pakai mesin Word, Gmail memotong pesan, gambar diblokir default).
+> **Kebutuhan nyata:** (1) SalesAgent kirim **penawaran** ke calon kepala desa/UMKM yang tampil benar di HP & Outlook; (2) desa kirim **pengumuman** (kerja bakti, posyandu, jadwal) ke warga; (3) kuitansi/notifikasi transaksional situs klien.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **MJML** | github.com/mjmlio/mjml | Framework markup → HTML email responsif. **Otomatis** keluarkan tabel ghost, fallback `mso` (Outlook), dan media query penumpuk kolom | Node/JS (`npx mjml`), CLI + API | ✅ **MIT** (`LICENSE.md`, Mailjet SAS) | 18.294 (**160**) · v5.4.1 (10 Sep 2026) · 6 commit/60d · repo **12,9 MB** | SalesAgent + ContentWriter | ✅ **PILIHAN untuk pengumuman panjang & Outlook** — pakai **`--config.minify`** |
+| **react-email** | github.com/resend/react-email | Tulis email pakai **komponen React/TSX**, render ke HTML + **plain-text otomatis**; ada preview server | TypeScript / React 19 / Node | ✅ **MIT** (`LICENSE.md` + `license.md` per paket, Plus Five Five Inc) | 19.938 (**44**) · `@react-email/components` **1.0.12** / 6.11.13 (13 Nov 2026) · **100 commit/60d** · repo **175 MB** (jangan clone) | SalesAgent + WebBuilder | ✅ **PILIHAN untuk email transaksional pendek** — ⚠️ media query **tidak dibuat otomatis** |
+| **Maizzle** | github.com/maizzle/maizzle | Framework email (Tailwind-like) | Vue/Node | ⚠️ **README menaut `./LICENSE` yang TIDAK ADA di repo**; npm `@maizzle/framework` 6.3.2 = **MIT**; engine aktif di repo terpisah `maizzle/framework` (MIT, **100 commit/60d**) | 2.861 (**26**) · **0 commit/60d** (push Jun 2026) | — | ⚠️ **UJI DULU** — repo yang dinamai "maizzle" justru mandek; pakai `maizzle/framework` |
+| **Cerberus** | github.com/emailmonday/Cerberus | **Pola** HTML email (bukan library): tombol, kolom, dark-mode, 4 template | HTML murni | ✅ MIT | 5.147 (**138**) · **0 commit/60d** · rilis terakhir **3.4.1 (2022)** | DesignerBot | 🔸 **BAHAN BELAJAR** — pola-nya masih valid (format HTML tidak berubah), tapi jangan dijadikan dependency |
+
+### 📏 Angka NYATA (email penawaran 600 px, 4 blok + tabel harga, dibangun & dirender di VPS ini)
+
+| Metrik | **MJML 5.4.1** | **MJML + `--config.minify`** | **react-email 1.0.12** |
+|---|---|---|---|
+| Ukuran HTML | **17.659 B** (gzip 2.642) | **13.564 B** (gzip **2.430**) | **7.271 B** (gzip **1.569**) |
+| `<table>` | 24 | 24 | 8 |
+| Fallback Outlook (`mso`) | **31** | 31 | 8 |
+| `@media` (kolom menumpuk di HP) | **1 (otomatis)** | 1 | 🚨 **0 — harus ditulis sendiri** |
+| Inline style | 80 elemen | 80 | 35 |
+| Waktu build | **1,7 dtk** | 1,6 dtk | **1,5 dtk** (render komponen) |
+| Versi plain-text | ❌ harus ditulis manual | ❌ | ✅ **`render(el,{plainText:true})` → 77 B** |
+| `<img>` | **0** (tidak ada gambar → tak ada yang diblokir) | 0 | 0 |
+
+**Batas pemotongan Gmail (yang sebenarnya jadi masalah):**
+- **Desktop ≈ 102 KB** — Gmail memotong HTML mentah **pesan sebagaimana diterima server** (ESP bisa menambah quoted-printable/BASE64; sumber: uji lapangan di `hteumeuleu/email-bugs` + dokumentasi vendor). Email dasar kita **17,7 KB = 17%** dari batas itu.
+- 🚨 **Gmail iOS dilaporkan ≈ 20 KB** (Klaviyo, *"applied inconsistently"*) → email 17,7 KB kita sudah **86%** dari batas ini; **minify → 13,5 KB = 66%**. Klaviyo: klip di HP **mematikan tampilan responsif** → kolom 3 tetap 3 kolom di layar 360 px.
+- **Isi email panjang:** tiap blok pengumuman ≈ **2.180 B** → **±39 blok** sebelum klip desktop, **0 blok** kalau mengejar batas 20 KB. ⇒ **pengumuman banyak item = tautan ke situs, bukan 40 blok di email**.
+
+### 🎯 Aturan produksi email (tulis di template, jangan diingat)
+- **Email penawaran/transaksional pendek → `react-email`** (paling kecil: 7,3 KB, plain-text otomatis, aktif 100 commit/60d) **tapi wajib** tambah sendiri blok `<style>` berisi `@media (max-width:480px){...}` kalau ada `Row/Column` — tanpa itu **kolom 33% = 119 px di HP 360 px** (≈18 karakter per baris).
+- **Pengumuman panjang & audiens Outlook lama → `MJML`** + `npx mjml file.mjml -o out.html --config.minify true` (turun 23% tanpa kehilangan satu pun tabel/mso).
+- **Tanpa gambar** kalau bisa (klien memblokir gambar default) — teks + tombol CSS lebih aman; kalau ada logo, `alt` wajib dan `<img width>` eksplisit.
+- **Lebar 600 px**, satu kolom untuk isi utama, tabel harga pakai `<mj-table>`/`<table>` — **jangan** `flex`/`grid` (Outlook membuangnya; di uji kita dua-duanya **0**).
+- **Uji kirim ke Gmail Android + Gmail iOS + Outlook web** sebelum kirim ke kades; cek juga **ukuran mentah** (`wc -c`) tiap kali isi bertambah.
+- **Kirim lewat SMTP relay** (lihat bagian 📧 Email & Newsletter: listmonk + relay), **bukan** port 25 dari VPS.
+
+### 🔎 Catatan query hari ini (jujur)
+- `html+email+template+in:name,description+stars:>2500+pushed:>2025-06-01` → **1 hasil** (Cerberus) — frasa ini terlalu sempit.
+- Yang bekerja: **`mjml+in:name,description`** & **`react-email+in:name,description`** (nama proyek), plus **`maizzle+in:name,description`**.
+- ⚠️ `email` sendirian = zonk total; `newsletter` nyeret platform pengirim (sudah tercatat di bagian email/newsletter).
+
+---
+
+## 🎨 DesignerBot / WebBuilder — TOKEN DESAIN → CSS & TAILWIND (satu sumber, banyak klien, tanpa tema duplikat)
+
+> Riset **2026-11-16** — rotasi topik: **design/UI**. Katalog sudah punya **hulu** (mengambil token dari situs referensi: `designlang`, `Dembrandt`) dan **hilir praktis** (shadcn/Tailwind), tapi **belum punya lapisan tengah**: mengubah satu file token → CSS variables + `@theme` Tailwind v4 + JSON — supaya 10 situs desa bisa punya warna berbeda **tanpa menyalin file CSS**.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Style Dictionary** | github.com/style-dictionary/style-dictionary | Build system token multi-platform: satu JSON → CSS vars, `@theme` Tailwind, JSON flat, Swift/Android/Compose (lewat format/transform) | Node/JS (**ESM only**, v5) | ✅ **Apache-2.0** (`LICENSE` + `NOTICE`) | 4.884 (**46**) · **v5.8.0 (3 Nov 2026)** · **35 commit/60d** · repo sejak 2016 · 16,8 MB | DesignerBot + WebBuilder | ✅ **REKOMENDASI** — format output bisa ditulis sendiri (sudah saya tulis format `@theme` kustom, jalan) |
+| **Terrazzo** | github.com/terrazzoapp/terrazzo | Alternatif: DTCG token JSON → kode (CSS/JS/Swift) + lint & diff token | Node | ✅ MIT | 491 (**6**) · 19 commit/60d (push 21 Okt) | DesignerBot | 🔸 **CADANGAN** — lebih kecil & lebih baru, fitur lint-nya bagus |
+| **designlang / Dembrandt** | (sudah tercatat di bagian Design & UI) | **Hulu**: URL situs → token DTCG | Node | MIT | — | DesignerBot | ✅ dipakai sebagai sumber token; **Style Dictionary = pasangan hilirnya** |
+| **Tailwind CSS v4** | (sudah tercatat di bagian Astro/Web Builder) | `@theme` = token langsung jadi utility (`bg-brand`) | — | MIT | — | WebBuilder | ✅ **sudah jadi jalur produksi** — tidak butuh plugin token |
+
+### 📏 Angka NYATA (dijalankan di VPS ini: 18 token, 1 base + 3 tema)
+| Metrik | Hasil |
+|---|---|
+| Build 4 varian (base + 3 tema) → CSS + `@theme` + JSON | **210 ms total** (≈50 ms/varian) |
+| Ukuran per varian | CSS **391–415 B** · `@theme` **438 B** · JSON **362 B** |
+| Total 4 varian | **4.827 B** — jadi **30 tema klien ≈ 12 KB** CSS (dan tiap situs cuma butuh **±800 B**) |
+| Tailwind v4.3.5 kompilasi `@theme` → utility | **71 ms**, `out.css` **4.714 B / 1.683 B gzip**, `.bg-brand{background-color:var(--color-brand)}` ✅, `.p-4` tetap dari skala spacing bawaan |
+
+### ⚠️ Dua jebakan teknis yang SAYA KENA SENDIRI (bukan teori)
+1. **Tanpa `transformGroup`, nama variabel kehilangan prefix grup** → keluar `--brand`, `--1`, `--sm` (bukan `--color-brand`, `--space-1`, `--radius-sm`). Akibatnya `radius.sm` dan `space.sm` **bertabrakan jadi `--sm`** dan CSS-nya tetap "jalan" — jadi bug-nya senyap. Terbukti A/B: tanpa transformGroup = `--brand`, dengan `transformGroup: "css"` = `--color-brand`.
+2. **Style Dictionary v5 = ESM-only** (`"type": "module"`): `require('style-dictionary/package.json')` gagal **`ERR_PACKAGE_PATH_NOT_EXPORTED`** → pakai `import` / `.mjs`, dan baca versi dari `npm ls`.
+
+### 🎯 Alur yang dipakai Webuild (tulis di template)
+```
+tokens/base.json        (warna netral, spacing, radius, font)  ← satu untuk semua proyek
+tokens/themes/<klien>.json (hanya brand & brand-soft)          ← 2 baris per klien
+      │  npx style-dictionary build  (atau API, 50 ms)
+      ├─ dist/<klien>.css        → CSS variables, atribut :root / [data-theme]
+      ├─ dist/<klien>.theme.css  → blok @theme Tailwind v4
+      └─ dist/<klien>.json       → dipakai JS/PDF/email (warna sama di email & surat!)
+```
+- **Satu sumber warna = situs + email + PDF + kartu sosmed.** Ini yang bikin brand klien terasa "satu nafas" (dan menghapus kerja menyalin hex manual).
+- **Jangan** commit file hasil build ke repo situs (auto-generated); build saat build situs.
+- `@theme` **statis saat build** → warna per klien = **build terpisah per situs** (bukan runtime theme switcher, kecuali pakai `[data-theme]`).
+- **Hulu → hilir lengkap:** ambil rasa desain referensi (`designlang`/`Dembrandt`) → *jadikan* token kita → **jangan jiplak**; ganti nama & rasio supaya bukan tiruan.
+
+### 🔎 Catatan query hari ini (jujur)
+- `design+tokens+in:name,description+stars:>1500` **berisik parah**: hasil teratas `VoxCPM` (TTS), `semi-design`, `china-dictatorship`, `devise_token_auth` — kata "token" menarik repo AI & autentikasi.
+- Yang bekerja: **`style-dictionary+in:name,description`**, **`terrazzo+tokens+in:name,description`**, dan nama proyek hulu (`designlang`, `dembrandt`).
+- ⚠️ `design system` / `design tokens` sendirian = bukan kelas alat, tapi daftar UI kit.
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
