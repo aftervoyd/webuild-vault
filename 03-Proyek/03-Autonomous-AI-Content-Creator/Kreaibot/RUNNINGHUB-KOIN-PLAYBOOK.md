@@ -713,3 +713,29 @@ Catatan baru non-prioritas: **World AI Cinema Festival "Remember the Future"** (
 2. Kalau koin masuk: bakar cepat (1–2 gambar Qwen-Edit ±50 koin/gambar), jangan disimpan.
 3. Kalau tidak renew: fokus kontes GRATIS tanpa RH — Artefact Paris (2 Des, ≤314 dtk = paling murah diproduksi) dan Chroma S2 (7 Jan).
 WARNING: TIDAK ADA jam gratis. Qwen-Edit ±49–52 koin/gambar, motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin). Hitung koin dulu sebelum render.
+
+## 29. SCAN 15 NOV 2026 (08:01) — saldo 0 (Δ 0, hari ke-12 kosong) + 3 KONTES BARU yang justru MEMBERI KREDIT RENDER GRATIS
+**SALDO: 0 RH Coins** (Δ **0** vs 13 Nov; run 14 Nov GAGAL total — `HTTP 404: Model not found or inactive`, jadi tak ada scan hari itu). Wallet **$0,0000**. Tugas jalan: 0. `apiType`: NORMAL.
+⚠️ **Membership Personal lewat 8 Nov = hari ke-7 tanpa jatah 36.000 koin/bulan.** Verifikasi hanya via dashboard web.
+
+### 🔑 TEMUAN INTI: keluar dari deadlock koin lewat platform lain yang membagi kredit gratis
+RunningHub bukan satu-satunya mesin. Tiga kontes aktif di bawah **gratis masuk DAN memberi kredit render gratis** — jadi produksi bisa jalan tanpa saldo RH.
+
+| Kontes BARU | Deadline | Hadiah | Kredit gratis | Syarat kunci |
+|---|---|---|---|---|
+| **Cascade Greenlight** (Cascade Studio × BytePlus Seedance, DIFC Dubai) | **15 Des 2026** 23:59 GST | **$65.000 cash** (1st $30rb + 2nd $20rb + 3rd $10rb + Fan Favourite $5rb) **+ paket produksi 1,5 jt/1 jt/500 rb kredit** | **5.000 kredit** setelah registrasi disetujui (unlock Seedance 2.5; top-up berikut 50% lalu 20% off) | teaser/pilot **1–5 mnt**, 16:9, Inggris/Sub-EN, **SETIAP shot video wajib digenerate di Cascade** (video dari tool lain = gugur; motion graphic/title boleh luar). Pitch ≤250 kata. Posting publik + ident Greenlight + #CascadeGreenlight. **Dikecualikan: China daratan, Brazil, Italia, Rusia, Belarus, Kuba, Iran, NK, Suriah** → **Indonesia LOLOS** |
+| **Fairground × CapCut — Animation Imagination** | **1 Des 2026** 23:59 PT | **$15.000** ($4rb Family Friendly + $4rb Saturday Morning Cartoons + $4rb Past Your Bedtime + $3rb Best of CapCut) + **50% revenue share** di Fairground AI TV | **10.000 kredit CapCut** (form di Creator Portal, masuk 1–2 hari kerja) | film animasi **100% original** (no IP pihak ketiga), **3+ mnt**, 1080p, wajib dibuat pakai produk CapCut, simpan bukti (screen recording), maks TV-14. 18+ |
+| **ADC 106th — AI Filmmaking (CapCut AI)** | **22 Jan 2027** (extended 12 Feb, final 5 Mar) | **$8.000 Gold + 3×$4.000 Silver + 6×$2.000 Bronze + $2.000 Social Impact + $2.000 social-performance** (±$36rb) | **30.000 kredit CapCut** (apply sebelum 20 Feb 2027) | tema **"Imperfection"**, **≥1 mnt**, **≥60% dibuat di CapCut Video Studio**, 18+, profesional/freelancer (student TIDAK eligible), maks 3 entri, deskripsi + konsep 300–500 kata Inggris |
+
+### Ditolak / bukan jalur kita (hasil verifikasi, jangan diulang)
+- **Indian Pixels AI Film Festival** (15 Jan 2027, ₹2,3 jt / ±$3rb, gratis) — **KHUSUS PENDUDUK INDIA** (butuh PAN + rekening India). Listing agregator menyesatkan → **SKIP**.
+- **HIIFF Hainan AI Film Gala** (tutup 15 Nov, $14rb) — submit **hanya via LibTV** (platform China) → tak realistis.
+- **Jade Lens Awards** (3 Des, $3,5rb kredit, paid, wajib ZenCreator) · **Gossip Goblin** (15 Des, $20rb, paid, tool-locked) · **WAICF India** (5 Des, $21rb, **tiered fee**) · **AI Film Festival Africa** (30 Nov, gratis tapi tanpa nominal cash) · **Melbourne/Veritas/Berlin/Florence/SIAMA/Turquoise/London/CSFCCA/Montreal/KURSAAL/IA Play/GAIMVA/Hollywood/LundinStudio/DPIFF** → semua **berbayar/laurel saja**.
+- **Artefact AI Film Festival × mk2** (13 Jan 2027, $15rb, "upcoming", fee unverified) — **berbeda** dari Artefact Paris (2 Des, €10rb). Pantau; jangan dicampur.
+- Koreksi kecil: **Cine Prague** per AIFC = 18 Nov & **paid** (catatan lama §28: 28 Nov / $1.000).
+
+### Aksi 15 Nov (prioritas)
+1. **Registrasi Cascade Greenlight hari ini** (gratis) → tunggu email link 5.000 kredit → itu modal produksi nyata, bukan koin RH. Ini jalur tercepat keluar dari saldo 0.
+2. **Daftar Creator Portal Fairground + apply 10.000 kredit CapCut** (1–2 hari kerja). Kalau kredit masuk sebelum 25 Nov, kejar slot **Past Your Bedtime / Best of CapCut** (1 Des).
+3. **Login web RunningHub** tetap lakukan: klaim ±100 koin harian (hangus 24 jam); kalau masuk, bakar 1–2 gambar Qwen-Edit (±50/gambar), jangan disimpan. Membership tetap perlu di-renew manual.
+WARNING: TIDAK ADA jam gratis di RunningHub. Qwen-Edit ±49–52 koin/gambar, motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin). Hitung koin dulu sebelum render.
