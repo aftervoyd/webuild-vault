@@ -2167,6 +2167,54 @@ tokens/themes/<klien>.json (hanya brand & brand-soft)          ← 2 baris per k
 - Yang bekerja: **`style-dictionary+in:name,description`**, **`terrazzo+tokens+in:name,description`**, dan nama proyek hulu (`designlang`, `dembrandt`).
 - ⚠️ `design system` / `design tokens` sendirian = bukan kelas alat, tapi daftar UI kit.
 
+## 🧾 Dokumen PDF — surat, RAB, invoice, proposal (riset 2026-11-17)
+
+> Riset **2026-11-17** — rotasi topik **web dev (hilir deliverable)**. Katalog sudah punya halaman web, email, token warna, kartu sosmed — tapi **belum punya PDF**, padahal dokumen inilah yang diterima klien/pemda: surat keterangan desa, RAB, invoice, penawaran. Catatan lama cuma bilang *"LibreOffice tidak ada di VPS → jangan janji PDF RAB"*; hari ini jalur itu **dibuka dan diukur** di VPS 2 vCPU / 1,9 GB.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Typst** | github.com/typst/typst | Bahasa tata letak → PDF (**bukan** HTML): surat, RAB, invoice, proposal; **satu binary 54 MB**, nol dependency sistem | Rust | ✅ **Apache-2.0** (`LICENSE` 9.723 B) · font bawaan: Libertinus **OFL-1.1** · New Computer Modern **GUST** · DejaVu **Bitstream Vera** — semuanya boleh di-embed & dikomersialkan | 57.236 (138) · v0.15.1, 95 commit/60d | WebBuilder + OpsAgent | ✅ **REKOMENDASI UTAMA** — surat 2 halaman: **52.859 B, compile 0,05 s, RSS 28,9 MB**; `pdftotext` membaca isinya utuh; **`--pdf-standard a-2b` = PDF/A-2b ASLI** (`pdfaid:part 2`, `conformance B`, GTS_PDFA1, font embedded+subset); Tagged PDF ✅; RAB **300 baris → 7 hal, 375 KB, 0,41 s** |
+| **Chromium printToPDF** (bukan repo — pakai `browser_exec` yang sudah ada) | — | HTML+CSS → PDF lewat browser yang **sudah terpasang** | CDP / Skia | — (Chromium) | — | WebBuilder | ✅ **PAKAI** — `cdp('Page.printToPDF', printBackground=True, …)` untuk surat yang sama = **57.999 B / 0,06 s**, teks terbaca, 2 hal A4; ⚠️ **tidak bisa PDF/A**; browser = ratusan MB RAM (bukan untuk cron serentak) |
+| **WeasyPrint** | github.com/Kozea/WeasyPrint | HTML/CSS → PDF **tanpa Chromium** (Python + Pango); docs: *"generation of PDF/A and PDF/UA documents is supported"* | Python | ✅ BSD-3-Clause | 9.794 (126) · 87 commit/60d | OpsAgent | ⏸️ **BELUM TERUJI di VPS ini** — `pip` tidak ada & paket apt tak tersedia ⇒ **jangan janjikan sebelum dipasang**; jalur kalau butuh render HTML tanpa browser |
+| **Gotenberg** | github.com/gotenberg/gotenberg | PDF via **HTTP API** (Chromium di container) | Go + Chromium | ✅ MIT | 13.607 (77) · v9.6.0 (16 Nov 2026) | OpsAgent | 🔸 CADANGAN — hanya kalau sistem lain perlu **API HTTP**; 1 container tapi Chromium = RAM berat. Untuk kerja kita `browser_exec` sudah cukup |
+| 🚫 **wkhtmltopdf** | github.com/wkhtmltopdf/wkhtmltopdf | (dulu) HTML→PDF paling populer | C++ / QtWebKit | LGPL-3.0 | 14.541 | — | 🚫 **JANGAN** — **`archived=true`, push terakhir 2022-11-22**; ini jawaban nomor-2 di query `html to pdf` (14,5k⭐) padahal mati & mesinnya WebKit 2016 (flexbox/grid rusak) |
+| **pdfkit** | foliojs/pdfkit | Bikin PDF dari kode (bukan HTML) | Node | ✅ MIT | 10.733 (156) | WebBuilder | 🔸 CADANGAN — invoice sederhana headless; tabel & page-break manual |
+| **jsPDF** | parallax/jsPDF | PDF di browser (client-side) | JS | ✅ MIT | 31.313 (469) | — | ⚠️ hanya kalau PDF dibuat **di perangkat pengguna** |
+| **pdfme** | pdfme/pdfme | Template PDF WYSIWYG + isi data | TS / React | ✅ MIT | 5.069 (27) — repo **797 MB** | — | ⚠️ kalau klien mau desainer template sendiri |
+| **dompdf** | dompdf/dompdf | HTML→PDF (PHP) | PHP | LGPL-2.1 | 11.212 | — | 🚫 tak relevan (stack kita bukan PHP) |
+
+### ⚠️ Jebakan yang SAYA KENA SENDIRI hari ini (bukan teori)
+1. **Compile "sukses" ≠ dokumen benar — verifikasi WAJIB `pdftotext`.** Dua kesalahan saya baru terlihat **di teks hasil**: `rp(62000)` tercetak mentah (di dalam `[...]` itu **markup**, kode butuh `#rp(…)`) dan judul jadi `RAB)nPembangunan` (`\n` bukan line-break di markup → pakai `\`). `pdfinfo` + `pdftotext -layout` = pemeriksa termurah; jangan kirim PDF ke klien tanpa itu.
+2. **Typst 0.15 = API bergeser dari tutorial lama:** `text(underline: true)` **dihapus** → `#underline[...]`; `regex("(?=…)")` **error** (look-ahead tak didukung) → hitung pemisah ribuan manual; **`@` dan `<…>` = label reference** → email harus `desa\@domain.go.id`; plus **font bawaan cuma 19** (tak ada `Arial`) → set `#set text(font: "DejaVu Sans")`.
+3. **PDF/A hanya dari jalur typst.** Chromium/Skia tidak menghasilkan PDF/A; arsip pemda (SRIKANDI/e-office) sering minta PDF/A → ini **fitur yang bisa dijual**, bukan detail teknis.
+4. **PDF = SUBSET font** (`pdffonts` → `sub yes`) ⇒ font yang **melarang subsetting** (Fontshare/ITF FFL, pelajaran 65) **tidak boleh** di-embed ke PDF klien. Pakai **OFL** (`Plus Jakarta Sans`, Inter) lewat `--font-path`.
+5. **Pilih berdasarkan bentuk dokumen:** dokumen **berulang & bernomor** (surat, invoice, RAB) → **typst** (0,05 s, PDF/A, teks rapi, 1 binary); dokumen yang **memang sudah HTML/CSS** (halaman web, kop desain yang sudah ada) → **Chromium printToPDF**.
+
+### 🔎 Catatan query (jujur)
+- `html+to+pdf+in:name,description` → **6 dari 8 hasil bukan alat itu** (`crawlee`, `pdf2htmlEX` = arah sebaliknya, `dashi-ppt-skill`); `pdf+generation+…` → `funNLP`, `OmniGen` nyasar.
+- Yang bekerja: **nama proyek** — `typst`, `weasyprint`, `gotenberg`, `pdfkit`, `pdfme`. Pelajaran lama (40) berlaku lagi: begitu nama proyek diketahui, **`gh api repos/O/R` langsung**, jangan disaring lagi lewat search.
+
+## ♿ Audit aksesibilitas situs klien (design/UI + QA) — riset 2026-11-17
+
+> Kenapa ini kelas repo sendiri: pengguna situs desa = **lansia + HP murah**, dan pengadaan pemda mulai menuntut aksesibilitas. Nilainya bukan alatnya, tapi **angka**: "situs lama Anda 106 elemen gagal" jauh lebih menjual daripada "kami bikin aksesibel".
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **axe-core** | github.com/dequelabs/axe-core | Mesin audit a11y (WCAG 2.2 A/AA) — disuntik ke halaman apa pun, hasil **per elemen + CSS selector + snippet HTML** | JS (jalan di browser) | ✅ **MPL-2.0** (`LICENSE` 15.921 B; banner `axe.min.js` menyebut MPL-2.0; ada `LICENSE-3RD-PARTY.txt`) | 7.833 (171) · **v4.14.1 (16 Nov 2026)**, 68 commit/60d | WebBuilder + DesignerBot | ✅ **PAKAI sebagai ALAT DEV** — **91 aturan** dijalankan, `axe.run()` **1,06 s**; 653.780 B min / **179 KB gz** tapi **tidak dikirim ke situs klien** (jadi tak kena aturan "tak ada SDK >10 KB") |
+| **pa11y** | pa11y/pa11y | CLI audit a11y | Node | ⚠️ **LGPL-3.0** | 4.601 (215) · 10.0.0, tapi **2 commit/60d** | OpsAgent | 🔸 CADANGAN — CLI rapi, ritme melambat; LGPL aman sebagai alat, **jangan** di-link ke produk |
+| **Lighthouse** | GoogleChrome/lighthouse | Satu jalan: performa + a11y + SEO (a11y-nya **memakai axe** di dalam — lihat `third-party/axe/`) | Node + Chrome | ✅ Apache-2.0 | 31.133 (607) · v13.6.0, 100 commit/60d, repo **375 MB** | OpsAgent | ⚠️ **PC/CI saja** — butuh Chrome asli (di VPS ini gagal: pelajaran 79) |
+
+### 📊 Bukti lapangan (dijalankan hari ini, bukan perkiraan)
+| Halaman | Aturan dilanggar | Elemen | Rincian |
+|---|---|---|---|
+| `karangtengahprandon.desa.id` (situs desa nyata, beranda) | **11** | **106** | contrast **32** · button-name **25** · image-alt **25** · link-name **14** · `marquee` **3** · region 2 · frame-title 1 · heading-order 1 · nested-interactive 1 · page-has-heading-one 1 |
+| `layanan.desa.id` (platform layanan desa nasional) | **4** | **8** | **`html-has-lang` 1** (tag `<html>` tanpa `lang`!) · landmark-one-main 1 · page-has-heading-one 1 · region 5 |
+| **halaman buatan kita sendiri** (`surat.html`) | **2** | 13 | `landmark-one-main` 1 · `region` 12 → **nol masalah kontras & nol gambar tanpa alt** |
+
+**Bacaannya:** dua aturan **struktural** (`<main>`, landmark) muncul di **ketiga** halaman — artinya itu jebakan template, bukan kesalahan penulis konten. Pasang `<main>` + `<header>/<footer>/<nav>` **sekali** di layout Astro → baseline kita bersih (15 aturan lolos, 0 kontras). Sebaliknya **kontras (32) + alt (25) + tombol tanpa nama (25)** di situs desa nyata = **paket audit berbayar** yang bisa dibuktikan per elemen.
+- ⚠️ **`axe-core` butuh browser nyata** — `jsdom` tak punya layout jadi **`color-contrast` tak bisa dihitung**. Jalur termurah: `browser_exec` → buka URL → suntik `axe.min.js` dari CDN → `axe.run()` (1 detik per halaman). Server-side `pa11y`/Lighthouse = alternatif kalau nanti mau otomatis di CI.
+- Query: **`accessibility+in:name,description` = ZONK** (hasil: AutoGPT, shadcn, ColossalAI — kata "accessible" di deskripsi). Pakai **nama proyek**: `axe-core`, `pa11y`, `lighthouse`.
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
