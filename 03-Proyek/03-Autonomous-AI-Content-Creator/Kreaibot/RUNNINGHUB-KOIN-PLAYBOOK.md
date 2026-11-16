@@ -739,3 +739,19 @@ RunningHub bukan satu-satunya mesin. Tiga kontes aktif di bawah **gratis masuk D
 2. **Daftar Creator Portal Fairground + apply 10.000 kredit CapCut** (1–2 hari kerja). Kalau kredit masuk sebelum 25 Nov, kejar slot **Past Your Bedtime / Best of CapCut** (1 Des).
 3. **Login web RunningHub** tetap lakukan: klaim ±100 koin harian (hangus 24 jam); kalau masuk, bakar 1–2 gambar Qwen-Edit (±50/gambar), jangan disimpan. Membership tetap perlu di-renew manual.
 WARNING: TIDAK ADA jam gratis di RunningHub. Qwen-Edit ±49–52 koin/gambar, motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin). Hitung koin dulu sebelum render.
+
+## 30. SCAN 16 NOV 2026 (08:01) — saldo 0 (Δ 0, hari ke-13 kosong) + TEMUAN: 2 kontes GRATIS tutup 20 Nov
+**SALDO: 0 RH Coins** (Δ **0** vs scan 15 Nov). Wallet **$0,0000**. Tugas jalan: 0. apiType NORMAL.
+Membership Personal lewat 8 Nov → **hari ke-8 tanpa 36.000 koin/bulan**. Verifikasi hanya via dashboard web.
+
+### 🔴 Deadline 20 Nov (4 hari) — dua kontes GRATIS, satu hadiah $1 JT
+| Kontes | Hadiah | Syarat kunci | Realistis? |
+|---|---|---|---|
+| **AI Film Award 2027** (1 Billion Followers Summit × BytePlus × TikTok) | **$1.000.000** grand prize (pemenang tunggal) | 5–7 mnt, 16:9 1080p MOV/MP4, **≥70% digenerate Seedance**, 5 tema (Society/Humanitarian, Truth & Misinfo, Humans & AI, Climate, Human Relationships), sub Inggris, 18+, gratis, worldwide | ⚠️ **hanya mungkin kalau kredit Cascade (5.000, unlock Seedance 2.5) sudah masuk** — 4 hari untuk 5–7 mnt sangat mepet |
+| **Cue Xmas '26** (AFRO TV, Orlando + live TV 12 Des) | 4 kategori cash (Best Film/Image/Sound/AI Music Video; nominal TBA sponsor) + premiere TV nasional | 2–6 mnt, tema Natal, multi-shot, edit akhir "human-shaped", gratis, 18+, submit 20 Nov 23:59 ET | ❌ tanpa koin RH: produksi 2 mnt pun tak bisa |
+
+### Catatan
+- **Sinergi penting:** registrasi Cascade Greenlight (§29) = **5.000 kredit + Seedance 2.5** → satu-satunya bahan bakar nyata untuk keduanya. Kalau email approval belum masuk, **cek spam + follow-up** hari ini.
+- NEXTALE Award (gratis, 20+ episode series, 14 Des, pool $3.000 + 100% revenue 6 bln) — sudah tercatat §26, masih layak sebagai target panjang.
+- AI ZONE Intl AI Film Fest (30 Nov, $500) — kecil, gratis, bisa jadi latihan cepat.
+- Tidak ada jam gratis. Qwen-Edit ±49–52 koin/gambar; motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin).
