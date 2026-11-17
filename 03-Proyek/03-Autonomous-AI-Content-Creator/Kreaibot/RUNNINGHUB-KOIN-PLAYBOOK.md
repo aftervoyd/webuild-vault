@@ -755,3 +755,28 @@ Membership Personal lewat 8 Nov → **hari ke-8 tanpa 36.000 koin/bulan**. Verif
 - NEXTALE Award (gratis, 20+ episode series, 14 Des, pool $3.000 + 100% revenue 6 bln) — sudah tercatat §26, masih layak sebagai target panjang.
 - AI ZONE Intl AI Film Fest (30 Nov, $500) — kecil, gratis, bisa jadi latihan cepat.
 - Tidak ada jam gratis. Qwen-Edit ±49–52 koin/gambar; motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin).
+
+## 31. SCAN 17 NOV 2026 (08:01) — saldo 0 (Δ 0, hari ke-14 kosong) + TIDAK ada kontes cash baru; 4 kontes "baru" ternyata gagal syarat
+**SALDO: 0 RH Coins** (Δ **0**). Wallet **$0,0000**. Tugas jalan: 0. Membership lewat 8 Nov → hari ke-9 tanpa 36.000/bulan.
+
+### Hasil scan (aifilmcontests.com /contests/new + /prize/free-entry, ai-fieldnotes Nov, aibetas)
+Kandidat "baru" yang muncul di listing tapi **GUGUR** setelah dibaca halaman resminya:
+| Kontes | Deadline | Kenapa gugur |
+|---|---|---|
+| **3rd HKUST AI Film Festival 2027** | 28 Feb 2027 | Gratis, worldwide, tapi hadiah **hanya screening Hong Kong — tanpa cash** |
+| **Chicago AI Film Festival 2027** | 31 Jan 2027 | Gratis sampai 31 Des, tapi hadiah **screening + tool prize TBA** (tanpa cash) |
+| **Altera Festival 2027** (Atlanta) | 15 Des (early) | 8 kategori "Altera Awards", **nominal cash tak dipublikasi** |
+| **Indian Pixels AIFF 2027** | 15 Jan 2027 | ₹2,3 jt tapi **wajib penduduk India (PAN + rekening India)** → konfirmasi ulang, SKIP |
+Lain-lain: **Fantasia** (1 Des) & **Raindance** (7 Des) — festival genre umum, **berbayar $59–95**, tanpa hadiah cash → bukan jalur kita.
+aibetas.com → hanya 2 lomba China (Shandong 20 Nov, Quanzhou 3 Des), wajib KTP China → skip.
+**Kesimpulan: 0 kontes cash baru yang layak. Daftar prioritas tidak berubah.**
+
+### 🔴 Yang benar-benar tinggal 3 hari (20 Nov)
+- **AI Film Award 2027** — $1.000.000, 5–7 mnt, ≥70% Seedance, gratis, worldwide.
+- **Cue Xmas '26** (AFRO TV) — 2–6 mnt tema Natal, 4 hadiah cash + tayang TV 12 Des, gratis.
+Keduanya **mustahil tanpa kredit**. Satu-satunya bahan bakar = **email approval Cascade Greenlight (5.000 kredit + Seedance 2.5)**.
+
+### Aksi
+1. Cek inbox + spam **Cascade Greenlight**; kalau belum ada, follow-up. Ini satu-satunya pembuka deadlock.
+2. Login web RH klaim ±100 koin (hangus 24 jam) — cukup untuk ±2 gambar Qwen-Edit, bukan untuk video.
+3. ⚠️ Tidak ada jam gratis. Qwen-Edit ±49–52 koin/gambar; motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin). Hitung dulu.
