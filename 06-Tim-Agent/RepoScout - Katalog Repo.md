@@ -2215,6 +2215,62 @@ tokens/themes/<klien>.json (hanya brand & brand-soft)          ← 2 baris per k
 - ⚠️ **`axe-core` butuh browser nyata** — `jsdom` tak punya layout jadi **`color-contrast` tak bisa dihitung**. Jalur termurah: `browser_exec` → buka URL → suntik `axe.min.js` dari CDN → `axe.run()` (1 detik per halaman). Server-side `pa11y`/Lighthouse = alternatif kalau nanti mau otomatis di CI.
 - Query: **`accessibility+in:name,description` = ZONK** (hasil: AutoGPT, shadcn, ColossalAI — kata "accessible" di deskripsi). Pakai **nama proyek**: `axe-core`, `pa11y`, `lighthouse`.
 
+## 🎨→💻 Figma → kode lewat MCP (agentic AI × design) — riset 2026-11-21
+
+> Rotasi topik **agentic AI**. Kenapa ini: user baru belajar Figma, dan DesignerBot perlu menyerahkan desain ke WebBuilder **tanpa** "salin manual angka padding". Kelas ini = jembatan Figma → repo. Hasil riset hari ini membalik asumsi: **alat Figma-MCP paling populer (16,2k⭐) justru yang mandek**, sementara jalur termurah ternyata **sudah ada di Hermes sendiri**.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Figma MCP resmi** (remote) | `mcp.figma.com/mcp` · panduan: github.com/figma/mcp-server-guide | Baca frame Figma → konteks layout/komponen/variabel untuk agen koding; **Code Connect** (pakai komponen kita, bukan bikin baru); **write-to-canvas** (agen bikin/ubah frame) | Remote HTTP + OAuth | ⚠️ **repo panduan TANPA file LICENSE** (root `figma/mcp-server-guide` tidak punya LICENSE/NOTICE sama sekali = *all rights reserved*); pemakaian tunduk **Figma Developer Terms** | repo 2.217 (subs 30) · **21 commit/60d** (18 Nov 2026) | WebBuilder + DesignerBot | ✅ **JALUR UTAMA — 1 perintah di Hermes: `hermes mcp install figma`** (sudah ada di `hermes mcp catalog`, OAuth, tanpa PAT). ⚠️ **Batas nyata (kutipan README): Starter plan / seat View atau Collab = maks 6 tool call per BULAN**; write-to-canvas gratis **hanya selama beta** (nanti berbayar). Pakai untuk **1 frame kunci per sesi**, bukan eksplorasi |
+| **Framelink Figma MCP** | github.com/GLips/Figma-Context-MCP (`figma-developer-mcp`) | Server komunitas: `get_figma_data` (ringkas layout+style) + `download_figma_images`; pakai **Personal Access Token**, tanpa batas bulanan | Node / TS | ✅ **MIT** (LICENSE 1.072 B, dibaca) | 16.266 (subs 59) · **0 commit/60d**, rilis terakhir **v0.13.2 (18 Jun 2026)**, 8,7 MB | WebBuilder | ⚠️ **UJI DULU — paling populer tapi MANDEK** (pola pelajaran 42). **Terbukti jalan** di VPS ini: `npm i figma-developer-mcp@0.13.2` → stdio `initialize` **0,7 dtk**, **2 tool** terdaftar; tanpa token → *"Either FIGMA_API_KEY or FIGMA_OAUTH_TOKEN is required"* (exit); dengan token dummy → `get_figma_data` menjawab **403 "Invalid token" dari api.figma.com** (butuh scope *File content: Read* + *Dev resources: Read*). ⚠️ **telemetri ON default** → wajib `--no-telemetry`; README menaut **framelink.ai** (berbayar) |
+| **Figma Console MCP** | github.com/southleft/figma-console-mcp | 130 tool: baca token/variabel, **tulis** variabel & mode, bikin komponen, screenshot, console log, `figma_execute` | Node + **plugin Figma + Playwright** | ✅ MIT | 3.376 (subs 27) · **64 commit/60d**, v1.46.0 | DesignerBot | 🔸 **CADANGAN KUAT** — dijalankan: **130 tool**, mode lokal menyalakan **WebSocket bridge port 9223** + menyalin plugin ke `~/.figma-console-mcp/plugin`, browser Playwright `headless:false`. ⇒ butuh **Figma Desktop + plugin terpasang + display** = **PC user, bukan VPS**. Paling masuk akal kalau kita mau **mengelola design token Figma** (pasangan pelajaran 87) |
+| **figwright** | github.com/awdr74100/figwright | Dua arah: Figma → kode framework-aware, dan kode balik ke canvas | Node / TS | ✅ MIT | 1.472 (subs **4** = rasio 368:1 🚩) · 100 commit/60d, v0.7.0, repo **35 MB** | — | ⚠️ **uji dulu** — aktif & dua arah, tapi rasio ⭐:subs ekstrem + repo besar = hype/masih muda |
+| **Playwright MCP** | github.com/microsoft/playwright-mcp | Agen mengemudikan browser sungguhan (klik, isi form, snapshot aksesibilitas) untuk **QA situs klien** | Node / TS | ✅ Apache-2.0 | 39.940 (subs 150) · **49 commit/60d**, v0.0.86 (18 Nov 2026), 2 MB | OpsAgent + WebBuilder | 🔸 **PERTIMBANGKAN** — untuk QA end-to-end (form layanan desa). Di Hermes kita sudah punya `browser_exec` (CDP) → tambah nilai = **rekaman langkah + artefak**, bukan kemampuan baru |
+| **MCP reference servers** | github.com/modelcontextprotocol/servers | Kumpulan server contoh resmi (filesystem, fetch, git, memory, time…) | TS / Python | ✅ MIT (per-folder) | 92.133 | OpsAgent | 📚 **REFERENSI POLA** — baca cara bikin server sendiri; bukan produk |
+
+### 🧠 Yang benar-benar penting buat kita
+1. **Jalur termurah = `hermes mcp install figma`** (OAuth, tanpa API key, tanpa npx). Cek dulu katalog Hermes **sebelum** memasang server komunitas — pelajaran 71/72 berlaku: katalog = alat verifikasi pertama.
+2. **Batas 6 panggilan/bulan itu nyata dan harus masuk desain kerja:** satu frame = satu panggilan → **desain di Figma harus "matang dulu"**, bukan iterasi 20×. Kalau mau iterasi bebas: PAT + Framelink (rate limit REST biasa) atau Console MCP di PC.
+3. **Hulu-hilir kita makin lengkap:** Figma (desain) → MCP → DesignerBot susun token (pelajaran 87: Style Dictionary) → WebBuilder kode (Astro/Tailwind). Yang **tidak** boleh: hasil ekstraksi Figma ditempel apa adanya (jadi template, melanggar prinsip anti-template kita) — ekstrak **rasio & token**, tulis ulang komponennya.
+4. **Repo panduan resmi Figma berisi 17+ `SKILL.md`** (`skills/` & `skills-figquery/`: `figma-design-to-code`, `figma-implement-motion`, `figma-code-connect`, `figma-spec`…) — **polanya** bagus untuk skill Hermes kita, tapi **tanpa lisensi** ⇒ ambil **ide alurnya**, jangan salin filenya.
+
+### 🔎 Catatan query (jujur)
+- **`figma+mcp+in:name,description` = query BERSIH** (10/10 hasil relevan) — langka; kata "figma"+"mcp" sama-sama spesifik.
+- **`schema.org+structured+data+in:name,description` = ZONK** (hasil teratas C# POCO 691⭐, sisanya validator & web components 17–150⭐) ⇒ **structured data bukan kelas repo**, itu **JSON-LD tulisan tangan**. Jangan cari library-nya; tulis 12 baris JSON-LD.
+- `model+context+protocol+server+…` = 92k⭐ koleksi, tapi isinya katalog — bukan alat.
+
+## 📊 Grafik APBDes: CSS, bukan library chart (web dev × design) — riset 2026-11-21
+
+> Halaman `apbdes.astro` di demo kita sudah punya tabel + proporsi, **belum ada grafik**. Naluri normal: pasang Chart.js. Hari ini diukur — dan hasilnya: **library chart memakan 17–100% jatah "halaman <300 KB"**, sedangkan grafik batang yang kita butuh cuma **945 B gzip**.
+
+| Nama | Fungsi | Ukuran terukur (VPS ini) | Lisensi | ⭐/aktivitas | Pemilik | Status |
+|---|---|---|---|---|---|---|
+| **CSS bar chart buatan sendiri** | 10 batang APBDes (pendapatan + belanja), label + nilai rupiah, responsif | **2.945 B mentah / 945 B gzip** (termasuk `<style>` + media query) | milik kita | — | WebBuilder | ✅ **REKOMENDASI** — render diverifikasi di browser: 1280 px lebar batang **446/219/53/144/143 px** (proporsional ke 1.284/612/148/402/400 juta); 360 px → **24–193 px**, **tanpa overflow horizontal** |
+| **Chart.js** 4.6.1 | library chart lengkap (canvas) | `chart.umd.min.js` = **210.082 B mentah / 71.052 B gzip** (≈ **24% jatah 300 KB**) — ⚠️ file `.min.js` justru **4 B LEBIH BESAR** dari `.umd.js` (210.082 vs 210.078) | ✅ MIT | 67.761 ⭐ / 100 commit/60d | — | 🔸 hanya kalau butuh **interaktif** (tooltip, zoom, multi-sumbu) |
+| **ECharts** | chart + dashboard | **359,3 KB gzip** | Apache-2.0 | 67.761 ⭐ | — | 🚫 **tidak untuk situs desa** (1 halaman = >300 KB hanya untuk grafik) |
+| **Recharts** | chart React | **172,6 KB gzip** (+ React) | MIT | 27.726 ⭐ | — | 🚫 stack kita Astro; 172 KB gz = mustahil |
+| **@nivo/bar** | chart React | 87,6 KB gzip | MIT | — | — | 🚫 |
+| **lightweight-charts** | chart finansial | 60,4 KB gzip | Apache-2.0 | — | — | 🚫 (khusus candlestick) |
+| **designlang** (`design-extract`) | **hulu**: URL → token DTCG/Tailwind/shadcn/Figma variables/DESIGN.md; **`verify-ui --brand DESIGN.md`** cek UI kita menyimpang dari brand, **exit 1 → bisa jadi gerbang CI** | CLI terpasang (`npx designlang --help` ✅), **belum diuji jalan** (butuh Chromium) | ✅ MIT | 5.173 (subs 15) · 48 commit/60d, dibuat Apr 2026, 16 MB | DesignerBot | ⚠️ **UJI DULU** — README: *"fully deterministic and free; **no API key**"* untuk ekstraksi sistem; tapi varian `--smart` memakai LLM lewat reseller **Infistar** (tautan afiliasi) = motif "kode bebas + layanan hosted" (ke-7) |
+
+### 📐 Resep grafik batang tanpa library (terbukti, siap pakai)
+```
+<ul class="bars"><li class="row"><span class="lbl">Dana Desa</span>
+<span class="track"><span class="bar p" style="width:100%"></span></span>
+<span class="val">Rp 1.284.300.000</span></li>…</ul>
+.row{display:grid;grid-template-columns:10.5rem 1fr auto;align-items:center;gap:.6rem;font-size:.85rem}
+.track{height:.95rem;background:#e7ded4;border-radius:99px;overflow:hidden}
+.bar{display:block;height:100%;border-radius:99px}
+@media(max-width:520px){.row{grid-template-columns:1fr auto}.lbl{grid-column:1/-1}.track{grid-column:1}.val{grid-column:2}}
+```
+- Lebar = `jumlah / max * 100` **dihitung saat build** (Astro frontmatter) → **nol JS**.
+- `<span>` semua (bukan `<div>`) karena dipakai di dalam `<li>`; angka pakai `font-variant-numeric: tabular-nums` biar rata.
+
+### ⚠️ Jebakan yang SAYA KENA hari ini (bukan teori)
+- **Versi pertama grafik saya RUSAK di HP dan tidak kelihatan di layar 1280 px.** Kolom label dipatok `10.5rem` + kolom nilai → di viewport **360 px** batang tinggal **3–25 px** (bukan 0, jadi tidak "error", cuma tak terbaca). Setelah `@media(max-width:520px)` label pindah ke baris sendiri → **24–193 px**. **Aturan: grafik apa pun wajib diukur ulang di 360 px**, jangan cukup screenshot desktop.
+- **Nama file `.min.js` bukan jaminan** — `chart.umd.min.js` Chart.js 4.6.1 justru 4 byte lebih besar dari versi non-min. Ukur sendiri (`gzip -c file | wc -c`), jangan percaya nama.
+- **Angka bundlephobia bisa beda dari dist nyata** (Chart.js: bundlephobia 68,0 KB gz vs `npm pack` 71,0 KB gz) — beda kecil, tapi untuk janji "halaman <300 KB" pakai **dist yang benar-benar kita `<script>`**.
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
