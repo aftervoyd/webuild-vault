@@ -780,3 +780,33 @@ Keduanya **mustahil tanpa kredit**. Satu-satunya bahan bakar = **email approval 
 1. Cek inbox + spam **Cascade Greenlight**; kalau belum ada, follow-up. Ini satu-satunya pembuka deadlock.
 2. Login web RH klaim ±100 koin (hangus 24 jam) — cukup untuk ±2 gambar Qwen-Edit, bukan untuk video.
 3. ⚠️ Tidak ada jam gratis. Qwen-Edit ±49–52 koin/gambar; motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin). Hitung dulu.
+
+## 32. SCAN 21 NOV 2026 (08:01) — saldo 0 (Δ 0, hari ke-18 kosong) + KONTES BARU BESAR: Higgsfield Talent Contest $1.000.000 (tutup 26 Nov)
+**SALDO: 0 RH Coins** (Δ **0**). Wallet **$0,0000**. Tugas jalan: 0. Membership habis 8 Nov → hari ke-13 tanpa 36.000/bulan. Cron 18–20 Nov gagal (error model 404 di scheduler), jadi scan bolong 3 hari.
+
+### 🆕 Higgsfield Talent Contest — TIDAK ada di catatan mana pun (beda dari Global Film Festival yang tutup 16 Sep)
+| Item | Fakta (official rules, berlaku 12 Nov) |
+|---|---|
+| Hadiah | **$1.000.000 / 20 award**: 1st $200K · 2nd $150K · 3rd $100K · 2× Audience Choice $50K · 15× kategori $30K |
+| Deadline | **26 Nov 2026 19:00 UTC = 27 Nov 02:00 WIB — tinggal ±5 hari**; pemenang diumumkan 3 Des |
+| Biaya | **Gratis**, akun free boleh masuk & boleh menang (tak perlu langganan) |
+| Syarat | 18+, worldwide, solo/tim ≤4, film **3–7 menit**, tema bebas, subtitle/voice-over Inggris |
+| Kunci | **SEMUA video & gambar AI wajib digenerate DI Higgsfield** dalam Contest Project; aset luar hanya boleh setelah "Qualifying Higgsfield Edit". Musik/suara harus AI (tool apa pun) |
+| Larangan | film dibuat **sebelum 12 Nov** atau untuk kontes lain = gugur (tak bisa re-cut Global Film Festival) |
+| Watermark | justru **diwajibkan** ("upload final cut with the Higgsfield watermark") → watermark akun free BUKAN penghalang |
+| Ekstra | project **publik** bisa dapat **credit grant** dari tim Higgsfield; shortlist lewat engagement atau seleksi tim; vote Audience Choice hanya subscriber berbayar |
+
+### Realita bahan bakar
+- Akun free Higgsfield = **0 kredit** (hanya "free generations" terbatas di beberapa model). Kredit tetap "used as usual" walau masuk gratis.
+- Opsi: (a) **bangun di publik** → kejar credit grant, (b) $3 one-time = 40 kredit (jauh dari cukup untuk 3–7 mnt), (c) trial unlimited 24–72 jam sifatnya personal/terbatas + via MCP yang butuh langganan.
+- Kesimpulan jujur: **5 hari + 0 kredit = tidak realistis untuk film 3–7 mnt**, KECUALI grant masuk cepat. Nilainya lebih sebagai pembuka jalan: akun Higgsfield + project publik = aset untuk kontes Higgsfield berikutnya (mereka rutin bikin).
+
+### Yang tutup & gugur (jangan diulang)
+- **AI Film Award 2027 ($1 jt)** + **Cue Xmas '26** → deadline 20 Nov **sudah lewat kemarin**, tidak disubmit (0 bahan bakar).
+- **Luma Dream Brief $1 jt** → tutup 27 Mar 2026, mati. (aifilmcontests masih memasukkannya di daftar $1 jt → listing tak selalu = buka.)
+- aibetas.com/competition-calendar → tetap hanya lomba China (wajib KTP China) → skip.
+
+### Aksi 21 Nov
+1. Daftar Higgsfield (gratis) + buat 1 Contest Project publik → coba tarik credit grant; kalau tak ada respons 24 jam, tutup jalur ini.
+2. Putuskan strategi RH: 18 hari 0 koin & membership habis → jalur koin RH praktis mati; fokus ke platform yang membagi kredit (Higgsfield/Cascade) atau kontes gratis berbasis tool sendiri (Artefact Paris 2 Des, Chroma S2 7 Jan 2027).
+3. ⚠️ Tidak ada jam gratis. Qwen-Edit ±49–52 koin/gambar; motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin). Hitung dulu sebelum render.

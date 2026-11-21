@@ -9,6 +9,11 @@
 
 ## 0. ⭐ STATUS TERKINI — 10 Okt 2026, 12:45 WIB (BACA INI DULU; bagian di bawah = riwayat)
 
+### 🔴 UPDATE 21 NOV 2026 (cron harian) — saldo 0 hari ke-18 + kontes baru $1 JT
+- **RH Coins 0 · wallet $0,0000 · Δ 0** (0 sejak 21 Okt; membership habis 8 Nov). Cron 18–20 Nov gagal karena error scheduler (model 404), bukan masalah script.
+- **KONTES BARU (belum pernah tercatat): Higgsfield Talent Contest — $1.000.000/20 award, gratis, worldwide, film 3–7 mnt, WAJIB semua video/gambar AI digenerate di Higgsfield, deadline 26 Nov 19:00 UTC (27 Nov 02:00 WIB) = ±5 hari.** Akun free boleh, watermark malah diwajibkan, tapi free plan = 0 kredit → realistis hanya kalau dapat *credit grant* dari project publik. Detail: `RUNNINGHUB-KOIN-PLAYBOOK.md` §32.
+- Sudah tutup tanpa submit: AI Film Award 2027 ($1 jt) & Cue Xmas (20 Nov). Luma Dream Brief = mati (Mar 2026).
+
 ### 🔴 UPDATE SALDO 9 NOV 2026 (cron harian)
 - **RH Coins 0 · wallet $0,0000 · Δ 0** (rantai: …100 → 0 → 0 → 0). `remainPoint` 7 · `apiType` NORMAL.
 - ⚠️ **Membership Personal tercatat aktif s/d 8 Nov 2026 = sudah LEWAT** → jatah 36.000 koin/bulan berhenti; API `accountStatus` tak punya field membership, jadi **wajib cek dashboard**. Tanpa renew/top-up saldo mentok 0.
