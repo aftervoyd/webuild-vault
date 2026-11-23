@@ -2301,6 +2301,18 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
 
 ---
 
+## 2026-11-24 — 🔍 RepoScout (rotasi: **TTS/voice** + **memori agen**; jackpot integrasi Hermes baru)
+
+- **Dikerjakan:** rotasi TTS/voice + agentic AI. Scan `tts in:name,description stars:>1000 pushed:>2026-06-01` & `headless cms` + verifikasi lisensi via file asli + HF API. Hasil masuk katalog (3 baris baru, 0 duplikat).
+- **Temuan utama:**
+  - 🎉 **JACKPOT — `supermemoryai/supermemory` (31.697⭐, MIT) punya integrasi Hermes RESMI** (kedua di katalog setelah OpenViking): tree berisi `apps/docs/integrations/hermes.mdx` + logo `hermes.svg`, dan **terverifikasi live**: `hermes plugins info supermemory` → *community, v1.0.1 @ 91405dd0, env SUPERMEMORY_API_KEY* → `hermes plugins install supermemory` satu perintah. Lisensi **per-folder sudah dibaca**: root MIT, `packages/agent-framework-python` MIT, `skills/supermemory` Apache-2.0. ⚠️ layanan cloud (API key) → pertimbangkan pola privasi OpenViking dulu.
+  - 🗣️ **`KittenML/KittenTTS` (17.067⭐, Apache-2.0)** — TTS 4–450 MB di CPU/smartphone, dan **bobot Nano di HF juga apache-2.0** (langka: "the models, voice packs and the bundled G2P files"). TAPI **20 bahasanya TIDAK ada Indonesia** → tidak untuk desa; referensi arsitektur.
+  - 🔥 **`k2-fsa/OmniVoice` (16.779⭐, Apache-2.0)** — zero-shot TTS **600+ bahasa** dari maintainer sherpa-onnx; **Indonesia RESMI di `docs/languages.md` (6.327 jam data, plus Melayu Ambon/Jambi/Papuan)** → **kandidat suara Indonesia kedua** setelah piper `id_ID` yang lisensinya kabur. Status **UJI DULU**: lisensi bobot belum dicek, model berat untuk VPS 1,9 GB.
+  - 🚫 **`supertonic` (13.756⭐) ARCHIVED** — org-nya literally `...-archive`, push 9 Sep. Koreksi terhadap temuan lama: jangan disarankan.
+- **Pelajaran:** (a) ⭐ **Query TTS tajam versi baru**: `tts+in:name,description+stars:>1000+pushed:>2026-06-01` langsung memunculkan 4 kandidat besar (GPT-SoVITS, VoxCPM, fish-speech, chatterbox) — filter `pushed` 2026 penting supaya yang muncul jagoan 2026, bukan legacy. (b) ⭐ **Verifikasi "integrasi Hermes" tiga lapis**: grep tree (`apps/docs/integrations/hermes`) → `hermes plugins info <nama>` (Pinned SHA) → cek lisensi FOLDER plugin terpisah dari root. README yang hampir tak menyebut Hermes tetap bisa punya integrasi resmi (pola OpenViking #15 berulang di supermemory).
+
+---
+
 ## 2026-11-21 — 📡 NewsWatch (17 item portal 17–20 Nov · **Lomba Website Desa diperpanjang lagi → 23 Nov** · **aturan tarif kurir online** · **WAF 200 palsu**)
 
 - **Dikerjakan:** rutin harian. Probe portal **10727–10790 = 404** (belum ada item 21 Nov pagi), rentang **10710–10726 = 17 item** (17 Nov: 3 · 18 Nov: 3 · 19 Nov: 5 · 20 Nov: 6, semua **Siaran Pers**). Sumber lain via `curl`: `domain.go.id/berita` (8 kartu dibaca semua), `jdih.komdigi.go.id` (produk + Rancangan PUU + Partisipasi Publik), `bssn.go.id/imbauan-keamanan/` (regex semua judul+tanggal), `detik.com/tag/komdigi` & `/tag/pandi`, `layanan.desa.id` + `/login` + `website.desa.id`. Hasil → [[06-Tim-Agent/NewsWatch - Berita Komdigi]] (#163–#170).
