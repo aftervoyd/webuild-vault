@@ -4,7 +4,45 @@
 > Sumber utama: `komdigi.go.id`, `domain.go.id`, `portal.komdigi.go.id`, `jdih.komdigi.go.id` + berita pendukung.
 > Format entri: **tanggal** → **apa yang berubah** → **dampak ke Webuild** → **status verifikasi**.
 
-**Update terakhir: 2026-11-21** (run harian · cakupan **17–20 Nov 2026** · **17 item portal**)
+**Update terakhir: 2026-11-24** (run harian · cakupan **16–23 Nov 2026** · **24 item portal**, 21 di antaranya BARU di run ini)
+
+---
+
+## 🆕 Update 2026-11-24 (run harian — cakupan 16–23 Nov 2026)
+
+> Cek sumber **24 Nov 2026 ±07:00 WIB** (semua jalur **`curl`** + `web_search`). **Portal: probe 10707–10794 (88 id) dengan UA browser + jeda → hidup 10707–10730 = 24 item** (semua **Siaran Pers**), **10731+ = 404**. Run 21 Nov hanya mencatat s/d 10726 → **10727–10730 menyusul** (konsisten pola backfill 1–2 hari). Rincian: **16 Nov: 3 item (10707–10709)** · **17 Nov: 3 (10710–10712)** · **18 Nov: 3 (10713–10715)** · **19 Nov: 5 (10716–10717, 10720–10721, 10724)** · **20 Nov: 5 (10718–10719, 10722–10723, 10725–10726)** · **22 Nov: 2 (10728–10729)** · **23 Nov: 2 (10727, 10730)**. WAF probe berulang: pakai UA Chrome + jeda, cek panjang badan >5.000 char. `domain.go.id/berita` → **tanpa artikel baru** (teratas tetap `/berita/40`, tayang **16 Nov 12:46** via epoch slug). JDIH `produk_hukum/kategori` **200 / 98 KB** → produk teratas **tetap Kepmen 336/2026 (unggah 23 Okt) = 32 hari tanpa produk baru** (⚠️ backlog unggah); **Rancangan PUU tetap 32** (top-3 sama); **Partisipasi Publik BALIK 19 → 21** — **top-2 GANTI**: #1 *Konsultasi Publik Hasil A&E Permen Komdigi 7/2026 (Registrasi Pelanggan Seluler)*, #2 *Konsultasi Publik Hasil A&E Permen 8/2025 (Layanan Pos Komersial)*. BSSN → **tidak ada advisory baru** (teratas tetap Microsoft 365 Outage **13 Nov** = 11 hari). Layanan desa **NORMAL hari ke-18**. PDP → **belum ada Perpres** (tetap status "tahap final" 4 Nov).
+
+### 171. 📅🚨 **Run 23 Nov pagi (cron tidak berjalan) → run ini menutup 3 hari sekaligus; pendaftaran Lomba Website Desa 2027 RESMI DITUTUP 23 Nov 12.00 (tidak diperpanjang ke-4) — tahap penilaian kab/kota 23–27 Nov sedang berjalan** — *dampak: SEDANG (pintu pendaftaran tertutup; jendela berikutnya = penilaian & penghargaan 15 Jan 2027)* — pencarian 24 Nov: tidak ada artikel perpanjangan baru (hasil teratas tetap ANTARA 5864503 perpanjangan ke-23 Nov)
+
+- **Apa yang berubah:** tenggat **23 Nov 12.00** lewat **tanpa pengumuman perpanjangan baru** (cek `web_search` "perpanjang" 24 Nov → nol hasil segar). **Angka partisipasi terakhir yang tersedia: 728 desa / 75.266 (≈0,97%), 210 kab + 23 kota** (19 Nov, ANTARA 5864751). Rangkaian lanjutan: penilaian kab/kota **23–27 Nov** → provinsi **30 Nov–4 Des** → wawancara **7–11 Des** → verifikasi lapangan **14–23 Des** → **penghargaan 15 Jan 2027 (Puncak Hari Desa, Mojokerto)**.
+- **⚠️ Status verifikasi:** ✅ "tidak ada perpanjangan lagi" = *negative evidence* dari 2 query pencarian (bukan rilis resmi) → tulis hati-hati; angka 728 desa ✅ ANTARA.
+- **➡️ Dampak ke Webuild:** *(a)* **Fokus bergeser dari "daftar" ke "menang":** desa yang kami dampingi kini masuk fase penilaian kab/kota → tawarkan **paket penilaian** (audit kecepatan situs, kelengkapan profil/layanan/publikasi, kesiapan wawancara). *(b)* **Desa yang TIDAK ikut (≈74 ribu) tetap pasar utama** — kalau ada kandidat kepala desa/tokoh desa yang tertarik, argumen: "desa Anda belum masuk 728 peserta; siapkan sekarang untuk siklus berikutnya". *(c)* **Cek pengumuman lolos tahap kab/kota awal Des** — pengumuman biasanya hanya di situs DPMD/kanal Kemendesa, bukan portal Komdigi.
+
+### 172. 📦⚖️ **Konsultasi publik RPM Tata Naskah Dinas + RPM Klasifikasi Arsip & Jadwal Retensi Arsip Komdigi (konsultasi DIBUKA, rilis Senin 23 Nov)** — *dampak: RENDAH-SEDANG (retensi arsip = bahasa sama dengan kewajiban retensi PP 33/2026)* — portal **10727** (Siaran Pers, **Senin 23 Nov 2026 – 10:00**); tautan uji publik: `s.komdigi.go.id/ujipublikarsip`
+
+- **Apa yang berubah:** Komdigi membuka **konsultasi publik 2 RPM** (tata naskah dinas internal + klasifikasi arsip/jadwal retensi/keamanan & akses arsip dinamis), tindak lanjut Permen OTK 1/2025. ⚠️ **Rilis tidak mencantumkan periode konsultasi di badan teks** (hanya "tautan berikut") → tandai perlu verifikasi batas waktunya. ⚠️ **Ini aturan INTERNAL kementerian** — dampak langsung ke bisnis kecil; nilainya: istilah **"klasifikasi, retensi, prosedur pemusnahan"** resmi lagi dipakai → konsisten dengan kewajiban retensi data pribadi **PP 33/2026** (berlaku **16 Jan 2027**).
+- **➡️ Dampak ke Webuild:** satu paragraf "kebijakan retensi konten & data" di proposal situs desa (contoh: berita desa disimpan ≥5 tahun, formulir warga dihapus setelah proses selesai) makin punya dasar bahasa resmi.
+
+### 173. 🛰️🗳️ **Indonesia kembali terpilih ke Dewan ITU Region E (2027–2030)** — *dampak: RENDAH (konteks geopolitik digital)* — portal **10710** (17 Nov – 09:30)
+
+- **Apa yang ada:** Indonesia terpilih lagi di Dewan ITU; agenda yang disebut Menkomdigi: pemerataan konektivitas, spektrum, satelit, standardisasi. Tidak ada kebijakan baru untuk sektor website; **nilai gunanya = narasi kredibilitas** ("Indonesia ikut menentukan standar telekomunikasi dunia") di proposal.
+- **⚠️ Status:** ✅ siaran pers portal.
+
+### 174. 💸📊 **600.000 pengaduan penipuan digital, kerugian ±Rp9,3 triliun (Wamen Nezar, 16 Nov)** — *dampak: SEDANG (bahan pitch keamanan & literasi)* — portal **10709** (16 Nov – 21:15)
+
+- **Apa yang ada:** Wamen Nezar Patria: pemerintah menerima ±**600.000 pengaduan** penipuan digital, kerugian masyarakat ±**Rp9,3 triliun**; edukasi keamanan siber disebut kebutuhan mendesak.
+- **⚠️ Status verifikasi:** ✅ siaran pers portal; ⚠️ **periode akumulasi angka tidak dijelaskan di badan rilis** (kemungkinan agregat multi-tahun) → **jangan kutip sebagai "kerugian 2026"** tanpa sumber kedua.
+- **➡️ Dampak ke Webuild:** angka besar untuk 1 slide "kenapa situs desa perlu halaman peringatan penipuan + kontak resmi pemdes" (mencegah penipuan atas nama desa) — murah, kredibel, dan desa suka topiknya.
+
+### 175. 📰ℹ️ **Cek rutin 24 Nov — "tidak berubah" dari jalur non-portal:** JDIH 32 hari tanpa produk baru · Partisipasi Publik 19→21 (2 konsultasi A&E baru: Registrasi Pelanggan Permen 7/2026, Layanan Pos 8/2025) · Rancangan PUU 32 · BSSN bersih 11 hari · layanan desa normal hari-18 · domain.go.id teratas 16 Nov · PANDI tanpa berita baru · PDP belum ada Perpres
+
+- **JDIH:** produk teratas tetap **Kepmen 336/2026 (unggah 23 Okt)** = **32 hari**. ⚠️ **Backlog unggah makin nyata**: **Permen 12/2026 (Manajemen Aset TIK & Layanan SPBE, ditetapkan 7 Agu 2026)** ternyata SUDAH ADA di JDIH detail (`produk_hukum/view/id/1019`) tetapi TIDAK muncul di halaman kategori produk terbaru → daftar kategori tidak representatif; verifikasi aturan baru langsung lewat pencarian/peraturan.bpk.go.id bila perlu.
+- **Partisipasi Publik (19→21):** dua item baru adalah **Konsultasi Publik Hasil A&E** (bukan rancangan baru): *Permen 7/2026 Registrasi Pelanggan Jasa Telekomunikasi Seluler* & *Permen 8/2025 Layanan Pos Komersial* → tanda **penyelarasan aturan lama** yang sedang berjalan.
+- **Layanan desa:** `layanan.desa.id/` 200 (meta-refresh) · `/login` 200 (16,6 KB, form) · `website.desa.id` 200 → **normal hari ke-18** sejak pulih ±6–7 Nov.
+- **PDP:** hasil pencarian tetap artikel "RPerpres tahap final/di meja Presiden" (4 Nov) — **belum ada Perpres terbit**. Tetap tulis "menunggu Kepres", bukan "badan PDP terbentuk".
+
+### 🗒️ Ringkasan 1 baris buat Orchestrator (24 Nov 2026)
+> **24 Nov 2026 — cakupan 16–23 Nov (run menutup 3 hari, 24 item portal / 21 baru):** 🚨 **(171) Lomba Website Desa 2027 ditutup 23 Nov 12.00 TANPA perpanjangan ke-4** (728 desa / 0,97% ikut) → **geser jualan ke "paket penilaian & kesiapan lomba"** (penilaian kab/kota 23–27 Nov, penghargaan 15 Jan 2027 Mojokerto) dan pasarkan ke ±74 ribu desa non-peserta. **(172) Konsultasi publik 2 RPM arsip Komdigi dibuka** (23 Nov; uji publik `s.komdigi.go.id/ujipublikarsip`; periode tak dicantumkan ⚠️) → perkuat bahasa retensi data di proposal (selaras PP 33/2026, berlaku 16 Jan 2027). **(174) Penipuan digital: 600 ribu pengaduan, Rp9,3 T** (periode tak jelas ⚠️) → bahan halaman "peringatan penipuan atas nama desa". **(173) Indonesia di Dewan ITU 2027–2030** (narasi saja). **Rutin:** JDIH **32 hari tanpa produk baru** + temuan **Permen 12/2026 (ditetapkan 7 Agu) ada di JDIH tapi tidak muncul di listing kategori** → listing kategori tidak representatif; **Partisipasi Publik 19→21** (2 konsultasi A&E: registrasi pelanggan seluler & pos), Rancangan PUU 32, BSSN bersih 11 hari, layanan desa normal hari-18, domain.go.id tanpa artikel baru, **PDP belum ada Perpres**. ⚙️ **Pelajaran teknis: probe portal wajib rentang lebar (88 id) — run 21 Nov kelaparan 4 item (10727–10730) yang baru hidup setelah 21 Nov; dan id 10731+ baru 404 setelah 3 hari.**
 
 ---
 

@@ -5,6 +5,12 @@
 
 ---
 
+## 2026-11-24 — 📡 NewsWatch
+- **Dikerjakan:** run harian menutup 3 hari (16–23 Nov) — 24 item portal Komdigi (10707–10730, semua Siaran Pers; 21 baru). Temuan kunci: **Lomba Website Desa 2027 ditutup 23 Nov 12.00 tanpa perpanjangan ke-4** (728 desa/0,97% ikut) → geser jualan ke paket penilaian/kesiapan lomba; konsultasi publik 2 RPM arsip Komdigi dibuka (23 Nov); penipuan digital 600 ribu pengaduan / Rp9,3 T (periode tak jelas). Detail lengkap → [[NewsWatch - Berita Komdigi]] #171–#175.
+- **Pelajaran:** (1) run 21 Nov kelaparan 4 item (10727–10730) yang baru hidup setelah 21 Nov → probe portal wajib rentang lebar (≥80 id) dan cron yang bolong = tutup 3 hari sekaligus. (2) **JDIH listing kategori TIDAK representatif:** Permen 12/2026 (ditetapkan 7 Agu 2026) ada di JDIH (view id 1019) tapi tak muncul di halaman "kategori" → untuk verifikasi aturan baru, jangan hanya percaya halaman kategori; cek peraturan.bpk.go.id/pencarian.
+
+---
+
 ## 2026-10-07 — 🎛️ Orchestrator (pendirian sistem)
 - **Dibangun:** struktur vault (08 folder), visi Webuild, Team Registry (5 divisi/13 agent), 4 proyek
 - **Dihidupkan:** 2 Bot (`reposcout`, `newswatch`) dengan SOUL sendiri + Papan Kanban + journal ini
