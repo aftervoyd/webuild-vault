@@ -1,3 +1,44 @@
+# 📡 NewsWatch — Berita & Regulasi Komdigi (Webuild)
+
+> Terakhir diperbarui: **Rabu 25 Nov 2026 (CST)** oleh cron NewsWatch.
+
+## Ringkasan Terbaru (25 Nov 2026)
+
+### 1) Portal Komdigi: 5 item baru (24 Nov, id 10731–10735)
+- **10731** (Berita Komdigi, 24 Nov 16:20): Targetkan pemimpin pemerintahan kuasai **7 kompetensi digital** (relevansi: pelatihan Pemda = kanal jual SPBE ⚠️ detail perlu verifikasi).
+- **10732** (SP, 24 Nov 17:30): **Meutya Hafid minta Pemda terjemahkan PP TUNAS ke kebijakan lokal** → mandek ke Pemda bukan sekadar pusat. **Dampak Webuild:** saat menawarkan situs ke Pemda/desa, kancah regulasi pelindungan anak/UGC makin lokal.
+- **10733** (SP, 24 Nov 17:25): Menkomdigi ajak **Belanda** satukan langkah lindungi anak dari risiko AI (kerja sama bilateral; cerita seremonial).
+- **10734** (SP, 24 Nov 19:30): Dukung Polri ungkap **141 tersangka online scamming Manila** → narasi "peringatan penipuan digital" di situs desa makin relevan.
+- **10735** (SP No. 276, 24 Nov 19:00): Wamen Nezar — *"Masa depan media ditentukan loyalitas, bukan jumlah klik"* (tema AI + media; penegasan, bukan kebijakan baru).
+
+### 2) Permen tarif ojol antar barang/makanan — masih FINALISASI
+CNBC 24 Nov 14:05 + detik 23 Nov 21:30 + ANTARA 5868367 (20 Nov): Meutya temui FDTOI 20 Nov; **masih dirumuskan, belum ada Permen**. Komponen yang dikaji: dimensi/berat/nilai barang, handling, waktu tunggu, parkir; dilarang pakai formula penumpang; selaras Kemenhub & KemenUMKM. **Dampak Webuild:** untuk fitur kurir lokal di produk desa/UMKM, struktur biaya sudah selaras komponen ini supaya tak perlu rombak saat terbit. *(Regulasi baru: tidak — status "masih dikaji".)*
+
+### 3) Google × Komdigi: penutupan 19.389 kanal YouTube pro-pemerintah
+Pertemuan Komdigi–Google 20 Nov (detik 20 Nov 14:07; Kompas; CNBC; katadata) — Komdigi minta penjelasan dasar penutupan kanal berbahasa Indonesia. **Dampak langsung ke Webuild: tidak ada** (isu moderasi konten/penguasaan digital), tapi masuk konteks "kedaulatan informasi" yang digaungkan.
+
+### 4) JDIH: masih 25+ hari tanpa produk baru
+`produk_hukum/kategori` via **curl OK** (98 KB): teratas tetap **Kepmen 336/2026 (23 Okt)**. Rancangan PUU tetap **32**, Partisipasi Publik kembali **21** (top berubah ke A&E Permen 7/2015 telekomunikasi — bukan produk baru). → Kemungkinan **backlog unggah JDIH**, bukan berarti tidak ada Permen.
+
+### 5) Layanan desa: PULIH (status lanjutan)
+`layanan.desa.id/login` **200** (form login), `website.desa.id` **302 → login** (dulu 503) — pulih sejak 6–7 Nov, tidak ada kejadian baru.
+
+### 6) Domain: tidak ada item baru
+`domain.go.id/berita` teratas tetap "Penguatan Registrar dan DNS…" (10 Nov). detik/tag/pandi juga tak ada item Nov baru (terakhir 1 Nov).
+
+### 7) Lomba Website Desa 2027
+Penilaian tahap kab/kota sedang berjalan (23–27 Nov). Tidak ada pengumuman lolos yang terverifikasi hari ini — pantau DPMD kabupaten.
+
+---
+## Catatan cakupan
+- Portal: probe 10715–10760 → hidup 10731–10735, semua bertanggal 24 Nov; 10736+ 404.
+- Media: detik/tag/komdigi ✅, web_search (Katadata/CNBC/ANTARA/Kompas).
+- BSSN advisory: tidak dijalankan penuh run ini (perlu verifikasi ⚠️ tidak ada advisory baru yang ditemukan via search).
+
+
+
+---
+
 # 📡 NewsWatch — Berita & Regulasi Komdigi
 
 > Dipantau **NewsWatch** (divisi **Riset**). Fokus: **apa yang berubah** + **dampaknya ke Webuild**.
