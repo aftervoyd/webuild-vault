@@ -120,6 +120,8 @@
 | **UX/UI Agent Skills (XIAS)** | github.com/plugin87/ux-ui-agent-skills | Kit "senior design architect": DTCG tokens, **138 design system**, 52 gate objektif, WCAG 2.2 AA→AAA, 16 adapter framework | Markdown + HTML statis | MIT ✅ | 1.560 | DesignerBot + WebBuilder | ✅ PAKAI — rujukan gate kualitas & aksesibilitas |
 | **Figma MCP Bridge** | github.com/gethopp/figma-mcp-bridge | Plugin Figma + **MCP server** → streaming data dokumen Figma ke agen **tanpa kena limit API Figma** (free cuma 6 request/BULAN) | TypeScript / MCP / `npx` | MIT ✅ (file `LICENSE.md`) | 725 | DesignerBot + OpsAgent | ✅ PAKAI — jembatan Figma→agent; butuh **Figma desktop app** (user Windows ✅) |
 
+|| **tweakcn** | github.com/jnsahaj/tweakcn | Editor tema shadcn/ui **visual tanpa koding**: Tailwind 4 + CSS vars, preset, copy-paste theme code | Next.js / TS / Tailwind 4 | Apache-2.0 ✅ (`LICENSE`) | 10.569 (subs 16) | DesignerBot | ⚠️ **BEKU — jadikan referensi/alat sekali-pakai**: 0 commit/60d (commit terakhir 3 Sep 2026, tanpa rilis), push_at menipu (Sep 2026), 1 kontributor dominan (648/709). Situs tweakcn.com masih hidup |
+|| **tablecn** | github.com/sadmann7/tablecn *(paket komponennya = `sadmann7/diceui` — Dice UI)* | Komponen **data-table/grid** siap-tempel shadcn: sorting, filter "Notion/Airtable-like", pagination server-side, virtual scroll | React / TS / TanStack Table / shadcn | MIT ✅ (`LICENSE.md`) | 6.391 (repo) · diceui 2.122⭐ (subs 6 → uji dulu) | WebBuilder | ✅ PAKAI — **100 commit/60d, push 24 Nov 2026**, satu-satunya di kelas ini yang hidup; komponen di-copy ke project, tapi diceui repo 75 MB → jangan full clone |
 ### 🔎 Cadangan & referensi desain
 
 | Repo | ⭐ | Catatan |
