@@ -1,8 +1,49 @@
 # 📡 NewsWatch — Berita & Regulasi Komdigi (Webuild)
 
-> Terakhir diperbarui: **Rabu 25 Nov 2026 (CST)** oleh cron NewsWatch.
+> Terakhir diperbarui: **Kamis 26 Nov 2026 (CST)** oleh cron NewsWatch.
 
-## Ringkasan Terbaru (25 Nov 2026)
+## Ringkasan Terbaru (26 Nov 2026)
+
+### 1) Portal Komdigi: 4 item baru (25 Nov, id 10736–10739)
+Probe 10730–10745 → hidup s/d 10739; **10740+ 404**. (10731–10735 sudah tercatat run 25 Nov — konsisten pola backfill.)
+- **10736** (SP, Rabu 25 Nov 07:00): **Komdigi tangani 67.578 konten penipuan digital** sejak Okt 2024 s/d 19 Nov 2026 — dikaitkan pengungkapan jaringan scam Manila (141 tersangka). **Dampak Webuild:** amunisi narasi "halaman peringatan penipuan atas nama desa" makin kuat (angka resmi + kanal pengaduan).
+- **10737** (Berita Komdigi, Selasa 24 Nov 23:00): **18 kab/kota peserta Digital Leadership Academy (DLA) 2026** susun rencana aksi transformasi digital via Klinik Pemerintah Digital. **Dampak Webuild:** sinyal pasar B2G — 18 pemda punya agenda transformasi digital resmi; kanal masuk lewat Diskominfo kab/kota.
+- **10738** (SP, Rabu 25 Nov 12:45): Wamen Angga Raka Prabowo — integritas aparatur & tata kelola kunci pembangunan digital tepat sasaran (seremonial/penegasan).
+- **10739** (SP, Rabu 25 Nov 18:15): Menkomdigi Meutya Hafid di puncak **AJK 2026** (469 karya, 361 jurnalis) — "jurnalis harus suarakan masyarakat yang jarang didengar" (seremonial; padanan: ANTARA 5878103 ✅).
+
+### 2) Media: registrasi SIM biometrik (penegasan program lama)
+detikInet 25 Nov 20:00: **41,49 juta pelanggan seluler sudah daftar biometrik** — kelanjutan program registrasi SIM Card (bukan kebijakan baru). Tidak ada dampak langsung ke Webuild.
+
+### 3) Domain & PANDI: tidak ada item baru
+`domain.go.id/berita` → 8 kartu terbaca, teratas tetap **/berita/40 (10 Nov)**. Tidak ada kartu baru sejak run sebelumnya.
+
+### 4) JDIH: 34 hari tanpa produk baru
+`produk_hukum/kategori` via curl **OK (98 KB, 15× "Diunggah pada")** → teratas tetap **Kepmen 336/2026 (23 Okt)** → **Permen 13/2026 (18 Okt)** di bawahnya. → tetap **backlog unggah JDIH**, bukan berarti tidak ada Permen.
+
+### 5) Layanan desa: tetap pulih (lanjutan)
+`layanan.desa.id` **200** (halaman aplikasi "Indeks Page"), `website.desa.id` **200** (login) — hari ke-20 normal, tidak ada kejadian baru.
+
+### 6) BSSN: tidak ada advisory baru
+`bssn.go.id/imbauan-keamanan/` teratas tetap **Microsoft 365 Global Outage (13 Nov)** = 13 hari tanpa advisory baru.
+
+### 7) Lomba Website Desa 2027
+Penilaian tahap kab/kota **23–27 Nov sedang berjalan** (pendaftaran tutup 23 Nov 12.00; 728/75.266 desa). Belum ada pengumuman lolos yang terverifikasi — pantau DPMD kab/kota awal Des.
+
+### PDP: tidak ada perkembangan baru
+Status tetap: RPerpres Badan PDP "tahap final, di meja Presiden" (4 Nov). PP 33/2026 berlaku 16 Jan 2027.
+
+---
+## Catatan cakupan (run 26 Nov)
+- Portal: probe 10730–10745 (UA browser) → hidup 10730–10739; 10740+ 404. Semua item baru bertanggal 24–25 Nov.
+- JDIH curl ✅ (98 KB), detik/tag/komdigi ✅, BSSN ✅, layanan.desa.id ✅, domain.go.id ✅, web_search (AJK 2026 ✅ ANTARA).
+- ✅ Nomor siaran pers: tidak ada nomor baru terbaca di 4 item (seremonial); tanggal + kategori ✅ di badan HTML.
+- Buat Orchestrator: tidak ada temuan kritis hari ini. Item bernilai jual: 67.578 konten penipuan (10736) + 18 kab/kota DLA (10737).
+
+---
+
+# Arsip run sebelumnya
+
+## Ringkasan (25 Nov 2026)
 
 ### 1) Portal Komdigi: 5 item baru (24 Nov, id 10731–10735)
 - **10731** (Berita Komdigi, 24 Nov 16:20): Targetkan pemimpin pemerintahan kuasai **7 kompetensi digital** (relevansi: pelatihan Pemda = kanal jual SPBE ⚠️ detail perlu verifikasi).
