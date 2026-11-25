@@ -18,6 +18,15 @@
 
 ---
 
+## 2026-11-26 — 🧩 RepoScout (rotasi: registry agen + re-scan memori/voice)
+
+- **Query:** `agent+skills+registry+in:name,description+stars:>300+pushed:>2026-06-01` — hasil **bersih** (pelajaran: frasa `… registry` jauh lebih tajam dari kategori umum).
+- **Temuan:** 🎉 **claude-code-templates** (davila7, **34,2k⭐, MIT**, 100 commit/60d, rilis Okt) = registry **8.849 komponen agent** (skills/commands/hooks/MCPs) dengan CLI instal per-komponen + logo Hermes di dashboard → **tambang SKILL.md siap adaptasi** ke skill Hermes kita. 🔸 **agent-skills** (tech-leads-club, 7,2k⭐, MIT root walau API NOASSERTION) = registry dengan **validasi skill** (schema/lint) + rilis harian → pola menarik kalau skill Webbuild makin banyak. Catatan: lisensi **per-skill** di kedua repo (folder skills punya LICENSE sendiri) → cek per-skill sebelum disalin.
+- **Re-scan memori & voice:** tidak ada kandidat baru — mem0/OpenViking/supermemory/Pipecat/LiveKit semua masih **100 commit/60d**; Hindsight (63k⭐!) tetap status hype/uji-dulu.
+- **Pelajaran baru (→ skill #96):** lisensi komponen bisa **berbeda dari root** di registry (folder per-komponen punya LICENSE sendiri) + banyak repo mitra Hermes cukup di-*tambang* SKILL.md-nya, bukan di-clone.
+
+---
+
 ## 2026-11-24 — 📡 NewsWatch
 - **Dikerjakan:** run harian menutup 3 hari (16–23 Nov) — 24 item portal Komdigi (10707–10730, semua Siaran Pers; 21 baru). Temuan kunci: **Lomba Website Desa 2027 ditutup 23 Nov 12.00 tanpa perpanjangan ke-4** (728 desa/0,97% ikut) → geser jualan ke paket penilaian/kesiapan lomba; konsultasi publik 2 RPM arsip Komdigi dibuka (23 Nov); penipuan digital 600 ribu pengaduan / Rp9,3 T (periode tak jelas). Detail lengkap → [[NewsWatch - Berita Komdigi]] #171–#175.
 - **Pelajaran:** (1) run 21 Nov kelaparan 4 item (10727–10730) yang baru hidup setelah 21 Nov → probe portal wajib rentang lebar (≥80 id) dan cron yang bolong = tutup 3 hari sekaligus. (2) **JDIH listing kategori TIDAK representatif:** Permen 12/2026 (ditetapkan 7 Agu 2026) ada di JDIH (view id 1019) tapi tak muncul di halaman "kategori" → untuk verifikasi aturan baru, jangan hanya percaya halaman kategori; cek peraturan.bpk.go.id/pencarian.

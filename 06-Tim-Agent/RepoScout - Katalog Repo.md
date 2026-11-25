@@ -2276,6 +2276,16 @@ tokens/themes/<klien>.json (hanya brand & brand-soft)          ← 2 baris per k
 - **Nama file `.min.js` bukan jaminan** — `chart.umd.min.js` Chart.js 4.6.1 justru 4 byte lebih besar dari versi non-min. Ukur sendiri (`gzip -c file | wc -c`), jangan percaya nama.
 - **Angka bundlephobia bisa beda dari dist nyata** (Chart.js: bundlephobia 68,0 KB gz vs `npm pack` 71,0 KB gz) — beda kecil, tapi untuk janji "halaman <300 KB" pakai **dist yang benar-benar kita `<script>`**.
 
+## 🧩 Agent Skills Registry (riset 26 Nov 2026)
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **claude-code-templates** | github.com/davila7/claude-code-templates | **Registry + CLI komponen agent** (agents, commands, skills, hooks, MCPs, plugins) — 8.849 file komponen di `cli-tool/components/`, instal per-komponen; **ada logo `hermes.svg`** di dashboard (ekosistem agent-agnostic) | Python CLI + katalog Markdown/YAML | ✅ MIT (root terverifikasi) | 34.201 (subs 188) · 100 commit/60d · rilis v1.29.7 (9 Okt) | RepoScout + OpsAgent | ✅ **PELAJARI/SUMBER SKILL** — tambang SKILL.md siap adaptasi ke skill Hermes (pola pelajaran 48); repo 314 MB → jangan clone, ambil via `gh api` per-file |
+| **agent-skills** | github.com/tech-leads-club/agent-skills | **Skill registry tervalidasi** (lint/schema per skill) untuk coding agent; rilis `skills-catalog` harian; ada `.claude-plugin` + `.cursor-plugin` marketplace.json | TypeScript | ✅ MIT (root terverifikasi, walau API `NOASSERTION`) | 7.212 (subs 66) · 68 commit/60d · rilis harian 21 Nov | RepoScout + OpsAgent | 🔸 PELAJARI — pola **validasi skill** (schema/lint) menarik kalau Webbuild punya banyak skill sendiri; lisensi per-skill di `packages/skills-catalog/skills/*/LICENSE.txt` → cek per-skill yang dipakai |
+
+**Catatan rotasi ini:** kelas "agent skill registry" query bersihnya `agent+skills+registry+in:name,description` — hasilnya bersih (beda dari kategori umum). Re-scan kategori memori & voice: **tidak ada kandidat baru** yang mengalahkan yang sudah ada di katalog (mem0, OpenViking, supermemory, Pipecat, LiveKit) — semuanya masih 100 commit/60d.
+
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
