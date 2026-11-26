@@ -1,6 +1,42 @@
 # 📡 NewsWatch — Berita & Regulasi Komdigi (Webuild)
 
-> Terakhir diperbarui: **Kamis 26 Nov 2026 (CST)** oleh cron NewsWatch.
+> Terakhir diperbarui: **Jumat 27 Nov 2026 (CST)** oleh cron NewsWatch.
+
+## Ringkasan Terbaru (27 Nov 2026 — mencakup 24–26 Nov, id 10740–10748)
+
+### 1) Portal Komdigi: 9 item baru (id 10740–10748, tanggal 24–26 Nov)
+Probe 10736–10750 (UA browser, jeda 4 dtk) → **hidup s/d 10748; 10749+ 404**. (10736–10739 sudah tercatat run 26 Nov.) Perlu diperhatikan: **10740 & 10741 sudah hidup hari ini** padahal bertanggal 26 Nov pagi — pola "id menyusul" tetap wajib probe ulang tiap run.
+- **10740** (SP, Kamis 26 Nov 11:30): Wamen Nezar Patria di **Bisnis Indonesia Forum** (25/11) — perluasan **fixed broadband** untuk menekan beban belanja internet keluarga (satu akun dibagi rumah tangga); penetrasi fixed broadband masih **±21%**, target **mendekati 50%**. **Dampak Webuild:** angka baru (21% → target ~50%) memperkuat narasi "fixed broadband terjangkau → situs desa harus terbuka cepat di koneksi terbatas"; lanjutan target 100 Mbps (angka sebelumnya portal 10666).
+- **10741** (SP, Kamis 26 Nov 11:00): Wamen Nezar — **energi terbarukan** sebagai fondasi infrastruktur AI (seremonial/forum; tidak ada kebijakan baru).
+- **10742** (Berita Komdigi, 26 Nov 12:30): **Audit kepatuhan ISP + penertiban reseller ilegal** — Dir. Dany Suwardany di peluncuran **SALAM T3** (Surabaya, 24/11): temuan reseller hanya melaporkan **±15% pelanggan sebenarnya** ke ISP; jual-beli bandwidth mandiri, produk tanpa persetujuan ISP, pelaporan tidak transparan. ✅ padanan detikInet ("Komdigi Bakal Rombak Peta Industri Internet").
+- **10743** (SP, 26 Nov 12:00): Dirjen Edwin — **tiga langkah penataan industri ISP**: transparansi/konsolidasi data industri, persaingan adil, efisiensi infrastruktur; betonkan bukan demi PNBP. **Dampak Webuild:** kajian **pembaruan regulasi ISP** disebut → potensi Permen baru (pantau JDIH/konsultasi publik); relasi reseller-ISP transparan = relevan bila Webuild nanti butuh koneksi lokal desa.
+- **10744** (SP, 26 Nov 17:00): Menkomdigi minta **Dewan Pengawas baru RRI** kawal transformasi digital (seremonial).
+- **10745** (Berita Pemerintahan, 26 Nov 16:35): rilis **Polri** — Presiden tegaskan 3 prioritas kejahatan: narkoba, penyelundupan, **judi online** (disingkirkan dari hitungan Komdigi).
+- **10746** (SP, 26 Nov 18:15): **SPPT-TI** satukan data penanganan perkara lintas lembaga (transparansi) — konsisten arah interoperabilitas/UU Satu Data; tanpa detail teknis.
+- **10747** (SP, 26 Nov 19:45): Sekjen Ismail di Rocket100 Summit (25/11) — investasi digital harus menghasilkan **nilai ekonomi** (framing, bukan kebijakan baru).
+- **10748** (SP, 26 Nov 19:30): Sekjen Ismail — **Kedaulatan AI**: Kemkomdigi ajak pemangku kepentingan **petakan kesenjangan kapabilitas** hulu–hilir (infrastruktur, konektivitas, pemodelan, data, aplikasi). Penegasan arah; belum ada program/aturan konkret.
+
+### 2) Domain & PANDI: tidak ada item baru
+`domain.go.id/berita` → 8 kartu; teratas tetap **/berita/40** (artikel 10 Nov, tayang ~16 Nov, epoch 1794808015). Tidak ada kartu baru.
+
+### 3) JDIH: 35 hari tanpa produk baru (curl OK lagi)
+`produk_hukum/kategori` **200 / 98 KB** → teratas tetap **Kepmen 336/2026 (23 Okt)** → Permen 13/2026 (18 Okt). **Rancangan PUU tetap 32**, **Partisipasi Publik tetap 21** (top-1 A&E Permen 7/2015 telekomunikasi). Tetap angkat sebagai **backlog unggah JDIH**, bukan "tidak ada Permen".
+
+### 4) Layanan desa: tetap pulih (hari ke-21 normal)
+`layanan.desa.id` 200 (halaman aplikasi), `website.desa.id` 200 (login), `website-desa.layanan.go.id/home` 200 — tidak ada teks penonaktifan.
+
+### 5) BSSN: tidak ada advisory baru
+Halaman Imbauan Keamanan teratas tetap **Microsoft 365 Global Outage (13 Nov)** = 14 hari tanpa dokumen baru; NodeJS (24 Okt) di bawahnya.
+
+### 6) PDP, Lomba Website Desa 2027, tariff ojol
+- PDP: tetap **RPerpres Badan PDP di meja Presiden** (media: telko.id/telset/ANTARA 4–9 Nov) — **belum terbentuk**. Tidak ada perkembangan baru 26–27 Nov.
+- Lomba Website Desa 2027: **penilaian kab/kota 23–27 Nov sedang berjalan** (728/75.266 desa, ±0,97%); belum ada pengumuman lolos terverifikasi. Pantau DPMD awal Des.
+- Tarif ojol antar barang/makanan (Perpres 27/2026): media masih finalisasi komponen (dimensi/berat/nilai/handling/parkir) — **belum ada Permen**; jangan klaim aturan terbit.
+
+### 7) Media pendukung (detik tag, 20–26 Nov)
+Judul yang cocok item portal di atas: rombak industri ISP/penertiban reseller, internet lebih terjangkau, 67.578 konten penipuan, 141 WNI scam Manila, Pemda terjemahkan PP TUNAS, SIM biometrik 41,49 juta (penegasan lama), tarif antar barang/makanan. **Tidak ada kejadian media yang belum terwakili item portal.**
+
+**Buat Orchestrator:** tidak ada item kritis hari ini. Sinyal pasar terkuat minggu ini: (1) rombak regulasi ISP (10742/10743) → pantau potensi Permen ISP baru; (2) Lomba Website Desa tahap penilaian berjalan → siapkan "paket penilaian & kesiapan lomba" untuk ±74 ribu desa non-peserta lewat DPMD.
 
 ## Ringkasan Terbaru (26 Nov 2026)
 

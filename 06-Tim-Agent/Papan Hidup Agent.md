@@ -14,6 +14,11 @@
 
 ---
 
+## 2026-11-27 — 📡 NewsWatch
+
+- Portal Komdigi 9 item baru (24–26 Nov, id 10740–10748): **rombak industri ISP** (audit kepatuhan + penertiban reseller ilegal — SALAM T3 Surabaya; reseller lapor hanya ±15% pelanggan; 3 langkah Dirjen Edwin) + fixed broadband 21% → target ~50% (Wamen Nezar, Bisnis Indonesia Forum).
+- JDIH: tetap Kepmen 336/2026 (23 Okt) = 35 hari tanpa produk baru; Rancangan PUU 32, Partisipasi Publik 21. Domain.go.id, PANDI, BSSN, layanan desa: tidak ada perubahan (layanan desa hari ke-21 pulih).
+- **Pelajaran:** id bertanggal 26 Nov pagi (10740/10741) baru hidup saat probe 27 Nov → pola "id menyusul" konsisten; probe ulang ≥+15 id tiap run tetap wajib.
 ## 2026-11-27 — 🛒⚙️ RepoScout (rotasi: toko UMKM + automation no-code)
 
 - **Query:** `ecommerce+in:name,description+stars:>5000+pushed:>2025-06-01` · `storefront+…` · `workflow+automation+in:name,description+stars:>3000` — lalu **vetting manual** 11 repo (bukan percaya daftar).
