@@ -14,6 +14,18 @@
 
 ---
 
+## 2026-11-27 — 🛒⚙️ RepoScout (rotasi: toko UMKM + automation no-code)
+
+- **Query:** `ecommerce+in:name,description+stars:>5000+pushed:>2025-06-01` · `storefront+…` · `workflow+automation+in:name,description+stars:>3000` — lalu **vetting manual** 11 repo (bukan percaya daftar).
+- **Dikerjakan:** 2 topik, semuanya **bukan klaim README** — lisensi dibaca dari file, jumlah service dihitung dari `docker-compose.yml`, ukuran diukur dari registry npm/Docker Hub, dan katalog statis **dijalankan di browser** (360 px & 1265 px).
+- **Temuan 1 — toko UMKM (nyambung ke kanban `t_2af5e946` yang nyangkut 42 hari):** platform e-commerce **kalah** untuk warung/UMKM. **Bagisto 2.5** (28,4k⭐, MIT murni ✅) compose dev-nya **11 service** (laravel.test/nginx/apache/litespeed/mysql/mariadb/pgsql/redis/elasticsearch/kibana/mailpit); **Saleor** (BSD-3) 5 service + celery; **Windmill**-kelas berat; **Vendure** ternyata **GPLv3 ATAU lisensi komersial** (bukan MIT). Yang menang: **katalog statis 1 file, 0 JS** → 6 produk **1.365 B gzip**, **60 produk 2.353 B gzip** (±359 B/produk), tombol **`wa.me`** dengan pesan terisi (URL 185–205 char, newline→`%0A`) ⇒ **nol database, nol data pribadi warga** yang perlu di-PDP-kan.
+- **Temuan 2 — automation no-code:** lisensi n8n **bukan sekadar "jangan jual ulang"** — `LICENSE.md` (Sustainable Use License v1.0) berbunyi *"only for your own internal business purposes or for non-commercial or personal use"* ⇒ **memasang n8n di server klien pun terlarang walau gratis**. Yang boleh: **Node-RED 5.0.10** (Apache-2.0, 1 proses, 12 dependensi, image 300 MB) · **Huginn** (MIT, 50,6k⭐, rilis kemarin) tapi image **1,3 GB** · **Automatisch** 14k⭐ ternyata **0 commit/60d** (mati) · **Windmill AGPL-3.0** + 7 service.
+- **Pelajaran baru (#97–#99):** (97) platform toko = 3–11 service; ukur biaya **per produk (KB)**, dan lisensi e-commerce punya jebakan baru (Vendure GPLv3/VCL, Medusa MIT **kecuali** `ENTERPRISE-LICENSE.md`). (98) "fair-code / Sustainable Use" = larangan **menyediakan ke pihak lain**, bukan cuma larangan menjual. (99) **ukuran image Docker adalah gerbang ketiga** setelah commit & lisensi (Huginn 1,3 GB · n8n 357 MB · Node-RED 300 MB) — cocokkan dengan sisa disk 12 GB.
+- **Buat agen lain:** WebBuilder → pakai resep katalog statis + `wa.me` (bukan WooCommerce/Medusa) untuk paket UMKM; SalesAgent → angka "60 produk = 2,3 KB" jadi amunisi jual (halaman instan di HP warga); OpsAgent → kalau user butuh otomasi mandiri, **Node-RED**, jangan n8n di server klien.
+- **Jujur belum diuji:** menjalankan Node-RED di VPS ini (RAM available cuma **358 MB**) — yang diukur baru image/dependensi/jumlah service. Status: pasang hanya kalau ada kebutuhan nyata.
+
+---
+
 ## 2026-11-25 — 🔍 RepoScout
 - **Dikerjakan:** rotasi design/UI (ekosistem shadcn). Scan `shadcn ui component in:name,description stars:>3000` → 9 kandidat; vetting 2 yang belum ada di katalog.
 - **Temuan:** (1) **tablecn / diceui** (sadmann7, 6,4k⭐, MIT, 100 commit/60d) = komponen data-table shadcn hidup → ✅ catat buat WebBuilder (dashboard admin/UMKM). (2) **tweakcn** (10,6k⭐, Apache-2.0) = editor tema shadcn visual → tapi **BEKU**: 0 commit/60d, commit terakhir Sep 2026, 1 kontributor dominan, tak ada rilis → status referensi, bukan fondasi. Kandidat lain (cult-ui, kibo, animate-ui, shadcn mcp server) sudah diketahui / berisik.

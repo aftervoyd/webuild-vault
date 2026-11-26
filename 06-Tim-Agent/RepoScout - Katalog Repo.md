@@ -2286,6 +2286,59 @@ tokens/themes/<klien>.json (hanya brand & brand-soft)          ← 2 baris per k
 **Catatan rotasi ini:** kelas "agent skill registry" query bersihnya `agent+skills+registry+in:name,description` — hasilnya bersih (beda dari kategori umum). Re-scan kategori memori & voice: **tidak ada kandidat baru** yang mengalahkan yang sudah ada di katalog (mem0, OpenViking, supermemory, Pipecat, LiveKit) — semuanya masih 100 commit/60d.
 
 
+## 🛒 WebBuilder / SalesAgent — TOKO UMKM: katalog statis **2,3 KB** vs platform e-commerce **3–11 service** (riset 2026-11-27)
+
+> Pemicu: tugas kanban `t_2af5e946` ("segmen toko UMKM") nyangkut 42 hari. Naluri normal: pasang platform e-commerce open source (Bagisto/Medusa/Saleor). Hari ini **diukur di VPS ini** — dan untuk warung/UMKM desa, platform kalah telak dari **satu halaman statis + link WhatsApp**.
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ / aktivitas | Berat (diukur) | Pemilik | Status |
+|---|---|---|---|---|---|---|---|---|
+| **Katalog statis + `wa.me`** (milik kita) | `/root/repos/uji-katalog/` (uji) | Grid produk + tombol "Pesan via WA" yang sudah terisi nama+harga | HTML 1 file, **0 JS** | milik kita | — | 6 produk = **3.944 B / 1.365 B gzip**; **60 produk = 23.400 B / 2.353 B gzip**; ±**359 B/produk** mentah | WebBuilder | ✅ **REKOMENDASI** — render diverifikasi 1265 px (kartu 244 px) & 360 px (2 kolom, kartu 175 px), `scrollWidth == clientWidth` **tanpa overflow** |
+| **Bagisto** 2.5 | github.com/bagisto/bagisto | Toko + multi-vendor marketplace | PHP / Laravel | ✅ **MIT murni** (dibaca) | 28.422 ⭐ · 100 commit/60d · v2.5.2 (18 Nov) · repo **433 MB** | compose dev **11 service**: `laravel.test` + `nginx` + `apache` + `litespeed` + `mysql` + `mariadb` + `pgsql` + `redis` + `elasticsearch` + `kibana` + `mailpit` (produksi min: app + web + MySQL + Redis [+ Elasticsearch]) | 🚫 **tidak untuk VPS 1,9 GB** |
+| **Medusa** v2 | github.com/medusajs/medusa | Headless commerce (fokus API) | TypeScript | ⚠️ **MIT *kecuali* EE** — `LICENSE` menunjuk `ENTERPRISE-LICENSE.md` (proprietary) | 37.435 ⭐ · 100 commit/60d · v2.23.1 (26 Nov) · repo **933 MB** (branch `develop`) | app + **Postgres** (+Redis) | 🔸 hanya kalau benar-benar butuh stok/ongkir multi-gudang |
+| **Saleor** | github.com/saleor/saleor | Headless commerce GraphQL | Python / Django | ✅ **BSD-3-Clause** (dibaca) | 23.610 ⭐ · **62 commit/60d** · v3.23.50 (17 Nov) · repo 252 MB | dev compose **5** (`saleor`, `dashboard`, `db`, `cache`, `mailpit`) + di produksi **celery worker & beat** | 🚫 kelas berat, perlu tim |
+| **Vendure** | github.com/vendure-ecommerce/vendure | Commerce TS (NestJS) | TypeScript | 🚨 **GPLv3 ATAU Vendure Commercial License** — bukan MIT | 8.622 ⭐ · 100 commit/60d · v3.8.2 (12 Nov) | dev compose: `mariadb` + `mysql_8` + `mysql_5` + `elasticsearch` + `redis`… (Postgres/MySQL di produksi) | 🚫 lisensi GPLv3 = pertanyaan hukum di pengadaan |
+| WooCommerce | — | Toko di WordPress | PHP | GPL | 10.610 ⭐ | WordPress + MySQL | 🚫 **bertentangan prinsip anti-template** |
+
+### 📐 Angka katalog statis (diukur hari ini, bukan dikira)
+- **6 produk** (kopi, gula aren, batik, keripik, madu, anyaman): HTML **3.944 B mentah / 1.365 B gzip**, `document.scripts.length = 0`, **nol** gambar (ubin produk pakai gradien CSS → nol request).
+- **60 produk berbeda** (skala satu desa): **23.400 B mentah / 2.353 B gzip** — masih **0,8%** dari janji "halaman <300 KB", dan **1/440** kuota 1 GB warga.
+- Kartu produk = **±359 B** mentah ⇒ tambah 1 produk ≈ 4 detik kerja, **0** biaya runtime.
+- Render diukur lewat `browser_exec`: **1265 px** → 4 kolom (kartu 244 px); **360 px** → **2 kolom** (kartu 175 px), tinggi tombol 41 px (nyaman dijemput jempol) — **tanpa overflow horizontal** (pelajaran #93: wajib ukur 360 px, jangan cuma desktop).
+
+### 🧾 Resep "Pesan via WhatsApp" (0 KB JS, terbukti ter-encode benar)
+```python
+import urllib.parse
+msg = f"Halo, saya mau pesan dari katalog desa:\n• {nama} — Rp {harga}\n\nNama saya: \nAlamat: "
+url = "https://wa.me/62" + nomor_tanpa_nol + "?text=" + urllib.parse.quote(msg)
+```
+- Hasil uji: URL **185–205 karakter**, newline jadi **`%0A`** (dikonfirmasi), tanpa `+`/spasi di nomor.
+- Pesanan **tidak** tersimpan di server kita (tempatkan di chat penjual) → **tidak ada data pribadi warga yang perlu di-PDP-kan**, nol database, nol biaya per pesan.
+- ⚠️ Nomor harus **WhatsApp Business** milik penjual (kalau nomor pribadi, pembeli melihat nomor pribadi itu). Jangan pakai Baileys/WA unofficial untuk otomatisasi (pelajaran #60: risiko akun di-restrict).
+
+### ✅ Keputusan buat `t_2af5e946`
+1. **Segmen UMKM dibuka dengan katalog statis** (Astro content collection `produk/*.md`) — bukan platform. Yang dijual: halaman + isi produk dibantu kita + tombol WA. Biaya hosting ~0.
+2. Platform e-commerce (Medusa/Saleor/Bagisto) **baru** kalau ada klien dengan kebutuhan stok, ongkir, dan pembayaran online — dan itu **proyek terpisah** dengan hitungan service sendiri, bukan "paket desa".
+3. Kalau pembeli butuh **pembayaran**, naikkan bertahap: WA konfirmasi → **QRIS statis** (nol integrasi) → baru payment gateway.
+
+## ⚙️ OpsAgent — AUTOMATION TANPA KODE: **n8n haram buat klien**, Node-RED boleh (riset 2026-11-27)
+
+> Katalog lama menulis n8n "PAKAI INTERNAL". Hari ini **dibuktikan dari file lisensinya** — dan batasnya lebih ketat dari yang kita tulis: bukan cuma "jangan jual ulang", tapi **"hanya untuk keperluan bisnis sendiri"**.
+
+| Nama | URL | Fungsi | Lisensi (dibaca dari file) | ⭐ / aktivitas | Berat terukur | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **Node-RED** 5.0.10 | github.com/node-red/node-red | Flow visual (node) untuk IoT/otomasi/webhook | ✅ **Apache-2.0** (file `LICENSE`, OpenJS Foundation) | 23.887 ⭐ · 100 commit/60d · rilis **5.0.10 (17 Nov)** | **1 proses** · npm **12 dependensi** · image **300 MB** | OpsAgent | ✅ **satu-satunya yang boleh dipasang untuk klien** |
+| **n8n** 2.49.7 | github.com/n8n-io/n8n | Platform automation + AI | 🚨 **Sustainable Use License v1.0** + `LICENSE_EE.md`: *"You may use or modify the software **only for your own internal business purposes** or for non-commercial or personal use"* · `.ee.` file = Enterprise License | 212.284 ⭐ · 100 commit/60d · rilis nyaris harian | image stable **356,9 MB** · npm **171 dependensi / 35 MB** · repo **894 MB** (jangan clone) | OpsAgent | 🚫 **internal kita saja** — memasang di server klien = "provide it to others" (terlarang walau gratis) |
+| **Huginn** | github.com/huginn/huginn | Agen pemantau web → aksi (email/WA/webhook) | ✅ **MIT** (dibaca) | 50.650 ⭐ · 100 commit/60d · rilis **v2026.11.27 (26 Nov)** | 🚨 image **1.307,8 MB (1,3 GB)** · compose `docker/single-process` = `mysql` + `web` + `threaded` | OpsAgent | 🔸 pola bagus ("agent" sebelum istilah agent populer), **berat** untuk VPS 12 GB sisa |
+| **Activepieces** 0.94.0 | github.com/activepieces/activepieces | Zapier-alternatif + MCP | ✅ **MIT Expat**, **kecuali** `packages/ee/` + `packages/server/api/src/app/ee` | 25.745 ⭐ · 100 commit/60d · 0.94.0 (25 Nov) · repo **1,1 GB** | produksi: app + worker + **Postgres** + **Redis** (dev compose: `db` + `redis`) | OpsAgent | 🔸 cadangan kalau butuh 400+ konektor; 3–4 service |
+| **Windmill** v1.886.0 | github.com/windmill-labs/windmill | Workflow + script (Rust) | 🚨 **AGPL-3.0 by default** (sebagian Apache-2.0) + proprietary EE | 18.736 ⭐ · 100 commit/60d | compose resmi **7 service**: `db`, `windmill_server`, `windmill_worker`, `windmill_worker_native`, `windmill_indexer`, `windmill_extra`, `caddy` | — | 🚫 mustahil di VPS 1,9 GB |
+| **Automatisch** | github.com/automatisch/automatisch | "Zapier open source" | (tidak dinilai — sudah mati) | 14.033 ⭐ tapi **0 commit/60d**, push terakhir **Feb 2026**, rilis terakhir **Agu 2025** | — | — | 🚫 **mati** walau ⭐ 14 ribu |
+
+### ✅ Keputusan
+1. **Untuk klien: Node-RED** (Apache-2.0, 1 container, 1 proses). Contoh paket jual: *"kalau ada pesanan masuk Google Form → kirim WA/email + catat ke Sheets"*.
+2. **n8n tetap internal** — kalau kita butuh flow visual untuk operasional sendiri (mis. ambil RSS Komdigi → ringkas → Telegram). **Jangan** dipasang di server klien, jangan dijadikan fitur berbayar.
+3. **Realitas VPS:** RAM available hari ini **358 MB** → **belum diuji menjalankan** Node-RED di sini (jujur: yang diukur baru image/dependensi/jumlah service, bukan RSS). Pasang hanya kalau ada kebutuhan nyata + setelah ronda RAM (Orchestrator).
+4. **Pengingat:** sebagian besar "otomasi" kita sudah jalan sebagai **cron Hermes** (0 container). Platform no-code dipakai untuk **memberi user (non-teknis) tombol sendiri**, bukan untuk menggantikan cron.
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
