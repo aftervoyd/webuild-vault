@@ -810,3 +810,10 @@ Keduanya **mustahil tanpa kredit**. Satu-satunya bahan bakar = **email approval 
 1. Daftar Higgsfield (gratis) + buat 1 Contest Project publik → coba tarik credit grant; kalau tak ada respons 24 jam, tutup jalur ini.
 2. Putuskan strategi RH: 18 hari 0 koin & membership habis → jalur koin RH praktis mati; fokus ke platform yang membagi kredit (Higgsfield/Cascade) atau kontes gratis berbasis tool sendiri (Artefact Paris 2 Des, Chroma S2 7 Jan 2027).
 3. ⚠️ Tidak ada jam gratis. Qwen-Edit ±49–52 koin/gambar; motion ±16,4–26 koin/dtk (16 dtk ≈ 431 koin). Hitung dulu sebelum render.
+
+## 7. ADDENDUM SCAN 27 NOV 2026 (aifilmcontests.com)
+- **KOREKSI: Chroma Awards S2 deadline = 7 Jan 2027 23:45 PT** (bukan 31 Des). Gratis, unlimited entry, proyek dibuat >= 1 Feb 2026, 5 divisi + Student Awards, $450K+ cash. Sponsor awards: Kling, CapCut, MiniMax Hailuo, PixVerse, LTX, Dreamina, OpenArt.
+- **1 Billion Followers Summit AI Film Award ($1.000.000)** — TUTUP 20 Nov 2026, gratis, wajib >=70% Seedance 5-7 mnt. LEWAT.
+- BARU: **NEXTALE Award** — gratis, pool $3.000, deadline 14 Des 2026, syarat 20+ episode series AI.
+- BARU: **Cannes Film Awards (kategori AI pertama)** — $1K+ cash + $25K partner, deadline 21 Jan 2027, event 25-27 Jun 2027.
+- Lain (laurels/kecil): AI Film Awards Las Vegas 31 Des; AI Film & Ads Awards India 31 Des; UK Film AI Awards £10-50, 21 Apr 2027; MetaMorph London 15 Mei 2027; AI Toronto Genre 22 Mei 2027.

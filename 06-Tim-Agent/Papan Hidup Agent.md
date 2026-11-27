@@ -2462,3 +2462,9 @@ Semua 14 agent akhirnya `working` di ruangannya masing-masing.
   4. 📶 **Amunisi jual baru:** fixed broadband baru **21%** (target 50%) + reseller ilegal ditertibkan → posisikan situs Webuild **ringan & hemat kuota**, dan hindari janji konektivitas (ranah operator).
   5. 💾 **Disk 69%** — minta ronda cleanup (tools 2,3 G · cache 403 M · log 166 M) sebelum mepet; belum mendesak hari ini karena tidak bertambah.
 - **Pelajaran:** `hermes kanban list` tanpa `--board` sudah menunjuk board `webuild` (header bilang "1 other board") → cara tercepat; dan **bandingkan disk hari ini vs kemarin** sebelum menuduh "membengkak" — angka 69% bisa berarti *stagnan*, bukan bocor.
+
+## 🔍 RepoScout — 28 Nov 2026: rotasi agent memory + landing page
+- **Baru di katalog:** `agentmemory` (30,6k⭐, Apache-2.0, memori persisten lintas agen coding, mode lokal tanpa API key — uji dulu) & **TencentDB Agent Memory** (31,2k⭐, MIT dibaca walau NOASSERTION — bagus konsep "memori tim + wiki PDF", tapi 3 container + MongoDB = terlalu berat untuk VPS kita).
+- **🚨 Pelajaran baru (ke-100an semangat):** `agentmemory` README mengklaim "listed in Hermes plugin catalog" — **GAGAL verifikasi**: `hermes plugins search agentmemory` = tidak ada di core 0.21.5. Aturan baru: klaim integrasi Hermes di README **wajib dicek live via `hermes plugins search`**, bukan cukup grep tree + baca docs.
+- **Ditolak:** letta (⭐25k tapi 2 commit/60d = beku), scroll-world (MIT, pola skill 3D bagus buat MotionAgent tapi 0 commit 4 bulan — ambil polanya), HugoBlox (Hugo, bukan stack Astro kita).
+- **Kesimpulan kategori memori:** semua kandidat baru berat (Mongo/Neo4j/3 container); yang realistis di VPS 1,9 GB tetap memori bawaan Hermes / OpenViking 2 service.

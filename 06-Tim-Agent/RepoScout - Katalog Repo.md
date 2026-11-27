@@ -2339,6 +2339,24 @@ url = "https://wa.me/62" + nomor_tanpa_nol + "?text=" + urllib.parse.quote(msg)
 3. **Realitas VPS:** RAM available hari ini **358 MB** → **belum diuji menjalankan** Node-RED di sini (jujur: yang diukur baru image/dependensi/jumlah service, bukan RSS). Pasang hanya kalau ada kebutuhan nyata + setelah ronda RAM (Orchestrator).
 4. **Pengingat:** sebagian besar "otomasi" kita sudah jalan sebagai **cron Hermes** (0 container). Platform no-code dipakai untuk **memberi user (non-teknis) tombol sendiri**, bukan untuk menggantikan cron.
 
+
+## 🧠 Agent Memory — ronda ulang 2026-11-28 (rotasi: agentic AI + landing page)
+
+| Nama | URL | Fungsi | Stack | Lisensi | ⭐ | Pemilik | Status |
+|---|---|---|---|---|---|---|---|
+| **agentmemory** | github.com/rohitg00/agentmemory | **Memori persisten lintas sesi & lintas agen coding** ([CC], Copilot CLI, Cursor, Codex, **Hermes**, dll — semua MCP client); recall keyword TANPA API key, lokal/remote embedding opsional; viewer lokal + import/export | TypeScript (Node) | ✅ **Apache-2.0** (`LICENSE`, dibaca); `packages/mcp/LICENSE` & `integrations/pi/LICENSE` = sub-lisensi terpisah (cek bila pakai bagian itu) | 30.635 (**subs 79 → rasio 388 ⚠️**) · **100 commit/60d** · rilis v0.9.33 (9 Nov) · created 2026-02 | RepoScout + Orchestrator | ⚠️ **UJI DULU** — klaim "listed in Hermes plugin catalog" di README **TIDAK terbukti**: `hermes plugins search agentmemory` = *No catalog entries matched* (katalog core kita 0.21.5 mungkin tercupik). Deps kecil (10 paket), mode lokal tanpa API key menarik → uji manual dulu sebelum dipercaya |
+| **TencentDB Agent Memory (TDAI)** | github.com/TencentCloud/TencentDB-Agent-Memory | **Memory hub TIM agen**: asset memori portabel lintas framework, panel + wiki (md/docx/xlsx/pptx/pdf → halaman berlink), CodeGraph indeks repo, skill diekstrak dari percakapan | TypeScript · 3 image Docker Hub `agentmemory/*` (memory-core 8420 · memory-hub 8125/8424 · proxy 8096) + **MongoDB** (local-mongo compose) | ✅ **MIT** (file `LICENSE`, dibaca — walau API `NOASSERTION`; pola pelajaran 23/44 berulang) | 31.230 (subs 89 → rasio 351 ⚠️) · 33 commit/60d · rilis v2.0.4 (19 Nov) · created 2026-04 | RepoScout + Orchestrator | ⚠️ **PELAJARI — berat**: stack = **3 container + MongoDB** (5+ volume) → terlalu besar buat VPS 1,9 GB; dua LLM key (MEMORY_* & PROXY_*) → biaya inferensi jalan terus. Konsep "memori tim bersama + wiki dokumen" relevan dgn kebutuhan PDF desa kita — pantau, uji di PC |
+| ~~letta~~ (MemGPT) | github.com/letta-ai/letta | Platform stateful agent + memori | Python | ✅ Apache-2.0 (dibaca) | 25.569 (subs 143) · **hanya 2 commit/60d** · rilis terakhir 0.16.8 (Mei 2026) | — | 🚫 **BEKU di main** walau ⭐ besar & repo 287 MB — pola pelajaran 42/94 berulang |
+| ~~scroll-world~~ | github.com/oso95/scroll-world | Skill landing page 3D scroll-scrub "fly-through world" buat [CC]/agent SKILL.md | JS/HTML (skill: SKILL.md + scrub-engine.js) | ✅ MIT (dibaca) | 11.176 (subs 50) · **0 commit/60d** (created Jul 2026, push terakhir Jul) | — | ⚠️ **IDE bagus (MotionAgent/WebBuilder)** — ambil polanya (scrub-engine + pipeline.md), jangan pakai blik; repo 49 KB ringan tapi mandek 4 bulan |
+| ~~HugoBlox/kit~~ | github.com/HugoBlox/kit | Framework Hugo "AI builds, you own as Markdown" | Hugo/HTML | ✅ MIT (`LICENSE.md`) | 9.802 (subs 92) · **0 commit/60d** (rilis terakhir Apr 2026) | — | 🚫 stack Hugo (bukan Astro kita) + mandek → skip |
+
+**Temuan & pelajaran rotasi ini:**
+- ⭐ **`agentmemory` = klaim integrasi Hermes pertama yang GAGAL verifikasi** — README menaut `hermes-agent.nousresearch.com/marketplace/agentmemory` + `hermes plugins install agentmemory`, tapi `hermes plugins search agentmemory` di core 0.21.5 = **tidak ada**. Pelajaran baru: **klaim "listed in plugin catalog" WAJIB diverifikasi via `hermes plugins search`**, pola pelajaran 15/95 (grep tree + verifikasi katalog) butuh langkah ketiga: **search-nya dijalankan, bukan dibaca**.
+- **Pola lisensi NOASSERTION=MIT berulang lagi** (TDAI) — ke-5 kalinya pola ini (klaro, lite-youtube, gotify, Orama, sekarang TDAI). `NOASSERTION` ≠ meragukan; selalu baca filenya.
+- **Kategori memori agen sekarang BERAT semua kecuali agentmemory**: TDAI = 3 container + Mongo; cognee = Neo4j+Postgres+Redis; Hindsight = repo 825 MB; letta beku. Yang realistis di VPS kita tetap: **memori bawaan Hermes / OpenViking (2 service)**.
+- **`affaan-m/ECC` (311.791⭐, MIT, 100 commit/60d, 1.780 kontributor)** sudah ada di katalog sebelumnya (277k⭐) → tumbuh 34k⭐/bulan, watchers 1.532 → masih **hype-risk**, status tidak berubah.
+- Landing page: tidak ada kandidat baru yang mengalahkan shadcn + Magic UI + Launch UI (sudah di katalog); `scroll-world` menarik sebagai **pola skill** bukan dependency.
+
 ## 🔗 Terkait
 - [[06-Tim-Agent/Team Registry]]
 - [[03-Proyek/04-Virtual-Office-Visualisasi/README|Proyek 04 — Virtual Office]]
