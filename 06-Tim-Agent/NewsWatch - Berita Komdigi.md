@@ -1,3 +1,41 @@
+## Ringkasan Terbaru (28 Nov 2026 — mencakup 25–27 Nov, id 10736–10756)
+
+### 1) Portal Komdigi: 17 item baru sejak run terakhir (id 10736–10756; 10736–10748 sebagian sudah tercatat run 26–27 Nov)
+Probe 10730–10780 (UA browser, jeda 4 dtk) → **hidup s/d 10756; 10757+ 404**. Item baru tambahan dibanding catatan run 26–27 Nov:
+- **10749** (SP, Jumat 27 Nov 10:50): Menkomdigi minta **kurir/pos perketat pengawasan kiriman** cegah jalur narkoba — dasar hukum **Permen Komdigi 8/2025 (Layanan Pos Komersial)**, SOP pencegahan kiriman mencurigakan. **Dampak Webuild:** relevan ke rencana produk **kurir lokal desa** — Permen 8/2025 sudah mewajibkan SOP keamanan pengiriman; catat sebagai kewajiban kepatuhan produk kurir (sejalan Perpres 27/2026 untuk aturan tarif).
+- **10750** (SP, 27 Nov 11:15) & **10751** (11:00): Wamen Nezar — **startup digital** sebagai solusi ketahanan iklim + bangun **ekosistem startup hingga kota menengah** (framing/forum, bukan kebijakan baru). Sinyal lembut: dukungan ekosistem startup di kota menengah → potensi program inkubasi daerah.
+- **10752** (SP, 27 Nov 12:00): **SPPT-TI** — masyarakat bisa **lacak perkara hukum tanpa menunggu viral** (transparansi; konsisten interoperabilitas Satu Data).
+- **10753** (SP, 27 Nov 15:15): Menkomdigi — **tiga langkah sikapi pengetatan AS atas ekspor chip & server AI**; Komdigi belum terima pemberitahuan resmi soal penghentian pengiriman mitra manufaktur. Pantau lanjutan (implikasi harga server/AI lokal) ⚠️ perlu verifikasi kebijakan konkret.
+- **10754** (14:35) & **10755** (21:00): **Sekolah Rakyat** — Meutya: Kemkomdigi pastikan **konektivitas**; pembelajaran digital ditinjau. Sinyal pasar konektivitas sekolah desa.
+- **10756** (SP, 27 Nov 19:45): **614.870 pelanggan baru internet murah** (fixed wireless access lelang **1,4 GHz**, akhir 2025), tarif **Rp100–150 ribu**, kecepatan hingga 100 Mbps; menjangkau Sumatra/Kalimantan/Sulawesi/Maluku/Papua. **Dampak Webuild:** angka terkini program Internet Rakyat — amunisi jual "situs desa harus terbuka cepat di koneksi terbatas"; evaluasi perluasan layanan disebut.
+
+### 2) DOMAIN — temuan TERPENTING run ini: kartu baru domain.go.id (terlewat run 27 Nov)
+`domain.go.id/berita` kini memuat kartu teratas **/berita/41** (epoch **1795810284** ≈ tayang 28 Nov): **"Penguatan DNS Server Pemerintah Dukung Pengawasan Website dan Subdomain"** — artikel bertanggal **18 Nov 2026** (Rakor Penonaktifan Website Pemerintah Tersisipi Judol, Depok, 18/11; Ditjen TPD):
+- **9.333.267 konten perjudian** ditemukan 2017 s/d 16 Nov 2026; **80–85% berada di dalam website**; tren notifikasi tahunan turun (7.795 di 2024 → 2.562 di 2025 → ±1.466 s/d 17 Nov 2026).
+- **Kemkomdigi sedang mengkaji layanan DNS Server Pemerintah; tahap awal UJI COBA untuk domain `.desa.id`** dan sebagian `.go.id` yang mengajukan diri.
+- Kanal aduan: Aduan Konten (masyarakat), Aduan Instansi (K/L/D), Aduan Polri; pengelola website wajib **update email notifikasi** di halaman depan situs.
+**Dampak Webuild:** ⚠️ penting untuk produk `.desa.id` — jika DNS `.desa.id` masuk pengelolaan terpusat Komdigi, alur pengelolaan domain klien desa bisa berubah (DNS, notifikasi insiden, SOP). Pantau kajian/kebijakan lanjutan; belum ada Permen → tandai kajian, bukan aturan baru.
+
+### 3) JDIH: 36 hari tanpa produk baru
+`produk_hukum/kategori` curl **200 / 98 KB** → teratas tetap **Kepmen 336/2026 (23 Okt)**, lalu 335/2026 (11 Sep), 141/2026 (9 Sep). **Rancangan PUU tetap 32**, **Partisipasi Publik tetap 21**. Tetap tulis sebagai **backlog unggah JDIH**, bukan "tidak ada Permen".
+
+### 4) Layanan desa: tetap pulih (hari ke-22 normal)
+`layanan.desa.id` 200 (halaman aplikasi Indeks), `website.desa.id` 200 (login WebsiteDesa) — tidak ada teks penonaktifan.
+
+### 5) BSSN: tidak ada advisory baru
+Teratas tetap **Microsoft 365 Global Outage (13 Nov)** → NodeJS (24 Okt), Oracle (23 Okt), GitLab (23 Okt). = 15 hari tanpa dokumen baru.
+
+### 6) PDP & Lomba Website Desa 2027
+- PDP: tidak ada perkembangan baru — tetap **RPerpres Badan PDP di meja Presiden** (media terakhir 4–9 Nov; b2btechasia 18 Nov masih kutip status yang sama). PP 33/2026 berlaku 16 Jan 2027.
+- Lomba Website Desa 2027: pendaftaran resmi tutup 23 Nov 12.00 (ANTARA 5864503 + borneotribun 25 Nov memuat rincian peserta per kab). **Penilaian kab/kota 23–27 Nov sedang/tamat** → tahap **provinsi 30 Nov–4 Des**; belum ada pengumuman lolos terverifikasi. Pantau DPMD akhir Nov/awal Des.
+
+### 7) Media pendukung
+Tidak ada kejadian media 27–28 Nov yang belum terwakili item portal di atas. (Konteks lama yang beredar ulang: 141 tersangka scam Manila, internet murah 1,4 GHz.)
+
+**Buat Orchestrator:** 1 item bernilai tinggi — **kajian DNS Server Pemerintah dengan uji coba `.desa.id`** (domain.go.id /berita/41): potensi perubahan cara pengelolaan DNS domain klien desa; pantau kebijakan lanjutannya. Angka baru amunisi jual: 614 ribu pelanggan internet murah (10756), 9,33 juta konten judol 80–85% di dalam website (domain.go.id).
+
+---
+
 # 📡 NewsWatch — Berita & Regulasi Komdigi (Webuild)
 
 > Terakhir diperbarui: **Jumat 27 Nov 2026 (CST)** oleh cron NewsWatch.

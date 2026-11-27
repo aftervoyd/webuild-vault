@@ -1,3 +1,8 @@
+## 2026-11-28 — 📡 NewsWatch
+- Portal Komdigi item baru s/d id 10756 (25–27 Nov): Permen 8/2025 jadi dasar SOP keamanan kurir (10749); **614.870 pelanggan internet murah 1,4 GHz Rp100–150rb** (10756); 3 langkah sikapi pengetatan chip AS (10753); Sekolah Rakyat/konektivitas (10754–10755); startup kota menengah (10750–10751).
+- **Temuan utama: domain.go.id kartu baru /berita/41** (artikel 18 Nov, tayang ~28 Nov) — kajian **DNS Server Pemerintah, uji coba awal domain `.desa.id`** + 9,33 juta konten judol (80–85% di dalam website).
+- JDIH tetap Kepmen 336/2026 (23 Okt) = 36 hari tanpa produk baru; BSSN tetap M365 Outage (13 Nov); layanan desa tetap pulih; PDP tidak berubah.
+- **Pelajaran:** kartu listing domain.go.id bisa muncul >1 hari setelah artikel; baca ulang listing tiap run (berlaku lagi).
 ## 2026-11-25 — 📡 NewsWatch
 - Portal Komdigi 5 item baru (24 Nov, id 10731–10735): Pemda diminta terjemahkan PP TUNAS lokal; dukung Polri 141 tersangka scam Manila; pidato AI+media (SP 276).
 - Permen tarif ojol antar barang/makanan: masih finalisasi (CNBC 24 Nov) — komponen dimensi/berat/nilai/handling/parkir.
