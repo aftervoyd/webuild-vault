@@ -1,3 +1,19 @@
+## 2026-11-28 — 🎛️ Orchestrator (digest harian)
+
+- **Papan Kanban (`webuild`):** `done=1` (t_05f9b201) · `ready=1` UNASSIGNED **`t_2af5e946`** (keputusan segmen toko UMKM + Lightpanda/Stagehand, sejak 15 Okt) → **hari ke-44 tanpa gerak**.
+- **Rutinitas tim — dua-duanya ✅ `ok` & on-time:**
+  - 🔍 **RepoScout ✅** 06:05 — rotasi **agent memory + landing page**: baru `agentmemory` (30,6k⭐ Apache-2.0, memori lintas agen coding, mode lokal) & TencentDB Agent Memory (MIT tapi 3 container + MongoDB = terlalu berat). 🚨 Pelajaran baru: klaim README `agentmemory` "listed in Hermes plugin catalog" **GAGAL verifikasi** via `hermes plugins search` → klaim integrasi Hermes di README wajib dicek live. Ditolak: letta (beku), scroll-world (0 commit 4 bln), HugoBlox (bukan stack kita). Kesimpulan: VPS 1,9 GB tetap pakai memori bawaan Hermes / OpenViking.
+  - 📡 **NewsWatch ✅** 07:08 — Portal Komdigi item baru s/d id 10756 (25–27 Nov): **614.870 pelanggan internet murah 1,4 GHz Rp100–150rb** · Permen 8/2025 jadi dasar SOP keamanan kurir. ⭐ **Temuan utama: domain.go.id kartu baru /berita/41** — kajian **DNS Server Pemerintah, uji coba awal domain `.desa.id`** + 9,33 juta konten judol. JDIH tetap Kepmen 336/2026 (23 Okt, 36 hari tanpa produk baru). Pelajaran: kartu listing domain.go.id bisa muncul >1 hari setelah artikel → baca ulang listing tiap run.
+- **Kesehatan VPS:** uptime **52d 20j** · load 1,34/1,04/0,88 (normal) · disk **69% (12G free, stagnan vs kemarin ✅)** · ⚠️ RAM ketat-stabil: free 102 MB / available 410 MB, swap 2,0 GB terpakai / 1,2 GB free · `kreaibot` + `kreeaimotion` active, port desa bind Tailscale-only ✅ · unit systemd `hermes` inactive (gateway jalan sebagai proses — pola dikenal, risiko reboot tetap tercatat) · vault git bersih & sinkron (`master...origin/main`).
+- **Butuh keputusan user (urut umur):**
+  1. 🛒 `t_2af5e946` **hari ke-44** — buka segmen toko UMKM (resep: katalog statis 1 file + `wa.me`) atau tutup tugasnya.
+  2. 🌐 **Kabar bagus buat jualan desa:** pemerintah mulai **uji coba awal domain `.desa.id`** (domain.go.id, 18 Nov) → peluang jualan paket "domain desa aktif + penertiban" naik, tapi belum ada kebijakan final.
+  3. ⚙️ Aturan otomasi klien: **Node-RED, jangan n8n** (lisensi Sustainable Use melarang dipasang di server klien) — setuju?
+  4. 💾 Disk 69% stagnan — cleanup /root/.hermes (tools 2,3 G + cache 403 M) kalau mau lega.
+- **Pelajaran:** klaim integrasi Hermes di README repo = wajib verifikasi `hermes plugins search`; kartu listing domain.go.id bisa telat >1 hari.
+
+---
+
 ## 2026-11-28 — 📡 NewsWatch
 - Portal Komdigi item baru s/d id 10756 (25–27 Nov): Permen 8/2025 jadi dasar SOP keamanan kurir (10749); **614.870 pelanggan internet murah 1,4 GHz Rp100–150rb** (10756); 3 langkah sikapi pengetatan chip AS (10753); Sekolah Rakyat/konektivitas (10754–10755); startup kota menengah (10750–10751).
 - **Temuan utama: domain.go.id kartu baru /berita/41** (artikel 18 Nov, tayang ~28 Nov) — kajian **DNS Server Pemerintah, uji coba awal domain `.desa.id`** + 9,33 juta konten judol (80–85% di dalam website).
